@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  // ブラウザからのアクセスを許可
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
   const token = process.env.TODOIST_API_TOKEN;
 
   try {
-    // ここが最新の "rest/v2" になっている必要があります
+    // ⚠️ ここが最新の "rest/v2" であることが重要です
     const response = await fetch('https://api.todoist.com/rest/v2/tasks', {
       method: 'POST',
       headers: {
@@ -21,13 +22,13 @@ export default async function handler(req, res) {
       })
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Todoistエラー: ${response.status} ${errorText}`);
+      throw new Error(`Todoist応答エラー: ${response.status} ${responseText}`);
     }
 
-    const data = await response.json();
-    return res.status(200).json(data);
+    return res.status(200).json(JSON.parse(responseText));
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
