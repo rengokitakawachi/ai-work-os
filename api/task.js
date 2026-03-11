@@ -3,11 +3,8 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const { title, due_string } = req.body;
   const token = process.env.TODOIST_API_TOKEN;
 
   try {
@@ -15,13 +12,18 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
-        content: title,
-        due_string: due_string || 'today',
-      }),
+        content: req.body.title,
+        due_string: req.body.due_string || 'today'
+      })
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Todoistエラー: ${response.status} ${errorText}`);
+    }
 
     const data = await response.json();
     return res.status(200).json(data);
