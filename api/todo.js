@@ -2,37 +2,36 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // ★ここを絶対に書き換えないでください★
-  const TODOIST_URL = "https://api.todoist.com/rest/v2/tasks";
-  const token = (process.env.TODOIST_API_TOKEN || "").trim();
+  // ★まずは ChatGPT推奨の「最新URL」をセットします
+  const TODOIST_URL = "https://api.todoist.com/api/v1/tasks";
+  const token = process.env.TODOIST_API_TOKEN;
 
-  console.log("--- AI Work OS 最終章 (v8) ---");
-  console.log("送信先:", TODOIST_URL);
+  // --- Claude推奨の【真実のログ】 ---
+  console.log("=== [FINAL DIAGNOSIS - v11] ===");
+  console.log("送信先URL:", TODOIST_URL);
+  console.log("鍵の有無:", !!token);
+  console.log("受信データ(body):", JSON.stringify(req.body));
 
   try {
     const response = await fetch(TODOIST_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token?.trim()}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        content: req.body.title || "テストタスク",
-        due_string: req.body.due_string || "today"
+        content: req.body?.title || "診断テスト",
+        due_string: "today"
       })
     });
 
     const data = await response.text();
-
-    if (!response.ok) {
-      return res.status(response.status).json({ error: "接続失敗", detail: data });
-    }
-
-    return res.status(200).json(JSON.parse(data));
+    console.log("Todoistからの生の回答:", data);
+    res.status(response.status).send(data);
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    console.error("エラー:", error.message);
+    res.status(500).send(error.message);
   }
 }
