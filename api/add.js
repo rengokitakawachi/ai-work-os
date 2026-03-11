@@ -5,17 +5,21 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  console.log("--- AI Work OS 稼働中 (v5-GOLDEN) ---");
+  // --- 診断ログ ---
+  const rawToken = process.env.TODOIST_API_TOKEN || "";
+  const token = rawToken.replace(/^Bearer\s+/i, "").trim();
+  
+  console.log("--- AI Work OS 稼働中 (v7-DIAGNOSTIC) ---");
+  console.log("鍵の状況: ", token ? `届いています（長さ:${token.length}文字）` : "❌ 届いていません！空っぽです");
+  if (token) {
+    console.log("鍵の断片: ", token.substring(0, 3) + "..." + token.substring(token.length - 3));
+  }
 
   try {
-    let token = process.env.TODOIST_API_TOKEN || "";
-    // 万が一「Bearer 」という文字が既に入っていたら自動で消す（掃除機能）
-    token = token.replace(/^Bearer\s+/i, "").trim();
-    
     const response = await fetch('https://api.todoist.com/rest/v2/tasks', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + token,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -25,15 +29,16 @@ export default async function handler(req, res) {
     });
 
     const data = await response.text();
-    console.log("Todoistからの生の回答:", data);
 
     if (!response.ok) {
-      return res.status(response.status).json({ error: "Todoist接続エラー", detail: data });
+      console.error("Todoistエラー詳細:", data);
+      return res.status(response.status).json({ error: "接続失敗", detail: data });
     }
 
+    console.log("✅ 登録成功！");
     return res.status(200).json(JSON.parse(data));
   } catch (error) {
-    console.error("エラー発生:", error.message);
+    console.error("エラー:", error.message);
     return res.status(500).json({ error: error.message });
   }
 }
