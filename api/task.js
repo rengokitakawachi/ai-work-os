@@ -7,10 +7,11 @@ export default async function handler(req, res) {
 
   const token = process.env.TODOIST_API_TOKEN;
 
-  // ログを出力（あとで Vercel でこれが出ているか確認します）
-  console.log("--- AI Work OS 稼働中 (v2) ---");
+  // ログに (v3) と表示されるか確認します
+  console.log("--- AI Work OS 稼働中 (v3-FINAL) ---");
 
   try {
+    // 確実に REST API v2 を指定します
     const response = await fetch('https://api.todoist.com/rest/v2/tasks', {
       method: 'POST',
       headers: {
@@ -26,12 +27,14 @@ export default async function handler(req, res) {
     const responseText = await response.text();
 
     if (!response.ok) {
-      throw new Error('Todoist応答エラー: ' + response.status + ' ' + responseText);
+      // 失敗した場合の詳細をログに出すようにしました
+      console.error("Todoistからのエラー回答:", responseText);
+      throw new Error('Todoist応答エラー: ' + response.status);
     }
 
     return res.status(200).json(JSON.parse(responseText));
   } catch (error) {
-    console.error("エラー詳細:", error.message);
+    console.error("エラーが発生しました:", error.message);
     return res.status(500).json({ error: error.message });
   }
 }
