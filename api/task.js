@@ -8,6 +8,7 @@ export default async function handler(req, res) {
   const token = process.env.TODOIST_API_TOKEN;
 
   try {
+    // ここが最新の "rest/v2" になっている必要があります
     const response = await fetch('https://api.todoist.com/rest/v2/tasks', {
       method: 'POST',
       headers: {
