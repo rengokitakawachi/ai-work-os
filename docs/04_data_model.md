@@ -12,7 +12,7 @@ Todoist へ登録・管理される動的データの構造。
   "project": "string (業務分類タグ)",
   "due_date": "date (YYYY-MM-DD)",
   "tags": ["string"],
-  "assignee": "self | delegated",
+  "assignee": "t-kinoshita | t-niwa",
   "status": "open | completed"
 }
 ```
@@ -66,6 +66,10 @@ AI は以下の属性を自動判定・付与する。
 - `#K-Project`
 - `#3rd交通政策WS`
 - `#プライベート`
+
+### 3.3. 担当者属性 (Assignee)
+- `@t-kinoshita` (木下)
+- `@t-niwa` (丹羽)
 
 ## 4. SSOT (Single Source of Truth) 責務の分離
 情報の「正本」を以下のように定義する。
