@@ -24,6 +24,7 @@ export default async function handler(req, res) {
 
     const title = body.title || '新しいタスク';
     const due_string = body.due_string || 'today';
+    const labels = Array.isArray(body.labels) ? body.labels : [];
 
     const response = await fetch(TODOIST_URL, {
       method: 'POST',
@@ -33,7 +34,8 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         content: title,
-        due_string: due_string
+        due_string: due_string,
+        labels: labels
       })
     });
 
