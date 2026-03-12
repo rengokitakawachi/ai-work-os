@@ -1,7 +1,11 @@
 {
   "name": "ai-work-os",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "node-fetch": "^3.3.0"
   }
