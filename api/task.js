@@ -22,9 +22,13 @@ export default async function handler(req, res) {
         ? JSON.parse(req.body)
         : (req.body || {});
 
-    const title = body.title || '新しいタスク';
-    const due_string = body.due_string || 'today';
+    const title = typeof body.title === 'string' ? body.title.trim() : '';
+    const due_string = typeof body.due_string === 'string' ? body.due_string : 'today';
     const labels = Array.isArray(body.labels) ? body.labels : [];
+
+    if (!title) {
+      return res.status(400).json({ error: 'title は必須です' });
+    }
 
     const response = await fetch(TODOIST_URL, {
       method: 'POST',
