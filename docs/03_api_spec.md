@@ -1,47 +1,51 @@
 # 03_API_Spec: 技術仕様とエンドポイント
 
 ## 1. 共通仕様
-- **Base URL:** `https://ai-work-os.vercel.app`
-- **認証方式:** Bearer Token (Vercel 環境変数 `TODOIST_API_TOKEN` を使用)
-- **データ形式:** JSON (UTF-8)
+- Base URL: https://ai-work-os.vercel.app
+- 認証方式: Bearer Token (Vercel 環境変数 GITHUB_TOKEN / TODOIST_API_TOKEN 等を使用)
+- データ形式: JSON (UTF-8)
 
-## 2. 実装済み API
-### 2.1. Todoist タスク登録 (/api/todo)
-- **Method:** POST
-- **概要:** 事務局長の Inbox へタスクを 1 件登録する。
-- **リクエストパラメータ:**
+## 2. Vercel 構成 (vercel.json)
+```json
+{
+  "functions": { "src/api/*.ts": { "runtime": "nodejs20.x" } },
+  "rewrites": [{ "source": "/api/:path*", "destination": "/src/api/:path*" }]
+}
+```
+
+## 3. API エンドポイント詳細
+
+### 3.1. タスク登録 (/api/task/create)
+- Method: POST
+- 機能: 事務局長の Todoist Inbox へタスクを登録する。
+- パラメータ:
+  - title (必須): タスク名（30-120分の粒度）
+  - due_string: 期限（例: "today", "tomorrow"）
+  - description: 詳細メモ
+  - labels: タグ配列（例: ["#連合北河内"]）
+
+### 3.2. ナレッジ保存 (/api/note/save)
+- Method: POST
+- 機能: GitHub リポジトリへ指定した Markdown ファイルを Push する（Obsidian 同期用）。
+- パラメータ:
   ```json
   {
-    "title": "string (必須: タスクの内容)",
-    "due_string": "string (任意: デフォルトは 'today')"
-  }
-  ```
-- **接続先:** Todoist Unified API v1 (`https://api.todoist.com/api/v1/tasks`)
-
-## 3. 将来の拡張予定 (Planned APIs)
-以下のエンドポイントは、開発ロードマップに基づき順次実装する。
-
-### 3.1. ナレッジ保存 (/api/note)
-- **Method:** POST
-- **機能:** GitHub リポジトリへ指定した Markdown ファイルを Push する。
-- **パラメータ:**
-  ```json
-  {
-    "filename": "string (例: 2026-03-11-meeting.md)",
+    "path": "string (例: 40_Knowledge/2026-03-11-meeting.md)",
     "content": "string (Markdown本文)",
-    "commit_message": "string"
+    "message": "string (コミットメッセージ)"
   }
   ```
+- 補足: フォルダ階層を含めて指定することで、Obsidian 内の適切な場所へ保存される。
 
-### 3.2. 会議録・戦略処理 (/api/meeting)
-- **Method:** POST
-- **機能:** 音声文字起こしやメモから、構造化された議事録（Markdown）を生成・保存する。
+### 3.3. 会議整理・タスク分解 (/api/meeting/process)
+- Method: POST
+- 機能: 会議メモから Meeting ノートと複数の Task を同時生成・処理する。
+- 入力: title, date, participants, raw_text, project, work_domain。
 
-### 3.3. ベクトル検索 (/api/knowledge/search)
-- **Method:** GET
-- **機能:** Obsidian 内の過去資産から RAG（検索拡張生成）用のデータを抽出する。
+### 3.4. 知識検索 (/api/knowledge/search)
+- Method: GET
+- 機能: Obsidian 内の過去資産から RAG（検索拡張生成）用のデータを抽出する（将来拡張）。
 
 ## 4. エラーハンドリング
-- **401/403:** 認証エラー。トークンの有効期限または設定を確認。
-- **410:** 廃止されたエンドポイントへのアクセス（v2 から v1 への移行が必要）。
-- **500:** システムエラー。Vercel Logs で診断が必要。
+- 401/403: 認証エラー。Vercel 環境変数のトークン設定（GITHUB_TOKEN等）を確認。
+- 500: システムエラー。Vercel Logs で API の動作ログを診断。
