@@ -3,7 +3,9 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -12,7 +14,9 @@ export default async function handler(req, res) {
   const token = (process.env.TODOIST_API_TOKEN || '').trim();
 
   if (!token) {
-    return res.status(500).json({ error: '設定エラー: APIトークンが未設定です' });
+    return res.status(500).json({
+      error: '設定エラー: TODOIST_API_TOKEN が未設定です'
+    });
   }
 
   try {
@@ -27,7 +31,9 @@ export default async function handler(req, res) {
         : '';
 
     if (!taskId) {
-      return res.status(400).json({ error: 'task_id は必須です' });
+      return res.status(400).json({
+        error: 'task_id は必須です'
+      });
     }
 
     const updatePayload = {};
@@ -58,8 +64,6 @@ export default async function handler(req, res) {
         string: body.due_string.trim(),
         lang: typeof body.lang === 'string' && body.lang.trim() ? body.lang.trim() : 'ja'
       };
-    } else if (body.due && typeof body.due === 'object') {
-      updatePayload.due = body.due;
     }
 
     if (body.deadline && typeof body.deadline === 'object') {
@@ -67,17 +71,24 @@ export default async function handler(req, res) {
     }
 
     if (Object.keys(updatePayload).length === 0) {
-      return res.status(400).json({ error: '更新項目がありません' });
+      return res.status(400).json({
+        error: '更新項目がありません'
+      });
     }
 
-    const response = await fetch(`https://api.todoist.com/api/v1/tasks/${encodeURIComponent(taskId)}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatePayload)
-    });
+    console.log('updatePayload:', JSON.stringify(updatePayload));
+
+    const response = await fetch(
+      `https://api.todoist.com/api/v1/tasks/${encodeURIComponent(taskId)}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatePayload)
+      }
+    );
 
     const text = await response.text();
 
@@ -90,6 +101,7 @@ export default async function handler(req, res) {
     }
 
     let data = null;
+
     try {
       data = text ? JSON.parse(text) : null;
     } catch {
