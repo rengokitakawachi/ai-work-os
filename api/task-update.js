@@ -87,9 +87,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // エンドポイントを v1 から v2 へ修正
+    console.log('updatePayload:', JSON.stringify(updatePayload));
+
     const response = await fetch(
-      `https://api.todoist.com/rest/v2/tasks/${encodeURIComponent(taskId)}`,
+      `https://api.todoist.com/rest/v1/tasks/${encodeURIComponent(taskId)}`,
       {
         method: 'POST',
         headers: {
