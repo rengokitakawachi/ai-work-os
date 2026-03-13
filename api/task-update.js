@@ -60,14 +60,25 @@ export default async function handler(req, res) {
     }
 
     if (typeof body.due_string === 'string' && body.due_string.trim()) {
-      updatePayload.due = {
-        string: body.due_string.trim(),
-        lang: typeof body.lang === 'string' && body.lang.trim() ? body.lang.trim() : 'ja'
-      };
+      updatePayload.due_string = body.due_string.trim();
     }
 
-    if (body.deadline && typeof body.deadline === 'object') {
-      updatePayload.deadline = body.deadline;
+    if (typeof body.due_date === 'string' && body.due_date.trim()) {
+      updatePayload.due_date = body.due_date.trim();
+    }
+
+    if (typeof body.due_datetime === 'string' && body.due_datetime.trim()) {
+      updatePayload.due_datetime = body.due_datetime.trim();
+    }
+
+    if (typeof body.due_lang === 'string' && body.due_lang.trim()) {
+      updatePayload.due_lang = body.due_lang.trim();
+    } else if (updatePayload.due_string) {
+      updatePayload.due_lang = 'ja';
+    }
+
+    if (typeof body.deadline_date === 'string' && body.deadline_date.trim()) {
+      updatePayload.deadline_date = body.deadline_date.trim();
     }
 
     if (Object.keys(updatePayload).length === 0) {
@@ -79,7 +90,7 @@ export default async function handler(req, res) {
     console.log('updatePayload:', JSON.stringify(updatePayload));
 
     const response = await fetch(
-      `https://api.todoist.com/api/v1/tasks/${encodeURIComponent(taskId)}`,
+      `https://api.todoist.com/rest/v2/tasks/${encodeURIComponent(taskId)}`,
       {
         method: 'POST',
         headers: {
