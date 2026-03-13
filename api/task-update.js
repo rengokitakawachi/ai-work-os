@@ -90,7 +90,7 @@ export default async function handler(req, res) {
     console.log('updatePayload:', JSON.stringify(updatePayload));
 
     const response = await fetch(
-      `https://api.todoist.com/rest/v2/tasks/${encodeURIComponent(taskId)}`,
+      `https://api.todoist.com/rest/v1/tasks/${encodeURIComponent(taskId)}`,
       {
         method: 'POST',
         headers: {
@@ -111,19 +111,11 @@ export default async function handler(req, res) {
       });
     }
 
-    let data = null;
-
-    try {
-      data = text ? JSON.parse(text) : null;
-    } catch {
-      data = null;
-    }
-
     return res.status(200).json({
       ok: true,
       task_id: taskId,
       updated: updatePayload,
-      task: data
+      detail: text || null
     });
   } catch (error) {
     console.error('System Error:', error.message);
