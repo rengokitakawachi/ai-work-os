@@ -45,6 +45,8 @@ Plan (1) --- (n) Project
 3.3. Knowledge (Knowledge Layer)
 - note_id: 一意のID
 - title: 知識タイトル
+- moc_ref: 属するMOC（Map of Content）へのリンク（追加）
+- source_origin: 情報源（Web, 会議録, AI対話ログ等の参照元）（追加）
 - summary: 概要
 - key_points: 重要ポイント
 - insights: 得られた示唆
@@ -60,6 +62,12 @@ Plan (1) --- (n) Project
 - strategy_issues: 戦略上の課題
 - system_issues: システム上の課題
 - actions: 改善アクション
+
+3.5. MOC (Knowledge Layer)
+- moc_id: 一意のID
+- title: トピック名
+- hub_links: 関連する知識ノートへのハブリンク
+- summary: トピック全体の構造解説
 
 4. タグ体系 (Tagging System)
 
