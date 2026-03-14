@@ -2,17 +2,17 @@
 
 1. Vercel 構成 (vercel.json)
 {
-  "functions": {
-    "src/api/*.ts": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/src/api/:path*"
-    }
-  ]
+ "functions": {
+ "api/*.js": {
+ "runtime": "nodejs20.x"
+ }
+ },
+ "rewrites": [
+ {
+ "source": "/api/:path*",
+ "destination": "/api/:path*"
+ }
+ ]
 }
 
 2. 環境変数 (.env)
@@ -26,7 +26,7 @@
 
 3. GitHub リポジトリ構造
 - docs/: 仕様書群
-- src/api/: API エンドポイント
+- api/: API エンドポイント
 - src/services/: 外部クライアントクラス（Todoist, GitHub等）
 - src/types/: 型定義
 - vercel.json: 構成ファイル
