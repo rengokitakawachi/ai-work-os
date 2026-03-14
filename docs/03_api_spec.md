@@ -35,16 +35,20 @@
     "message": "string (コミットメッセージ)"
   }
   ```
-- 補足: フォルダ階層を含めて指定することで、Obsidian 内の適切な場所へ保存される。
+- 補足: 保存される content には、04_Data_Model で定義した moc_ref および source_origin を含めることで、MOC（情報の地図化）とソース駆動型思考の基盤とする。
 
 ### 3.3. 会議整理・タスク分解 (/api/meeting/process)
 - Method: POST
-- 機能: 会議メモから Meeting ノートと複数の Task を同時生成・処理する。
+- 機能: 会議メモから Meeting ノート and 複数の Task を同時生成・処理する。
 - 入力: title, date, participants, raw_text, project, work_domain。
 
 ### 3.4. 知識検索 (/api/knowledge/search)
 - Method: GET
-- 機能: Obsidian 内の過去資産から RAG（検索拡張生成）用のデータを抽出する（将来拡張）。
+- 機能: Obsidian 内の過去資産から RAG（検索拡張生成）用のデータを抽出する。
+- 役割: 原則10（ソース駆動型思考）を実現するための基幹エンドポイント。AI の回答前に本 API を叩き、Grounding（根拠付け）を行う。
+
+### 3.5. 資産化フロー実行（将来拡張）
+- 役割: AI との対話ログから要約を生成し、適切な MOC へのリンクを含めて /api/note/save を呼び出す一連のシークエンスを制御する。
 
 ## 4. エラーハンドリング
 - 401/403: 認証エラー。Vercel 環境変数のトークン設定（GITHUB_TOKEN等）を確認。
