@@ -1,21 +1,11 @@
-import { listDocs, getDocFile } from '../src/services/github-docs.js';
+import { getDocFiles } from '../src/services/github-docs.js';
+import { authorizeInternalRequest } from '../arc/lib/auth.js';
 
-function isAuthorized(req) {
-  const internalApiKey = (process.env.INTERNAL_API_KEY || '').trim();
-
-  if (!internalApiKey) {
-    return true;
-  }
-
-  const authHeader = req.headers.authorization || '';
-  const bearerToken = authHeader.startsWith('Bearer ')
-    ? authHeader.slice(7).trim()
-    : '';
-
-  const queryToken =
-    typeof req.query?.key === 'string' ? req.query.key.trim() : '';
-
-  return bearerToken === internalApiKey || queryToken === internalApiKey;
+function parseFilesParam(filesParam) {
+  return String(filesParam || '')
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean);
 }
 
 export default async function handler(req, res) {
@@ -30,48 +20,40 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({
       ok: false,
-      error: 'method not allowed'
+      error: {
+        code: 'INVALID_REQUEST',
+        message: 'Method not allowed'
+      }
     });
   }
 
-  if (!isAuthorized(req)) {
-    return res.status(401).json({
-      ok: false,
-      error: 'unauthorized'
-    });
+  if (!authorizeInternalRequest(req, res)) {
+    return;
   }
 
   try {
-    const list = await listDocs();
+    const files = parseFilesParam(req.query.files);
 
-    const data = await Promise.all(
-      list.items.map(async (item) => {
-        const file = await getDocFile(item.name);
+    if (!files.length) {
+      return res.status(400).json({
+        ok: false,
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'files query is required'
+        }
+      });
+    }
 
-        return {
-          name: file.name,
-          path: file.path,
-          sha: file.sha,
-          size: file.size,
-          content: file.content
-        };
-      })
-    );
+    const result = await getDocFiles(files);
 
-    return res.status(200).json({
-      ok: true,
-      data: {
-        items: data,
-        count: data.length
-      }
-    });
+    return res.status(200).json(result);
   } catch (error) {
-    const status = Number.isInteger(error?.status) ? error.status : 500;
-
-    return res.status(status).json({
+    return res.status(error.status || 500).json({
       ok: false,
-      error: error?.message || 'internal server error',
-      detail: error?.detail || null
+      error: {
+        code: error.code || 'UNKNOWN_ERROR',
+        message: error.message || 'Unknown error'
+      }
     });
   }
 }
