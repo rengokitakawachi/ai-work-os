@@ -88,6 +88,19 @@ src/types/
 
 ---
 
+## 認証
+
+一部 API は INTERNAL_API_KEY による認証を行う。
+
+認証方法
+
+・Authorization ヘッダー（Bearer）  
+・または query パラメータ（key）
+
+一致した場合のみアクセスを許可する。
+
+---
+
 ## GitHub 連携
 
 GitHub との通信は service 層で行う。
@@ -111,6 +124,7 @@ docs の取得は専用 API を通じて行う。
 
 ・GET /api/docs  
 ・GET /api/docs-read?file=FILENAME  
+・GET /api/docs-bulk  
 
 docs は GitHub 上で管理される SSOT である。
 
