@@ -95,35 +95,51 @@ GET /api/docs-read?file=FILENAME
 
 ### エンドポイント
 
-GET /api/docs-bulk
+GET /api/docs-bulk?files=FILENAME1,FILENAME2,...
 
 ### 概要
 
-docs フォルダ内の全ファイルを一括取得する。
+指定した複数の docs ファイルを一括取得する。
 
-AI による全体解析、整合チェック、差分検出に使用する。
+AI による整合チェック、差分検出、関連 docs の同時参照に使用する。
+
+### パラメータ
+
+・files  
+カンマ区切りのファイル名一覧  
+例：03_api_spec.md,04_data_model.md,10_docs_dev_api.md
 
 ### レスポンス例
 
   {
     "ok": true,
-    "data": {
-      "items": [
-        {
-          "name": "01_concept.md",
-          "content": "Markdown本文"
+    "files": [
+      {
+        "ok": true,
+        "file": "03_api_spec.md",
+        "name": "03_api_spec.md",
+        "path": "docs/03_api_spec.md",
+        "sha": "xxx",
+        "size": 1234,
+        "content": "Markdown本文"
+      },
+      {
+        "ok": false,
+        "file": "10_docs_dev_api.md",
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "Document not found"
         }
-      ],
-      "count": 1
-    }
+      }
+    ]
   }
 
 ### 用途
 
-・全docsの構造把握  
-・スタイル違反検出  
+・複数docsの同時参照  
 ・仕様不整合の検出  
-・一括レビュー  
+・差分レビュー  
+・関連ドキュメントの横断確認  
 
 ---
 
@@ -226,7 +242,7 @@ AI Agent
 ↓  
 GET /api/docs-bulk  
 ↓  
-docs 全体取得  
+docs 取得（必要ファイル指定）  
 ↓  
 解析  
 ↓  
