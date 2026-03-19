@@ -1,4 +1,4 @@
-# 10_docs_dev_api.md
+# 10_docs_dev_api
 
 ## 概要
 
@@ -10,24 +10,33 @@
 
 ## 基本方針
 
-docs は GitHub 上で管理する。
-
-AI は docs API を通じてのみ docs を読み書きする。
-
-GitHub URL を直接参照してはならない。
+・docs は GitHub 上で管理する  
+・AI は docs API を通じてのみ docs を読み書きする  
+・GitHub URL を直接参照しない  
 
 ---
 
 ## API 一覧
 
-GET /api/docs  
-GET /api/docs-read  
-GET /api/docs-bulk  
-POST /api/docs-update（予定）
+・GET /api/docs  
+・GET /api/docs-read  
+・GET /api/docs-bulk  
+・POST /api/docs-update（予定）  
+
+---
+
+## 実装状況
+
+・GET /api/docs：実装済み  
+・GET /api/docs-read：実装済み  
+・GET /api/docs-bulk：実装済み  
+・POST /api/docs-update：未実装  
 
 ---
 
 ## docs 一覧取得
+
+### エンドポイント
 
 GET /api/docs
 
@@ -37,23 +46,25 @@ docs フォルダ内のファイル一覧を取得する。
 
 ### レスポンス例
 
-{
-  "ok": true,
-  "data": {
-    "items": [
-      {
-        "name": "01_concept.md",
-        "path": "docs/01_concept.md",
-        "sha": "xxx"
-      }
-    ],
-    "count": 1
+  {
+    "ok": true,
+    "data": {
+      "items": [
+        {
+          "name": "01_concept.md",
+          "path": "docs/01_concept.md",
+          "sha": "xxx"
+        }
+      ],
+      "count": 1
+    }
   }
-}
 
 ---
 
 ## docs 本文取得
+
+### エンドポイント
 
 GET /api/docs-read?file=FILENAME
 
@@ -63,24 +74,26 @@ GET /api/docs-read?file=FILENAME
 
 ### パラメータ
 
-file  
+・file  
 対象ファイル名（例：08_dev_config.md）
 
 ### レスポンス例
 
-{
-  "ok": true,
-  "data": {
-    "name": "08_dev_config.md",
-    "path": "docs/08_dev_config.md",
-    "sha": "xxx",
-    "content": "Markdown本文"
+  {
+    "ok": true,
+    "data": {
+      "name": "08_dev_config.md",
+      "path": "docs/08_dev_config.md",
+      "sha": "xxx",
+      "content": "Markdown本文"
+    }
   }
-}
 
 ---
 
 ## docs 一括取得
+
+### エンドポイント
 
 GET /api/docs-bulk
 
@@ -92,18 +105,18 @@ AI による全体解析、整合チェック、差分検出に使用する。
 
 ### レスポンス例
 
-{
-  "ok": true,
-  "data": {
-    "items": [
-      {
-        "name": "01_concept.md",
-        "content": "Markdown本文"
-      }
-    ],
-    "count": 1
+  {
+    "ok": true,
+    "data": {
+      "items": [
+        {
+          "name": "01_concept.md",
+          "content": "Markdown本文"
+        }
+      ],
+      "count": 1
+    }
   }
-}
 
 ### 用途
 
@@ -114,9 +127,11 @@ AI による全体解析、整合チェック、差分検出に使用する。
 
 ---
 
-## docs 更新（予定）
+## docs 更新
 
-POST /api/docs-update
+### エンドポイント
+
+POST /api/docs-update（予定）
 
 ### 概要
 
@@ -124,10 +139,10 @@ docs の内容を更新し、GitHub に commit する。
 
 ### リクエスト例
 
-{
-  "file": "08_dev_config.md",
-  "content": "Markdown本文"
-}
+  {
+    "file": "08_dev_config.md",
+    "content": "Markdown本文"
+  }
 
 ### 処理フロー
 
@@ -155,29 +170,24 @@ src/services/github-docs.js
 
 ## service の責務
 
-GitHub REST API 呼び出し  
-
-認証処理  
-
-Base64 デコード  
-
-エラーハンドリング  
+・GitHub REST API 呼び出し  
+・認証処理  
+・Base64 デコード  
+・エラーハンドリング  
 
 ---
 
 ## 設計原則
 
-API は薄く保つ  
-
-API は service を呼び出すのみとする  
-
-ロジックは service 層に集約する  
+・API は薄く保つ  
+・API は service を呼び出すのみとする  
+・ロジックは service 層に集約する  
 
 ---
 
 ## セキュリティ
 
-必要に応じて INTERNAL_API_KEY による認証を行う  
+・必要に応じて INTERNAL_API_KEY による認証を行う  
 
 ---
 
@@ -185,8 +195,7 @@ API は service を呼び出すのみとする
 
 ### 目的
 
-docs を基点とした自己進化ループを自動化するため、  
-サーバー側に AI エージェントを導入する。
+docs を基点とした自己進化ループを自動化するため、サーバー側に AI エージェントを導入する。
 
 ---
 
@@ -231,9 +240,9 @@ GitHub commit
 
 ### 利用API
 
-GET /api/docs-bulk  
-GET /api/docs-read  
-POST /api/docs-update  
+・GET /api/docs-bulk  
+・GET /api/docs-read  
+・POST /api/docs-update（予定）  
 
 ---
 
@@ -241,15 +250,11 @@ POST /api/docs-update
 
 AI エージェントは以下を厳守する。
 
-SSOT は docs のみ  
-
-差分最小で更新する  
-
-既存構造を破壊しない  
-
-未確定事項は更新しない  
-
-notes を優先しない  
+・SSOT は docs のみ  
+・差分最小で更新する  
+・既存構造を破壊しない  
+・未確定事項は更新しない  
+・notes を優先しない  
 
 ---
 
@@ -257,15 +262,13 @@ notes を優先しない
 
 現段階では AI は API を直接実行しない。
 
-docs の取得は人間が実行し、  
-その結果を AI に入力する方式とする。
+docs の取得は人間が実行し、その結果を AI に入力する方式とする。
 
 ---
 
 ### 将来の状態
 
-将来的には AI エージェントが API を直接実行し、  
-以下のループを自律的に回す。
+将来的には AI エージェントが API を直接実行し、以下のループを自律的に回す。
 
 読む  
 ↓  
@@ -279,20 +282,15 @@ docs の取得は人間が実行し、
 
 ### 前提条件
 
-docs-bulk API の安定稼働  
-
-docs-update API の実装  
-
-認証（INTERNAL_API_KEY）  
-
-12_ai_update_policy.md の遵守  
+・docs-bulk API の安定稼働  
+・docs-update API の実装  
+・認証（INTERNAL_API_KEY）  
+・12_ai_update_policy.md の遵守  
 
 ---
 
 ## 注意事項
 
-docs は SSOT である  
-
-AI は docs を最優先で参照する  
-
-docs の更新は 12_ai_update_policy.md に従う  
+・docs は SSOT である  
+・AI は docs を最優先で参照する  
+・docs の更新は 12_ai_update_policy.md に従う  
