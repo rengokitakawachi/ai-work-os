@@ -203,7 +203,41 @@ src/services/github-docs.js
 
 ## セキュリティ
 
-・必要に応じて INTERNAL_API_KEY による認証を行う  
+・INTERNAL_API_KEY による認証を行う  
+
+### 認証方式
+
+以下のいずれかで認証を行う
+
+・Authorization ヘッダー（Bearer）  
+・x-api-key ヘッダー  
+・query パラメータ（key）  
+
+一致した場合のみアクセスを許可する。
+
+---
+
+## エラー仕様
+
+API エラーは以下の形式で返却する。
+
+  {
+    "ok": false,
+    "error": {
+      "code": "ERROR_CODE",
+      "message": "説明"
+    }
+  }
+
+### 主なエラーコード
+
+・INVALID_REQUEST  
+・UNAUTHORIZED  
+・NOT_FOUND  
+・RATE_LIMIT  
+・UPSTREAM_TIMEOUT  
+・UPSTREAM_5XX  
+・UNKNOWN_ERROR  
 
 ---
 
