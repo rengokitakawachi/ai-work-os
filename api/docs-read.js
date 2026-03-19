@@ -1,10 +1,47 @@
 import { getDocFile } from '../src/services/github-docs.js';
-import { authorizeInternalRequest } from '../arc/lib/auth.js';
+
+function authorizeInternalRequest(req, res) {
+  const internalApiKey = (process.env.INTERNAL_API_KEY || '').trim();
+
+  if (!internalApiKey) {
+    return true;
+  }
+
+  const authHeader = typeof req.headers?.authorization === 'string'
+    ? req.headers.authorization.trim()
+    : '';
+  const bearerToken = authHeader.startsWith('Bearer ')
+    ? authHeader.slice('Bearer '.length).trim()
+    : '';
+
+  const apiKeyHeader = typeof req.headers?.['x-api-key'] === 'string'
+    ? req.headers['x-api-key'].trim()
+    : '';
+
+  const queryKey =
+    typeof req.query?.key === 'string' ? req.query.key.trim() : '';
+
+  if (
+    bearerToken === internalApiKey ||
+    apiKeyHeader === internalApiKey ||
+    queryKey === internalApiKey
+  ) {
+    return true;
+  }
+
+  return res.status(401).json({
+    ok: false,
+    error: {
+      code: 'UNAUTHORIZED',
+      message: 'Unauthorized'
+    }
+  });
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
