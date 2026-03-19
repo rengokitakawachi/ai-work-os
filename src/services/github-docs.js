@@ -1,5 +1,13 @@
 const GITHUB_API_BASE = 'https://api.github.com';
 
+function createError(status, code, message, detail = null) {
+  const error = new Error(message);
+  error.status = status;
+  error.code = code;
+  error.detail = detail;
+  return error;
+}
+
 function getConfig() {
   const token = (process.env.GITHUB_TOKEN || '').trim();
   const owner = (process.env.GITHUB_OWNER || '').trim();
