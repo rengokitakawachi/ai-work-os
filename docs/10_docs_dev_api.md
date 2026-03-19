@@ -22,6 +22,7 @@ GitHub URL を直接参照してはならない。
 
 GET /api/docs  
 GET /api/docs-read  
+GET /api/docs-bulk  
 POST /api/docs-update（予定）
 
 ---
@@ -79,6 +80,40 @@ file
 
 ---
 
+## docs 一括取得
+
+GET /api/docs-bulk
+
+### 概要
+
+docs フォルダ内の全ファイルを一括取得する。
+
+AI による全体解析、整合チェック、差分検出に使用する。
+
+### レスポンス例
+
+{
+  "ok": true,
+  "data": {
+    "items": [
+      {
+        "name": "01_concept.md",
+        "content": "Markdown本文"
+      }
+    ],
+    "count": 1
+  }
+}
+
+### 用途
+
+・全docsの構造把握  
+・スタイル違反検出  
+・仕様不整合の検出  
+・一括レビュー  
+
+---
+
 ## docs 更新（予定）
 
 POST /api/docs-update
@@ -104,7 +139,7 @@ docs-read
 ↓  
 docs-update  
 ↓  
-GitHub commit
+GitHub commit  
 
 ---
 
@@ -112,7 +147,7 @@ GitHub commit
 
 docs API のロジックは service 層に配置する。
 
-対象ファイル
+### 対象ファイル
 
 src/services/github-docs.js
 
@@ -120,36 +155,144 @@ src/services/github-docs.js
 
 ## service の責務
 
-GitHub REST API 呼び出し
+GitHub REST API 呼び出し  
 
-認証処理
+認証処理  
 
-Base64 デコード
+Base64 デコード  
 
-エラーハンドリング
+エラーハンドリング  
 
 ---
 
 ## 設計原則
 
-API は薄く保つ
+API は薄く保つ  
 
-API は service を呼び出すのみとする
+API は service を呼び出すのみとする  
 
-ロジックは service 層に集約する
+ロジックは service 層に集約する  
 
 ---
 
 ## セキュリティ
 
-必要に応じて INTERNAL_API_KEY による認証を行う
+必要に応じて INTERNAL_API_KEY による認証を行う  
+
+---
+
+## AI Agent Integration（将来構想）
+
+### 目的
+
+docs を基点とした自己進化ループを自動化するため、  
+サーバー側に AI エージェントを導入する。
+
+---
+
+### 役割
+
+AI エージェントは以下を実行する。
+
+1  
+docs の取得  
+
+2  
+仕様の解析  
+
+3  
+不整合・不足の検出  
+
+4  
+修正案の生成  
+
+5  
+docs-update API による更新  
+
+---
+
+### 処理フロー
+
+AI Agent  
+↓  
+GET /api/docs-bulk  
+↓  
+docs 全体取得  
+↓  
+解析  
+↓  
+差分生成  
+↓  
+POST /api/docs-update  
+↓  
+GitHub commit  
+
+---
+
+### 利用API
+
+GET /api/docs-bulk  
+GET /api/docs-read  
+POST /api/docs-update  
+
+---
+
+### 更新ルール
+
+AI エージェントは以下を厳守する。
+
+SSOT は docs のみ  
+
+差分最小で更新する  
+
+既存構造を破壊しない  
+
+未確定事項は更新しない  
+
+notes を優先しない  
+
+---
+
+### 現在の運用
+
+現段階では AI は API を直接実行しない。
+
+docs の取得は人間が実行し、  
+その結果を AI に入力する方式とする。
+
+---
+
+### 将来の状態
+
+将来的には AI エージェントが API を直接実行し、  
+以下のループを自律的に回す。
+
+読む  
+↓  
+理解する  
+↓  
+修正する  
+↓  
+更新する  
+
+---
+
+### 前提条件
+
+docs-bulk API の安定稼働  
+
+docs-update API の実装  
+
+認証（INTERNAL_API_KEY）  
+
+12_ai_update_policy.md の遵守  
 
 ---
 
 ## 注意事項
 
-docs は SSOT である
+docs は SSOT である  
 
-AI は docs を最優先で参照する
+AI は docs を最優先で参照する  
 
-docs の更新は 12_ai_update_policy.md に従う
+docs の更新は 12_ai_update_policy.md に従う  
