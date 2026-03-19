@@ -13,7 +13,10 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({
       ok: false,
-      error: 'method not allowed'
+      error: {
+        code: 'INVALID_REQUEST',
+        message: 'Method not allowed'
+      }
     });
   }
 
@@ -22,12 +25,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const file = typeof req.query.file === 'string' ? req.query.file : '';
+    const file = typeof req.query.file === 'string' ? req.query.file.trim() : '';
 
     if (!file) {
       return res.status(400).json({
         ok: false,
-        error: 'file is required'
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'file is required'
+        }
       });
     }
 
@@ -38,12 +44,13 @@ export default async function handler(req, res) {
       data
     });
   } catch (error) {
-    const status = Number.isInteger(error?.status) ? error.status : 500;
-
-    return res.status(status).json({
+    return res.status(error.status || 500).json({
       ok: false,
-      error: error?.message || 'internal server error',
-      detail: error?.detail || null
+      error: {
+        code: error.code || 'UNKNOWN_ERROR',
+        message: error.message || 'internal server error'
+      },
+      detail: error.detail || null
     });
   }
 }
