@@ -1,22 +1,5 @@
 import { getDocFile } from '../src/services/github-docs.js';
-
-function isAuthorized(req) {
-  const internalApiKey = (process.env.INTERNAL_API_KEY || '').trim();
-
-  if (!internalApiKey) {
-    return true;
-  }
-
-  const authHeader = req.headers.authorization || '';
-  const bearerToken = authHeader.startsWith('Bearer ')
-    ? authHeader.slice(7).trim()
-    : '';
-
-  const queryToken =
-    typeof req.query?.key === 'string' ? req.query.key.trim() : '';
-
-  return bearerToken === internalApiKey || queryToken === internalApiKey;
-}
+import { authorizeInternalRequest } from '../arc/lib/auth.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -34,11 +17,8 @@ export default async function handler(req, res) {
     });
   }
 
-  if (!isAuthorized(req)) {
-    return res.status(401).json({
-      ok: false,
-      error: 'unauthorized'
-    });
+  if (!authorizeInternalRequest(req, res)) {
+    return;
   }
 
   try {
