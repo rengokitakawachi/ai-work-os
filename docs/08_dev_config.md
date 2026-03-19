@@ -1,4 +1,4 @@
-# 08_dev_config.md
+# 08_dev_config
 
 ## 概要
 
@@ -32,52 +32,46 @@ api/
 
 ---
 
-## ルーティング設定
-
-vercel.json にてリライトルールを定義する。
-
-{
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    }
-  ]
-}
-
----
-
 ## ディレクトリ構成
 
-api/
-src/
-  services/
-  types/
+api/  
+→ HTTP リクエストの受付とレスポンス返却  
+
+src/services/  
+→ ビジネスロジック  
+
+src/types/  
+→ 型定義  
+
+docs/  
+→ 仕様書（SSOT）  
 
 ---
 
 ## 各ディレクトリの役割
 
-api/
-HTTP リクエストの受付とレスポンス返却を行う  
-ロジックは持たず、service を呼び出すのみ
+api/  
 
-src/services/
-ビジネスロジックを実装する  
-GitHub API や外部連携もここに集約する
+・HTTP リクエストの受付  
+・レスポンス返却  
+・ロジックは持たず service を呼び出すのみ  
 
-src/types/
-型定義を管理する
+src/services/  
+
+・ビジネスロジックの実装  
+・外部API連携（GitHub / Todoist など）  
+
+src/types/  
+
+・型定義の管理  
 
 ---
 
 ## 設計原則
 
-API は薄く保つ
-
-API → service 呼び出し
-
-ロジックはすべて service 層に配置する
+・API は薄く保つ  
+・API は service を呼び出すのみとする  
+・ロジックはすべて service 層に配置する  
 
 ---
 
@@ -85,20 +79,18 @@ API → service 呼び出し
 
 以下の環境変数を Vercel に設定する
 
-GITHUB_TOKEN  
-GITHUB_OWNER  
-GITHUB_REPO  
-GITHUB_BRANCH  
-
-INTERNAL_API_KEY（任意）
-
-TODOIST_API_TOKEN
+・GITHUB_TOKEN  
+・GITHUB_OWNER  
+・GITHUB_REPO  
+・GITHUB_BRANCH  
+・INTERNAL_API_KEY（任意）  
+・TODOIST_API_TOKEN  
 
 ---
 
 ## GitHub 連携
 
-GitHub との通信は service 層で行う
+GitHub との通信は service 層で行う。
 
 対象ファイル
 
@@ -106,26 +98,28 @@ src/services/github-docs.js
 
 主な責務
 
-- GitHub REST API 呼び出し
-- 認証処理
-- Base64 デコード
-- エラーハンドリング
+・GitHub REST API 呼び出し  
+・認証処理  
+・Base64 デコード  
+・エラーハンドリング  
 
 ---
 
 ## docs API
 
-docs の取得は専用 API を通じて行う
+docs の取得は専用 API を通じて行う。
 
-GET /api/docs  
-GET /api/docs-read?file=FILENAME
+・GET /api/docs  
+・GET /api/docs-read?file=FILENAME  
+
+docs は GitHub 上で管理される SSOT である。
+
+AI は GitHub を直接参照せず、必ず docs API を経由して取得する。
 
 ---
 
 ## 注意事項
 
-docs は SSOT である
-
-仕様確認時は必ず docs を参照すること
-
-API 実装は docs と整合させること
+・docs は SSOT である  
+・仕様確認時は必ず docs を参照すること  
+・API 実装は docs と整合させること  
