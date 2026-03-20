@@ -29,43 +29,46 @@ docs は以下の3つの領域で構成される。
 ## ファイル一覧と役割
 
 01_concept.md  
-AI Work OS の目的、思想、価値を定義する
+AI Work OS の目的、思想、価値を定義する  
 
 02_architecture.md  
-システム全体の構造、レイヤー、情報フローを定義する
+システム全体の構造、レイヤー、情報フローを定義する  
 
 03_api_spec.md  
-ユーザー向け機能 API の仕様を定義する
+ユーザー向け機能 API の仕様を定義する  
 
 04_data_model.md  
-データ構造（Task、Project 等）を定義する
+データ構造（Task、Project 等）を定義する  
 
 05_roadmap.md  
-開発フェーズと進行方針を定義する
+開発フェーズと進行方針を定義する  
 
 06_obsidian_design.md  
-Obsidian 連携およびノート構造を定義する
+Obsidian 連携およびノート構造を定義する  
 
 07_external_integration.md  
-外部サービス連携（Todoist、GitHub 等）を定義する
+外部サービス連携（Todoist、GitHub 等）を定義する  
 
 08_dev_config.md  
-開発環境、ディレクトリ構成、環境変数を定義する
+開発環境、ディレクトリ構成、環境変数を定義する  
 
 09_troubleshooting.md  
-過去の問題と再発防止策を記録する
+過去の問題と再発防止策を記録する  
 
 10_docs_dev_api.md  
-docs 操作用 API（read / update）の仕様を定義する
+docs 操作用 API（read / update）の仕様を定義する  
 
 11_doc_style.md  
-docs の記述ルールおよびフォーマットを定義する
+docs の記述ルールおよびフォーマットを定義する  
 
 12_ai_update_policy.md  
-AI の docs 更新ルールと制約を定義する
+AI の docs 更新ルールと制約を定義する  
 
 13_dev_workflow.md  
-AI と人間の開発手順を定義する
+AI と人間の開発手順を定義する  
+
+16_governance.md  
+統治ルールおよび禁止事項を定義する  
 
 ---
 
@@ -74,23 +77,61 @@ AI と人間の開発手順を定義する
 AI は必ず次の順序で docs を読むこと。
 
 1  
-本ファイル（00_docs_index.md）
+本ファイル（00_docs_index.md）  
 
 2  
-対象機能に関連する docs
+対象機能に関連する docs  
 
 3  
-開発基盤仕様
+開発基盤仕様  
 
 08_dev_config.md  
 10_docs_dev_api.md  
 
 4  
-ルール系ドキュメント
+ルール系ドキュメント  
 
 11_doc_style.md  
 12_ai_update_policy.md  
 13_dev_workflow.md  
+16_governance.md  
+
+---
+
+## Docs取得強制ルール
+
+AI は docs を扱う際、必ず以下を実行する。
+
+- 修正前に必ず API で docs を取得する  
+- 対象 docs だけでなく関連 docs も取得する  
+- 取得済み docs を明示する  
+- docs 未取得の場合は処理を停止する  
+- 11_doc_style.md を事前取得し準拠する  
+- GitHub URL を直接参照しない  
+- 「アクセスできない」と判断しない  
+
+---
+
+## Docs取得方法
+
+ベースURL  
+
+https://ai-work-os.vercel.app  
+
+使用するAPI  
+
+GET /api/docs  
+docs一覧を取得する  
+
+GET /api/docs-read?file=FILENAME  
+指定ファイルの本文を取得する  
+
+---
+
+## 出力ルール
+
+- 必ず全文出力する  
+- コードブロック内で出力する  
 
 ---
 
@@ -118,12 +159,12 @@ docs を最優先の仕様として扱う
 
 ## 最重要原則
 
-SSOT = GitHub docs
+SSOT = GitHub docs  
 
-Docs Driven Development
+Docs Driven Development  
 
 仕様  
 ↓  
 実装  
 ↓  
-仕様更新
+仕様更新  
