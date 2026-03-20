@@ -1,4 +1,3 @@
-===== FILE: src/services/internal-auth.js =====
 export function auth(req, res) {
   const key = process.env.INTERNAL_API_KEY;
   if (!key) return true;
