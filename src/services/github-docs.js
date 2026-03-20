@@ -190,6 +190,16 @@ function decodeBase64Content(encodedContent) {
   return Buffer.from(encoded, 'base64').toString('utf8');
 }
 
+function buildStatus(content, exists = true) {
+  if (!exists) return 'NOT_FOUND';
+  if (!content) return 'EMPTY';
+  return 'OK';
+}
+
+function nowISO() {
+  return new Date().toISOString();
+}
+
 export async function listDocs() {
   const { owner, repo, branch } = getConfig();
 
@@ -235,13 +245,18 @@ export async function getDocFile(fileName) {
   }
 
   const content = decodeBase64Content(data.content);
+  const content_length = content.length;
+  const status = buildStatus(content, true);
 
   return {
     name: data.name,
     path: data.path,
     sha: data.sha || null,
-    size: data.size ?? content.length,
-    content
+    size: data.size ?? content_length,
+    content,
+    content_length,
+    fetched_at: nowISO(),
+    status
   };
 }
 
@@ -261,7 +276,10 @@ export async function getDocFiles(fileNames) {
           path: doc.path,
           sha: doc.sha,
           size: doc.size,
-          content: doc.content
+          content: doc.content,
+          content_length: doc.content_length,
+          fetched_at: doc.fetched_at,
+          status: doc.status
         };
       } catch (error) {
         return {
