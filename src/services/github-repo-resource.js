@@ -1,4 +1,3 @@
-===== FILE: src/services/github-repo-resource.js =====
 const GITHUB_API_BASE = 'https://api.github.com';
 
 function createError(status, code, message) {
