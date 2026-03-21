@@ -1,1 +1,0 @@
-https://m.yahoo.co.jp/
