@@ -107,7 +107,7 @@ notes
 
 本ルールは、AI が docs 未取得状態で仕様判断を行うことを防ぐための最終防衛ラインである。
 
-10_docs_dev_api.md、13_dev_workflow.md と連動し、取得・手順・統治の三層で整合性を担保する。
+10_repo_resource_api.md、13_dev_workflow.md と連動し、取得・手順・統治の三層で整合性を担保する。
 
 docs の修正は以下を前提とする。
 
