@@ -55,8 +55,9 @@ Obsidian 連携およびノート構造を定義する
 09_troubleshooting.md  
 過去の問題と再発防止策を記録する  
 
-10_docs_dev_api.md  
-docs 操作用 API（read / update）の仕様を定義する  
+10_repo_resource_api.md  
+repo access API の仕様を定義する  
+現行の docs 専用 API と、将来的な repo-resource 統合方針を定義する  
 
 11_doc_style.md  
 docs の記述ルールおよびフォーマットを定義する  
@@ -86,7 +87,7 @@ AI は必ず次の順序で docs を読むこと。
 開発基盤仕様  
 
 08_dev_config.md  
-10_docs_dev_api.md  
+10_repo_resource_api.md  
 
 4  
 ルール系ドキュメント  
