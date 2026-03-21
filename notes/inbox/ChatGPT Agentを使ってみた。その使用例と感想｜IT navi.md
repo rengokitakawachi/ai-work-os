@@ -1,1 +1,0 @@
-https://ai-work-os.vercel.app/api/repo-resource?action=create&resource=notes&key=ai-work-os-secret-2026-Gdh8G
