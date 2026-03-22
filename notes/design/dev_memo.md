@@ -61,8 +61,12 @@
 - 思いつきメモは notes/inbox/memo/ に新規作成
 - 定期的に inbox を見直す（web / memo 両方）
 - 必要な情報・示唆・設計に効く内容は design/dev_memo.md に要点追記する
-- 元記事・元メモは使い終わったら別の保管場所へ移す（archive等）
+- 元記事・元メモは使い終わったら notes/archive/ に移動する
 - inbox は未整理情報の一時置き場とする
+
+### archive構造
+- notes/archive/：使用済み素材（web / memo）の保管場所
+- 参照はするが、日常的には触らない領域
 
 ---
 
@@ -71,7 +75,6 @@
 - Outlook自動スケジューリング
 - MindMeister → Task変換
 - Task → MindMeister再構造化
-- inbox記事/メモの移動先ルール（archiveの設計）
 - 設計素材メモの命名規則
 
 ---
