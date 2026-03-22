@@ -1,56 +1,103 @@
+// api/task-close.js
+
+import { authorizeInternalRequest } from '../src/lib/auth.js';
+import { applyCors, handlePreflight } from '../src/lib/http.js';
+
+import {
+  createRequestId,
+  createError,
+  normalizeError,
+  logError,
+} from '../src/services/tasks/error.js';
+
+import { dispatchUpdate } from '../src/services/tasks/dispatch.js';
+
+function ensureString(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (handlePreflight(req, res, 'POST, OPTIONS')) {
+    return;
+  }
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  applyCors(res, 'POST, OPTIONS');
 
-  const token = (process.env.TODOIST_API_TOKEN || '').trim();
+  const requestId = createRequestId();
+  const method = ensureString(req.method).toUpperCase();
+  const resource = 'tasks';
+  const action = 'update';
 
-  if (!token) {
-    return res.status(500).json({ error: '設定エラー: TODOIST_API_TOKEN が未設定です' });
+  if (!authorizeInternalRequest(req, res)) {
+    return;
   }
 
   try {
-    const body =
-      typeof req.body === 'string'
-        ? JSON.parse(req.body)
-        : (req.body || {});
-
-    const taskId =
-      typeof body.task_id === 'string' || typeof body.task_id === 'number'
-        ? String(body.task_id).trim()
-        : '';
-
-    if (!taskId) {
-      return res.status(400).json({ error: 'task_id is required' });
-    }
-
-    const response = await fetch(`https://api.todoist.com/api/v1/tasks/${encodeURIComponent(taskId)}/close`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    const text = await response.text();
-
-    if (!response.ok) {
-      return res.status(response.status).json({
-        error: 'Close failed',
-        detail: text
+    if (method !== 'POST') {
+      throw createError({
+        status: 405,
+        code: 'METHOD_NOT_ALLOWED',
+        message: 'method not allowed',
+        category: 'routing',
+        step: 'handler',
+        resource,
+        action,
+        retryable: false,
+        details: {
+          method,
+          allowed_methods: ['POST', 'OPTIONS'],
+        },
       });
     }
 
+    const taskId = ensureString(req.body?.task_id);
+
+    if (!taskId) {
+      throw createError({
+        status: 400,
+        code: 'INVALID_REQUEST',
+        message: 'task_id required',
+        category: 'validation',
+        step: 'validateUpdate',
+        resource,
+        action,
+        retryable: false,
+        details: {
+          field: 'task_id',
+        },
+      });
+    }
+
+    const data = await dispatchUpdate(
+      { id: taskId },
+      { status: 'closed' },
+      {
+        requestId,
+        resource,
+        action,
+        step: 'dispatchUpdate',
+      }
+    );
+
     return res.status(200).json({
       ok: true,
-      message: 'Task closed successfully'
+      data,
+      request_id: requestId,
     });
   } catch (error) {
-    return res.status(500).json({
-      error: 'System error',
-      detail: error.message
+    logError(error, {
+      requestId,
+      method,
+      resource,
+      action,
     });
+
+    const normalized = normalizeError(error, {
+      requestId,
+      resource,
+      action,
+    });
+
+    return res.status(normalized.status).json(normalized.body);
   }
 }
