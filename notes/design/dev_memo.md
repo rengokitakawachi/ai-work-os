@@ -75,6 +75,12 @@
 - 基本構造は「目的 → ナレッジ → ルール → 連携 → 運用」
 - AIエージェントはチャットボットではなく、ナレッジベースの意思決定システム
 
+### repoResource API 改善メモ（new）
+- archive運用のためには delete API が必要
+- move は不要で、copy + delete で実現する
+- 現状は delete が存在しないため、inbox → archive の状態遷移が完結しない
+- 将来的に repoResourceWrite に delete アクションを追加する
+
 ---
 
 ## 今後の検討
