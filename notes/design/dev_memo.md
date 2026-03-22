@@ -51,11 +51,17 @@
 - 開発メモは素材であり、散らかっていてよい
 - 整理したいときは design 配下のメモをまとめて読んで統合する
 
-### inbox記事の運用フロー
-- 気になるWeb記事があれば notes/inbox/ に保存する
-- たまに inbox の中身を見直す
+### inbox構造（更新）
+- notes/inbox/web：外部記事・URLなどの素材
+- notes/inbox/memo：思いつき・断片メモなどの素材
+- inbox は未整理の「素材置き場」として統一（種類はサブフォルダで分離）
+
+### inbox記事・メモの運用フロー
+- 気になるWeb記事は notes/inbox/web/ に保存
+- 思いつきメモは notes/inbox/memo/ に新規作成
+- 定期的に inbox を見直す（web / memo 両方）
 - 必要な情報・示唆・設計に効く内容は design/dev_memo.md に要点追記する
-- 元記事を使い終わったら別の保管場所へ移す
+- 元記事・元メモは使い終わったら別の保管場所へ移す（archive等）
 - inbox は未整理情報の一時置き場とする
 
 ---
@@ -65,7 +71,7 @@
 - Outlook自動スケジューリング
 - MindMeister → Task変換
 - Task → MindMeister再構造化
-- inbox記事の移動先ルール
+- inbox記事/メモの移動先ルール（archiveの設計）
 - 設計素材メモの命名規則
 
 ---
