@@ -20,7 +20,6 @@ export async function createTask(input, context) {
       subtasks,
     } = input;
 
-    // ① 親タスク作成
     const parent = await createTodoistTask({
       content: title,
       description,
@@ -29,7 +28,6 @@ export async function createTask(input, context) {
       priority,
     });
 
-    // ② subtasks（Phase1: まずは安全に逐次）
     if (Array.isArray(subtasks) && subtasks.length > 0) {
       for (const sub of subtasks) {
         try {
@@ -38,7 +36,6 @@ export async function createTask(input, context) {
             parent_id: parent.id,
           });
         } catch (subError) {
-          // 失敗しても親は保持
           console.error(
             '[subtask_error]',
             JSON.stringify({
@@ -57,6 +54,10 @@ export async function createTask(input, context) {
       title: parent.content,
     };
   } catch (error) {
+    if (error?.code && error?.category && error?.status) {
+      throw error;
+    }
+
     throw createError({
       status: 500,
       code: 'TODOIST_ERROR',
@@ -85,7 +86,6 @@ export async function updateTask(input, context) {
     } = input;
 
     if (status === 'closed') {
-      // 完了処理（Todoist close）
       await updateTodoistTask(id, { completed: true });
       return { id, status: 'closed' };
     }
@@ -100,6 +100,10 @@ export async function updateTask(input, context) {
 
     return { id };
   } catch (error) {
+    if (error?.code && error?.category && error?.status) {
+      throw error;
+    }
+
     throw createError({
       status: 500,
       code: 'TODOIST_ERROR',
@@ -118,9 +122,12 @@ export async function updateTask(input, context) {
 export async function listTasks(input, context) {
   try {
     const tasks = await listTodoistTasks(input);
-
     return tasks;
   } catch (error) {
+    if (error?.code && error?.category && error?.status) {
+      throw error;
+    }
+
     throw createError({
       status: 500,
       code: 'TODOIST_ERROR',
