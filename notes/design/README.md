@@ -32,7 +32,8 @@ docs 直前の仕様草案にする場所
 
 ## メモ保存ルール
 
-・単発の開発メモは notes/design/memos/ に日時付き単票で保存する
+・仕様確定前の開発メモは notes/exploration/memo/ に保存する
+・design 配下は docs 直前の仕様草案を扱う
 ・design/dev_memo.md は整理・統合先として扱う
 ・初回保存先として design/dev_memo.md を使わない
 
