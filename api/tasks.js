@@ -1,90 +1,132 @@
+// api/tasks.js
+
+import { authorizeInternalRequest } from '../src/lib/auth.js';
+import { applyCors, handlePreflight } from '../src/lib/http.js';
+
+import {
+  createRequestId,
+  createError,
+  normalizeError,
+  logError,
+} from '../src/services/tasks/error.js';
+
+import {
+  validateCreate,
+  validateList,
+} from '../src/services/tasks/validate.js';
+
+import {
+  dispatchCreate,
+  dispatchList,
+} from '../src/services/tasks/dispatch.js';
+
+function ensureString(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (handlePreflight(req, res, 'GET, POST, OPTIONS')) {
+    return;
   }
 
-  const TODOIST_URL = 'https://api.todoist.com/api/v1/tasks';
-  const token = (process.env.TODOIST_API_TOKEN || '').trim();
+  applyCors(res, 'GET, POST, OPTIONS');
 
-  if (!token) {
-    return res.status(500).json({ error: '設定エラー: APIトークンが未設定です' });
+  const requestId = createRequestId();
+  const method = ensureString(req.method).toUpperCase();
+  const resource = 'tasks';
+  let action = '';
+
+  if (!authorizeInternalRequest(req, res)) {
+    return;
   }
 
   try {
-    const url = new URL(req.url, `https://${req.headers.host}`);
+    // =========================
+    // CREATE
+    // =========================
+    if (method === 'POST') {
+      action = 'create';
 
-    const allowedParams = [
-      'project_id',
-      'section_id',
-      'label_id',
-      'filter',
-      'lang',
-      'ids',
-      'cursor',
-      'limit'
-    ];
+      validateCreate(req.body || {}, {
+        requestId,
+        resource,
+        action,
+        step: 'validateCreate',
+      });
 
-    const query = new URLSearchParams();
+      const data = await dispatchCreate(req.body || {}, {
+        requestId,
+        resource,
+        action,
+        step: 'dispatchCreate',
+      });
 
-    for (const key of allowedParams) {
-      const value = url.searchParams.get(key);
-      if (value !== null && value !== '') {
-        query.append(key, value);
-      }
-    }
-
-    const requestUrl = query.toString()
-      ? `${TODOIST_URL}?${query.toString()}`
-      : TODOIST_URL;
-
-    const response = await fetch(requestUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const text = await response.text();
-
-    if (!response.ok) {
-      console.error('Todoist API Error:', text);
-      return res.status(response.status).json({
-        error: '取得に失敗しました',
-        detail: text
+      return res.status(200).json({
+        ok: true,
+        data,
+        request_id: requestId,
       });
     }
 
-    const data = text ? JSON.parse(text) : {};
+    // =========================
+    // LIST
+    // =========================
+    if (method === 'GET') {
+      action = 'list';
 
-    const tasks = Array.isArray(data)
-      ? data
-      : Array.isArray(data.results)
-        ? data.results
-        : [];
+      validateList(req.query || {}, {
+        requestId,
+        resource,
+        action,
+        step: 'validateList',
+      });
 
-    const next_cursor =
-      data && typeof data === 'object' && 'next_cursor' in data
-        ? data.next_cursor
-        : null;
+      const data = await dispatchList(req.query || {}, {
+        requestId,
+        resource,
+        action,
+        step: 'dispatchList',
+      });
 
-    return res.status(200).json({
-      ok: true,
-      count: tasks.length,
-      next_cursor,
-      tasks
+      return res.status(200).json({
+        ok: true,
+        data,
+        request_id: requestId,
+      });
+    }
+
+    // =========================
+    // METHOD ERROR
+    // =========================
+    throw createError({
+      status: 405,
+      code: 'METHOD_NOT_ALLOWED',
+      message: 'method not allowed',
+      category: 'routing',
+      step: 'handler',
+      resource,
+      action: action || '',
+      retryable: false,
+      details: {
+        method,
+        allowed_methods: ['GET', 'POST', 'OPTIONS'],
+      },
     });
 
   } catch (error) {
-    console.error('System Error:', error.message);
-    return res.status(500).json({
-      error: '通信エラーが発生しました',
-      detail: error.message
+    logError(error, {
+      requestId,
+      method,
+      resource,
+      action,
     });
+
+    const normalized = normalizeError(error, {
+      requestId,
+      resource,
+      action,
+    });
+
+    return res.status(normalized.status).json(normalized.body);
   }
 }
