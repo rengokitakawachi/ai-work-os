@@ -116,30 +116,6 @@
 - 現状は delete が存在しないため、inbox → archive の状態遷移が完結しない
 - 将来的に repoResourceWrite に delete アクションを追加する
 
-### 推奨方向性メモ（2026-03-23）
-- AI Work OS の主軸は「個別業務の自動化ツール群」より「docs を根拠に repo を読み、notes/design を介して安全に進化できる AI 開発 OS」に置く方がよい
-- 最優先は repo-resource 基盤の完成
-- その次に notes/design 運用の固定化を行う
-- その後に docs と code のズレ検出を可能にする
-- Knowledge Integration はその後に進める
-- Outlook / Teams / kintone / GAS / Actions / MCP などの外部自動化は基盤完成後に拡張する
-- concept と architecture の中心は思考支援であり、単なる API 自動化の集合より根拠ベースで知識と仕様を扱える基盤が重要
-- docs 群の重心は repo access と統治にある
-- notes/inbox → exploration → design → docs → code の流れを実運用化する方が自然
-- repo-resource 基盤で優先する項目は notes update、code tree、code read、構造化エラー統一、resource boundary 固定
-- design レイヤーではテンプレート定義、昇格基準、decisions の使い分け、backlog 接続を整理する
-- docs と code のズレ検出では命名差分、endpoint 差分、request / response 差分、error schema 差分を観点にする
-- 最初の具体タスクは以下
-  - repo-resource における code tree / read の仕様確定
-  - notes/design の標準テンプレート作成
-  - 1つの docs を対象にした docs vs code 差分検出の試行
-- 今後の優先順位判断は以下で行う
-  - docs 全体と整合しているか
-  - SSOT 運用を強めるか
-  - notes/design を活かせるか
-  - code との整合確認に寄与するか
-  - 単なる便利機能追加に留まっていないか
-
 ---
 
 ## 今後の検討
