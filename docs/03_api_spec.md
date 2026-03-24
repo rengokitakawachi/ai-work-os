@@ -163,6 +163,7 @@ GET /api/tasks
 
 - タスクの一覧取得
 - 条件によるフィルタリング
+- status は open のみ指定可能とする
 - pagination（cursor / limit）対応
 
 ---
@@ -290,20 +291,18 @@ src/services/
 
 ## 旧 API
 
-以下は互換層として扱う。
+以下の旧 API は廃止済みとする。
 
 - /api/task
 - /api/task-update
 - /api/task-close
-
-段階的に廃止する。
 
 ---
 
 ## 非対象
 
 docs 操作用 API は本ドキュメントの対象外とする。  
-詳細は 10_docs_dev_api.md を参照する。
+詳細は 10_repo_resource_api.md を参照する。
 
 ---
 
