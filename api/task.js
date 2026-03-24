@@ -1,3 +1,0 @@
-// DEPRECATED
-// This endpoint has been removed. Use /api/tasks instead.
-export default function handler(req,res){res.status(410).json({ok:false,error:{code:"DEPRECATED_API",message:"Use /api/tasks",status:410}})}
