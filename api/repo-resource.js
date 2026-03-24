@@ -13,6 +13,7 @@ import {
   readNote,
   createNote,
   updateNote,
+  deleteNote,
 } from '../src/services/repo-resource/notes.js';
 
 import {
@@ -191,42 +192,75 @@ function validateGet(resource, action, query) {
 }
 
 function validatePost(resource, action, body) {
-  if (!['notes', 'code'].includes(resource)) {
-    throw createError({
-      status: 400,
-      code: 'RESOURCE_NOT_SUPPORTED',
-      message: 'resource not supported',
-      category: 'routing',
+  if (resource === 'notes') {
+    if (!['create', 'update', 'delete'].includes(action)) {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validatePost',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    requireFile(body?.file, {
       step: 'validatePost',
       resource,
       action,
-      retryable: false,
     });
+
+    if (action !== 'delete') {
+      requireContent(body?.content, {
+        step: 'validatePost',
+        resource,
+        action,
+      });
+    }
+
+    return;
   }
 
-  if (!['create', 'update'].includes(action)) {
-    throw createError({
-      status: 400,
-      code: 'ACTION_NOT_SUPPORTED',
-      message: 'action not supported',
-      category: 'routing',
+  if (resource === 'code') {
+    if (!['create', 'update'].includes(action)) {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validatePost',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    requireFile(body?.file, {
       step: 'validatePost',
       resource,
       action,
-      retryable: false,
     });
+
+    requireContent(body?.content, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    return;
   }
 
-  requireFile(body?.file, {
+  throw createError({
+    status: 400,
+    code: 'RESOURCE_NOT_SUPPORTED',
+    message: 'resource not supported',
+    category: 'routing',
     step: 'validatePost',
     resource,
     action,
-  });
-
-  requireContent(body?.content, {
-    step: 'validatePost',
-    resource,
-    action,
+    retryable: false,
   });
 }
 
@@ -308,26 +342,42 @@ async function dispatchPost(resource, action, body) {
     action,
   });
 
-  const content = requireContent(body?.content, {
-    step: 'dispatchPost',
-    resource,
-    action,
-  });
-
   const message = ensureString(body?.message);
   const sha = ensureString(body?.sha);
 
   if (resource === 'notes') {
     if (action === 'create') {
+      const content = requireContent(body?.content, {
+        step: 'dispatchPost',
+        resource,
+        action,
+      });
+
       return createNote(file, content, message);
     }
 
     if (action === 'update') {
+      const content = requireContent(body?.content, {
+        step: 'dispatchPost',
+        resource,
+        action,
+      });
+
       return updateNote(file, content, message, sha);
+    }
+
+    if (action === 'delete') {
+      return deleteNote(file, message, sha);
     }
   }
 
   if (resource === 'code') {
+    const content = requireContent(body?.content, {
+      step: 'dispatchPost',
+      resource,
+      action,
+    });
+
     if (action === 'create') {
       return createCode(file, content, message);
     }
