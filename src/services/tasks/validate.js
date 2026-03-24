@@ -179,6 +179,31 @@ function assertStatus(value, context) {
   }
 }
 
+function assertListStatus(value, context) {
+  if (value === undefined || value === null || value === '') {
+    return;
+  }
+
+  const status = ensureString(value);
+
+  if (status !== 'open') {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'status must be open',
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: {
+        field: 'status',
+        supported: ['open'],
+      },
+    });
+  }
+}
+
 export function validateCreate(body, context) {
   assertNonEmptyString(body?.title, 'title', context);
 
@@ -263,7 +288,7 @@ export function validateList(query, context) {
   }
 
   assertAssignee(query?.assignee, context);
-  assertStatus(query?.status, context);
+  assertListStatus(query?.status, context);
 
   const stringFields = [
     'project_id',
