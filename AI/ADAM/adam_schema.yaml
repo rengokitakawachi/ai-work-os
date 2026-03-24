@@ -1,12 +1,8 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.1.2"
-  description: |
-    AI Work OS repo access API + Todoist Tasks API.
-    Supports docs (read only), notes (read/create/update/delete), code (read/create/update),
-    and Todoist task operations.
-    Legacy docs endpoints are kept for compatibility during migration.
+  version: "2.1.3"
+  description: AI Work OS repo access API and Todoist Tasks API
 
 servers:
   - url: https://ai-work-os.vercel.app
@@ -26,6 +22,7 @@ components:
 
     ErrorObject:
       type: object
+      additionalProperties: true
       properties:
         code:
           type: string
@@ -63,10 +60,10 @@ components:
       required:
         - code
         - message
-      additionalProperties: true
 
     ErrorResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
@@ -76,10 +73,10 @@ components:
       required:
         - ok
         - error
-      additionalProperties: true
 
     DocsListItem:
       type: object
+      additionalProperties: true
       properties:
         name:
           type: string
@@ -89,24 +86,25 @@ components:
           type: string
         size:
           type: integer
-      additionalProperties: true
 
     DocsListData:
       type: object
+      additionalProperties: true
       properties:
         resource:
           type: string
-          enum: [docs]
+          enum:
+            - docs
         items:
           type: array
           items:
             $ref: "#/components/schemas/DocsListItem"
         count:
           type: integer
-      additionalProperties: true
 
     DocsListResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
@@ -118,10 +116,10 @@ components:
       required:
         - ok
         - data
-      additionalProperties: true
 
     FileReadData:
       type: object
+      additionalProperties: true
       properties:
         name:
           type: string
@@ -139,10 +137,10 @@ components:
           type: string
         status:
           type: string
-      additionalProperties: true
 
     FileReadResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
@@ -154,10 +152,10 @@ components:
       required:
         - ok
         - data
-      additionalProperties: true
 
     BulkFileItem:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
@@ -182,10 +180,10 @@ components:
         error:
           type: object
           additionalProperties: true
-      additionalProperties: true
 
     DocsBulkResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
@@ -199,10 +197,10 @@ components:
       required:
         - ok
         - data
-      additionalProperties: true
 
     RepoTreeItem:
       type: object
+      additionalProperties: true
       properties:
         path:
           type: string
@@ -215,10 +213,10 @@ components:
             - dir
         sha:
           type: string
-      additionalProperties: true
 
     RepoTreeData:
       type: object
+      additionalProperties: true
       properties:
         resource:
           type: string
@@ -231,10 +229,10 @@ components:
             $ref: "#/components/schemas/RepoTreeItem"
         count:
           type: integer
-      additionalProperties: true
 
     RepoTreeResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
@@ -246,53 +244,29 @@ components:
       required:
         - ok
         - data
-      additionalProperties: true
 
-    WriteRequest:
+    RepoResourceWriteRequest:
       type: object
+      additionalProperties: false
       required:
         - file
-        - content
       properties:
         file:
           type: string
+          description: Relative file path inside the selected resource
         content:
           type: string
+          description: Required for create and update. Do not send for delete.
         message:
           type: string
+          description: Optional commit message
         sha:
           type: string
-      additionalProperties: false
+          description: Optional file SHA. Can be used for update or delete.
 
-    DeleteRequest:
+    RepoResourceWriteResultData:
       type: object
-      required:
-        - file
-      properties:
-        file:
-          type: string
-        message:
-          type: string
-        sha:
-          type: string
-      additionalProperties: false
-
-    WriteResultData:
-      type: object
-      properties:
-        path:
-          type: string
-        sha:
-          type: string
-        status:
-          type: string
-          enum:
-            - CREATED
-            - UPDATED
       additionalProperties: true
-
-    DeleteResultData:
-      type: object
       properties:
         path:
           type: string
@@ -303,41 +277,28 @@ components:
         status:
           type: string
           enum:
+            - CREATED
+            - UPDATED
             - DELETED
-      additionalProperties: true
 
-    WriteResponse:
+    RepoResourceWriteResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
           const: true
         data:
-          $ref: "#/components/schemas/WriteResultData"
+          $ref: "#/components/schemas/RepoResourceWriteResultData"
         request_id:
           $ref: "#/components/schemas/RequestId"
       required:
         - ok
         - data
-      additionalProperties: true
-
-    DeleteResponse:
-      type: object
-      properties:
-        ok:
-          type: boolean
-          const: true
-        data:
-          $ref: "#/components/schemas/DeleteResultData"
-        request_id:
-          $ref: "#/components/schemas/RequestId"
-      required:
-        - ok
-        - data
-      additionalProperties: true
 
     CreateTaskRequest:
       type: object
+      additionalProperties: false
       required:
         - title
       properties:
@@ -359,10 +320,10 @@ components:
           type: array
           items:
             type: string
-      additionalProperties: false
 
     UpdateTaskRequest:
       type: object
+      additionalProperties: false
       properties:
         title:
           type: string
@@ -383,10 +344,10 @@ components:
           enum:
             - open
             - closed
-      additionalProperties: false
 
     TaskListResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
@@ -399,49 +360,48 @@ components:
       required:
         - ok
         - data
-      additionalProperties: true
 
     TaskCreateResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
           const: true
         data:
           type: object
+          additionalProperties: true
           properties:
             id:
               type: string
             title:
               type: string
-          additionalProperties: true
         request_id:
           $ref: "#/components/schemas/RequestId"
       required:
         - ok
         - data
-      additionalProperties: true
 
     TaskUpdateResponse:
       type: object
+      additionalProperties: true
       properties:
         ok:
           type: boolean
           const: true
         data:
           type: object
+          additionalProperties: true
           properties:
             id:
               type: string
             status:
               type: string
-          additionalProperties: true
         request_id:
           $ref: "#/components/schemas/RequestId"
       required:
         - ok
         - data
-      additionalProperties: true
 
 security:
   - bearerAuth: []
@@ -563,13 +523,29 @@ paths:
       responses:
         "200":
           description: Success
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
     post:
       operationId: repoResourceWrite
       summary: Write repo resources
       description: |
         Supports create, update, and delete.
-        delete is currently intended for notes resource only.
+        Rules:
+        - action=create: content is required
+        - action=update: content is required
+        - action=delete: content must be omitted
+        - delete is currently intended for notes resource only
       security:
         - bearerAuth: []
       parameters:
@@ -595,18 +571,26 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: "#/components/schemas/WriteRequest"
-                - $ref: "#/components/schemas/DeleteRequest"
+              $ref: "#/components/schemas/RepoResourceWriteRequest"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/WriteResponse"
-                  - $ref: "#/components/schemas/DeleteResponse"
+                $ref: "#/components/schemas/RepoResourceWriteResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /api/tasks:
     get:
@@ -617,22 +601,27 @@ paths:
       parameters:
         - name: project_id
           in: query
+          required: false
           schema:
             type: string
         - name: section_id
           in: query
+          required: false
           schema:
             type: string
         - name: parent_id
           in: query
+          required: false
           schema:
             type: string
         - name: label
           in: query
+          required: false
           schema:
             type: string
         - name: status
           in: query
+          required: false
           schema:
             type: string
             enum:
@@ -640,10 +629,12 @@ paths:
               - closed
         - name: cursor
           in: query
+          required: false
           schema:
             type: string
         - name: limit
           in: query
+          required: false
           schema:
             type: integer
             minimum: 1
@@ -655,6 +646,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TaskListResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
     post:
       operationId: createTask
@@ -674,6 +671,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TaskCreateResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /api/tasks/{id}:
     patch:
@@ -700,3 +703,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TaskUpdateResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
