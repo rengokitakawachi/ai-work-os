@@ -110,21 +110,26 @@ export async function githubRequest(path, options = {}) {
     let status = 502;
     let retryable = false;
 
+    const upstreamMessage = data?.message || '';
+    const isRateLimit =
+      response.status === 429 ||
+      (response.status === 403 &&
+        typeof upstreamMessage === 'string' &&
+        upstreamMessage.toLowerCase().includes('rate limit'));
+
     if (response.status === 404) {
       code = 'GITHUB_NOT_FOUND';
       status = 404;
-    } else if (response.status === 401 || response.status === 403) {
-      code = 'GITHUB_UNAUTHORIZED';
-      status = 502;
-    } else if (
-      response.status === 429 ||
-      (response.status === 403 &&
-        typeof data?.message === 'string' &&
-        data.message.toLowerCase().includes('rate limit'))
-    ) {
+    } else if (isRateLimit) {
       code = 'GITHUB_RATE_LIMIT';
       status = 503;
       retryable = true;
+    } else if (response.status === 401 || response.status === 403) {
+      code = 'GITHUB_UNAUTHORIZED';
+      status = 502;
+    } else if (response.status === 409) {
+      code = 'CONFLICT';
+      status = 409;
     } else if (response.status >= 500) {
       code = 'UPSTREAM_5XX';
       status = 502;
@@ -141,7 +146,7 @@ export async function githubRequest(path, options = {}) {
       details: {
         github_path: path,
         upstream_status: response.status,
-        upstream_message: data?.message || '',
+        upstream_message: upstreamMessage,
       },
     });
   }
@@ -301,6 +306,59 @@ export async function putContentFile(path, content, message, sha, context = {}) 
       message: 'GitHub content update failed',
       category: 'service',
       step: context.step || 'putContentFile',
+      resource: context.resource || '',
+      action: context.action || '',
+      retryable: false,
+      details: {
+        path,
+      },
+    });
+  }
+
+  return data;
+}
+
+export async function deleteContentFile(path, message, sha, context = {}) {
+  const { owner, repo, branch } = getConfig();
+
+  const safeMessage = typeof message === 'string' ? message.trim() : '';
+  const safeSha = typeof sha === 'string' ? sha.trim() : '';
+
+  if (!safeSha) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'sha required',
+      category: 'validation',
+      step: context.step || 'deleteContentFile',
+      resource: context.resource || '',
+      action: context.action || '',
+      retryable: false,
+      details: {
+        field: 'sha',
+        path,
+      },
+    });
+  }
+
+  const body = {
+    message: safeMessage || `delete ${path}`,
+    sha: safeSha,
+    branch,
+  };
+
+  const data = await githubRequest(`/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'DELETE',
+    body: JSON.stringify(body),
+  });
+
+  if (!data?.commit?.sha) {
+    throw createError({
+      status: 502,
+      code: 'GITHUB_ERROR',
+      message: 'GitHub content delete failed',
+      category: 'service',
+      step: context.step || 'deleteContentFile',
       resource: context.resource || '',
       action: context.action || '',
       retryable: false,
