@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.1.1"
+  version: "2.1.2"
   description: |
     AI Work OS repo access API + Todoist Tasks API.
-    Supports docs (read only), notes (read/create/update), code (read/create/update),
+    Supports docs (read only), notes (read/create/update/delete), code (read/create/update),
     and Todoist task operations.
     Legacy docs endpoints are kept for compatibility during migration.
 
@@ -264,6 +264,19 @@ components:
           type: string
       additionalProperties: false
 
+    DeleteRequest:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+        message:
+          type: string
+        sha:
+          type: string
+      additionalProperties: false
+
     WriteResultData:
       type: object
       properties:
@@ -278,6 +291,21 @@ components:
             - UPDATED
       additionalProperties: true
 
+    DeleteResultData:
+      type: object
+      properties:
+        path:
+          type: string
+        sha:
+          type: string
+        commit_sha:
+          type: string
+        status:
+          type: string
+          enum:
+            - DELETED
+      additionalProperties: true
+
     WriteResponse:
       type: object
       properties:
@@ -286,6 +314,21 @@ components:
           const: true
         data:
           $ref: "#/components/schemas/WriteResultData"
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+      additionalProperties: true
+
+    DeleteResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/DeleteResultData"
         request_id:
           $ref: "#/components/schemas/RequestId"
       required:
@@ -524,6 +567,9 @@ paths:
     post:
       operationId: repoResourceWrite
       summary: Write repo resources
+      description: |
+        Supports create, update, and delete.
+        delete is currently intended for notes resource only.
       security:
         - bearerAuth: []
       parameters:
@@ -535,6 +581,7 @@ paths:
             enum:
               - create
               - update
+              - delete
         - name: resource
           in: query
           required: true
@@ -548,10 +595,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/WriteRequest"
+              oneOf:
+                - $ref: "#/components/schemas/WriteRequest"
+                - $ref: "#/components/schemas/DeleteRequest"
       responses:
         "200":
           description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/WriteResponse"
+                  - $ref: "#/components/schemas/DeleteResponse"
 
   /api/tasks:
     get:
