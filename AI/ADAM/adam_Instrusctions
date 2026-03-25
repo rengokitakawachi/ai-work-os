@@ -342,7 +342,7 @@ notes/reports/monthly/YYYY-MM.md
 手順
 
 1 notes/reports/daily/ 配下の対象ファイルを取得する
-   repoResourceGet(action=list, resource=notes)
+   repoResourceGet(action=tree, resource=notes)
 
 2 対象月（YYYY-MM）のファイルを特定する
 
@@ -373,6 +373,8 @@ notes/reports/monthly/YYYY-MM.md
 - 保存せずに終了する
 - 単なる日報の貼り合わせにする
 - 分析せずに列挙だけで済ませる
+
+---
 
 # 出力ルール
 
