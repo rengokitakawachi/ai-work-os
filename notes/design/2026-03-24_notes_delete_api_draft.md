@@ -17,6 +17,7 @@ notes resource に対してのみ delete を導入する。
 - 誤作成した notes を API 経由で除去できない
 - 一時メモが蓄積しても整理完了できない
 - notes は補助レイヤーであるにもかかわらず、運用上は半永久保存になっている
+- design 配下の草案整理や重複除去を API 経由で行えない
 
 docs は SSOT であり read only を維持する。
 
@@ -35,6 +36,7 @@ code は docs 従属であり、削除は現時点では導入しない。
 - 削除ロジックは service 層に集約する
 - エラーは既存の構造化形式に従う
 - 削除時も request_id により追跡可能にする
+- design 配下も delete 許可対象に含める
 
 ---
 
@@ -65,7 +67,7 @@ notes 配下の既存ファイルを削除する。
 リクエスト例
 
 {
-  "file": "exploration/memo/example.md"
+  "file": "design/memo/example.md"
 }
 
 レスポンス例
@@ -73,7 +75,7 @@ notes 配下の既存ファイルを削除する。
 {
   "ok": true,
   "data": {
-    "path": "notes/exploration/memo/example.md",
+    "path": "notes/design/memo/example.md",
     "sha": "xxx",
     "status": "DELETED"
   },
@@ -84,22 +86,22 @@ notes 配下の既存ファイルを削除する。
 
 ## 許可範囲
 
-初期導入では delete 対象を notes 全域ではなく、以下に限定する。
+現行導入では delete 対象を notes 全域ではなく、以下に限定する。
 
 - notes/inbox/
 - notes/exploration/
 - notes/logs/
-
-以下は初期導入では delete 対象外とする。
-
 - notes/design/
+
+以下は現行導入では delete 対象外とする。
+
 - notes/decisions/
 - notes/backlog/
 - notes/README.md
 
 理由
 
-- design は docs 直前の草案であり、軽率な削除を避ける
+- design は docs 直前の草案であるが、重複整理や草案整理を API 経由で行えるようにする必要がある
 - decisions は意思決定ログであり、履歴価値が高い
 - backlog は次アクション管理の中核であり、誤削除の影響が大きい
 - ルート README は構造理解の基盤である
@@ -228,16 +230,16 @@ notes は SSOT ではない。
 
 そのため、delete を最初に導入する resource として妥当である。
 
-ただし notes 全域 delete は運用リスクがあるため、初期導入は低リスク領域に限定する。
+現時点では decisions / backlog のような履歴価値の高い領域は保護しつつ、運用上整理需要の高い inbox / exploration / logs / design を delete 許可対象とする。
 
-この仕様は、安全性を保ちつつ notes 運用の詰まりを解消するための最小導入とする。
+この仕様は、安全性を保ちつつ notes 運用の詰まりを解消するための現行導入とする。
 
 ---
 
 ## 次アクション
 
 1
-この草案を前提に repo-resource 実装差分を設計する
+この草案を前提に repo-resource 実装差分を更新する
 
 2
 10_repo_resource_api.md への反映差分を整理する
