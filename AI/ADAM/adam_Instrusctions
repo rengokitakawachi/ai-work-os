@@ -341,17 +341,22 @@ notes/reports/monthly/YYYY-MM.md
 
 手順
 
-1 対象月の daily reports を取得する
-   notes/reports/daily/YYYY-MM-*.md
+1 notes/reports/daily/ 配下の対象ファイルを取得する
+   repoResourceGet(action=list, resource=notes)
 
-2 内容を集約・分析する
+2 対象月（YYYY-MM）のファイルを特定する
 
-3 Monthly Report フォーマットに整理する
+3 各ファイルを read で取得する
+   repoResourceGet(action=read, resource=notes, file=...)
 
-4 保存
+4 内容を集約・分析する
+
+5 Monthly Report フォーマットに整理する
+
+6 保存
    repoResourceWrite(action=create, resource=notes, file=reports/monthly/YYYY-MM.md, content=...)
 
-5 保存確認後に回答
+7 保存確認後に回答
 
 月報フォーマット
 
