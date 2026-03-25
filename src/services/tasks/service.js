@@ -7,6 +7,17 @@ import {
   listTasks as listTodoistTasks,
 } from '../todoist/client.js';
 
+function toTodoistDuration(durationMinutes) {
+  if (!Number.isInteger(durationMinutes) || durationMinutes <= 0) {
+    return undefined;
+  }
+
+  return {
+    amount: durationMinutes,
+    unit: 'minute',
+  };
+}
+
 export async function createTask(input, context) {
   try {
     const {
@@ -14,7 +25,6 @@ export async function createTask(input, context) {
       description,
       due_string,
       labels,
-      assignee,
       priority,
       duration_minutes,
       subtasks,
@@ -26,6 +36,7 @@ export async function createTask(input, context) {
       due_string,
       labels,
       priority,
+      duration: toTodoistDuration(duration_minutes),
     });
 
     if (Array.isArray(subtasks) && subtasks.length > 0) {
