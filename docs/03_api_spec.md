@@ -85,7 +85,6 @@ POST /api/tasks
       "description": "依頼内容を整理した要約",
       "due_string": "2026-03-25",
       "labels": ["幹事会"],
-      "assignee": "@t-niwa",
       "priority": 3,
       "duration_minutes": 60,
       "subtasks": [
@@ -95,10 +94,24 @@ POST /api/tasks
       ]
     }
 
+### パラメータ
+
+- title
+- description
+- due_string
+- labels
+- priority
+- duration_minutes
+  - Todoist の duration に変換される
+- subtasks
+- assignee
+  - 現在未対応とする
+
 ### 処理
 
 - 入力データの検証
 - Todoist 形式への変換
+- duration_minutes を duration に変換
 - 親タスク作成
 - subtasks の逐次作成
 
@@ -131,10 +144,20 @@ PATCH /api/tasks/:id
       "description": "更新内容",
       "due_date": "2026-03-26",
       "labels": ["幹事会"],
-      "assignee": "@t-niwa",
       "priority": 2,
       "status": "closed"
     }
+
+### パラメータ
+
+- title
+- description
+- due_date
+- labels
+- priority
+- status
+- assignee
+  - 現在未対応とする
 
 ### 処理
 
@@ -157,7 +180,7 @@ GET /api/tasks
 
 ### クエリ例
 
-?project_id=xxx&assignee=@t-niwa&label=幹事会&status=open
+?project_id=xxx&label=幹事会&status=open
 
 ### 処理
 
@@ -179,7 +202,7 @@ src/services/
 - 入力検証
 - 外部 API との連携
 - データ変換処理
-- assignee を外部サービス形式へ変換する
+- duration_minutes を外部形式へ変換する
 - エラーハンドリング
 
 ### 非責務
