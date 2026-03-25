@@ -13,6 +13,7 @@ const DELETE_ALLOWED_PREFIXES = [
   'inbox/',
   'exploration/',
   'logs/',
+  'design/',
 ];
 
 function assertNotesDeleteAllowed(file) {
