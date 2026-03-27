@@ -35,9 +35,9 @@ P2: 余力があれば
 
 ### P2
 
-- [ ] overall_development_plan を refine
-- [ ] streams（strategy_todoist_sync_phase1）と整合確認
-- [ ] docs 修正対象の洗い出し（02 / 03 / 05 / 07）
+- [ ] notesフォルダ構造リファクタ設計を作成
+- [ ] フォルダ移行マッピングを定義
+- [ ] README更新対象の洗い出し
 
 ---
 
