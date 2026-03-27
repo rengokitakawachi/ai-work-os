@@ -27,18 +27,21 @@ P2: 余力があれば
 
 ### P1
 
-- [x] idea_log を作成（notes/ideas/idea_log.md）
-- [ ] 現在の課題を idea_log に蓄積
-- [ ] backlog 候補を抽出
+- [x] 課題を issue として蓄積する方針を整理
 - [ ] README を現行 docs に整合する内容へ更新
+- [ ] notes/plans/ の単位と役割を具体化する
+- [ ] operations の週次ファイル名とテンプレートを設計する
+- [ ] 標準開発フローのステップごとに、判断内容・保存先・次アクションを対応付ける
 
 ---
 
 ### P2
 
+- [ ] 中核フォルダと保留整理対象の再編案を詰める
+- [ ] ideas → issues の再編方針を整理する
+- [ ] exploration → inbox/dev_memo の再編方針を整理する
 - [ ] notesフォルダ構造リファクタ設計を作成
 - [ ] フォルダ移行マッピングを定義
-- [ ] README更新対象の洗い出し
 
 ---
 
@@ -46,6 +49,7 @@ P2: 余力があれば
 
 - 課題収集フローが実運用できる
 - 計画に必要な材料が揃う
+- 標準開発フロー設計の前提となるフォルダ構造と運用ルールが固まる
 
 ---
 
@@ -55,3 +59,6 @@ P2: 余力があれば
 - 完璧な整理は後回し
 - まずは動かす
 - README 更新草案は notes/design/2026-03-27_readme_alignment_update.md を参照
+- 計画系整理は notes/design/2026-03-27_phase_plan_operations_structure.md を参照
+- 標準開発フロー自動化の草案は notes/design/2026-03-27_standard_development_flow_automation.md を参照
+- 開発フロー再設計の統合メモは notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md を参照
