@@ -19,15 +19,15 @@ P2: 余力があれば
 
 ### P0
 
-- [ ] Instructions に Idea Capture ルールを追加
-- [ ] Instructions に 課題整理モード を追加
-- [ ] 課題整理モードを1回実行（現状課題の収集）
+- [x] Instructions に Idea Capture ルールを追加
+- [x] Instructions に 課題整理モード を追加
+- [x] 課題整理モードを1回実行（現状課題の収集）
 
 ---
 
 ### P1
 
-- [ ] idea_log を作成（notes/ideas/idea_log.md）
+- [x] idea_log を作成（notes/ideas/idea_log.md）
 - [ ] 現在の課題を idea_log に蓄積
 - [ ] backlog 候補を抽出
 
