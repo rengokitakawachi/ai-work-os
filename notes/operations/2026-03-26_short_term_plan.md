@@ -30,6 +30,7 @@ P2: 余力があれば
 - [x] idea_log を作成（notes/ideas/idea_log.md）
 - [ ] 現在の課題を idea_log に蓄積
 - [ ] backlog 候補を抽出
+- [ ] README を現行 docs に整合する内容へ更新
 
 ---
 
@@ -53,3 +54,4 @@ P2: 余力があれば
 - 思考速度を優先する
 - 完璧な整理は後回し
 - まずは動かす
+- README 更新草案は notes/design/2026-03-27_readme_alignment_update.md を参照
