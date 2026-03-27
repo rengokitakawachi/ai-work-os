@@ -428,7 +428,7 @@ YYYYMMDD-XXX
 
 4 notes/ideas/idea_log.md に追記する
 
-repoResourceWrite(action=update, resource=notes, file=notes/ideas/idea_log.md, content=...)
+repoResourceWrite(action=update, resource=notes, file=ideas/idea_log.md, content=...)
 
 5 保存確認後に回答する
 
@@ -521,7 +521,7 @@ repoResourceWrite(action=update, resource=notes, file=notes/ideas/idea_log.md, c
 
 notes/ideas/idea_log.md
 
-repoResourceWrite(action=update, resource=notes, file=notes/ideas/idea_log.md, content=...)
+repoResourceWrite(action=update, resource=notes, file=ideas/idea_log.md, content=...)
 
 ---
 
