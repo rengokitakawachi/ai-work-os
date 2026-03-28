@@ -24,10 +24,11 @@
 ## 結論
 
 - 未整理の開発メモの入口は `notes/inbox/dev_memo/` に統一する
-- `notes/exploration/memo/` の既存ファイルは一括移動せず、棚卸し後に段階移行する
-- 移行単位は「ファイル」ではなく「役割」で判定する
-- 移行後の旧 `exploration/memo/` は新規保存先として使わない
-- 旧フォルダは移行完了後に archive 扱いまたは廃止判断を行う
+- `notes/exploration/memo/` の既存ファイルは、まず `notes/inbox/dev_memo/` に複写する
+- 以後の整理は新フォルダ側を主作業対象として行う
+- 旧 `notes/exploration/memo/` は移行期間中の原本参照用として残す
+- 旧 `exploration/memo/` は新規保存先として使わない
+- 新フォルダ側で整理が完了した後に、旧フォルダの archive / 廃止判断を行う
 
 ---
 
@@ -37,6 +38,12 @@
 
 ```text
 notes/exploration/memo/
+```
+
+複写先は以下とする。
+
+```text
+notes/inbox/dev_memo/
 ```
 
 関連確認対象は以下とする。
@@ -58,9 +65,17 @@ notes/operations/
 
 今後、新しい未整理開発メモはすべて `notes/inbox/dev_memo/` に保存する。
 
-### 2. 既存メモの棚卸し
+### 2. 先行複写
 
-`notes/exploration/memo/` の既存ファイルを一覧化し、以下の観点で分類する。
+`notes/exploration/memo/` の既存ファイルは、まず `notes/inbox/dev_memo/` に複写する。
+
+この時点では分類しない。
+
+目的は、未整理開発メモの作業対象を新フォルダ側へ先に集約することにある。
+
+### 3. 新フォルダ側で棚卸し
+
+複写後は `notes/inbox/dev_memo/` 側を正面の作業対象とし、以下の観点で分類する。
 
 - 未整理のまま保持すべきか
 - すでに design 化済みか
@@ -68,24 +83,24 @@ notes/operations/
 - operations に接続済みか
 - 役割を終えて archive 候補か
 
-### 3. 役割ベース移行
+### 4. 役割ベース整理
 
-各ファイルは以下のいずれかへ振り分ける。
+新フォルダ側の各ファイルは以下のいずれかとして扱う。
 
 - 未整理入力として保持
   - `notes/inbox/dev_memo/`
 - 仕様草案として昇格
   - `notes/design/`
 - issue として記録済み
-  - `notes/ideas/idea_log.md` を参照し、原本は archive 候補
+  - `notes/ideas/idea_log.md` を参照し、複写ファイルは archive 候補
 - 実行計画へ接続済み
-  - `notes/operations/` を参照し、原本は archive 候補
+  - `notes/operations/` を参照し、複写ファイルは archive 候補
 - 参照価値のみ残る
   - archive 候補
 
-### 4. 旧フォルダ凍結
+### 5. 旧フォルダ凍結
 
-`notes/exploration/memo/` は移行期間中は read only 相当で扱う。
+`notes/exploration/memo/` は移行期間中は原本参照用として扱う。
 
 新規保存は行わない。
 
@@ -93,7 +108,7 @@ notes/operations/
 
 ## 振り分けルール
 
-### inbox/dev_memo へ移すもの
+### inbox/dev_memo に残すもの
 
 以下を満たすもの。
 
@@ -131,13 +146,18 @@ notes/operations/
 
 ### Step 1
 
-`notes/exploration/memo/` の全ファイルを棚卸しする。
+`notes/exploration/memo/` の全ファイルを `notes/inbox/dev_memo/` に複写する。
 
 ### Step 2
 
+複写後、新フォルダ側のファイル一覧を作業対象一覧として確定する。
+
+### Step 3
+
 各ファイルについて、以下を付けて一覧化する。
 
-- current_path
+- source_path
+- working_path
 - title
 - status
   - keep_in_inbox
@@ -149,19 +169,19 @@ notes/operations/
 - linked_issue
 - linked_operations
 
-### Step 3
-
-未整理のものだけを `notes/inbox/dev_memo/` へ移す候補として確定する。
-
 ### Step 4
 
-design 化すべきものは個別に `notes/design/` へ昇格させる。
+未整理のものは `notes/inbox/dev_memo/` に残し、インテークレビュー対象とする。
 
 ### Step 5
 
-archive 候補は、必要な参照先が確保された後にまとめて処理する。
+design 化すべきものは個別に `notes/design/` へ昇格させる。
 
 ### Step 6
+
+archive 候補は、必要な参照先が確保された後にまとめて処理する。
+
+### Step 7
 
 移行後に `notes/exploration/README.md` の役割を見直す。
 
@@ -171,8 +191,9 @@ archive 候補は、必要な参照先が確保された後にまとめて処理
 
 以下を満たしたら移行計画の完了とみなす。
 
+- `notes/exploration/memo/` の全ファイルが `notes/inbox/dev_memo/` に複写されている
 - 新規の未整理開発メモ保存先が `notes/inbox/dev_memo/` に統一されている
-- `notes/exploration/memo/` の全ファイルに移行判定が付いている
+- 新フォルダ側の全ファイルに移行判定が付いている
 - design 化対象と archive 候補が分離されている
 - 旧 `exploration/memo/` が新規運用で使われなくなっている
 
@@ -180,15 +201,16 @@ archive 候補は、必要な参照先が確保された後にまとめて処理
 
 ## リスク
 
-- ファイル単位で移すだけだと、論点混在を温存する
+- 複写直後は同一内容が二重化する
+- ファイル単位で整理すると、論点混在を温存する
 - design / issue / operations への接続確認なしに archive すると参照経路を失う
-- future と source_ref の未確定論点が一部の移行判断を遅らせる
+- future と source_ref の未確定論点が一部の整理判断を遅らせる
 
 ---
 
 ## 次のアクション
 
-1. `notes/exploration/memo/` の棚卸し表を作る
-2. 既存ファイルを role ベースで分類する
-3. まず未整理のまま残すものだけを `notes/inbox/dev_memo/` 候補にする
+1. `notes/exploration/memo/` の全ファイルを `notes/inbox/dev_memo/` へ複写する
+2. 新フォルダ側で棚卸し表を作る
+3. 各ファイルを role ベースで分類する
 4. 並行して `notes/exploration/README.md` の更新要否を判断する
