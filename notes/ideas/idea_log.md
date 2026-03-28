@@ -48,3 +48,57 @@
 - impact: high
 - status: open
 - created_at: 2026-03-28
+
+### 20260328-002
+- title: notes フォルダ構造の再編方針を正式確定する必要がある
+- category: architecture
+- description: notes フォルダ構造が視覚的に分かりにくく、GitHub 上で目的のファイルを探す際に迷いやすい。README に定義された思考フローと実際のフォルダ構造も一致していない。中核フォルダと保留整理対象が混在しているため、標準開発フローの前提となる notes 構造を正式に確定する必要がある。
+- context: 開発メモでは、issues / design / operations / handover / reports / inbox を中核にし、analysis / backlog / logs / decisions / archive は保留整理対象として扱う方向が見えている。フォルダ名そのものより、標準フローにどう接続するかを先に固定する必要がある。
+- impact: high
+- status: open
+- created_at: 2026-03-28
+
+### 20260328-003
+- title: future レイヤーの導入と運用ルールを定義する必要がある
+- category: ops
+- description: inbox だけでは、今は解釈すべきでないが将来のために残したい未整理入力を扱いにくい。そのため、未来向け未整理入力を保持する future レイヤーが必要である。future は整理済み保管ではなく、将来の文脈で再解釈する前提の未整理保管として扱う必要がある。
+- context: 振り分け基準には phase を使う方針が自然であり、現フェーズまたは次期フェーズに関係するものは inbox で扱い、それより先のものは future に送る方針が整理されている。future は archive と異なり、将来再活性化する前提のレイヤーである。
+- impact: high
+- status: open
+- created_at: 2026-03-28
+
+### 20260328-004
+- title: インテークレビューを正式な運用機能として定義する必要がある
+- category: ops
+- description: notes/inbox/web や notes/inbox/memo などの未整理入力を、そのまま放置せず中核フローへ接続するためのインテークレビュー機能が必要である。入力を読み取り、整理し、分類し、保存先を決め、元ファイルの処理まで判断する工程を正式な運用機能として定義する必要がある。
+- context: インテークレビューはファイル単位ではなく、フォルダ全体を読んで統合的に処理する方針が見えている。処理後は inbox を原則空に戻す運用とし、issue は標準開発フローへ、task は operations へ、不要なものは delete する流れを持たせたい。
+- impact: high
+- status: open
+- created_at: 2026-03-28
+
+### 20260328-005
+- title: 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールが必要である
+- category: architecture
+- description: web や開発メモの 1 ファイル内には、複数のフェーズや複数の論点が混在することがある。そのため、ファイル単位で inbox / future / design などへ移動するだけでは不十分である。処理単位をファイルではなく論点チャンクにし、必要なら 1 ファイルを複数テーマに分解して 1テーマ1メモとして扱うルールが必要である。
+- context: phase 判定や future 送りもテーマ単位で行う方が自然であると整理されている。元ファイルは原本として archive へ送る、または不要なら delete し、中核フローでは分割後のテーマメモを主に扱う方針が見えている。
+- impact: high
+- status: open
+- created_at: 2026-03-28
+
+### 20260328-006
+- title: source_ref の適用ルールを定義する必要がある
+- category: architecture
+- description: 入力ファイルを論点チャンクに分割し、テーマメモを生成する場合、元の文脈や出自を失いやすい。そのため、各テーマメモがどの元ファイル・元入力から切り出されたかを示す source_ref を導入し、どのレイヤーで必須にするかを定義する必要がある。
+- context: source_ref は Obsidian 的なノート間参照に近いが、通常の関連リンクより出自追跡の意味が強い。特に issue / design / future への派生や再解釈において有効であり、複数由来の統合テーマでは複数の source_ref を持つことも自然である。
+- impact: medium
+- status: open
+- created_at: 2026-03-28
+
+### 20260328-007
+- title: 旧開発メモフォルダを新フォルダ構成へ移行する必要がある
+- category: architecture
+- description: 旧開発メモの保存先として使っていた `notes/exploration/memo` を、新しい方針である `notes/inbox/memo` へ移行する必要がある。現在は旧構造と新構造が混在しており、開発メモの入口と運用ルールが一貫していない。そのため、未整理入力の入口を inbox に統一する方針と整合するように、既存メモの移行計画と実施が必要である。
+- context: 新運用では未整理入力の入口を inbox に統一したい一方、旧運用では exploration/memo に開発メモを置いていた。新旧構造が併存すると保存先判断とレビュー運用がぶれるため、棚卸し・移行・旧参照更新・旧構造の廃止判断まで含めた移行課題として扱う必要がある。
+- impact: high
+- status: open
+- created_at: 2026-03-28
