@@ -37,3 +37,14 @@
 - impact: high
 - status: open
 - created_at: 2026-03-27
+
+## 2026-03-28
+
+### 20260328-001
+- title: GitHub のユーザー名を個人利用前提の名前へ変更したい
+- category: ops
+- description: 現在の GitHub ユーザー名は `rengokitakawachi` である。これは組織名ベースで登録した名前だが、組織を離れた後も自分で継続利用する前提では、個人アカウントとしての実態と合わなくなる。そのため、今後も長く使える個人利用前提の名前へ変更したい。候補としては `santos-no-one` を想定している。また、この変更はシステムが大きくなる前に早めに行った方がよいという助言を受けている。後になるほど、GitHub ユーザー名に依存する設定、デプロイ、CI、Webhook、外部参照が増え、移行コストとリスクが高くなるためである。ただし、懸念しているのはリポジトリ URL の変化そのものではなく、変更によって既存の運用中システムや連携が壊れたり、動かなくなったりする可能性である。特に影響が心配なのは Vercel のデプロイ、GitHub Actions、外部 API / Webhook である。
+- context: 過去の開発メモおよび handover から、現在の開発基盤は GitHub / Vercel / repo-resource API / GPTs Action を前提に構成されていることが分かっている。そのため GitHub ユーザー名変更は、単なる識別名変更ではなく、repo-resource、Action 接続、Vercel デプロイ、外部連携への影響確認を伴う運用変更として扱う必要がある。後回しにすると依存箇所が増えて移行難度が上がるため、早期対応候補として扱うべき課題である。
+- impact: high
+- status: open
+- created_at: 2026-03-28
