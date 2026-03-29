@@ -29,10 +29,10 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 ## 推奨実行順
 
 1. README を現行 docs に整合する内容へ更新する
-2. source_ref の適用ルールを定義する
-3. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-4. notes/plans/ の単位と役割を具体化する
-5. AI instructions・schema の配置を `code/config/ai/` に統一する
+2. AI instructions・schema の配置を `code/config/ai/` に統一する
+3. source_ref の適用ルールを定義する
+4. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+5. notes/plans/ の単位と役割を具体化する
 6. notes フォルダ構造の再編方針を正式確定する
 7. インテークレビューを正式な運用機能として定義する
 8. future レイヤーの導入と運用ルールを定義する
@@ -59,10 +59,10 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] 標準開発フローのステップごとに、判断内容・保存先・次アクションを対応付ける
 - [x] 旧開発メモフォルダを新フォルダ構成へ移行する計画を作る
 - [ ] README を現行 docs に整合する内容へ更新する
+- [ ] AI instructions・schema の配置を `code/config/ai/` に統一する
 - [ ] source_ref の適用ルールを定義する
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
 - [ ] notes/plans/ の単位と役割を具体化する
-- [ ] AI instructions・schema の配置を `code/config/ai/` に統一する
 - [ ] notes フォルダ構造の再編方針を正式確定する
 
 ---
