@@ -102,3 +102,14 @@
 - impact: high
 - status: open
 - created_at: 2026-03-28
+
+## 2026-03-29
+
+### 20260329-001
+- title: operations を weekly_tasks.md の単一継続更新ファイルとして運用するルールが必要である
+- category: ops
+- description: operations を週ごとにファイル分割するよりも、`notes/operations/weekly_tasks.md` のような単一ファイルを継続更新し、常に今日から7日程度の短期実行タスクを管理する方式の方が現運用に合っている可能性が高い。そのため、週次ファイル名とテンプレートを設計するのではなく、単一継続更新ファイルとしての命名、期間、日付欄、完了項目の残し方、daily report との役割分離を定義する必要がある。
+- context: operations について議論した結果、週次分割ファイルは切替コストがあり、今ほしいのは履歴よりも「今から7日を見る実行面」であると整理された。`current.md` より `weekly_tasks.md` の方が役割が分かりやすく、weekly は週ごとのファイル分割ではなく、ローリングな7日管理を意味する名称として使う方針が見えている。
+- impact: medium
+- status: open
+- created_at: 2026-03-29
