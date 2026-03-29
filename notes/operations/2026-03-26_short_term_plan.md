@@ -30,7 +30,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 1. README を現行 docs に整合する内容へ更新する
 2. source_ref の適用ルールを定義する
-3. operations の週次ファイル名とテンプレートを設計する
+3. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
 4. notes/plans/ の単位と役割を具体化する
 5. notes フォルダ構造の再編方針を正式確定する
 6. インテークレビューを正式な運用機能として定義する
@@ -59,7 +59,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] 旧開発メモフォルダを新フォルダ構成へ移行する計画を作る
 - [ ] README を現行 docs に整合する内容へ更新する
 - [ ] source_ref の適用ルールを定義する
-- [ ] operations の週次ファイル名とテンプレートを設計する
+- [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
 - [ ] notes/plans/ の単位と役割を具体化する
 - [ ] notes フォルダ構造の再編方針を正式確定する
 
@@ -99,3 +99,4 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - 旧開発メモ移行計画は notes/design/2026-03-28_dev_memo_migration_plan.md を参照
 - 開発フロー再設計の統合メモは notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md を参照
 - future と source_ref の論点は notes/inbox/dev_memo/2026-03-27_15-25-00_future_and_reference_model_discussion.md を参照
+- operations の rolling 7日管理論点は issue 20260329-001 を参照
