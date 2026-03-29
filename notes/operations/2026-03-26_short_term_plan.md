@@ -32,13 +32,14 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 2. source_ref の適用ルールを定義する
 3. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
 4. notes/plans/ の単位と役割を具体化する
-5. notes フォルダ構造の再編方針を正式確定する
-6. インテークレビューを正式な運用機能として定義する
-7. future レイヤーの導入と運用ルールを定義する
-8. GitHub ユーザー名変更の影響調査を先に行う
-9. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
-10. ideas → issues の再編方針を整理する
-11. フォルダ移行マッピングを定義する
+5. AI instructions・schema の配置を `code/config/ai/` に統一する
+6. notes フォルダ構造の再編方針を正式確定する
+7. インテークレビューを正式な運用機能として定義する
+8. future レイヤーの導入と運用ルールを定義する
+9. GitHub ユーザー名変更の影響調査を先に行う
+10. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+11. ideas → issues の再編方針を整理する
+12. フォルダ移行マッピングを定義する
 
 ---
 
@@ -61,6 +62,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] source_ref の適用ルールを定義する
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
 - [ ] notes/plans/ の単位と役割を具体化する
+- [ ] AI instructions・schema の配置を `code/config/ai/` に統一する
 - [ ] notes フォルダ構造の再編方針を正式確定する
 
 ---
@@ -100,3 +102,4 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - 開発フロー再設計の統合メモは notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md を参照
 - future と source_ref の論点は notes/inbox/dev_memo/2026-03-27_15-25-00_future_and_reference_model_discussion.md を参照
 - operations の rolling 7日管理論点は issue 20260329-001 を参照
+- AI instructions / schema 配置移行論点は issue 20260327-002 を参照
