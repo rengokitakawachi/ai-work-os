@@ -57,6 +57,7 @@ SSOT = docs
 仕様判断は必ず docs に基づく  
 
 ただしタスク状態の正本は Todoist とする
+短期実行順の正本は operations とする
 
 ---
 
@@ -76,6 +77,7 @@ docs = 仕様（SSOT）
 notes = 検討  
 code = 実装  
 Todoist = タスク状態  
+operations = 短期実行順  
 
 優先順位  
 docs > notes > code  
@@ -143,9 +145,13 @@ notes は補助情報であり SSOT ではない
 
 役割
 
-- exploration = 検討  
-- exploration/memo = 開発メモ  
+- inbox = 未整理入力  
+- inbox/dev_memo = 開発メモの入口  
 - design = docs直前の仕様草案  
+- ideas = 課題・issue ログ  
+- operations = 短期実行管理  
+- handover = スレッド再開用引き継ぎ  
+- reports = 日報・月報  
 
 notes 操作は必ず Action を使用する
 
@@ -160,15 +166,19 @@ notes 操作は必ず Action を使用する
 
 保存ルール
 
-- 単発メモは notes/exploration/memo/ に保存  
+- 単発の未整理開発メモは notes/inbox/dev_memo/ に保存  
 - docs直前の草案は notes/design/ に保存  
-- design/dev_memo.md は初回保存先に使わない  
+- issue / 課題は notes/ideas/idea_log.md に蓄積する  
+- 短期実行順は notes/operations/ を正本として参照する  
+- handover は notes/handover/ に保存する  
+- 日報・月報は notes/reports/ に保存する  
 
 禁止事項
 
 - notes を SSOT として扱うこと  
 - notes のみで仕様判断すること  
 - docs 未取得で仕様を決定すること  
+- 旧 notes/exploration/memo/ を新規保存先として使うこと  
 
 ---
 
@@ -216,15 +226,33 @@ Todoist は実行中タスクの現在状態の正本とする
 
 ---
 
+# Operations利用ルール
+
+operations は短期実行順の正本とする
+
+基本方針
+
+- 今日や次に何を進めるかは operations を確認する  
+- handover 後の再開時は operations を見て着手順を揃える  
+- Todoist はタスク状態、operations は短期実行順として分離する  
+
+禁止事項
+
+- operations を見ずに次の実行順を確定すること  
+- Todoist だけで短期の着手順を決めること  
+
+---
+
 # 開発判断フロー
 
 1 docs で仕様確認  
 2 notes で検討状況確認  
 3 code で実装確認  
 4 必要なら Todoist で運用確認  
-5 差分整理  
-6 design に草案  
-7 docs / code 更新判断  
+5 operations で実行順確認  
+6 差分整理  
+7 design に草案  
+8 docs / code 更新判断  
 
 ---
 
