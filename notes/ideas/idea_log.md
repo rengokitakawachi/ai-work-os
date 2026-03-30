@@ -113,3 +113,14 @@
 - impact: medium
 - status: open
 - created_at: 2026-03-29
+
+## 2026-03-30
+
+### 20260330-001
+- title: ADAM instruction の repo正本化と同期方式を整理する必要がある
+- category: architecture
+- description: ADAM の instruction をリポジトリ上の `config/ai/adam_instruction.md` に正本化したいが、GPT の Instructions 欄そのものをリポジトリ内容で自動上書き同期する公式機構は見当たらない。そのため、固定 Instructions と repo 正本の役割分担、および必要時読取によるハイブリッド運用を整理する必要がある。
+- context: 完全自動同期は難しく、毎回 repo を読みに行く運用はパフォーマンスがやや重くなる。一方で固定 Instructions に全量を持つと更新同期が手動依存になる。現実的には、固定 Instructions は最重要ルールだけに絞り、詳細ルールは repo 側を正本として必要時だけ読むハイブリッドが有力である。
+- impact: medium
+- status: open
+- created_at: 2026-03-30
