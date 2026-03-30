@@ -235,7 +235,7 @@ export function buildCodePath(file, context = {}) {
     resource: 'code',
   });
 
-  const allowedPrefixes = ['src/', 'api/', 'lib/', 'scripts/'];
+  const allowedPrefixes = ['src/', 'api/', 'lib/', 'scripts/', 'config/'];
   const isAllowed = allowedPrefixes.some((prefix) => safe.startsWith(prefix));
 
   if (!isAllowed) {
