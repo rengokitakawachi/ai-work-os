@@ -229,6 +229,11 @@ components:
             $ref: "#/components/schemas/RepoTreeItem"
         count:
           type: integer
+        allowed_code_prefixes:
+          type: array
+          items:
+            type: string
+          description: For code resource, allowed prefixes are src/, api/, lib/, scripts/, config/
 
     RepoTreeResponse:
       type: object
@@ -488,6 +493,8 @@ paths:
     get:
       operationId: repoResourceGet
       summary: Read repo resources
+      description: |
+        Code resource can read files under src/, api/, lib/, scripts/, config/.
       security:
         - bearerAuth: []
       parameters:
@@ -545,6 +552,7 @@ paths:
         - action=create: content is required
         - action=update: content is required
         - action=delete: content must be omitted
+        - create / update are available for notes and code
         - delete is currently intended for notes resource only
       security:
         - bearerAuth: []
