@@ -1,0 +1,723 @@
+openapi: 3.1.0
+info:
+  title: AI Work OS Repo Resource API
+  version: "2.1.4"
+  description: AI Work OS repo access API and Todoist Tasks API
+
+servers:
+  - url: https://ai-work-os.vercel.app
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+
+  schemas:
+    RequestId:
+      type: string
+      description: Per-request identifier for tracing and log correlation
+      example: fbf3bd6b-5d7f-4c1f-ab91-0b4cc517ed96
+
+    ErrorObject:
+      type: object
+      additionalProperties: true
+      properties:
+        code:
+          type: string
+          example: INVALID_REQUEST
+        message:
+          type: string
+          example: file required
+        category:
+          type: string
+          enum:
+            - validation
+            - auth
+            - routing
+            - service
+            - upstream
+            - config
+            - internal
+        step:
+          type: string
+        resource:
+          type: string
+          nullable: true
+        action:
+          type: string
+          nullable: true
+        status:
+          type: integer
+        retryable:
+          type: boolean
+        details:
+          type: object
+          additionalProperties: true
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - code
+        - message
+
+    ErrorResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          $ref: "#/components/schemas/ErrorObject"
+      required:
+        - ok
+        - error
+
+    DocsListItem:
+      type: object
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        sha:
+          type: string
+        size:
+          type: integer
+
+    DocsListData:
+      type: object
+      additionalProperties: true
+      properties:
+        resource:
+          type: string
+          enum:
+            - docs
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocsListItem"
+        count:
+          type: integer
+
+    DocsListResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/DocsListData"
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    FileReadData:
+      type: object
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        sha:
+          type: string
+        size:
+          type: integer
+        content:
+          type: string
+        content_length:
+          type: integer
+        fetched_at:
+          type: string
+        status:
+          type: string
+
+    FileReadResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/FileReadData"
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    BulkFileItem:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+        file:
+          type: string
+        name:
+          type: string
+        path:
+          type: string
+        sha:
+          type: string
+        size:
+          type: integer
+        content:
+          type: string
+        content_length:
+          type: integer
+        fetched_at:
+          type: string
+        status:
+          type: string
+        error:
+          type: object
+          additionalProperties: true
+
+    DocsBulkResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/BulkFileItem"
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    RepoTreeItem:
+      type: object
+      additionalProperties: true
+      properties:
+        path:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - file
+            - dir
+        sha:
+          type: string
+
+    RepoTreeData:
+      type: object
+      additionalProperties: true
+      properties:
+        resource:
+          type: string
+          enum:
+            - notes
+            - code
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RepoTreeItem"
+        count:
+          type: integer
+
+    RepoTreeResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/RepoTreeData"
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    RepoResourceWriteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          description: Relative file path inside the selected resource
+        content:
+          type: string
+          description: Required for create and update. Do not send for delete.
+        message:
+          type: string
+          description: Optional commit message
+        sha:
+          type: string
+          description: Optional file SHA. Can be used for update or delete.
+
+    RepoResourceWriteResultData:
+      type: object
+      additionalProperties: true
+      properties:
+        path:
+          type: string
+        sha:
+          type: string
+        commit_sha:
+          type: string
+        status:
+          type: string
+          enum:
+            - CREATED
+            - UPDATED
+            - DELETED
+
+    RepoResourceWriteResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/RepoResourceWriteResultData"
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    CreateTaskRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        due_string:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 4
+        subtasks:
+          type: array
+          items:
+            type: string
+
+    UpdateTaskRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        due_date:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 4
+        status:
+          type: string
+          enum:
+            - open
+            - closed
+
+    TaskListResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          additionalProperties: true
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    TaskCreateResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          additionalProperties: true
+          properties:
+            id:
+              type: string
+            title:
+              type: string
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    TaskUpdateResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          additionalProperties: true
+          properties:
+            id:
+              type: string
+            status:
+              type: string
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/docs:
+    get:
+      operationId: listDocsLegacy
+      summary: List docs (legacy endpoint)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocsListResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/docs-read:
+    get:
+      operationId: readDocLegacy
+      summary: Read one doc (legacy endpoint)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: file
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: refresh
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileReadResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/docs-bulk:
+    get:
+      operationId: readDocsBulkLegacy
+      summary: Read multiple docs (legacy endpoint)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: files
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocsBulkResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/repo-resource:
+    get:
+      operationId: repoResourceGet
+      summary: Read repo resources
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - list
+              - tree
+              - read
+              - bulk
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - docs
+              - notes
+              - code
+        - name: file
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: files
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: repoResourceWrite
+      summary: Write repo resources
+      description: |
+        Supports create, update, and delete.
+        Rules:
+        - action=create: content is required
+        - action=update: content is required
+        - action=delete: content must be omitted
+        - delete is currently intended for notes resource only
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - create
+              - update
+              - delete
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - notes
+              - code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RepoResourceWriteRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RepoResourceWriteResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/tasks:
+    get:
+      operationId: listTasks
+      summary: List Todoist tasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: section_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: parent_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: label
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - open
+              - closed
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskListResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: createTask
+      summary: Create Todoist task
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskCreateResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/tasks/{id}:
+    patch:
+      operationId: updateTask
+      summary: Update or close Todoist task
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskUpdateResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
