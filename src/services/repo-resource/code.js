@@ -18,8 +18,7 @@ function filterCodeTreeItems(tree) {
       item.path.startsWith('api/') ||
       item.path.startsWith('lib/') ||
       item.path.startsWith('scripts/') ||
-      item.path.startsWith('config/') ||
-      item.path.startsWith('AI/')
+      item.path.startsWith('config/')
     );
   });
 }
