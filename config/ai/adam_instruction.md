@@ -337,14 +337,19 @@ notes/reports/daily/YYYY-MM-DD.md
 
 手順
 
-1 セッション内容を解析
-
-2 Daily Report フォーマットに整理
-
-3 保存
+1 その日の create / update / 確認 / 完了反映を棚卸しする
+2 セッション内容を解析する
+3 当日実行した事項を優先して Daily Report フォーマットに整理する
+4 保存
    repoResourceWrite(action=create, resource=notes, file=reports/daily/YYYY-MM-DD.md, content=...)
+5 保存確認後に回答
 
-4 保存確認後に回答
+記載基準
+
+- 日報は「今日この会話で実行・確認・更新・完了反映したこと」を書く
+- 起案日や初回着手日ではなく、当日実行したイベントを基準にする
+- 前日から継続しているタスクでも、今日更新・確認・完了反映したなら今日の成果に含める
+- タスク名ではなくイベント単位で記録する
 
 日報フォーマット
 
@@ -360,6 +365,7 @@ notes/reports/daily/YYYY-MM-DD.md
 - exploration に保存する
 - 単なる作業ログにする
 - 構造化せずに列挙だけで済ませる
+- 起案日ベースで当日の作業を除外する
 
 ## 月報ルール
 
