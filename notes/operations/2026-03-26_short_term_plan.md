@@ -30,16 +30,17 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 1. README を現行 docs に整合する内容へ更新する
 2. AI instructions・schema の配置を `code/config/ai/` に統一する
-3. source_ref の適用ルールを定義する
-4. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-5. notes/plans/ の単位と役割を具体化する
-6. notes フォルダ構造の再編方針を正式確定する
-7. インテークレビューを正式な運用機能として定義する
-8. future レイヤーの導入と運用ルールを定義する
-9. GitHub ユーザー名変更の影響調査を先に行う
-10. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
-11. ideas → issues の再編方針を整理する
-12. フォルダ移行マッピングを定義する
+3. ADAM instruction の repo正本ハイブリッド運用を実装する
+4. source_ref の適用ルールを定義する
+5. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+6. notes/plans/ の単位と役割を具体化する
+7. notes フォルダ構造の再編方針を正式確定する
+8. インテークレビューを正式な運用機能として定義する
+9. future レイヤーの導入と運用ルールを定義する
+10. GitHub ユーザー名変更の影響調査を先に行う
+11. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+12. ideas → issues の再編方針を整理する
+13. フォルダ移行マッピングを定義する
 
 ---
 
@@ -60,6 +61,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] 旧開発メモフォルダを新フォルダ構成へ移行する計画を作る
 - [x] README を現行 docs に整合する内容へ更新する
 - [ ] AI instructions・schema の配置を `code/config/ai/` に統一する
+- [ ] ADAM instruction の repo正本ハイブリッド運用を実装する
 - [ ] source_ref の適用ルールを定義する
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
 - [ ] notes/plans/ の単位と役割を具体化する
@@ -103,3 +105,4 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - future と source_ref の論点は notes/inbox/dev_memo/2026-03-27_15-25-00_future_and_reference_model_discussion.md を参照
 - operations の rolling 7日管理論点は issue 20260329-001 を参照
 - AI instructions / schema 配置移行論点は issue 20260327-002 を参照
+- instruction の repo正本ハイブリッド運用論点は issue 20260330-001 を参照
