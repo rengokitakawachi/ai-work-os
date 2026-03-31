@@ -61,7 +61,9 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] 旧開発メモフォルダを新フォルダ構成へ移行する計画を作る
 - [x] README を現行 docs に整合する内容へ更新する
 - [x] AI instructions・schema の配置を `code/config/ai/` に統一する
-- [ ] ADAM instruction の repo正本ハイブリッド運用を実装する
+- [ ] decision_log / case_study レイヤーを設計する
+- [ ] failure_log / breaking_points ログを設計する
+- [ ] ADAM instruction の repo正本ハイブリッド運用を実装する（保留）
 - [ ] source_ref の適用ルールを定義する
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
 - [ ] notes/plans/ の単位と役割を具体化する
