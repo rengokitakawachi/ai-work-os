@@ -23,10 +23,10 @@
 ### 20260327-002
 - title: AI instructions・schema の配置を code/config/ai/ に統一する必要がある
 - category: architecture
-- description: 現在、ADAM と EVE の instructions / schema はリポジトリ直下の AI/ フォルダに保存されている。ただし、AI/ 配下は現行の access path に含まれていないため、ADAM は必要時にそれらを直接参照できない。その結果、repo に現物が存在していても、運用上は現状把握や差分確認に使いにくい状態になっている。特に instruction や schema をアップデートするときに、ADAM が現在の内容を直接読めないため、更新前の確認や差分判断が手動依存になっている。
-- context: 解決策としては AI/ に API を追加する案と、API がある責務領域へ移動する案があった。方針としては後者を採用し、保存先を code/config/ai/ に統一する。これにより code resource の read 経路に乗せ、更新時の標準フローを 現状読取 → 差分確認 → 草案生成 → 更新判断 に揃えたい。
+- description: ADAM と EVE の instructions / schema を code resource から直接参照できる場所へ移し、repo 上の現物確認と差分確認を可能にする必要があった。配置先は `code/config/ai/` とし、instruction / schema を code resource の read 経路に乗せる方針を採用した。
+- context: 当初はリポジトリ直下の AI/ フォルダに保存されていたが、そこは現行 access path に含まれていなかった。そのため、repo に現物が存在していても運用上は読みに行きにくかった。現在は `config/ai/adam_instruction.md`、`config/ai/adam_schema.yaml`、`config/ai/eve_instruction.md`、`config/ai/eve_schema.yaml` が code resource 上に存在することを確認済みであり、配置移行そのものは完了している。未着手なのは、ADAM instruction と repo 正本をどう分担・同期するかというハイブリッド運用の整理である。
 - impact: high
-- status: open
+- status: closed
 - created_at: 2026-03-27
 
 ### 20260327-003
