@@ -60,7 +60,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] 標準開発フローのステップごとに、判断内容・保存先・次アクションを対応付ける
 - [x] 旧開発メモフォルダを新フォルダ構成へ移行する計画を作る
 - [x] README を現行 docs に整合する内容へ更新する
-- [ ] AI instructions・schema の配置を `code/config/ai/` に統一する
+- [x] AI instructions・schema の配置を `code/config/ai/` に統一する
 - [ ] ADAM instruction の repo正本ハイブリッド運用を実装する
 - [ ] source_ref の適用ルールを定義する
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
@@ -104,5 +104,5 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - 開発フロー再設計の統合メモは notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md を参照
 - future と source_ref の論点は notes/inbox/dev_memo/2026-03-27_15-25-00_future_and_reference_model_discussion.md を参照
 - operations の rolling 7日管理論点は issue 20260329-001 を参照
-- AI instructions / schema 配置移行論点は issue 20260327-002 を参照
+- AI instructions / schema 配置移行論点は完了済み
 - instruction の repo正本ハイブリッド運用論点は issue 20260330-001 を参照
