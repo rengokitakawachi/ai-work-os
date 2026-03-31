@@ -61,13 +61,26 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] 旧開発メモフォルダを新フォルダ構成へ移行する計画を作る
 - [x] README を現行 docs に整合する内容へ更新する
 - [x] AI instructions・schema の配置を `code/config/ai/` に統一する
+
 - [ ] decision_log / case_study レイヤーを設計する
+  - ref: （新規設計のため未紐付け）
+
 - [ ] failure_log / breaking_points ログを設計する
+  - ref: （新規設計のため未紐付け）
+
 - [ ] ADAM instruction の repo正本ハイブリッド運用を実装する（保留）
+
 - [ ] source_ref の適用ルールを定義する
+  - ref: notes/inbox/dev_memo/2026-03-27_15-25-00_future_and_reference_model_discussion.md
+
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+  - ref: issue 20260329-001
+
 - [ ] notes/plans/ の単位と役割を具体化する
+  - ref: notes/design/2026-03-27_phase_plan_operations_structure.md
+
 - [ ] notes フォルダ構造の再編方針を正式確定する
+  - ref: notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
 
 ---
 
