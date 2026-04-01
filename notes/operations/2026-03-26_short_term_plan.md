@@ -82,6 +82,9 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] notes フォルダ構造の再編方針を正式確定する
   - ref: notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
 
+- [ ] operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+  - ref: issue 20260401-001
+
 ---
 
 ### P2
