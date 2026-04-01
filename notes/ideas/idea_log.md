@@ -57,3 +57,14 @@
 - impact: medium
 - status: open
 - created_at: 2026-03-31
+
+## 2026-04-01
+
+### 20260401-001
+- title: operationsからTodoistへのタスク自動作成機能が必要
+- category: ops
+- description: operationsに定義されたタスクをTodoistのEVE開発プロジェクトへ自動で反映する機能が必要。一方向連携（operations → Todoist）とし、正本はoperationsに保持する。
+- context: 実行UIとしてTodoistを利用することで、通知・チェック・日次運用の利便性を向上させる。現在は手動転記だが、将来的にはcreateTask APIで自動生成したい。
+- impact: high
+- status: open
+- created_at: 2026-04-01
