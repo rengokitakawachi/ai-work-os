@@ -58,6 +58,7 @@ notes/
 - 旧構造はすぐ消さず、凍結・段階移行する
 - archive は最終退避先として維持する
 - 実運用を止めないため、一括 rename は行わない
+- 廃止・整理予定でまだ参照が必要なフォルダには `xx_` 接頭辞を付ける
 
 ---
 
@@ -87,8 +88,8 @@ notes/archive/      → notes/99_archive/
 ### 2. 統合・再編対象
 
 ```text
-notes/ideas/        → notes/01_issues/ に統合予定
-notes/backlog/      → 再整理対象（operations との関係を再定義）
+notes/ideas/        → notes/xx_ideas/ → notes/01_issues/
+notes/backlog/      → notes/xx_backlog/ → 再整理後に最終配置決定
 notes/plans/        → notes/03_plans/ として新設または整理対象
 ```
 
@@ -103,9 +104,10 @@ notes/plans/        → notes/03_plans/ として新設または整理対象
 - design や operations への接続起点として自然
 
 当面方針:
-- すぐに rename しなくてもよい
-- まずは概念上 `01_issues` とみなす
+- すぐに `01_issues` へ統合しない
+- 中間状態として `xx_ideas` を採用する
 - 既存の `idea_log.md` は当面維持する
+- 最終的には `01_issues` へ統合する
 
 ---
 
@@ -113,7 +115,8 @@ notes/plans/        → notes/03_plans/ として新設または整理対象
 
 扱い:
 - 直ちに番号付き中核へ入れない
-- operations との役割を再定義してから判断する
+- 中間状態として `xx_backlog` を採用する
+- operations との役割を再定義してから最終配置を決める
 
 理由:
 - 現在の短期実行順の正本は operations に寄っている
@@ -121,7 +124,7 @@ notes/plans/        → notes/03_plans/ として新設または整理対象
 - 無理に `03` や `04` へ混ぜると責務が曖昧になる
 
 当面方針:
-- 現状維持
+- `xx_backlog` として整理予定を明示する
 - 後続フェーズで「残す / 統合する / 補助レイヤー化する」を決める
 
 ---
@@ -156,6 +159,7 @@ notes/exploration/  → 中核外、凍結・段階移行対象
 当面方針:
 - 新規保存先として使わない
 - 既存内容はすぐ消さない
+- 必要なら `xx_` 接頭辞の対象として扱える
 - inbox / issues / design へ段階的に寄せる
 - 最終的な archive / 廃止判断は後続で行う
 
@@ -232,6 +236,10 @@ plans
 - 名前と責務がまだ揺れている
 - そのまま番号付きへ移すと将来また変更が必要になる
 
+補足:
+- ideas / backlog は `xx_` 接頭辞で中間状態を作る
+- plans は新設寄りで扱う
+
 ---
 
 ### C. 凍結・段階移行
@@ -256,8 +264,9 @@ exploration
 2. README / docs の差分を整理する
 3. 新規作成で必要なフォルダを先に用意する
 4. rename 可能なものから段階的に移す
-5. 再編対象は concept 固定後に動かす
-6. exploration は最後に扱う
+5. ideas / backlog は `xx_` 接頭辞で中間状態を作る
+6. 再編対象は concept 固定後に動かす
+7. exploration は最後に扱う
 
 ---
 
@@ -266,9 +275,9 @@ exploration
 この時点で固定するのは以下。
 
 - inbox / design / operations / decisions / handover / reports / analysis / content / logs / archive は番号付き rename 対象
-- ideas は issues へ統合する方向で扱う
+- ideas は `xx_ideas` を経由して issues へ統合する方向で扱う
+- backlog は `xx_backlog` を経由して再整理する
 - plans は `03_plans` として新設寄りで扱う
-- backlog は再整理対象として保留する
 - exploration は凍結・段階移行対象とする
 - 実運用を止めないため、一括 rename はしない
 
