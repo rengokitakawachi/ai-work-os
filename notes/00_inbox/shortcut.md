@@ -1,3 +1,0 @@
-# Capture
- 
-shortcut test
