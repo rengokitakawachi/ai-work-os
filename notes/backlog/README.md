@@ -1,22 +1,9 @@
-# notes/backlog/README.md
+# moved
 
-## 役割
+このファイルは移行中です。
 
-次アクション管理
+参照先:
+- notes/xx_backlog/README.md
 
-notes 内で整理された内容を
-開発タスクへ接続する場所
-
----
-
-## 最重要ファイル
-
-dev-backlog.md
-
----
-
-## 使い方
-
-・ exploration で見えた作業を書く
-・ design で必要になった作業を書く
-・ docs に上げる前の準備も書く
+旧パスは互換用の stub として残しています。
+更新は新パス側で行ってください。
