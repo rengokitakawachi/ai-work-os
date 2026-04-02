@@ -77,3 +77,14 @@
 - impact: high
 - status: open
 - created_at: 2026-04-01
+
+## 2026-04-02
+
+### 20260402-001
+- title: 新しいnotes構造と日報時のcontent抽出運用をinstructionとdocsへ反映する必要がある
+- category: ops
+- description: notes の indexed 構造への移行が進んだため、ADAM instruction と docs を旧構造のまま放置すると保存先や判断基準が再びずれる。特に 03_plan の追加、07_reports の保存先、09_content の位置づけ、日報作成時に content 化できるネタを同時抽出する運用は、instruction と docs の両方に反映する必要がある。
+- context: 現在の notes 構造は 00_inbox / 01_issues / 02_design / 03_plan / 04_operations / 05_decisions / 06_handover / 07_reports / 08_analysis / 09_content / 10_logs / 99_archive に整理されつつある。一方で instruction や docs/15_notes_system.md、notes/README.md はまだこの新構造を十分に反映できていない。日報トリガー時に 07_reports/daily/YYYY-MM-DD.md へ保存すること、および content 候補を 09_content/drafts/ に残す運用も明文化が必要。
+- impact: high
+- status: open
+- created_at: 2026-04-02
