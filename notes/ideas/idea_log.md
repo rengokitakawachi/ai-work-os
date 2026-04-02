@@ -68,3 +68,12 @@
 - impact: high
 - status: open
 - created_at: 2026-04-01
+
+### 20260401-002
+- title: note記事用ドラフトをリポジトリ内で蓄積・運用する仕組みが必要
+- category: architecture
+- description: 将来的なマネタイズに向けて、note記事として公開可能なドラフトを日々の開発と並行して蓄積する仕組みが必要。記事を書くのではなく、問題・解決・意思決定・学びなどの素材を構造的に蓄積し、いつでも記事化できる状態を維持する。
+- context: 開発中の思考や意思決定は時間経過で失われやすく、後から記事を書くのは困難である。日報・design・issue・decision_logなどと連携し、自然に記事素材が蓄積される仕組みが必要。
+- impact: high
+- status: open
+- created_at: 2026-04-01
