@@ -32,8 +32,9 @@
 - operations は短期実行順の正本として確立
 - handover は再開時の正本として確立
 - reports は daily / monthly の継続運用が成立
-- ideas は実態として issue レイヤーに近い
+- xx_ideas は実態として issue レイヤーに近い移行中フォルダ
 - content は運用先行の新レイヤーとして導入済み
+- xx_backlog は再整理対象の移行中フォルダ
 - exploration は旧構造であり中核主線から外れつつある
 
 そのため、docs 側でも notes の現行構造を反映し直す必要がある。
@@ -47,7 +48,7 @@
 - ただしディレクトリ構成と主線は現行運用に合わせて更新する
 - 番号付き rename の詳細までは docs に書きすぎない
 - 現時点の「役割」と「運用上の中核」を優先して記述する
-- exploration や backlog は削除ではなく、移行中・再整理対象として位置づける
+- exploration や xx_backlog は削除ではなく、移行中・再整理対象として位置づける
 
 ---
 
@@ -66,14 +67,14 @@
 - 短期実行順の正本は operations とする
 - 再開時の正本は handover とする
 - 実績と振り返りは reports に残す
-- 課題ログは ideas に保持するが、実態として issue レイヤーに近い
+- 課題ログは xx_ideas に保持するが、実態として issue レイヤーに近い
 
 ### 3. ディレクトリ構成の更新
 
 少なくとも docs には以下を出す。
 
 - inbox
-- ideas
+- xx_ideas
 - design
 - operations
 - handover
@@ -84,7 +85,7 @@
 - logs
 - archive
 
-exploration と backlog は「移行中 / 再整理対象」として扱う。
+exploration と xx_backlog は「移行中 / 再整理対象」として扱う。
 
 ### 4. 各レイヤーの役割を更新
 
@@ -94,7 +95,7 @@ exploration と backlog は「移行中 / 再整理対象」として扱う。
 - handover = スレッド再開の正本
 - reports = daily / monthly の蓄積
 - content = 発信用素材の蓄積
-- ideas = issue 相当の課題ログ
+- xx_ideas = issue 相当の課題ログを保持する移行中フォルダ
 
 ### 5. 最重要ファイルの見直し
 
@@ -103,7 +104,7 @@ notes の運用上重要な正本を複数示す形に変える。
 
 候補:
 - notes/operations/2026-03-26_short_term_plan.md
-- notes/ideas/idea_log.md
+- notes/xx_ideas/idea_log.md
 - notes/handover/*.md
 - notes/reports/daily/*.md
 
@@ -164,7 +165,7 @@ docs 更新前に design を経由する。
 notes/ の中核レイヤーは以下とする。
 
 - inbox
-- ideas
+- xx_ideas
 - design
 - operations
 - handover
@@ -189,12 +190,12 @@ notes/ の中核レイヤーは以下とする。
 以下は旧構造または再整理対象とする。
 
 - exploration
-- backlog
+- xx_backlog
 
 exploration は旧来の調査・検討レイヤーであり、
 現在は中核主線から外れつつある。
 
-backlog は operations との役割を再整理対象とする。
+xx_backlog は operations との役割を再整理対象とする。
 
 ---
 
@@ -208,9 +209,9 @@ web や dev_memo を含む。
 
 ---
 
-### ideas
+### xx_ideas
 
-課題や論点を保持するレイヤー。
+課題や論点を保持する移行中レイヤー。
 
 実態としては issue レイヤーに近い。
 
@@ -278,7 +279,7 @@ daily / monthly の実績と振り返りを蓄積する。
 ## 運用上の重要ファイル
 
 - operations 配下の短期実行計画
-- ideas/idea_log.md
+- xx_ideas/idea_log.md
 - handover 配下の最新引き継ぎ書
 - reports/daily 配下の日報
 
@@ -303,7 +304,7 @@ notes → docs
 今回の docs 更新で変えるべき主点は以下。
 
 - notes の中核構成を現行実態へ更新する
-- operations / handover / reports / ideas / content を反映する
+- operations / handover / reports / xx_ideas / content を反映する
 - backlog 単独中心の説明を外す
 - exploration を旧主線から外す
 - 「正本」の説明を notes 内部でも分離して書く
@@ -334,6 +335,6 @@ notes → docs
 - operations の位置づけ
 - handover の位置づけ
 - reports の位置づけ
-- ideas の実態的な位置づけ
+- xx_ideas の実態的な位置づけ
 - content の存在
-- exploration / backlog の再整理前提
+- exploration / xx_backlog の再整理前提
