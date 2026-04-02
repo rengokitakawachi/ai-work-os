@@ -62,11 +62,38 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] README を現行 docs に整合する内容へ更新する
 - [x] AI instructions・schema の配置を `code/config/ai/` に統一する
 
+- [ ] notes フォルダのインデックス番号仕様を design に昇格する
+  - ref: notes/inbox/dev_memo/2026-03-27_notes_structure_refactor_plan.md
+
+- [ ] notes の現行運用構造を整理し、中核フォルダと責務を明文化する
+  - ref: notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
+
+- [ ] notes/plans/ の単位と役割を具体化する
+  - ref: notes/design/2026-03-27_phase_plan_operations_structure.md
+
+- [ ] ideas → issues の再編方針を整理する
+  - ref: notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
+
+- [ ] notes フォルダ構造の再編方針を正式確定する
+  - ref: notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
+
+- [ ] フォルダ移行マッピングを定義する
+  - ref: notes/design/2026-03-28_dev_memo_migration_plan.md
+
+- [ ] `15_notes_system.md` と `notes/README.md` の差分を洗い出す
+  - ref: docs/15_notes_system.md
+
+- [ ] `10_repo_resource_api.md` と code 実装の差分を洗い出す
+  - ref: docs/10_repo_resource_api.md
+
+- [ ] `05_roadmap.md` を現行 design / notes 運用と照合し、更新要否を判断する
+  - ref: docs/05_roadmap.md
+
 - [ ] decision_log / case_study レイヤーを設計する
-  - ref: （新規設計のため未紐付け）
+  - ref: issue 20260331-001
 
 - [ ] failure_log / breaking_points ログを設計する
-  - ref: （新規設計のため未紐付け）
+  - ref: issue 20260331-002
 
 - [ ] ADAM instruction の repo正本ハイブリッド運用を実装する（保留）
 
@@ -75,12 +102,6 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
   - ref: issue 20260329-001
-
-- [ ] notes/plans/ の単位と役割を具体化する
-  - ref: notes/design/2026-03-27_phase_plan_operations_structure.md
-
-- [ ] notes フォルダ構造の再編方針を正式確定する
-  - ref: notes/inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
 
 - [ ] operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
   - ref: issue 20260401-001
@@ -96,8 +117,6 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] future レイヤーの導入と運用ルールを定義する
 - [ ] GitHub ユーザー名変更の影響調査を行う（Vercel / GitHub Actions / 外部 API / Webhook）
 - [ ] 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
-- [ ] ideas → issues の再編方針を整理する
-- [ ] フォルダ移行マッピングを定義する
 
 ---
 
