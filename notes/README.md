@@ -30,9 +30,9 @@ docs へ昇格する前段を支える。
 
 を主に扱う。
 
-### ideas
+### xx_ideas
 
-課題や論点を蓄積するレイヤー。
+課題や論点を蓄積する移行中レイヤー。
 
 現状は idea_log を中心に運用しているが、実態としては issue レイヤーに近い。
 
@@ -71,7 +71,7 @@ input
 ↓
 inbox
 ↓
-ideas または design
+xx_ideas または design
 ↓
 operations
 ↓
@@ -114,9 +114,9 @@ reports
 
 現在は中核主線ではなく、縮小・移行対象として扱う。
 
-### backlog
+### xx_backlog
 
-旧来の backlog レイヤー。
+旧来の backlog レイヤーを整理予定として明示した移行中フォルダ。
 
 現在の短期実行順の正本は operations に寄っているため、再整理対象とする。
 
