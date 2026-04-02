@@ -23,12 +23,13 @@
 
 特に以下のズレがある。
 
-- notes/README.md では exploration が主線に残っている
+- notes/README.md では exploration が主線に残っていた
 - notes/design/README.md でも exploration / exploration/memo 前提が残っている
 - 一方で実運用では inbox/dev_memo、operations、handover、reports、content が中核になっている
-- ideas は実態として issue レイヤーに近い
+- ideas は実態として issue レイヤーに近く、現在は `xx_ideas` へ移行を開始している
 - analysis は横断確認に使われている
 - archive はすでに存在するが、主線ではない
+- backlog は `xx_backlog` へ移行を開始し、再整理対象になっている
 
 そのため、まず「いま実際に何が使われているか」を切り出しておく必要がある。
 
@@ -148,23 +149,6 @@
 
 ---
 
-### notes/ideas/
-
-役割:
-- 現状では idea_log の保存先
-- 実態としては課題ログに近い
-
-実態:
-- notes/ideas/idea_log.md に architecture / ops / idea などが蓄積されている
-- 内容は「アイデア」より issue に近い
-
-評価:
-- 現行では中核寄り
-- ただし名称と責務は再整理対象
-- 将来的には issues へ寄せる前提
-
----
-
 ## 2. 補助・周辺レイヤー
 
 ### notes/decisions/
@@ -212,24 +196,39 @@
 
 ---
 
-### notes/backlog/
+## 3. 旧構造または移行中レイヤー
+
+### notes/xx_ideas/
 
 役割:
-- backlog 管理
-- candidate / ready next / blocked などの保持
+- 旧 ideas レイヤーを整理予定として明示した移行中フォルダ
+- 実態としては課題ログに近い
 
 実態:
-- notes/backlog/dev-backlog.md が存在する
-- ただし現在の短期実行順の正本は operations 側へ寄っている
+- notes/xx_ideas/idea_log.md が存在する
+- 内容は「アイデア」より issue に近い
 
 評価:
-- 役割が operations と一部競合
-- 中核からは外れ気味
-- 将来的に再整理対象
+- 中核へ向かう移行中レイヤー
+- 最終的には 01_issues 相当へ統合する前提
 
 ---
 
-## 3. 旧構造または移行中レイヤー
+### notes/xx_backlog/
+
+役割:
+- 旧 backlog レイヤーを整理予定として明示した移行中フォルダ
+
+実態:
+- notes/xx_backlog/dev-backlog.md が存在する
+- notes/xx_backlog/idea_log.md も存在する
+- ただし現在の短期実行順の正本は operations 側へ寄っている
+
+評価:
+- 再整理対象
+- 中核主線ではない
+
+---
 
 ### notes/exploration/
 
@@ -271,7 +270,7 @@ input
 ↓
 notes/inbox/
 ↓
-notes/ideas/ または notes/design/
+notes/xx_ideas/ または notes/design/
 ↓
 notes/operations/
 ↓
@@ -304,7 +303,7 @@ notes/reports/
 - inbox/dev_memo が中心
 - exploration は中核ではない
 - operations / handover / reports / content が重要
-- ideas は issue レイヤーとして機能している
+- xx_ideas は issue レイヤーへ向かう移行中フォルダとして機能している
 
 ---
 
@@ -331,7 +330,6 @@ notes/design/
 notes/operations/
 notes/handover/
 notes/reports/
-notes/ideas/
 notes/content/
 ```
 
@@ -341,7 +339,8 @@ notes/content/
 notes/decisions/
 notes/logs/
 notes/analysis/
-notes/backlog/
+notes/xx_ideas/
+notes/xx_backlog/
 notes/exploration/
 notes/archive/
 ```
@@ -352,11 +351,11 @@ notes/archive/
 
 以下は現時点で未確定。
 
-- ideas をいつ issues に変えるか
+- xx_ideas をいつ 01_issues 相当に変えるか
 - plans をどの単位で持つか
 - content を正式に中核へ昇格させるか
 - analysis を独立レイヤーとして固定するか
-- backlog を残すか operations に統合するか
+- xx_backlog の最終配置
 - exploration の最終扱い
 - decisions / logs の強化方針
 
@@ -368,10 +367,11 @@ notes/archive/
 
 - 現在の主線は旧 README より進んでいること
 - inbox / design / operations / handover / reports はすでに中核運用であること
-- ideas は実態として issue レイヤーに近いこと
+- xx_ideas は issue レイヤーへ向かう移行中フォルダであること
 - content は運用先行の新レイヤーであること
+- xx_backlog は再整理対象であること
 - exploration は中核ではなく移行対象であること
-- backlog / analysis / decisions / logs は補助または再整理対象であること
+- analysis / decisions / logs は補助または再整理対象であること
 
 ---
 
