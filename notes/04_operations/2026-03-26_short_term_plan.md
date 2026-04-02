@@ -83,6 +83,18 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] `15_notes_system.md` と `notes/README.md` の差分を洗い出す
   - ref: docs/15_notes_system.md
 
+- [ ] 新しい notes indexed 構造を `docs/15_notes_system.md` に反映する
+  - ref: issue 20260402-001
+
+- [ ] 新しい notes indexed 構造を `notes/README.md` に反映する
+  - ref: issue 20260402-001
+
+- [ ] 日報保存先と content 抽出運用を ADAM instruction に反映する
+  - ref: issue 20260402-001
+
+- [ ] 日報作成時に `07_reports/daily/` 保存と `09_content/drafts/` 抽出を同時実行する運用を定義する
+  - ref: issue 20260402-001
+
 - [ ] `10_repo_resource_api.md` と code 実装の差分を洗い出す
   - ref: docs/10_repo_resource_api.md
 
