@@ -29,23 +29,19 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 ## 推奨実行順
 
 1. `05_roadmap.md` を現行 design / notes / repo-resource 運用と照合し、更新要否を判断する
-2. notes bulk の実装方針を確定し、必要なら着手する
-3. 旧 `src/services/github-repo-resource.js` の整理方針を決める
-4. ADAM instruction の repo正本ハイブリッド運用を実装する
-5. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-6. notes/plans/ の単位と役割を具体化する
-7. ideas → issues の再編方針を整理する
-8. notes フォルダ構造の再編方針を正式確定する
-9. フォルダ移行マッピングを定義する
-10. source_ref の適用ルールを定義する
+2. 旧 `src/services/github-repo-resource.js` の整理方針を決める
+3. notes bulk の実装方針を確定し、必要なら着手する
+4. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+5. ADAM instruction の repo正本ハイブリッド運用を実装する
+6. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+7. notes/plans/ の単位と役割を具体化する
+8. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+9. decision_log / case_study レイヤーを設計する
+10. failure_log / breaking_points ログを設計する
 11. インテークレビューを正式な運用機能として定義する
 12. future レイヤーの導入と運用ルールを定義する
-13. note記事ドラフトをリポジトリ内で蓄積・運用する仕組みを設計する
-14. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-15. decision_log / case_study レイヤーを設計する
-16. failure_log / breaking_points ログを設計する
-17. GitHub ユーザー名変更の影響調査を行う
-18. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+13. GitHub ユーザー名変更の影響調査を行う
+14. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
