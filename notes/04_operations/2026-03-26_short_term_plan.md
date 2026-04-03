@@ -28,20 +28,24 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 ## 推奨実行順
 
-1. `docs/15_notes_system.md` に新しい notes indexed 構造を反映する
-2. `10_repo_resource_api.md` と code 実装の差分を洗い出す
-3. `05_roadmap.md` を現行 design / notes 運用と照合し、更新要否を判断する
+1. `05_roadmap.md` を現行 design / notes / repo-resource 運用と照合し、更新要否を判断する
+2. notes bulk の実装方針を確定し、必要なら着手する
+3. 旧 `src/services/github-repo-resource.js` の整理方針を決める
 4. ADAM instruction の repo正本ハイブリッド運用を実装する
-5. source_ref の適用ルールを定義する
-6. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-7. notes/plans/ の単位と役割を具体化する
-8. ideas → issues の再編方針を整理する
-9. notes フォルダ構造の再編方針を正式確定する
-10. フォルダ移行マッピングを定義する
+5. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+6. notes/plans/ の単位と役割を具体化する
+7. ideas → issues の再編方針を整理する
+8. notes フォルダ構造の再編方針を正式確定する
+9. フォルダ移行マッピングを定義する
+10. source_ref の適用ルールを定義する
 11. インテークレビューを正式な運用機能として定義する
 12. future レイヤーの導入と運用ルールを定義する
-13. GitHub ユーザー名変更の影響調査を先に行う
-14. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+13. note記事ドラフトをリポジトリ内で蓄積・運用する仕組みを設計する
+14. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+15. decision_log / case_study レイヤーを設計する
+16. failure_log / breaking_points ログを設計する
+17. GitHub ユーザー名変更の影響調査を行う
+18. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -71,20 +75,20 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] notes/plans/ の単位と役割を具体化する
   - ref: notes/02_design/2026-03-27_phase_plan_operations_structure.md
 
-- [ ] ideas → issues の再編方針を整理する
-  - ref: notes/00_inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
+- [x] ideas → issues の再編方針を整理する
+  - ref: notes/01_issues/idea_log.md
 
-- [ ] notes フォルダ構造の再編方針を正式確定する
-  - ref: notes/00_inbox/dev_memo/2026-03-27_13-35-00_development_flow_restructure_discussion.md
+- [x] notes フォルダ構造の再編方針を正式確定する
+  - ref: docs/15_notes_system.md
 
-- [ ] フォルダ移行マッピングを定義する
+- [x] フォルダ移行マッピングを定義する
   - ref: notes/02_design/2026-04-02_notes_folder_migration_mapping.md
 
 - [x] `15_notes_system.md` と `notes/README.md` の差分を洗い出す
   - ref: docs/15_notes_system.md
 
-- [ ] 新しい notes indexed 構造を `docs/15_notes_system.md` に反映する
-  - ref: issue 20260402-001
+- [x] 新しい notes indexed 構造を `docs/15_notes_system.md` に反映する
+  - ref: docs/15_notes_system.md
 
 - [x] 新しい notes indexed 構造を `notes/README.md` に反映する
   - ref: issue 20260402-001
@@ -95,10 +99,13 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] 日報作成時に `07_reports/daily/` 保存と `09_content/drafts/` 抽出を同時実行する運用を定義する
   - ref: issue 20260402-001
 
-- [ ] `10_repo_resource_api.md` と code 実装の差分を洗い出す
+- [x] `10_repo_resource_api.md` と code 実装の差分を洗い出す
+  - ref: notes/02_design/2026-04-03_docs_10_repo_resource_api_update_draft.md
+
+- [x] `10_repo_resource_api.md` を現行実装に整合する内容へ更新する
   - ref: docs/10_repo_resource_api.md
 
-- [ ] `05_roadmap.md` を現行 design / notes 運用と照合し、更新要否を判断する
+- [ ] `05_roadmap.md` を現行 design / notes / repo-resource 運用と照合し、更新要否を判断する
   - ref: docs/05_roadmap.md
 
 - [ ] decision_log / case_study レイヤーを設計する
@@ -110,8 +117,11 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] ADAM instruction の repo正本ハイブリッド運用を実装する（保留）
   - ref: issue 20260330-001
 
-- [ ] source_ref の適用ルールを定義する
-  - ref: notes/00_inbox/dev_memo/2026-03-27_15-25-00_future_and_reference_model_discussion.md
+- [x] source_ref の適用ルール草案を定義する
+  - ref: notes/02_design/intake_review_and_source_ref_spec.md
+
+- [ ] source_ref を docs / instructions / operations にどう正式反映するかを確定する
+  - ref: notes/02_design/intake_review_and_source_ref_spec.md
 
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
   - ref: issue 20260329-001
@@ -119,8 +129,20 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
   - ref: issue 20260401-001
 
-- [ ] note記事ドラフトをリポジトリ内で蓄積・運用する仕組みを設計する
-  - ref: issue 20260401-002
+- [x] note記事ドラフトをリポジトリ内で蓄積・運用する仕組みを設計する
+  - ref: notes/09_content/README.md
+
+- [x] notes delete の許可 prefix を現行レイヤーに合わせて修正する
+  - ref: code/src/services/repo-resource/notes.js
+
+- [x] notes delete 許可範囲の判断を decision として記録する
+  - ref: notes/05_decisions/2026-04-03_notes_delete_allowed_prefixes.md
+
+- [ ] notes bulk の実装方針を確定する
+  - ref: notes/02_design/2026-04-03_docs_10_repo_resource_api_update_draft.md
+
+- [ ] 旧 `src/services/github-repo-resource.js` の整理方針を決める
+  - ref: notes/02_design/2026-04-03_docs_10_repo_resource_api_update_draft.md
 
 ---
 
@@ -139,7 +161,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - 計画に必要な材料が揃う
 - 標準開発フロー設計の前提となるフォルダ構造と運用ルールが固まる
 - 重要 issue の着手順が operations に反映されている
-- 旧構造と README の混在が縮小している
+- docs / notes / code の主要整合が更新されている
 - 軽量な整合タスクが先に消化され、未完了の数が圧縮されている
 
 ---
@@ -152,9 +174,13 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - GitHub ユーザー名変更は後回しにすると移行コストが上がるため、調査だけ先行する
 - notes indexed 構造の設計草案は notes/02_design/2026-04-02_notes_indexed_structure_spec.md を参照
 - 現行運用構造の整理は notes/02_design/2026-04-02_notes_current_operating_structure.md を参照
-- `docs/15_notes_system.md` の更新草案は notes/02_design/2026-04-02_docs_15_notes_system_update_draft.md を参照
+- `docs/15_notes_system.md` は現行 indexed 構造へ更新済み
 - `notes/README.md` は現行 indexed 構造へ更新済み
+- `docs/10_repo_resource_api.md` は現行実装に合わせて更新済み
 - ADAM instruction には日報保存先と content 抽出運用を反映済み
+- notes delete の許可 prefix は現行レイヤーに修正済み
+- delete 許可範囲の判断は notes/05_decisions/2026-04-03_notes_delete_allowed_prefixes.md を参照
+- `docs/10` の更新草案は notes/02_design/2026-04-03_docs_10_repo_resource_api_update_draft.md を参照
 - 計画系整理は notes/02_design/2026-03-27_phase_plan_operations_structure.md を参照
 - 標準開発フロー routing は notes/02_design/2026-03-28_standard_development_flow_routing_table.md を参照
 - フォルダ移行マッピングは notes/02_design/2026-04-02_notes_folder_migration_mapping.md を参照
