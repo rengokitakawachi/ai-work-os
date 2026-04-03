@@ -10,10 +10,14 @@ import {
 } from './common.js';
 
 const DELETE_ALLOWED_PREFIXES = [
-  'inbox/',
-  'exploration/',
-  'logs/',
-  'design/',
+  '00_inbox/',
+  '01_issues/',
+  '02_design/',
+  '03_plan/',
+  '04_operations/',
+  '05_decisions/',
+  '08_analysis/',
+  '09_content/',
 ];
 
 function assertNotesDeleteAllowed(file) {
