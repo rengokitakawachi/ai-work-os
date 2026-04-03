@@ -181,13 +181,16 @@ notes は補助情報であり SSOT ではない
 
 役割
 
-- inbox = 未整理入力  
-- inbox/dev_memo = 開発メモの入口  
-- design = docs直前の仕様草案  
-- ideas = 課題・issue ログ  
-- operations = 短期実行管理  
-- handover = スレッド再開用引き継ぎ  
-- reports = 日報・月報  
+- 00_inbox = 未整理入力  
+- 00_inbox/dev_memo = 開発メモの入口  
+- 01_issues = 課題・issue ログ  
+- 02_design = docs直前の仕様草案  
+- 03_plan = 一定期間の重点テーマ整理  
+- 04_operations = 短期実行管理  
+- 06_handover = スレッド再開用引き継ぎ  
+- 07_reports = 日報・月報  
+- 09_content = 発信用素材・記事ドラフト  
+- 05_decisions / 08_analysis / 10_logs / 99_archive = 補助レイヤー  
 
 notes 操作は必ず Action を使用する
 
@@ -202,12 +205,14 @@ notes 操作は必ず Action を使用する
 
 保存ルール
 
-- 単発の未整理開発メモは notes/inbox/dev_memo/ に保存  
-- docs直前の草案は notes/design/ に保存  
-- issue / 課題は notes/ideas/idea_log.md に蓄積する  
-- 短期実行順は notes/operations/ を正本として参照する  
-- handover は notes/handover/ に保存する  
-- 日報・月報は notes/reports/ に保存する  
+- 単発の未整理開発メモは notes/00_inbox/dev_memo/ に保存  
+- docs直前の草案は notes/02_design/ に保存  
+- issue / 課題は notes/01_issues/idea_log.md に蓄積する  
+- 重点テーマ整理は notes/03_plan/ に保存する  
+- 短期実行順は notes/04_operations/ を正本として参照する  
+- handover は notes/06_handover/ に保存する  
+- 日報・月報は notes/07_reports/ に保存する  
+- 発信用素材は notes/09_content/drafts/ に保存する  
 
 禁止事項
 
@@ -319,12 +324,12 @@ operations は短期実行順の正本とする
 
 保存先
 
-notes/handover/YYYY-MM-DD_HH-mm-ss_summary.md
+notes/06_handover/YYYY-MM-DD_HH-mm-ss_summary.md
 
 手順
 
 1 テンプレ取得  
-   repoResourceGet(action=read, resource=notes, file=design/handover_template.md)
+   repoResourceGet(action=read, resource=notes, file=02_design/handover_template.md)
 
 2 セッション解析  
 
@@ -333,7 +338,7 @@ notes/handover/YYYY-MM-DD_HH-mm-ss_summary.md
 4 ファイル名生成  
 
 5 保存  
-   repoResourceWrite(action=create, resource=notes, file=..., content=...)
+   repoResourceWrite(action=create, resource=notes, file=06_handover/..., content=...)
 
 6 保存確認後に回答  
 
@@ -361,16 +366,19 @@ notes/handover/YYYY-MM-DD_HH-mm-ss_summary.md
 
 保存先
 
-notes/reports/daily/YYYY-MM-DD.md
+notes/07_reports/daily/YYYY-MM-DD.md
 
 手順
 
 1 その日の create / update / 確認 / 完了反映を棚卸しする
 2 セッション内容を解析する
 3 当日実行した事項を優先して Daily Report フォーマットに整理する
-4 保存
-   repoResourceWrite(action=create, resource=notes, file=reports/daily/YYYY-MM-DD.md, content=...)
-5 保存確認後に回答
+4 日報を保存
+   repoResourceWrite(action=create, resource=notes, file=07_reports/daily/YYYY-MM-DD.md, content=...)
+5 価値化できる学び・判断・構造差分がある場合は、09_content/drafts/ に 1トピック1ファイルで抽出保存する
+   - 既存近接ファイルがあれば update
+   - なければ create
+6 保存確認後に回答
 
 記載基準
 
@@ -407,11 +415,11 @@ notes/reports/daily/YYYY-MM-DD.md
 
 保存先
 
-notes/reports/monthly/YYYY-MM.md
+notes/07_reports/monthly/YYYY-MM.md
 
 手順
 
-1 notes/reports/daily/ 配下の対象ファイルを取得する
+1 notes/07_reports/daily/ 配下の対象ファイルを取得する
    repoResourceGet(action=tree, resource=notes)
 
 2 対象月（YYYY-MM）のファイルを特定する
@@ -424,7 +432,7 @@ notes/reports/monthly/YYYY-MM.md
 5 Monthly Report フォーマットに整理する
 
 6 保存
-   repoResourceWrite(action=create, resource=notes, file=reports/monthly/YYYY-MM.md, content=...)
+   repoResourceWrite(action=create, resource=notes, file=07_reports/monthly/YYYY-MM.md, content=...)
 
 7 保存確認後に回答
 
@@ -476,7 +484,7 @@ notes/reports/monthly/YYYY-MM.md
 
 ## 保存先
 
-notes/ideas/idea_log.md
+notes/01_issues/idea_log.md
 
 ---
 
@@ -498,9 +506,9 @@ notes/ideas/idea_log.md
 
 YYYYMMDD-XXX
 
-4 notes/ideas/idea_log.md に追記する
+4 notes/01_issues/idea_log.md に追記する
 
-repoResourceWrite(action=update, resource=notes, file=ideas/idea_log.md, content=...)
+repoResourceWrite(action=update, resource=notes, file=01_issues/idea_log.md, content=...)
 
 5 保存確認後に回答する
 
@@ -591,9 +599,9 @@ repoResourceWrite(action=update, resource=notes, file=ideas/idea_log.md, content
 
 承認後、以下に保存する
 
-notes/ideas/idea_log.md
+notes/01_issues/idea_log.md
 
-repoResourceWrite(action=update, resource=notes, file=ideas/idea_log.md, content=...)
+repoResourceWrite(action=update, resource=notes, file=01_issues/idea_log.md, content=...)
 
 ---
 
