@@ -117,3 +117,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-03
+
+### 20260403-003
+- title: roadmap / plan / operations の3階層を一般業務版 EVE にも展開したい
+- category: architecture
+- description: 開発用に整理している roadmap / plan / operations の3階層は、一般業務でも有効な責務分離になっている可能性が高い。将来的に、一般業務を扱う EVE にも同様の planning 機能を持たせられるよう、開発専用モデルではなく汎用 planning model として再利用できるかを検討する必要がある。
+- context: 現在の docs/05_roadmap.md では、roadmap = 上位計画、plan = 中期計画、operations = 短期実行順として整理されている。この分離は開発以外にも転用可能に見えるが、現時点では EVE 開発計画としての色が強い。今すぐ深掘りはせず、将来の設計論点として保持したい。
+- impact: medium
+- status: open
+- created_at: 2026-04-03
