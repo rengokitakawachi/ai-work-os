@@ -6,7 +6,7 @@
 
 本 API は、docs（SSOT）の取得、notes の読書き、code の読書きを支える開発基盤である。
 
-現状の docs 専用 API を定義しつつ、将来的な repo-resource 統合方針を定義する。
+現状の docs 専用 API を定義しつつ、repo-resource 統合方針と現行実装状態を定義する。
 
 エラー発生時は、失敗理由だけでなく、失敗箇所、分類、再試行可否を返し、解析しやすい状態を維持する。
 
@@ -43,7 +43,7 @@ docs-bulk は補助取得 API とする。
 
 docs の更新は本 API の責務に含めない。
 
-docs の修正案は notes/design を経由して人間が判断する。
+docs の修正案は notes/02_design を経由して人間が判断する。
 
 request_id は 1 リクエスト単位の識別子とする。
 
@@ -62,7 +62,7 @@ error.details は解析補助情報を示す。
 - docs は API 経由で取得する
 - 本文未取得状態で判断・修正しない
 - docs は read only とする
-- docs の修正案は notes/design に整理する
+- docs の修正案は notes/02_design に整理する
 - notes は補助レイヤーとして扱う
 - code は docs に従属する
 - API は薄く保つ
@@ -89,10 +89,13 @@ error.details は解析補助情報を示す。
 - GET /api/repo-resource?action=bulk&resource=docs&files=FILENAME1,FILENAME2,...
 - GET /api/repo-resource?action=tree&resource=notes
 - GET /api/repo-resource?action=read&resource=notes&file=FILENAME
+- GET /api/repo-resource?action=bulk&resource=notes&files=FILENAME1,FILENAME2,...
 - POST /api/repo-resource?action=create&resource=notes
 - POST /api/repo-resource?action=update&resource=notes
+- POST /api/repo-resource?action=delete&resource=notes
 - GET /api/repo-resource?action=tree&resource=code
 - GET /api/repo-resource?action=read&resource=code&file=FILENAME
+- GET /api/repo-resource?action=bulk&resource=code&files=FILENAME1,FILENAME2,...
 - POST /api/repo-resource?action=create&resource=code
 - POST /api/repo-resource?action=update&resource=code
 
@@ -101,12 +104,20 @@ error.details は解析補助情報を示す。
 - GET /api/docs：実装済み
 - GET /api/docs-read：実装済み
 - GET /api/docs-bulk：実装済み
+- GET /api/repo-resource?action=list&resource=docs：実装済み
+- GET /api/repo-resource?action=read&resource=docs：実装済み
+- GET /api/repo-resource?action=bulk&resource=docs：実装済み
 - GET /api/repo-resource?action=tree&resource=notes：実装済み
 - GET /api/repo-resource?action=read&resource=notes：実装済み
 - POST /api/repo-resource?action=create&resource=notes：実装済み
-- docs の repo-resource 統合：移行予定
-- notes の update：整備予定
-- code の read / create / update：整備予定
+- POST /api/repo-resource?action=update&resource=notes：実装済み
+- POST /api/repo-resource?action=delete&resource=notes：実装済み
+- GET /api/repo-resource?action=tree&resource=code：実装済み
+- GET /api/repo-resource?action=read&resource=code：実装済み
+- POST /api/repo-resource?action=create&resource=code：実装済み
+- POST /api/repo-resource?action=update&resource=code：実装済み
+- GET /api/repo-resource?action=bulk&resource=notes：未実装
+- GET /api/repo-resource?action=bulk&resource=code：未実装
 - docs の update：当面は実装しない
 
 ### resource 定義
@@ -125,7 +136,7 @@ read only とする。
 
 補助レイヤーとして扱う。
 
-read / create / update を許可する。
+read / create / update / delete を許可する。
 
 ### code
 
@@ -157,7 +168,7 @@ notes / code resource に使用する。
 
 複数ファイル本文を一括取得する。
 
-docs resource における関連仕様の同時参照に使用する。
+docs / notes / code における関連仕様や関連実装の同時参照に使用する。
 
 ### create
 
@@ -170,6 +181,12 @@ notes / code resource に使用する。
 既存ファイルを更新する。
 
 notes / code resource に使用する。
+
+### delete
+
+既存ファイルを削除する。
+
+notes resource に使用する。
 
 ---
 
@@ -316,6 +333,23 @@ GET /api/repo-resource?action=read&resource=notes&file=FILENAME
 
 指定した notes ファイルの本文を取得する。
 
+GET /api/repo-resource?action=bulk&resource=notes&files=FILENAME1,FILENAME2,...
+
+概要
+
+指定した複数の notes ファイルを一括取得する。
+
+補足
+
+現時点では未実装である。
+
+導入理由は以下とする。
+
+- handover と operations の同時読取
+- related design の同時読取
+- reports の複数参照
+- README と関連メモの横断確認
+
 ### notes 作成
 
 エンドポイント
@@ -329,7 +363,7 @@ notes 配下に新規ファイルを作成する。
 リクエスト例
 
 {
-  "file": "design/new-spec.md",
+  "file": "02_design/new-spec.md",
   "content": "# title"
 }
 
@@ -346,9 +380,41 @@ notes 配下の既存ファイルを更新する。
 リクエスト例
 
 {
-  "file": "design/new-spec.md",
+  "file": "02_design/new-spec.md",
   "content": "# updated title"
 }
+
+### notes 削除
+
+エンドポイント
+
+POST /api/repo-resource?action=delete&resource=notes
+
+概要
+
+notes 配下の既存ファイルを削除する。
+
+補足
+
+delete は全レイヤーに許可しない。
+
+現行の delete 許可範囲は以下とする。
+
+- 00_inbox/
+- 01_issues/
+- 02_design/
+- 03_plan/
+- 04_operations/
+- 05_decisions/
+- 08_analysis/
+- 09_content/
+
+以下は delete 非許可とする。
+
+- 06_handover/
+- 07_reports/
+- 10_logs/
+- 99_archive/
 
 ### code 読取
 
@@ -365,6 +431,18 @@ GET /api/repo-resource?action=read&resource=code&file=FILENAME
 概要
 
 指定した code ファイルの本文を取得する。
+
+GET /api/repo-resource?action=bulk&resource=code&files=FILENAME1,FILENAME2,...
+
+概要
+
+指定した複数の code ファイルを一括取得する。
+
+補足
+
+現時点では未実装である。
+
+導入時は件数とサイズの制御を前提とする。
 
 ### code 作成
 
@@ -412,7 +490,7 @@ GET /api/docs-read
 ↓
 差分生成
 ↓
-notes/design に草案整理
+notes/02_design に草案整理
 ↓
 人間レビュー
 ↓
@@ -453,7 +531,7 @@ docs / notes / code を同一 Access Layer で扱う。
 ただし、resource ごとの権限は分離する。
 
 - docs は read only
-- notes は read / create / update
+- notes は read / create / update / delete
 - code は read / create / update
 
 ---
@@ -566,7 +644,7 @@ API エラーは以下の形式を基本とする。
     "category": "validation | auth | routing | service | upstream | config | internal",
     "step": "失敗箇所",
     "resource": "docs | notes | code",
-    "action": "list | tree | read | bulk | create | update",
+    "action": "list | tree | read | bulk | create | update | delete",
     "status": 400,
     "retryable": false,
     "details": {},
@@ -659,6 +737,7 @@ step の例
 - readNote
 - createNote
 - updateNote
+- deleteNote
 - readCode
 - createCode
 - updateCode
@@ -701,7 +780,7 @@ cause が存在する場合は、内部ログにのみ保持する。
 - AI は docs を最優先で参照する
 - 本文未取得状態で判断・修正してはならない
 - docs 修正前に必ず docs-read を実行する
-- docs の修正案は notes/design を経由する
+- docs の修正案は notes/02_design を経由する
 - notes を正本として扱わない
 
 ### docs 更新禁止事項
@@ -714,7 +793,7 @@ cause が存在する場合は、内部ログにのみ保持する。
 ### notes 更新ルール
 
 - notes は補助レイヤーとして扱う
-- notes/design を docs 直前の草案レイヤーとする
+- notes/02_design を docs 直前の草案レイヤーとする
 - notes の構造を壊さない
 - docs と矛盾する場合は docs を正とする
 
@@ -731,17 +810,17 @@ cause が存在する場合は、内部ログにのみ保持する。
 
 ### 現状と到達形
 
-現状は docs 専用 API と notes の一部機能が実装済みである。
+現状は docs 専用 API と repo-resource の主要機能が実装済みである。
 
 到達形は repo-resource を統合 Access Layer とし、docs / notes / code を一貫した方式で扱う構成とする。
 
-### notes/design 連携
+### notes/02_design 連携
 
-docs に不整合や不足を見つけた場合、AI は notes/design に草案を整理する。
+docs に不整合や不足を見つけた場合、AI は notes/02_design に草案を整理する。
 
-notes/design は docs 直前の草案レイヤーとする。
+notes/02_design は docs 直前の草案レイヤーとする。
 
-意思決定が必要な場合は notes/decisions に記録する。
+意思決定が必要な場合は notes/05_decisions に記録する。
 
 ### repo-resource との関係
 
@@ -772,7 +851,7 @@ docs の取得
 修正案の生成
 
 5
-notes/design への整理
+notes/02_design への整理
 
 6
 code との整合確認
@@ -794,7 +873,7 @@ GET /api/repo-resource?action=read&resource=code&file=...
 ↓
 差分生成
 ↓
-notes/design へ整理
+notes/02_design へ整理
 ↓
 人間レビュー
 ↓
@@ -809,10 +888,13 @@ code 反映
 - GET /api/docs-bulk
 - GET /api/repo-resource?action=tree&resource=notes
 - GET /api/repo-resource?action=read&resource=notes&file=...
+- GET /api/repo-resource?action=bulk&resource=notes&files=...
 - POST /api/repo-resource?action=create&resource=notes
 - POST /api/repo-resource?action=update&resource=notes
+- POST /api/repo-resource?action=delete&resource=notes
 - GET /api/repo-resource?action=tree&resource=code
 - GET /api/repo-resource?action=read&resource=code&file=...
+- GET /api/repo-resource?action=bulk&resource=code&files=...
 - POST /api/repo-resource?action=create&resource=code
 - POST /api/repo-resource?action=update&resource=code
 
@@ -828,8 +910,8 @@ code 反映
 
 - docs-bulk API の安定稼働
 - repo-resource の docs 統合
-- notes の update API の整備
-- code の read / create / update API の整備
+- notes bulk API の実装
+- code bulk API の実装
 - 認証（INTERNAL_API_KEY）
 - 11_doc_style.md の遵守
 - 15_notes_system.md の設計に従った design 経由
