@@ -31,15 +31,16 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 1. `05_roadmap.md` へ確定済み roadmap 方針を反映する
 2. notes bulk の実装方針を確定し、必要なら着手する
-3. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-4. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
-5. ADAM instruction の repo正本ハイブリッド運用を実装する
-6. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-7. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-8. decision_log / case_study レイヤーを設計する
-9. failure_log / breaking_points ログを設計する
-10. GitHub ユーザー名変更の影響調査を行う
-11. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+3. code bulk の実装方針を確定し、必要なら着手する
+4. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+5. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+6. ADAM instruction の repo正本ハイブリッド運用を実装する
+7. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+8. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+9. decision_log / case_study レイヤーを設計する
+10. failure_log / breaking_points ログを設計する
+11. GitHub ユーザー名変更の影響調査を行う
+12. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -151,6 +152,9 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
   - ref: issue 20260403-001
 
+- [ ] code bulk の実装方針を確定する
+  - ref: issue 20260403-002
+
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
   - ref: issue 20260329-001
 
@@ -226,3 +230,4 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - operations の rolling 7日管理論点は issue 20260329-001 を参照
 - AI instructions / schema 配置移行論点は完了済み
 - instruction の repo正本ハイブリッド運用論点は issue 20260330-001 を参照
+- code bulk は再開時と横断整合確認の読取効率を上げる候補として issue 化済み
