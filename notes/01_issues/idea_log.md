@@ -88,3 +88,12 @@
 - impact: high
 - status: open
 - created_at: 2026-04-02
+
+### 20260402-002
+- title: GitHub Issues / Projects を将来の実装追跡レイヤーとして使うか検討が必要
+- category: ops
+- description: GitHub Issues / Projects は PR 接続や実装追跡には有効だが、現時点で導入すると notes / operations / Todoist と役割が重なり、二重管理でフローが複雑化する可能性がある。今すぐ導入するのではなく、共同開発や PR 追跡需要が高まった段階で限定導入するかを再検討する必要がある。
+- context: EVE 連携の外部実行UIとしては Todoist を採用済みであり、現状は notes/01_issues が論点、notes/04_operations が短期実行順、Todoist が実行状態の正本として機能している。GitHub Issues は code / docs 変更と PR を結びつける用途では価値がある一方、現段階では管理先を増やしすぎると効率低下の懸念があるため、将来の導入候補として保持する。
+- impact: medium
+- status: open
+- created_at: 2026-04-02
