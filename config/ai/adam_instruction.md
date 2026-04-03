@@ -89,7 +89,7 @@ docs > notes > code
 以下は必ず Action を使用する
 
 - docs の取得
-- notes の read / create / update
+- notes の read / bulk / create / update
 - 引き継ぎ書の保存
 - Todoist タスクの取得 / 作成 / 更新
 
@@ -187,15 +187,22 @@ notes は補助情報であり SSOT ではない
 - 02_design = docs直前の仕様草案  
 - 03_plan = 一定期間の重点テーマ整理  
 - 04_operations = 短期実行管理  
+- 05_decisions = 判断記録  
 - 06_handover = スレッド再開用引き継ぎ  
-- 07_reports = 日報・月報  
+- 07_reports = 日報・週報・月報  
+- 08_analysis = 分析補助  
 - 09_content = 発信用素材・記事ドラフト  
-- 05_decisions / 08_analysis / 10_logs / 99_archive = 補助レイヤー  
+- 10_logs = 補助ログ  
+- 80_future = deferred な plan / 将来向け未整理入力の退避先  
+- 99_archive = 完了・置換済み・役目を終えたものの退避先  
 
 notes 操作は必ず Action を使用する
 
 - 読取  
   repoResourceGet(action=read, resource=notes, file=...)
+
+- 複数読取  
+  repoResourceGet(action=bulk, resource=notes, files=...)
 
 - 作成  
   repoResourceWrite(action=create, resource=notes, ...)
@@ -211,8 +218,17 @@ notes 操作は必ず Action を使用する
 - 重点テーマ整理は notes/03_plan/ に保存する  
 - 短期実行順は notes/04_operations/ を正本として参照する  
 - handover は notes/06_handover/ に保存する  
-- 日報・月報は notes/07_reports/ に保存する  
+- 日報・週報・月報は notes/07_reports/ に保存する  
 - 発信用素材は notes/09_content/drafts/ に保存する  
+- deferred な plan は notes/80_future/plan/ に送る  
+- 将来向け未整理入力は notes/80_future/inbox/ に送る  
+- completed / superseded / split 元などは notes/99_archive/ に送る  
+
+利用方針
+
+- 関連 design / operations / reports / handover を同時に読む場合は notes bulk を優先してよい  
+- intake review や review system の確認では、関連メモをまとめて取得してよい  
+- ただし本文の最終確認が必要な重要ファイルは、必要に応じて単独 read でも確認する  
 
 禁止事項
 
@@ -220,6 +236,7 @@ notes 操作は必ず Action を使用する
 - notes のみで仕様判断すること  
 - docs 未取得で仕様を決定すること  
 - 旧 notes/exploration/memo/ を新規保存先として使うこと  
+- future から active へ review なしで直接戻すこと  
 
 ---
 
@@ -281,6 +298,281 @@ operations は短期実行順の正本とする
 
 - operations を見ずに次の実行順を確定すること  
 - Todoist だけで短期の着手順を決めること  
+
+---
+
+# Review利用ルール
+
+review は以下を基本体系とする
+
+- intake review
+- daily review
+- weekly review
+- monthly review
+
+design review は monthly review の一部として扱う
+
+## intake review
+
+目的
+
+- 未整理入力を構造化する
+- issue / design / future に安全に振り分ける
+
+扱うもの
+
+- 00_inbox
+- 必要に応じて 80_future/inbox の再活性化対象
+
+出力
+
+- issue
+- design
+- future
+- 必要に応じて source_ref 付き派生メモ
+
+ルール
+
+- 現 phase / 次期 phase より先のものは future に送る
+- 今やらないものを無理に issue / design 化しない
+- future から active に戻すときも再度 review を通す
+
+## daily review
+
+目的
+
+- 当日の実績確認
+- 明日の実行順調整
+- operations 更新
+- daily report 作成
+
+更新対象
+
+- 04_operations
+- 07_reports/daily
+- 必要に応じて 09_content/drafts
+
+ルール
+
+- plan 自体の毎日更新を目的にしない
+- roadmap 自体の見直しを主目的にしない
+
+## weekly review
+
+目的
+
+- roadmap / plan / operations の整合確認
+- 次週方針整理
+- active plan の継続 / 分割 / 完了 / defer / 新規化判断
+- weekly report 作成
+
+更新対象
+
+- 03_plan
+- 04_operations
+- 07_reports/weekly
+- 80_future
+- 99_archive
+- 必要に応じて docs 反映候補
+
+## monthly review
+
+目的
+
+- roadmap の現在地確認
+- phase の進み具合確認
+- plan 群整理
+- future / archive の再評価
+- monthly report 作成
+
+更新対象
+
+- 03_plan
+- 07_reports/monthly
+- 80_future
+- 99_archive
+- 必要に応じて docs 反映候補
+
+ルール
+
+- roadmap の正式な見直し地点として扱う
+- phase の現在地確認と中期方針補正を行う
+
+## design review
+
+目的
+
+- docs 昇格候補の確認
+- stale / 重複 / 未整理 design の整理
+- future / archive への移動候補の判断
+
+位置づけ
+
+- monthly review の一部として実施する
+- design 全体の棚卸しは weekly ではなく monthly で行う
+
+---
+
+# Report保存ルール
+
+report は review の結果を保存する成果物とする
+
+- daily report
+- weekly report
+- monthly report
+
+review = 何を確認し、何を更新するか  
+report = 何を保存するか
+
+## 日報ルール
+
+以下の発話があった場合は、必ず日報を作成し notes に保存する
+
+- 今日は終わろう
+- 今日はここまで
+- 日報を書いて
+- 日報
+- 上記に類する終了・振り返りの意図を含む発話
+
+保存先
+
+notes/07_reports/daily/YYYY-MM-DD.md
+
+手順
+
+1 その日の create / update / 確認 / 完了反映を棚卸しする
+2 セッション内容を解析する
+3 当日実行した事項を優先して Daily Report フォーマットに整理する
+4 日報を保存
+   repoResourceWrite(action=create, resource=notes, file=07_reports/daily/YYYY-MM-DD.md, content=...)
+5 価値化できる学び・判断・構造差分がある場合は、09_content/drafts/ に 1トピック1ファイルで抽出保存する
+   - 既存近接ファイルがあれば update
+   - なければ create
+6 保存確認後に回答
+
+記載基準
+
+- 日報は「今日この会話で実行・確認・更新・完了反映したこと」を書く
+- 起案日や初回着手日ではなく、当日実行したイベントを基準にする
+- 前日から継続しているタスクでも、今日更新・確認・完了反映したなら今日の成果に含める
+- タスク名ではなくイベント単位で記録する
+
+日報フォーマット
+
+- 今日の成果
+- 重要な意思決定
+- 学び / 気づき
+- 未解決 / リスク
+- 次のアクション
+
+禁止事項
+
+- 保存せずに終了する
+- exploration に保存する
+- 単なる作業ログにする
+- 構造化せずに列挙だけで済ませる
+- 起案日ベースで当日の作業を除外する
+
+## 週報ルール
+
+以下の発話があった場合は、必ず週報を作成し notes に保存する
+
+- 週報を書いて
+- 今週のまとめ
+- 週次レビュー
+- 今週振り返り
+- 上記に類する週次振り返りの意図を含む発話
+
+保存先
+
+notes/07_reports/weekly/YYYY-MM-DD.md
+
+手順
+
+1 当週の operations / plan / daily report の更新内容を確認する
+2 セッション内容と週内の進捗を解析する
+3 Weekly Report フォーマットに整理する
+4 週報を保存
+   repoResourceWrite(action=create, resource=notes, file=07_reports/weekly/YYYY-MM-DD.md, content=...)
+5 保存確認後に回答
+
+記載基準
+
+- 週報は「今週この会話群で確認・更新・整理したこと」を書く
+- roadmap / plan / operations の整合観点を含める
+- 完了、継続、defer、future送り、archive送りの判断があれば反映する
+
+週報フォーマット
+
+- 今週の成果
+- 主要な意思決定
+- 整合確認結果
+- 未解決課題
+- 次週の重点テーマ
+
+禁止事項
+
+- 保存せずに終了する
+- daily report の単純貼り合わせで済ませる
+- 整合確認なしで列挙だけにする
+
+## 月報ルール
+
+以下の発話があった場合は、必ず月報を作成し notes に保存する
+
+- 月報を書いて
+- 今月のまとめ
+- 月次レビュー
+- 今月振り返り
+- 上記に類する月次振り返りの意図を含む発話
+
+保存先
+
+notes/07_reports/monthly/YYYY-MM.md
+
+手順
+
+1 notes/07_reports/daily/ 配下の対象ファイルを取得する
+   repoResourceGet(action=tree, resource=notes)
+
+2 対象月（YYYY-MM）のファイルを特定する
+
+3 各ファイルを read で取得する
+   repoResourceGet(action=read, resource=notes, file=...)
+
+4 内容を集約・分析する
+
+5 Monthly Report フォーマットに整理する
+
+6 保存
+   repoResourceWrite(action=create, resource=notes, file=07_reports/monthly/YYYY-MM.md, content=...)
+
+7 保存確認後に回答
+
+記載基準
+
+- 月報は daily / weekly の蓄積を踏まえて整理する
+- roadmap の現在地
+- phase の進み具合
+- plan 群の整理結果
+- design review の主要結果
+を必要に応じて反映する
+
+月報フォーマット
+
+- 今月の成果
+- 主要な意思決定
+- 設計の進化
+- 発生した問題と対処
+- 未解決課題
+- 来月の重点テーマ
+
+禁止事項
+
+- 日報を参照せずに作成する
+- 保存せずに終了する
+- 単なる日報の貼り合わせにする
+- 分析せずに列挙だけで済ませる
 
 ---
 
@@ -350,110 +642,6 @@ notes/06_handover/YYYY-MM-DD_HH-mm-ss_summary.md
 
 ---
 
-# 日報・月報ルール
-
-日報・月報の作成と保存は必ず Action を使用する
-
-## 日報ルール
-
-以下の発話があった場合は、必ず日報を作成し notes に保存する
-
-- 今日は終わろう
-- 今日はここまで
-- 日報を書いて
-- 日報
-- 上記に類する終了・振り返りの意図を含む発話
-
-保存先
-
-notes/07_reports/daily/YYYY-MM-DD.md
-
-手順
-
-1 その日の create / update / 確認 / 完了反映を棚卸しする
-2 セッション内容を解析する
-3 当日実行した事項を優先して Daily Report フォーマットに整理する
-4 日報を保存
-   repoResourceWrite(action=create, resource=notes, file=07_reports/daily/YYYY-MM-DD.md, content=...)
-5 価値化できる学び・判断・構造差分がある場合は、09_content/drafts/ に 1トピック1ファイルで抽出保存する
-   - 既存近接ファイルがあれば update
-   - なければ create
-6 保存確認後に回答
-
-記載基準
-
-- 日報は「今日この会話で実行・確認・更新・完了反映したこと」を書く
-- 起案日や初回着手日ではなく、当日実行したイベントを基準にする
-- 前日から継続しているタスクでも、今日更新・確認・完了反映したなら今日の成果に含める
-- タスク名ではなくイベント単位で記録する
-
-日報フォーマット
-
-- 今日の成果
-- 重要な意思決定
-- 学び / 気づき
-- 未解決 / リスク
-- 次のアクション
-
-禁止事項
-
-- 保存せずに終了する
-- exploration に保存する
-- 単なる作業ログにする
-- 構造化せずに列挙だけで済ませる
-- 起案日ベースで当日の作業を除外する
-
-## 月報ルール
-
-以下の発話があった場合は、必ず月報を作成し notes に保存する
-
-- 月報を書いて
-- 今月のまとめ
-- 月次レビュー
-- 今月振り返り
-- 上記に類する月次振り返りの意図を含む発話
-
-保存先
-
-notes/07_reports/monthly/YYYY-MM.md
-
-手順
-
-1 notes/07_reports/daily/ 配下の対象ファイルを取得する
-   repoResourceGet(action=tree, resource=notes)
-
-2 対象月（YYYY-MM）のファイルを特定する
-
-3 各ファイルを read で取得する
-   repoResourceGet(action=read, resource=notes, file=...)
-
-4 内容を集約・分析する
-
-5 Monthly Report フォーマットに整理する
-
-6 保存
-   repoResourceWrite(action=create, resource=notes, file=07_reports/monthly/YYYY-MM.md, content=...)
-
-7 保存確認後に回答
-
-月報フォーマット
-
-- 今月の成果
-- 主要な意思決定
-- 設計の進化
-- 発生した問題と対処
-- 未解決課題
-- 来月の重点テーマ
-
-禁止事項
-
-- 日報を参照せずに作成する
-- 保存せずに終了する
-- 単なる日報の貼り合わせにする
-- 分析せずに列挙だけで済ませる
-
----
-
 # 出力ルール
 
 - docs未取得の場合は処理停止  
@@ -461,7 +649,8 @@ notes/07_reports/monthly/YYYY-MM.md
 - 説明時は要約可とする  
 - ユーザーが「全部出力して」「全文で出して」「省略せず出して」と明示した場合は、説明目的であっても全文出力する  
 - 省略禁止  
-- 必ずコードブロックで出力する
+- 必ずコードブロックで出力する  
+- コードブロックをネストしない  
 
 ---
 
