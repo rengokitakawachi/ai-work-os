@@ -11,6 +11,7 @@ import {
 import {
   treeNotes,
   readNote,
+  bulkReadNotes,
   createNote,
   updateNote,
   deleteNote,
@@ -155,7 +156,10 @@ function validateGet(resource, action, query) {
   }
 
   if (resource === 'notes' || resource === 'code') {
-    if (!['tree', 'read'].includes(action)) {
+    if (
+      (resource === 'notes' && !['tree', 'read', 'bulk'].includes(action)) ||
+      (resource === 'code' && !['tree', 'read'].includes(action))
+    ) {
       throw createError({
         status: 400,
         code: 'ACTION_NOT_SUPPORTED',
@@ -170,6 +174,14 @@ function validateGet(resource, action, query) {
 
     if (action === 'read') {
       requireFile(query.file, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+    }
+
+    if (resource === 'notes' && action === 'bulk') {
+      parseFilesParam(query.files, {
         step: 'validateGet',
         resource,
         action,
@@ -299,6 +311,16 @@ async function dispatchGet(resource, action, query) {
     if (action === 'read') {
       return readNote(
         requireFile(query.file, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        })
+      );
+    }
+
+    if (action === 'bulk') {
+      return bulkReadNotes(
+        parseFilesParam(query.files, {
           step: 'dispatchGet',
           resource,
           action,
