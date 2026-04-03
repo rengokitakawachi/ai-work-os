@@ -135,3 +135,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-03
+
+### 20260403-006
+- title: flow check の結果を可視化する dashboard 機能が必要
+- category: ops
+- description: 将来的に、inbox・dev_memo・issue・plan・operations・future などの各レイヤーでどこに目詰まりがあるかを一目で把握できる dashboard が必要。flow check が目詰まりを点検する機能だとすれば、dashboard はその結果や滞留状況を継続的に見える化する層として位置づけたい。
+- context: flow check 論点を整理する中で、単発の確認だけでなく、未整理件数、未routing件数、plan→operations 未接続、operations 過密、future 放置などをまとめて見られる可視化レイヤーがあると、今どこが詰まっているかを直感的に把握しやすいと分かった。まずは flow check の検知観点を固め、その後に dashboard へつなげるのが自然。
+- impact: medium
+- status: open
+- created_at: 2026-04-03
