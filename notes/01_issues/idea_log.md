@@ -108,3 +108,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-03
+
+### 20260403-002
+- title: repo-resource に code bulk 読取が必要
+- category: architecture
+- description: 再開時や整合確認時に複数の code ファイルを横断して読む頻度が高く、単体 read のみでは確認コストが高い。repo-resource の docs / notes / code の操作モデルを揃えるためにも、件数・サイズ制限付きの code bulk 読取を実装する必要がある。
+- context: handover の Related code 読取、instruction と schema の整合確認、repo-resource 実装の横断確認では複数 code ファイルをまとめて読む需要がある。一方で現行実装は code の tree / read / create / update のみで、bulk は未実装である。無制限 bulk ではなく、許可 prefix・件数上限・総サイズ上限を持つ read-only bulk として小さく導入するのが妥当。
+- impact: medium
+- status: open
+- created_at: 2026-04-03
