@@ -221,6 +221,7 @@ phase の現在地と中期方針を見直す。
 - phase の進み具合を確認する
 - roadmap の前提が崩れていないかを見る
 - future へ送ったものの再評価もここで行う
+- design review を実施し、docs 昇格候補、stale design、future / archive 送り候補を整理する
 
 ---
 
@@ -240,6 +241,19 @@ phase の現在地と中期方針を見直す。
 
 - weekly review は次週更新
 - monthly review は phase / roadmap の見直し
+
+### weekly review と design の関係
+
+- weekly review では、今の plan や operations に直結する design だけを必要最小限確認する
+- design 全体の棚卸しは weekly review では行わない
+
+### monthly review と design の関係
+
+- monthly review では design review を正式に実施する
+- design レイヤー全体を棚卸しする
+- docs に昇格すべき design があるか確認する
+- stale な design、重複した design、役目を終えた design を整理する
+- 必要に応じて 80_future または 99_archive への移動候補を判断する
 
 ---
 
@@ -269,6 +283,36 @@ future は review と強く結びつく。
 
 ---
 
+## design との関係
+
+design review は monthly review の一部として実施する。
+
+### design review の目的
+
+- design レイヤーの棚卸し
+- docs 昇格候補の確認
+- stale / 重複 / 未整理 design の整理
+- future / archive への移動判断
+
+### design review で見る観点
+
+- docs に昇格すべき design はあるか
+- active な plan と接続している design はどれか
+- 役目を終えた design はあるか
+- stale 化している草案はあるか
+- 統合すべき design はあるか
+- 80_future に送るべき design はあるか
+- 99_archive に送るべき design はあるか
+
+### ルール
+
+- weekly review では全 design 棚卸しを行わない
+- monthly review で全体整理を行う
+- design から docs への昇格判断は review を通して行う
+- design を放置して蓄積させない
+
+---
+
 ## reports との関係
 
 ### daily report
@@ -295,6 +339,7 @@ review そのものではない。
 - daily / weekly / monthly review は運用更新
 - weekly review を roadmap → plan → operations の接続点とする
 - monthly review を roadmap / phase 見直しの接続点とする
+- design review は monthly review の一部として実施する
 
 ---
 
