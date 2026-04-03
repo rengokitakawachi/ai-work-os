@@ -29,21 +29,18 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 ## 推奨実行順
 
-1. plan layer operating spec を保存し、`03_plan` の運用仕様を確定する
-2. future layer operating spec を保存し、`80_future` の導入方針を確定する
-3. `03_plan/README.md` を現行方針へ更新する
-4. Phase 1 の最初の plan ファイルを作成する
-5. `05_roadmap.md` へ確定済み roadmap 方針を反映する
-6. notes bulk の実装方針を確定し、必要なら着手する
-7. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-8. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
-9. ADAM instruction の repo正本ハイブリッド運用を実装する
-10. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-11. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-12. decision_log / case_study レイヤーを設計する
-13. failure_log / breaking_points ログを設計する
-14. GitHub ユーザー名変更の影響調査を行う
-15. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+1. `2026-04_phase1_teams_and_obsidian_light_use.md` を作成する
+2. `05_roadmap.md` へ確定済み roadmap 方針を反映する
+3. notes bulk の実装方針を確定し、必要なら着手する
+4. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+5. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+6. ADAM instruction の repo正本ハイブリッド運用を実装する
+7. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+8. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+9. decision_log / case_study レイヤーを設計する
+10. failure_log / breaking_points ログを設計する
+11. GitHub ユーザー名変更の影響調査を行う
+12. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -60,18 +57,28 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 ### P1
 
 - [x] 課題を issue として蓄積する方針を整理
+  - ref: notes/01_issues/idea_log.md
+
 - [x] 標準開発フローのステップごとに、判断内容・保存先・次アクションを対応付ける
+  - ref: notes/02_design/2026-03-28_standard_development_flow_routing_table.md
+
 - [x] 旧開発メモフォルダを新フォルダ構成へ移行する計画を作る
+  - ref: notes/02_design/2026-03-28_dev_memo_migration_plan.md
+
 - [x] README を現行 docs に整合する内容へ更新する
+  - ref: notes/README.md
+
 - [x] AI instructions・schema の配置を `code/config/ai/` に統一する
+  - ref: issue 20260327-002
+
 - [x] notes フォルダのインデックス番号仕様を design に昇格する
   - ref: notes/02_design/2026-04-02_notes_indexed_structure_spec.md
 
 - [x] notes の現行運用構造を整理し、中核フォルダと責務を明文化する
   - ref: notes/02_design/2026-04-02_notes_current_operating_structure.md
 
-- [ ] `03_plan` の単位と役割を具体化する
-  - ref: notes/02_design/2026-03-27_phase_plan_operations_structure.md
+- [x] `03_plan` の単位と役割を具体化する
+  - ref: notes/02_design/2026-04-03_plan_layer_operating_spec.md
 
 - [x] ideas → issues の再編方針を整理する
   - ref: notes/01_issues/idea_log.md
@@ -106,19 +113,25 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [ ] `05_roadmap.md` に確定済み roadmap 方針を反映する
   - ref: docs/05_roadmap.md
 
-- [ ] plan layer operating spec を保存する
+- [x] plan layer operating spec を保存する
   - ref: notes/02_design/2026-04-03_plan_layer_operating_spec.md
 
 - [x] review system operating spec を保存する
   - ref: notes/02_design/2026-04-03_review_system_operating_spec.md
 
-- [ ] future layer operating spec を保存する
+- [x] future layer operating spec を保存する
   - ref: notes/02_design/2026-04-03_future_layer_operating_spec.md
 
-- [ ] `03_plan/README.md` を現行方針へ更新する
+- [x] `03_plan/README.md` を現行方針へ更新する
   - ref: notes/03_plan/README.md
 
-- [ ] Phase 1 の最初の plan ファイルを作成する
+- [x] Phase 1 の最初の plan ファイルを作成する
+  - ref: notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+
+- [x] Phase 1 の schedule proposal plan を作成する
+  - ref: notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
+
+- [ ] Phase 1 の Teams / Obsidian light use plan を作成する
   - ref: notes/03_plan/
 
 - [ ] decision_log / case_study レイヤーを設計する
@@ -197,6 +210,11 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - `docs/10_repo_resource_api.md` は現行実装に合わせて更新済み
 - roadmap の上位方針は確定済みで、docs 反映は未実施
 - review system spec は notes/02_design/2026-04-03_review_system_operating_spec.md に保存済み
+- plan layer spec は notes/02_design/2026-04-03_plan_layer_operating_spec.md に保存済み
+- future layer spec は notes/02_design/2026-04-03_future_layer_operating_spec.md に保存済み
+- `03_plan/README.md` は現行方針へ更新済み
+- Phase 1 foundation plan は notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md に作成済み
+- Phase 1 schedule proposal plan は notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md に作成済み
 - ADAM instruction には日報保存先と content 抽出運用を反映済み
 - notes delete の許可 prefix は現行レイヤーに修正済み
 - delete 許可範囲の判断は notes/05_decisions/2026-04-03_notes_delete_allowed_prefixes.md を参照
