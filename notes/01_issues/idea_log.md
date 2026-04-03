@@ -126,3 +126,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-03
+
+### 20260403-005
+- title: 運用の目詰まりを検知する flow check 機能が必要
+- category: ops
+- description: 現在の notes / plan / operations 構造では、どこに情報があるかだけでなく、どこで流れが止まっているかを検知できることが重要になってきている。inbox に未整理入力が溜まっている、dev_memo が issue や plan に昇格しないまま残っている、issue が routing されていない、plan が operations に落ちていない、operations が過密化している、といった目詰まりをざっと点検し、次に何を流すべきか指摘する flow check 機能が必要。
+- context: intake routing / issue routing / roadmap / plan / operations / review の骨格が見えてきたことで、次は全体の流れを健康診断する層が必要になってきた。review が見直しであるのに対し、flow check は滞留や停滞を検知して「何をすべきか」を示す機能として位置づけたい。
+- impact: medium
+- status: open
+- created_at: 2026-04-03
