@@ -32,16 +32,17 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 2. 旧 `src/services/github-repo-resource.js` の整理方針を決める
 3. notes bulk の実装方針を確定し、必要なら着手する
 4. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-5. ADAM instruction の repo正本ハイブリッド運用を実装する
-6. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-7. notes/plans/ の単位と役割を具体化する
-8. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-9. decision_log / case_study レイヤーを設計する
-10. failure_log / breaking_points ログを設計する
-11. インテークレビューを正式な運用機能として定義する
-12. future レイヤーの導入と運用ルールを定義する
-13. GitHub ユーザー名変更の影響調査を行う
-14. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+5. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+6. ADAM instruction の repo正本ハイブリッド運用を実装する
+7. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+8. notes/plans/ の単位と役割を具体化する
+9. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+10. decision_log / case_study レイヤーを設計する
+11. failure_log / breaking_points ログを設計する
+12. インテークレビューを正式な運用機能として定義する
+13. future レイヤーの導入と運用ルールを定義する
+14. GitHub ユーザー名変更の影響調査を行う
+15. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -118,6 +119,9 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 - [ ] source_ref を docs / instructions / operations にどう正式反映するかを確定する
   - ref: notes/02_design/intake_review_and_source_ref_spec.md
+
+- [ ] legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+  - ref: issue 20260403-001
 
 - [ ] operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
   - ref: issue 20260329-001
