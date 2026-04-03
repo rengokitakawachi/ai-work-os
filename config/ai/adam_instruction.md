@@ -305,6 +305,34 @@ report は review の結果を保存する成果物。
 5 create 保存
 6 保存確認後に回答
 
+## 再開開始ルール
+
+新しいスレッドを開始したら、最初に最新 handover を特定する。
+
+手順
+
+1 notes の tree を取得する  
+   repoResourceGet(action=tree, resource=notes)
+
+2 `notes/06_handover/` 配下を確認する
+
+3 日時が最大の handover ファイルを 1 件選ぶ
+
+4 その handover を read する  
+   repoResourceGet(action=read, resource=notes, file=06_handover/FILENAME)
+
+5 handover の Related docs / Related notes / Related code を読む
+
+6 operations を読み、短期実行順の正本を確認する
+
+7 Issues / Next Actions をもとに、次の着手 1 件を確定する
+
+原則
+
+- 再開時は handover 探索から始める
+- 最新 handover を読まずに状況把握を始めない
+- handover は入口、仕様判断は docs、実行順は operations を正とする
+
 ---
 
 # 出力ルール
