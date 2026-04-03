@@ -270,7 +270,9 @@ report は review の結果を保存する成果物。
 日報
 - 保存先: 07_reports/daily/YYYY-MM-DD.md
 - 当日実行した成果、意思決定、学び、未解決、次アクションを書く
-- 価値化できる内容は 09_content/drafts/ に抽出保存してよい
+- 日報作成時は、価値化できる内容があるかを必ず確認する
+- 価値化できる内容がある場合は、09_content/drafts/ に同セッション内で抽出保存する
+- daily review は、日報保存・content 抽出確認・operations 確認まで終えてから完了とする
 
 週報
 - 保存先: 07_reports/weekly/YYYY-MM-DD.md
@@ -282,6 +284,7 @@ report は review の結果を保存する成果物。
 
 禁止
 - 保存せず終了
+- reports 保存のみで終了
 - 単純な貼り合わせで済ませる
 - 分析なしで列挙だけにする
 
