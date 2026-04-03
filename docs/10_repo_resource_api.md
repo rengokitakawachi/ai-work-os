@@ -109,6 +109,7 @@ error.details は解析補助情報を示す。
 - GET /api/repo-resource?action=bulk&resource=docs：実装済み
 - GET /api/repo-resource?action=tree&resource=notes：実装済み
 - GET /api/repo-resource?action=read&resource=notes：実装済み
+- GET /api/repo-resource?action=bulk&resource=notes：実装済み
 - POST /api/repo-resource?action=create&resource=notes：実装済み
 - POST /api/repo-resource?action=update&resource=notes：実装済み
 - POST /api/repo-resource?action=delete&resource=notes：実装済み
@@ -116,7 +117,6 @@ error.details は解析補助情報を示す。
 - GET /api/repo-resource?action=read&resource=code：実装済み
 - POST /api/repo-resource?action=create&resource=code：実装済み
 - POST /api/repo-resource?action=update&resource=code：実装済み
-- GET /api/repo-resource?action=bulk&resource=notes：未実装
 - GET /api/repo-resource?action=bulk&resource=code：未実装
 - docs の update：当面は実装しない
 
@@ -339,16 +339,13 @@ GET /api/repo-resource?action=bulk&resource=notes&files=FILENAME1,FILENAME2,...
 
 指定した複数の notes ファイルを一括取得する。
 
-補足
-
-現時点では未実装である。
-
-導入理由は以下とする。
+用途
 
 - handover と operations の同時読取
 - related design の同時読取
 - reports の複数参照
 - README と関連メモの横断確認
+- intake review や review system における複数メモの同時参照
 
 ### notes 作成
 
@@ -735,6 +732,7 @@ step の例
 - readDoc
 - bulkReadDocs
 - readNote
+- bulkReadNotes
 - createNote
 - updateNote
 - deleteNote
@@ -910,7 +908,6 @@ code 反映
 
 - docs-bulk API の安定稼働
 - repo-resource の docs 統合
-- notes bulk API の実装
 - code bulk API の実装
 - 認証（INTERNAL_API_KEY）
 - 11_doc_style.md の遵守
