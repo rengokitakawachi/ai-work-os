@@ -100,6 +100,48 @@ export async function readNote(file) {
   }
 }
 
+export async function bulkReadNotes(files) {
+  if (!Array.isArray(files) || files.length === 0) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'files required',
+      category: 'validation',
+      step: 'bulkReadNotes',
+      resource: 'notes',
+      action: 'bulk',
+      retryable: false,
+      details: {
+        field: 'files',
+      },
+    });
+  }
+
+  const results = await Promise.all(
+    files.map(async (file) => {
+      try {
+        const data = await readNote(file);
+        return {
+          ok: true,
+          file,
+          ...data,
+        };
+      } catch (error) {
+        return {
+          ok: false,
+          file,
+          error: {
+            code: error?.code || 'UNKNOWN_ERROR',
+            message: error?.message || 'Unknown error',
+          },
+        };
+      }
+    })
+  );
+
+  return results;
+}
+
 export async function createNote(file, content, message = '') {
   const path = buildNotesPath(file, {
     step: 'createNote',
