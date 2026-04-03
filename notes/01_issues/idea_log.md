@@ -97,3 +97,14 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-02
+
+## 2026-04-03
+
+### 20260403-001
+- title: legacy docs API と github-docs.js を repo-resource/docs.js に統一する必要がある
+- category: architecture
+- description: 現在 docs 取得系は legacy docs API（`/api/docs`, `/api/docs-read`, `/api/docs-bulk`）と `repo-resource` 系の二系統が併存している。将来的には docs access を `repo-resource/docs.js` に統一し、`src/services/github-docs.js` と legacy endpoint 群を整理する必要がある。
+- context: `docs/10_repo_resource_api.md` では docs の repo-resource 統合方針が仕様として定義されている。一方で現行実装では `api/docs.js`、`api/docs-read.js`、`api/docs-bulk.js` が `src/services/github-docs.js` を使用しており、docs access が二系統に分かれている。`src/services/github-repo-resource.js` は削除済みであり、次は docs access 側の整理を論点として明示しておきたい。
+- impact: medium
+- status: open
+- created_at: 2026-04-03
