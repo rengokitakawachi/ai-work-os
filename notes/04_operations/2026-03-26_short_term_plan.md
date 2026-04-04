@@ -37,17 +37,16 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 1. `05_roadmap.md` に Phase 0 を含む確定済み roadmap 方針を反映する
 2. intake routing / issue routing の命名と責務を継続確認する
 3. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
-4. notes bulk の実装方針を確定し、必要なら着手する
-5. code bulk の実装方針を確定し、必要なら着手する
-6. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-7. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
-8. ADAM instruction の repo正本ハイブリッド運用を実装する
-9. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-10. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-11. decision_log / case_study レイヤーを設計する
-12. failure_log / breaking_points ログを設計する
-13. GitHub ユーザー名変更の影響調査を行う
-14. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+4. code bulk の実装方針を確定し、必要なら着手する
+5. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+6. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+7. ADAM instruction の repo正本ハイブリッド運用を実装する
+8. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+9. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+10. decision_log / case_study レイヤーを設計する
+11. failure_log / breaking_points ログを設計する
+12. GitHub ユーザー名変更の影響調査を行う
+13. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -187,8 +186,10 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] notes delete 許可範囲の判断を decision として記録する
   - ref: notes/05_decisions/2026-04-03_notes_delete_allowed_prefixes.md
 
-- [ ] notes bulk の実装方針を確定する
-  - ref: notes/02_design/2026-04-03_docs_10_repo_resource_api_update_draft.md
+- [x] notes bulk は実装済みであることを確認する
+  - ref: docs/10_repo_resource_api.md
+  - ref: code/src/services/repo-resource/notes.js
+  - ref: code/api/repo-resource.js
 
 - [x] 旧 `src/services/github-repo-resource.js` の整理方針を決める
   - ref: code/src/services/github-repo-resource.js
@@ -251,4 +252,5 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - operations の rolling 7日管理論点は issue 20260329-001 を参照
 - AI instructions / schema 配置移行論点は完了済み
 - instruction の repo正本ハイブリッド運用論点は issue 20260330-001 を参照
+- notes bulk は実装済み
 - code bulk は再開時と横断整合確認の読取効率を上げる候補として issue 化済み
