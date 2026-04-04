@@ -37,17 +37,18 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 1. `15_notes_system.md` に `80_future` と reports 実態を反映する
 2. intake routing / issue routing の命名と責務を継続確認する
 3. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
-4. 旧 docs 群の棚卸し方針を整理する
-5. code bulk の実装方針を確定し、必要なら着手する
-6. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-7. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
-8. ADAM instruction の repo正本ハイブリッド運用を実装する
-9. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-10. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-11. decision_log / case_study レイヤーを設計する
-12. failure_log / breaking_points ログを設計する
-13. GitHub ユーザー名変更の影響調査を行う
-14. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+4. operations の `active_operations` / `archive_operations` 運用方針を固める
+5. 旧 docs 群の棚卸し方針を整理する
+6. code bulk の実装方針を確定し、必要なら着手する
+7. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+8. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+9. ADAM instruction の repo正本ハイブリッド運用を実装する
+10. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+11. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+12. decision_log / case_study レイヤーを設計する
+13. failure_log / breaking_points ログを設計する
+14. GitHub ユーザー名変更の影響調査を行う
+15. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -127,6 +128,10 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 - [x] `07_reports/README.md` を現行構造へ更新する
   - ref: notes/07_reports/README.md
+
+- [ ] operations の `active_operations` / `archive_operations` 運用方針を固める
+  - ref: issue 20260404-002
+  - ref: notes/02_design/2026-04-04_operations_active_archive_model_light_draft.md
 
 - [ ] 旧 docs 群の棚卸し方針を整理する
   - ref: notes/08_analysis/2026-04-04_repo_readthrough_findings.md
@@ -251,6 +256,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - review system spec は notes/02_design/2026-04-03_review_system_operating_spec.md に保存済み
 - plan layer spec は notes/02_design/2026-04-03_plan_layer_operating_spec.md に保存済み
 - future layer spec は notes/02_design/2026-04-03_future_layer_operating_spec.md に保存済み
+- operations の active / archive 運用草案は notes/02_design/2026-04-04_operations_active_archive_model_light_draft.md を参照
 - `03_plan/README.md` は現行方針へ更新済み
 - Phase 0 common operating model plan は notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md に作成済み
 - Phase 1 foundation plan は notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md に作成済み
