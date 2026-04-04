@@ -2,49 +2,107 @@
 
 ## Day0（04/05 日）
 
-- docs/15_notes_system.md と docs/16_operations_system.md の operations 定義差分を整理する
-- notes design に残る旧表現（intake review など）を洗い出す
-- active_operations / standby_operations の実体と運用ルールの微修正方針を整理する
-- standby_operations の名称変更は保留し、Todoist 仕様調査後に判断する
+- docs/15_notes_system.md と docs/16_operations_system.md の operations 定義差を比較表にする
+  source_ref:
+    - notes/01_issues/idea_log.md#20260404-004
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+    - notes/02_design/2026-04-04_operations_active_archive_model_light_draft.md
+
+- operations の正本構造案を 1つに絞る
+  source_ref:
+    - notes/02_design/2026-04-04_operations_active_archive_model_light_draft.md
+    - notes/02_design/2026-04-03_plan_layer_operating_spec.md
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+
+- standby_operations の改名論点を「後続判断項目」として切り分ける
+  source_ref:
+    - notes/01_issues/idea_log.md#20260404-003
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+    - notes/00_inbox/dev_memo/2026-04-04_19-05-00_operations_eve_execution_intelligence_memo.md
 
 ## Day1（04/06 月）
 
-- operations に source_ref を導入する
-- daily review / weekly review と operations の接続確認
-- review 手順の不足を整理する
+- operations の task 記法を「task / source_ref / 必要なら補足」に統一する
+  source_ref:
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/02_design/operations_generation_rules.md
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+
+- active_operations の既存タスクに source_ref を適用する
+  source_ref:
+    - notes/02_design/2026-04-04_operations_active_archive_model_light_draft.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+
+- notes design に残る旧表現を洗い出して、置換対象一覧を作る
+  source_ref:
+    - notes/01_issues/idea_log.md#20260404-005
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
 
 ## Day2（04/07 火）
 
-- roadmap / plan / operations の接続確認
-- Phase 0 の完了条件に照らして不足を確認する
-- 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
+- roadmap / plan / operations の接続条件を文章で整理する
+  source_ref:
+    - notes/02_design/2026-04-03_plan_layer_operating_spec.md
+    - notes/02_design/operations_generation_rules.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+
+- issue / dev_memo / design から operations へ落とす条件を表にする
+  source_ref:
+    - notes/02_design/2026-04-04_dev_memo_promotion_flow.md
+    - notes/00_inbox/dev_memo/2026-04-04_routing_hybrid_control_model.md
+    - notes/02_design/2026-03-28_standard_development_flow_routing_table.md
 
 ## Day3（04/08 水）
 
-- docs への未反映事項を補完する
-- notes design の残差分を補完する
-- code bulk の実装方針を確定する
-- 旧 docs 群の棚卸し方針を整理する
-- docs 番号衝突（16系）の整理方針を作る
-- source_ref を docs / instructions / operations にどう正式反映するかを確定する
+- operations 周辺で docs に未反映の差分を一覧化する
+  source_ref:
+    - notes/02_design/2026-04-02_docs_15_notes_system_update_draft.md
+    - notes/02_design/2026-04-04_docs_05_roadmap_phase0_update_draft.md
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+
+- docs 番号衝突と旧 docs 群の整理方針をメモにまとめる
+  source_ref:
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+    - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
 
 ## Day4（04/09 木）
 
-- Phase 0 完了条件をチェックする
-- 完了判断に必要な不足を潰す
-- roadmap / plan / operations の接続確認を完了させる
-- docs / notes / code の主要整合を確認する
+- review system と operations rolling の接続ルールを確認する
+  source_ref:
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/04_operations/active_operations.md
+    - notes/07_reports/daily/2026-04-04.md
+
+- dev_memo → design → docs の昇格フローと operations の接続点を整理メモにする
+  source_ref:
+    - notes/02_design/2026-04-04_dev_memo_promotion_flow.md
+    - notes/00_inbox/dev_memo/2026-04-04_routing_hybrid_control_model.md
 
 ## Day5（04/10 金）
 
-- Phase 1 移行準備
-- 次の plan と operations の接続を整理する
+- Phase 0 完了条件に対する未充足項目を洗い出す
+  source_ref:
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+
+- Phase 1 の各 plan と operations 接続案を並べる
+  source_ref:
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
+    - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
 
 ## Day6（04/11 土）
 
-- standby_operations にある候補の再評価
-- docs / notes の残差があれば軽微な整合修正へ落とす
-- Phase 1 移行時の最初の Day0 候補を補充する
+- standby_operations の候補を見直して次の Day0 候補を補充する
+  source_ref:
+    - notes/04_operations/standby_operations.md
+    - notes/04_operations/active_operations.md
+
+- next_operations 論点の再判定条件を整理する
+  source_ref:
+    - notes/01_issues/idea_log.md#20260404-003
+    - notes/00_inbox/dev_memo/2026-04-04_19-05-00_operations_eve_execution_intelligence_memo.md
 
 ---
 
@@ -54,6 +112,7 @@
 - Day は仮配置であり固定日付ではない
 - 日付と曜日は人間可読性のために付与する
 - 日付表示は daily review 時に更新する
+- operations の各タスクは source_ref を持つ
 - 未完了タスクは翌日以降へ移動する
 - 溢れたタスクは standby_operations に移す
 - Phase 0 中は構造整合を優先する
