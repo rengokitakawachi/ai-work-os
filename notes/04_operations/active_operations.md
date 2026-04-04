@@ -1,38 +1,53 @@
 # active_operations
 
-## Day0（今日）
+## Day0（04/04 土）
 
-- （ここに今日やるタスクを書く）
+- operations 初期構造確認
+- ADAM instruction 更新（operations モデル反映）
+- docs / notes の整合確認（operations 周辺）
 
-## Day1（明日）
+## Day1（04/05 日）
 
-- 
+- active_operations / standby_operations の実体と運用ルールの微修正
+- operations 周辺の不整合を洗い出す
 
-## Day2
+## Day2（04/06 月）
 
-- 
+- daily review / weekly review と operations の接続確認
+- review 手順の不足を整理する
 
-## Day3
+## Day3（04/07 火）
 
-- 
+- roadmap / plan / operations の接続確認
+- Phase 0 の完了条件に照らして不足を確認する
+- 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
 
-## Day4
+## Day4（04/08 水）
 
-- 
+- docs への未反映事項を補完する
+- notes design の残差分を補完する
+- code bulk の実装方針を確定する
+- 旧 docs 群の棚卸し方針を整理する
+- source_ref を docs / instructions / operations にどう正式反映するかを確定する
 
-## Day5
+## Day5（04/09 木）
 
-- 
+- Phase 0 完了条件をチェックする
+- 完了判断に必要な不足を潰す
+- roadmap / plan / operations の接続確認を完了させる
+- docs / notes / code の主要整合を確認する
 
-## Day6
+## Day6（04/10 金）
 
-- 
+- Phase 1 移行準備
+- 次の plan と operations の接続を整理する
 
 ---
 
 ## ルール
 
 - 上から順に実行優先度とする
-- Dayは仮配置であり固定日付ではない
+- Day は仮配置であり固定日付ではない
 - 未完了タスクは翌日以降へ移動する
 - 溢れたタスクは standby_operations に移す
+- Phase 0 中は構造整合を優先する
