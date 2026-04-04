@@ -1,9 +1,11 @@
-# Intake Review and Source Ref Specification
+# Intake Routing and Source Ref Specification
 
 ## 目的
 
 未整理入力（inbox）を構造化し、
 標準開発フローへ安全に接続するための処理仕様を定義する。
+
+本仕様は intake routing の処理を定義する。
 
 ---
 
@@ -168,7 +170,7 @@ future は、将来やる可能性があるが、
 
 ### 分岐基準
 
-インテークレビュー時、各チャンクに対して以下を判断する。
+intake routing 時、各チャンクに対して以下を判断する。
 
 1. 問題か
   → yes: issue候補
@@ -184,7 +186,7 @@ future は、将来やる可能性があるが、
 
 ### 7 inbox 後処理（更新）
 
-インテークレビュー完了後、対象ファイルは原則 inbox から移動する。
+intake routing 完了後、対象ファイルは原則 inbox から移動する。
 
 ルール
 
@@ -231,7 +233,7 @@ future は、将来やる可能性があるが、
 
 - 無理由で残さない
 - 意図的に保留する
-- 後続のインテークレビューで再評価する
+- 後続の intake routing で再評価する
 - 判断可能なものを pending に逃がさない
 
 ---
@@ -240,7 +242,7 @@ future は、将来やる可能性があるが、
 
 future に格納された要素は、直接 active に移動してはならない。
 
-再活性化時は必ずインテークレビューを再実行する。
+再活性化時は必ず intake routing を再実行する。
 
 フロー:
 
@@ -248,7 +250,7 @@ future
 ↓  
 再活性化トリガー  
 ↓  
-intake review（再実行）  
+intake routing（再実行）  
 ↓  
 issue / design / operations へ再配置  
 
