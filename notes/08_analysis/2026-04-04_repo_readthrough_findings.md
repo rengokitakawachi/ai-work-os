@@ -244,6 +244,39 @@ Phase 0 → Phase 1 の上位整合を固めること。
 
 ---
 
+## 追加確認結果（docs / code / notes 再読後）
+
+### 読取範囲
+
+- docs は主要一式を再確認した
+- code は tree 全体確認と中核実装を単体 read した
+- notes は operations / plan / review / future / handover / issue の中核を再確認した
+
+### 新たに確定した不整合
+
+- `docs/15_notes_system.md` は operations を `active / archive` の2状態として説明している
+- `docs/16_operations_system.md` は `active_operations / standby_operations` を正式構造として定義している
+- この差により、operations モデルの docs 正本が二重化している
+
+- `notes/02_design/2026-04-03_future_layer_operating_spec.md`
+- `notes/02_design/intake_review_and_source_ref_spec.md`
+- `notes/02_design/standard_development_flow_v2.md`
+- `notes/02_design/operations_generation_rules.md`
+には `intake review` など旧表現が残っている
+
+- docs には `16_governance.md` と `16_operations_system.md` の番号衝突がある
+- `standby_operations` は現行 docs / notes / instruction の正本ではまだ有効
+- `next_operations` は有力論点だが、Todoist 仕様確認前のため issue 段階に留めるのが妥当
+
+### 現時点の判断
+
+- Day0 の `docs / notes の整合確認（operations 周辺）` としては有効な確認ができた
+- 最優先の構造差は `docs/15_notes_system.md` と `docs/16_operations_system.md` の operations 定義差である
+- 次点は notes/design に残る旧 terminology の整理である
+- `standby_operations → next_operations` は、Todoist の date / due / deadline / 表示モデル確認後に design 化する
+
+---
+
 ## 推奨順
 
 1. `docs/05_roadmap.md` に Phase 0 を反映する
@@ -267,5 +300,7 @@ Phase 0 → Phase 1 の上位整合を固めること。
 - roadmap の Phase 0
 - notes system の future / reports
 - 旧 docs 群の整理
+- docs/15 と docs/16 の operations 定義差
+- notes/design の旧 terminology 整理
 
 は、今の骨格開発の前提整備として優先度が高い。
