@@ -144,3 +144,14 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-03
+
+## 2026-04-04
+
+### 20260404-001
+- title: EVE でも operations を正本にし、外部ツールは projection として扱う設計を検討したい
+- category: architecture
+- description: EVE の短期実行順も operations を正本にし、Todoist・MindMeister・Outlook・Teams などは projection / view / 実行UI として接続する設計が有力である。これにより ADAM / EVE の骨格を揃えやすくなり、外部ツール依存を下げながら実行性を高められる可能性がある。
+- context: ADAM / EVE の全体構成を見直す中で、EVE から design / decisions などを早期に排除するより、多くのレイヤーを共通候補として持ち、違いは運用強度と外部接続に置く方が自然だと分かってきた。特に EVE でも operations を正本とし、Todoist は実行UI、MindMeister は構造可視化、Outlook は calendar projection として扱う整理は、共通 operating model の観点で重要な論点である。
+- impact: high
+- status: open
+- created_at: 2026-04-04
