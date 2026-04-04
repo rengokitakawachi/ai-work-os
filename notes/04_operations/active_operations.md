@@ -8,8 +8,10 @@
 
 ## Day1（04/05 日）
 
-- active_operations / standby_operations の実体と運用ルールの微修正
-- operations 周辺の不整合を洗い出す
+- docs/15_notes_system.md と docs/16_operations_system.md の operations 定義差分を整理する
+- notes design に残る旧表現（intake review など）を洗い出す
+- active_operations / standby_operations の実体と運用ルールの微修正方針を整理する
+- standby_operations の名称変更は保留し、Todoist 仕様調査後に判断する
 
 ## Day2（04/06 月）
 
@@ -28,6 +30,7 @@
 - notes design の残差分を補完する
 - code bulk の実装方針を確定する
 - 旧 docs 群の棚卸し方針を整理する
+- docs 番号衝突（16系）の整理方針を作る
 - source_ref を docs / instructions / operations にどう正式反映するかを確定する
 
 ## Day5（04/09 木）
