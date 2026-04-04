@@ -323,12 +323,19 @@ knowledge layer の接続先として扱う。
 
 ## レビュー設計
 
-### intake review
+### intake routing
 
 - 未整理入力を構造化する
 - issue / design / future へ安全に振り分ける
 - 現 phase / 次期 phase より先のものは future に送る
-- future から active に戻すときも再度 review を通す
+- future から active に戻すときは再度 routing を通す
+
+位置づけ
+
+intake routing は未整理入力を扱う入口処理とする。
+
+評価や見直しではなく、
+構造化と振り分けを目的とする。
 
 ### daily review
 
