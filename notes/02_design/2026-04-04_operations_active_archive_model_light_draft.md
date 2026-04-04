@@ -1,65 +1,214 @@
-# 2026-04-04 Operations Active / Archive Model Light Draft
+# 2026-04-04 Operations Active / Archive Model
 
 ## 目的
 
-operations の正本ファイル命名と archive 運用を整理する。
-
-現在の `notes/04_operations/2026-03-26_short_term_plan.md` は、
-作成日ベースであり、短期実行順の正本であることが名前から読み取りにくい。
-
-本メモでは、
-
-- active_operations を短期実行順の正本にする
-- archive_operations は履歴保存として限定的に使う
-- future に operations を置くことは原則としない
-- active → archive の移行は weekly review で判定する
-
-という方針を軽量に整理する。
+operations を短期実行順の正本として定義し、
+7日ローリング計画・生成ルール・外部連携を含めた
+運用モデルを確立する。
 
 ---
 
 ## 結論
 
-- `notes/04_operations/active_operations.md` を短期実行順の正本候補とする
-- operations は単一継続更新ファイルを基本とする
-- future に operations を置くことは原則としない
-- 旧 operations の履歴保存が必要なときのみ archive する
-- archive 判定は weekly review の中で行う
+- operations は短期実行順の正本とする
+- operations は 7日ローリング実行計画を持つ
+- operations は schedule ではない
+- active_operations を単一正本とする
+- standby_operations を一時退避レイヤーとして持つ
+- archive_operations は履歴用途に限定する
+- future に operations は置かない
 
 ---
 
-## 理由
+## operations の定義
 
-### 1. 命名
+operations は以下を兼ねる。
 
-日付ベースのファイル名より、責務ベースのファイル名の方が正本として読みやすい。
-
-- `2026-03-26_short_term_plan.md`
-より
-- `active_operations.md`
-の方が、役割が明確。
-
-### 2. future に operations を置かない
-
-operations は「今やる順番」であり、保留した時点で operations ではなくなる。
-
-保留すべきものは、
-plan / issue / future item に戻す方が自然。
-
-### 3. archive は履歴用途
-
-operations の過去状態には、
-優先順位の変遷や詰まり方の履歴として価値がある。
-
-ただし、毎回 archive するのではなく、
-大きな再構成や phase / plan 切替時に限定する方が軽い。
+- 今すぐ進める短期実行順
+- 1週間前後の実行計画
+- daily / weekly review により継続更新される正本
 
 ---
 
-## 推奨構造
+## 構造
 
-- `notes/04_operations/active_operations.md`
-- `notes/99_archive/operations/archive_operations_YYYY-MM-DD.md`
+operations は以下の構造を持つ。
+
+- active_operations（正本）
+  - Day0〜Day6
+- standby_operations（退避）
+
+---
+
+## 7日ローリングモデル
+
+operations は日単位に分割された順序付きタスク群として扱う。
+
+Day構造
+
+- Day0（今日）
+- Day1（明日）
+- Day2
+- Day3
+- Day4
+- Day5
+- Day6
+
+ルール
+
+- 各 Day はタスク順序を持つ
+- 時刻は持たない
+- 仮配置であり、確定スケジュールではない
+
+---
+
+## ローリング更新
+
+### daily review
+
+- Day0 の実績確認
+- 未完了タスクの再配置
+- Day1 以降の繰り上げ
+- 新しい Day6 の補充
+- 溢れたタスクは standby へ移動
+
+### weekly review
+
+- 7日構成の再設計
+- 優先順位の再構築
+- 大きな入れ替え
+- standby の再評価
+- archive 判定
+
+---
+
+## standby_operations
+
+目的
+
+7日ローリングから一時的に外れたタスクを退避する。
+
+特徴
+
+- 整理しない
+- 優先順位を持たない
+- 思考コストを増やさない
+- Day6 の候補プールとして扱う
+
+ルール
+
+- active_operations から溢れたタスクを格納する
+- 7日内に収まらないタスクを格納する
+- daily / weekly review で再評価する
+- future とは区別する
+
+---
+
+## operations の生成ルール
+
+発生源
+
+- plan
+- issue
+- adam
+- review
+
+補足
+
+- plan: 中期計画から落ちるタスク
+- issue: 即着手課題
+- adam: 会話で確定した短期タスク
+- review: daily / weekly による再構成
+
+---
+
+## operations に入る条件
+
+- 今すぐ進める短期実行対象である
+- 実行順を持つ
+- 7日内に配置する価値がある
+
+満たさない場合
+
+- issue / design / dev_memo / future に戻す
+
+---
+
+## Day配置ルール
+
+operations に入ったタスクは Day0〜Day6 のいずれかに配置する。
+
+原則
+
+- 近い順に配置する
+- 厳密な日付拘束は持たない
+- 「この辺でやる」粒度で扱う
+
+---
+
+## operations ≠ schedule
+
+operations はスケジュールではない。
+
+役割分離
+
+- operations = 何をいつ頃やるか（順序）
+- Outlook = 何時から何時に行うか（時間配置）
+
+---
+
+## 外部連携
+
+### Outlook
+
+- 予定の正本
+- 空き時間の制約として扱う
+
+役割
+
+- 空き時間に応じたタスク選択
+- operations から schedule proposal を生成
+- 承認後に予定として反映
+
+---
+
+### Todoist
+
+- execution view
+- 操作UI
+
+役割
+
+- タスク実行
+- 完了操作
+
+ルール
+
+- 正本ではない
+- 操作結果は operations に反映する
+
+---
+
+### MindMeister
+
+- structure / strategy view
+
+役割
+
+- 全体構造の可視化
+- タスク関係の俯瞰
+
+---
+
+### Obsidian
+
+- 実行インテリジェンスの蓄積層
+
+蓄積対象
+
+- 見積時間 / 実績時間
+- タスク特性
+- 成功 / 失敗パターン
 
 ---
 
@@ -69,44 +218,46 @@ roadmap
 ↓
 plan
 ↓
-active_operations
+operations（active / standby）
 ↓
 daily review
 ↓
-active_operations 更新
+operations 更新
 ↓
 weekly review
 ↓
-active_operations 継続 / 再構成 / archive 判定
+operations 再構成 / archive 判定
 ↓
-archive_operations
+Outlook（schedule proposal）
+↓
+実行
+↓
+Obsidian（学習）
 
 ---
 
-## weekly review での扱い
+## ファイル構造
 
-weekly review では以下を行う。
-
-1. 現 active_operations を確認する
-2. 完了 / 継続 / 持越しを整理する
-3. active_operations を更新する
-4. 大きな再構成や phase / plan 切替がある場合のみ archive を生成する
+- notes/04_operations/active_operations.md
+- notes/04_operations/standby_operations.md
+- notes/99_archive/operations/archive_operations_YYYY-MM-DD.md
 
 ---
 
-## archive 条件
+## archive 運用
 
-以下のいずれかを満たす場合に archive 候補とする。
+archive は履歴用途に限定する。
 
-- active_operations の構造が大きく変わる
-- phase / plan の切替が起きる
-- 旧 active_operations が正本でなくなる
-- 履歴として残す価値がある節目である
+条件
+
+- 構造が大きく変わる
+- phase / plan が切り替わる
+- 履歴価値がある
 
 ---
 
-## 当面の扱い
+## 判断
 
-- まず issue と operations に反映する
-- その後、review system / operations generation rules / notes system との整合を見て design を昇格する
-- 実ファイル rename は方針固定後に行う
+- operations は単なるタスク列ではない
+- 短期実行計画の中核レイヤーとする
+- EVE の実行知能の基盤とする
