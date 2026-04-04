@@ -34,21 +34,20 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 ## 推奨実行順
 
-1. `05_roadmap.md` に Phase 0 を含む確定済み roadmap 方針を反映する
-2. `15_notes_system.md` に `80_future` と reports 実態を反映する
-3. intake routing / issue routing の命名と責務を継続確認する
-4. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
-5. 旧 docs 群の棚卸し方針を整理する
-6. code bulk の実装方針を確定し、必要なら着手する
-7. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-8. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
-9. ADAM instruction の repo正本ハイブリッド運用を実装する
-10. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-11. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-12. decision_log / case_study レイヤーを設計する
-13. failure_log / breaking_points ログを設計する
-14. GitHub ユーザー名変更の影響調査を行う
-15. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+1. `15_notes_system.md` に `80_future` と reports 実態を反映する
+2. intake routing / issue routing の命名と責務を継続確認する
+3. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
+4. 旧 docs 群の棚卸し方針を整理する
+5. code bulk の実装方針を確定し、必要なら着手する
+6. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+7. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+8. ADAM instruction の repo正本ハイブリッド運用を実装する
+9. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+10. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+11. decision_log / case_study レイヤーを設計する
+12. failure_log / breaking_points ログを設計する
+13. GitHub ユーザー名変更の影響調査を行う
+14. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -118,7 +117,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - [x] `10_repo_resource_api.md` を現行実装に整合する内容へ更新する
   - ref: docs/10_repo_resource_api.md
 
-- [ ] `05_roadmap.md` に Phase 0 を含む確定済み roadmap 方針を反映する
+- [x] `05_roadmap.md` に Phase 0 を含む確定済み roadmap 方針を反映する
   - ref: docs/05_roadmap.md
   - related plan: notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
 
@@ -248,7 +247,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - `notes/07_reports/README.md` は現行構造へ更新済み
 - `notes/README.md` は現行 indexed 構造へ更新済み
 - `docs/10_repo_resource_api.md` は現行実装に合わせて更新済み
-- roadmap の上位方針は確定済みで、Phase 0 の docs 反映は未実施
+- roadmap は Phase 0 を含む上位方針へ更新済み
 - review system spec は notes/02_design/2026-04-03_review_system_operating_spec.md に保存済み
 - plan layer spec は notes/02_design/2026-04-03_plan_layer_operating_spec.md に保存済み
 - future layer spec は notes/02_design/2026-04-03_future_layer_operating_spec.md に保存済み
