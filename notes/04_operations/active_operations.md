@@ -9,6 +9,7 @@
 
 ## Day1（04/06 月）
 
+- operations に source_ref を導入する
 - daily review / weekly review と operations の接続確認
 - review 手順の不足を整理する
 
