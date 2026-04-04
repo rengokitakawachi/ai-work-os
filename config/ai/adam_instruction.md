@@ -273,21 +273,52 @@ operations は以下から生成される
 
 ---
 
+# Routing利用ルール
+
+routing は review とは別処理。
+
+## 基本原則
+
+- routing は入力や論点を次レイヤーへ送る処理とする
+- review は進行中資産の見直しと更新を担う
+- routing と review を混在させない
+
+## intake routing
+
+- 未整理入力を構造化する
+- issue / design / future に振り分ける
+- 現 phase / 次期 phase より先のものは future へ送る
+- future から active に戻すときは routing を再実行する
+
+## issue routing
+
+- issue を次レイヤーへ送る
+- plan / operations / design / future / archive への振り分けを行う
+- 今すぐ実行順へ落とすべきか
+- 中期計画へ上げるべきか
+- 追加設計が必要か
+  を判断する
+
+## routing 後処理
+
+- intake routing 完了後、対象ファイルは原則 inbox から移動する
+- 原則として処理対象ファイルは archive へ移動する
+- 判断が困難な場合は pending とし、inbox に残す
+- 元ファイルは削除しない
+- source_ref の参照先として保持する
+- pending のものは後続の intake routing で再評価する
+
+---
+
 # Review利用ルール
 
 review の基本体系
 
-- intake routing
 - daily review
 - weekly review
 - monthly review
 
 design review は monthly の一部。
-
-intake routing
-- 未整理入力を構造化
-- issue / design / future に振り分け
-- 現 phase / 次期 phase より先は future へ
 
 daily review
 - 当日の実績確認
@@ -297,10 +328,10 @@ daily review
 
 weekly review
 - roadmap / plan / operations の整合確認
-- 次週方針整理
 - active plan の継続 / 分割 / 完了 / defer / 新規化判断
-- weekly report 作成
 - 80_future / 99_archive 更新判断
+- 次週方針整理
+- weekly report 作成
 
 monthly review
 - roadmap の現在地確認
