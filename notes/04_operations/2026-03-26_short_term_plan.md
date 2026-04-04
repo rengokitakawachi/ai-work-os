@@ -35,18 +35,21 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 ## 推奨実行順
 
 1. `05_roadmap.md` に Phase 0 を含む確定済み roadmap 方針を反映する
-2. intake routing / issue routing の命名と責務を継続確認する
-3. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
-4. code bulk の実装方針を確定し、必要なら着手する
-5. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-6. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
-7. ADAM instruction の repo正本ハイブリッド運用を実装する
-8. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-9. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-10. decision_log / case_study レイヤーを設計する
-11. failure_log / breaking_points ログを設計する
-12. GitHub ユーザー名変更の影響調査を行う
-13. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+2. `15_notes_system.md` に `80_future` と reports 実態を反映する
+3. `07_reports/README.md` を現行構造へ更新する
+4. intake routing / issue routing の命名と責務を継続確認する
+5. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
+6. 旧 docs 群の棚卸し方針を整理する
+7. code bulk の実装方針を確定し、必要なら着手する
+8. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+9. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+10. ADAM instruction の repo正本ハイブリッド運用を実装する
+11. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+12. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+13. decision_log / case_study レイヤーを設計する
+14. failure_log / breaking_points ログを設計する
+15. GitHub ユーザー名変更の影響調査を行う
+16. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -120,6 +123,16 @@ issue が増えてきたため、以下の基準で優先順位を決める。
   - ref: docs/05_roadmap.md
   - related plan: notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
 
+- [ ] `15_notes_system.md` に `80_future` と reports 実態を反映する
+  - ref: docs/15_notes_system.md
+  - ref: notes/02_design/2026-04-03_future_layer_operating_spec.md
+
+- [ ] `07_reports/README.md` を現行構造へ更新する
+  - ref: notes/07_reports/README.md
+
+- [ ] 旧 docs 群の棚卸し方針を整理する
+  - ref: notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+
 - [x] plan layer operating spec を保存する
   - ref: notes/02_design/2026-04-03_plan_layer_operating_spec.md
 
@@ -191,6 +204,9 @@ issue が増えてきたため、以下の基準で優先順位を決める。
   - ref: code/src/services/repo-resource/notes.js
   - ref: code/api/repo-resource.js
 
+- [x] repo 全体の読破と対応洗い出しを行う
+  - ref: notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+
 - [x] 旧 `src/services/github-repo-resource.js` の整理方針を決める
   - ref: code/src/services/github-repo-resource.js
 
@@ -229,10 +245,10 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - 本 operations は Phase 0 common operating model plan の短期実行順として扱う
 - notes indexed 構造の設計草案は notes/02_design/2026-04-02_notes_indexed_structure_spec.md を参照
 - 現行運用構造の整理は notes/02_design/2026-04-02_notes_current_operating_structure.md を参照
-- `docs/15_notes_system.md` は現行 indexed 構造へ更新済み
+- `docs/15_notes_system.md` は現行 indexed 構造へ更新済みだが、`80_future` と reports 実態の反映が未完了
 - `notes/README.md` は現行 indexed 構造へ更新済み
 - `docs/10_repo_resource_api.md` は現行実装に合わせて更新済み
-- roadmap の上位方針は確定済みで、docs 反映は未実施
+- roadmap の上位方針は確定済みで、Phase 0 の docs 反映は未実施
 - review system spec は notes/02_design/2026-04-03_review_system_operating_spec.md に保存済み
 - plan layer spec は notes/02_design/2026-04-03_plan_layer_operating_spec.md に保存済み
 - future layer spec は notes/02_design/2026-04-03_future_layer_operating_spec.md に保存済み
@@ -254,3 +270,4 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - instruction の repo正本ハイブリッド運用論点は issue 20260330-001 を参照
 - notes bulk は実装済み
 - code bulk は再開時と横断整合確認の読取効率を上げる候補として issue 化済み
+- repo 横断読取の監査結果は notes/08_analysis/2026-04-04_repo_readthrough_findings.md を参照
