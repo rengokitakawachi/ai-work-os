@@ -36,20 +36,19 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 
 1. `05_roadmap.md` に Phase 0 を含む確定済み roadmap 方針を反映する
 2. `15_notes_system.md` に `80_future` と reports 実態を反映する
-3. `07_reports/README.md` を現行構造へ更新する
-4. intake routing / issue routing の命名と責務を継続確認する
-5. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
-6. 旧 docs 群の棚卸し方針を整理する
-7. code bulk の実装方針を確定し、必要なら着手する
-8. source_ref を docs / instructions / operations にどう正式反映するかを確定する
-9. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
-10. ADAM instruction の repo正本ハイブリッド運用を実装する
-11. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
-12. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
-13. decision_log / case_study レイヤーを設計する
-14. failure_log / breaking_points ログを設計する
-15. GitHub ユーザー名変更の影響調査を行う
-16. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
+3. intake routing / issue routing の命名と責務を継続確認する
+4. 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
+5. 旧 docs 群の棚卸し方針を整理する
+6. code bulk の実装方針を確定し、必要なら着手する
+7. source_ref を docs / instructions / operations にどう正式反映するかを確定する
+8. legacy docs API と `src/services/github-docs.js` を `repo-resource/docs.js` に統一する方針を確定する
+9. ADAM instruction の repo正本ハイブリッド運用を実装する
+10. operations の `weekly_tasks.md` 単一継続更新ファイル運用ルールとテンプレートを設計する
+11. operations から Todoist（EVE開発）へタスクを一方向反映する仕組みを設計する
+12. decision_log / case_study レイヤーを設計する
+13. failure_log / breaking_points ログを設計する
+14. GitHub ユーザー名変更の影響調査を行う
+15. 1ファイルを論点チャンクに分解して 1テーマ1メモへ変換するルールを定義する
 
 ---
 
@@ -127,7 +126,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
   - ref: docs/15_notes_system.md
   - ref: notes/02_design/2026-04-03_future_layer_operating_spec.md
 
-- [ ] `07_reports/README.md` を現行構造へ更新する
+- [x] `07_reports/README.md` を現行構造へ更新する
   - ref: notes/07_reports/README.md
 
 - [ ] 旧 docs 群の棚卸し方針を整理する
@@ -246,6 +245,7 @@ issue が増えてきたため、以下の基準で優先順位を決める。
 - notes indexed 構造の設計草案は notes/02_design/2026-04-02_notes_indexed_structure_spec.md を参照
 - 現行運用構造の整理は notes/02_design/2026-04-02_notes_current_operating_structure.md を参照
 - `docs/15_notes_system.md` は現行 indexed 構造へ更新済みだが、`80_future` と reports 実態の反映が未完了
+- `notes/07_reports/README.md` は現行構造へ更新済み
 - `notes/README.md` は現行 indexed 構造へ更新済み
 - `docs/10_repo_resource_api.md` は現行実装に合わせて更新済み
 - roadmap の上位方針は確定済みで、Phase 0 の docs 反映は未実施
