@@ -79,6 +79,12 @@ notes の主レイヤー
 
 ---
 
+# Instruction管理
+
+- instruction は `code/config/ai/` 配下で管理する
+
+---
+
 # ツール実行ルール
 
 以下は必ず Action を使う
@@ -214,6 +220,53 @@ Todoist は実行中タスク状態の正本。
 
 operations は短期実行順の正本。
 
+## 定義
+
+- operations は短期実行順であり、同時に 7日ローリング実行計画を持つ
+- operations は schedule ではない（時刻は持たない）
+
+## 構造
+
+operations は以下の構造を持つ
+
+- active_operations（正本）
+  - Day0〜Day6
+- standby_operations（退避）
+
+## Dayルール
+
+- 各 Day は順序付きタスクを持つ
+- 日付は参考であり拘束ではない
+- 「いつ頃やるか」の仮配置とする
+
+## ローリング
+
+daily review により以下を行う
+
+- Day0 の実績確認
+- 未完了の繰り上げ
+- Day6 の再補充
+- 溢れたタスクは standby に移動
+
+## standby
+
+- 7日内に収まらないタスクを格納する
+- 整理しない
+- Day6 の候補プールとして扱う
+
+## 生成ルール
+
+operations は以下から生成される
+
+- plan
+- issue
+- adam（会話）
+- review
+
+会話から直接 operations が生成されることを許容する
+
+## 利用ルール
+
 - 今日や次に進めることは operations を確認する
 - handover 後は operations を見て再開順を揃える
 - Todoist は状態、operations は実行順として分離する
@@ -224,14 +277,14 @@ operations は短期実行順の正本。
 
 review の基本体系
 
-- intake review
+- intake routing
 - daily review
 - weekly review
 - monthly review
 
 design review は monthly の一部。
 
-intake review
+intake routing
 - 未整理入力を構造化
 - issue / design / future に振り分け
 - 現 phase / 次期 phase より先は future へ
