@@ -164,3 +164,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-04
+
+### 20260404-003
+- title: Todoist 連携前提で standby_operations を next_operations へ拡張するか検討が必要
+- category: architecture
+- description: ADAM 開発プロジェクトは EVE 開発のプロトタイプでもあり、EVE では一般の業務を対象とする。operations を Todoist と連携する前提で考えると、7日ローリングの active_operations だけでは Todoist 上に表示したい実行候補を十分に表現できない可能性がある。そのため、現行の standby_operations を単なる退避場所ではなく、active の次に来る候補群として next_operations へ拡張する案を検討したい。next_operations は Day0〜Day6 の日別分類は持たないが、Todoist 連携の都合上、各タスクに日付情報を持てる可能性がある。ただし、この日付が Todoist の due / deadline / 並び順のどれに対応するべきかは、Todoist の現行仕様と API を確認したうえで確定する必要がある。
+- context: operations の 7日ローリングモデルを整理する中で、standby_operations は overflow 退避としては自然だが、EVE の一般業務運用や Todoist 表示を考えると意味が弱いと分かった。Todoist では 1 週間分より先の実行候補も見せたい場面があり、その受け皿として next_operations を持つ案が浮上した。一方で、Todoist の task date / deadline / filter / day_order などの仕様を確認せずに operations 側の date モデルを決めると意味が混線するため、まず仕様調査が必要である。issue として保持したうえで、必要に応じて dev_memo で調査メモを作成し、その後に operations（7日間）へ入れるかを判断する。
+- impact: high
+- status: open
+- created_at: 2026-04-04
