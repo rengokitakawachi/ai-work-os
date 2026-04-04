@@ -155,3 +155,12 @@
 - impact: high
 - status: open
 - created_at: 2026-04-04
+
+### 20260404-002
+- title: active_operations 単一継続更新と weekly review archive 判定の運用を固める必要がある
+- category: ops
+- description: operations の正本ファイルは日付ベースより責務ベースの命名が自然であり、`active_operations.md` を単一継続更新ファイルとして扱う方針を検討したい。保留したものを future に operations として置くのではなく、plan / issue / future item に戻し、旧 operations は節目のみ `archive_operations_YYYY-MM-DD.md` として保存する。archive 判定は weekly review の中で行う運用が有力である。
+- context: `notes/04_operations/2026-03-26_short_term_plan.md` という日付ベース命名には、短期実行順の正本としての意味が出にくいという違和感が出た。検討の結果、active / archive は自然だが、future に operations を置くのは原則不自然と整理できた。daily では継続更新、weekly review で大きな再構成や phase / plan 切替時のみ archive を切る方が運用負荷が低く、review system とも整合しやすい。
+- impact: medium
+- status: open
+- created_at: 2026-04-04
