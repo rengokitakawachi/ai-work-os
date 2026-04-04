@@ -2,16 +2,17 @@
 
 ## 目的
 
-本ドキュメントは、EVE システムの上位開発計画を定義する。
+本ドキュメントは、AI Work OS / EVE の上位開発計画を定義する。
 
-roadmap は EVE 全体の進化段階を示す上位計画とする。
+roadmap は AI Work OS / EVE 全体の進化段階を示す上位計画とする。
 
 plan は roadmap を一定期間やテーマ単位に落とした中期計画とする。
 
 operations は今すぐ進める短期実行順とする。
 
 本ロードマップは、
-EVE を段階的に成立させるための開発フェーズを整理し、
+Phase 0 で共通 operating model を整備し、
+その上で EVE を段階的に成立させるための開発フェーズを整理し、
 roadmap → plan → operations の階層を安定運用するための上位方針を示す。
 
 ---
@@ -20,7 +21,7 @@ roadmap → plan → operations の階層を安定運用するための上位方
 
 EVE は、実行、予定、戦略、知識、通知をつなぐシステムとする。
 
-roadmap は EVE の大きな到達段階を示す。
+roadmap は AI Work OS / EVE の大きな到達段階を示す。
 
 plan は roadmap の一部を具体化した中期計画とする。
 
@@ -44,6 +45,10 @@ Outlook は schedule の正本として扱う。
 
 Teams はプロジェクトメンバーへの通知チャネルとして扱う。
 
+Phase 0 は、EVE の実行系機能を本格的に前進させる前に、AI Work OS 全体に共通する operating model を整備する段階とする。
+
+Phase 1 以降は、Phase 0 の共通骨格の上で EVE の実行系と外部接続を前進させる段階とする。
+
 EVE は Outlook 上の予定を確認し、
 空き時間を把握したうえで、
 優先順位づけしたタスクを当てはめたスケジュール案を提示する。
@@ -63,12 +68,13 @@ completed / superseded / split 元など、
 
 ## 基本原則
 
-- roadmap は EVE 全体の上位計画として扱う
+- roadmap は AI Work OS / EVE 全体の上位計画として扱う
 - roadmap → plan → operations の順で具体化する
 - 各 phase は役割の違いが分かるように分離する
-- 先に最小運用を成立させる
-- 次に正本と view の分離を進める
-- その後に knowledge layer の本格連携を進める
+- 先に共通 operating model を整備する
+- 次に EVE の最小運用を成立させる
+- その後に正本と view の分離を進める
+- knowledge layer の本格連携は基盤成立後に進める
 - 拡張は基盤成立後に進める
 - 未確定の将来像は広めに書き、過度に固定しない
 - 正本と view の役割を混線させない
@@ -92,6 +98,43 @@ operations
 
 ## 開発フェーズ
 
+### Phase 0: Common Operating Model Foundation
+
+目的
+
+ADAM の開発を通じて、
+AI Work OS 全体に共通する operating model を整備する。
+
+範囲
+
+- intake routing の位置づけ整理
+- issue routing の位置づけ整理
+- roadmap / plan / operations の3階層整理
+- routing と review の責務分離
+- handover を入口にした再開構造の整理
+- docs / notes / code / operations の正本関係整理
+- ADAM 固有要素と EVE 共通骨格の分離整理
+
+位置づけ
+
+この phase は、
+EVE の実行系機能を本格的に進める前に、
+AI Work OS 全体に共通する operating model を定義する foundation phase とする。
+
+Phase 1 以降の EVE 実行系 plan 群は、
+この共通骨格の上で進める。
+
+完了イメージ
+
+- intake routing / issue routing / roadmap / plan / operations / review の責務分離が説明できる
+- ADAM 固有要素と EVE に展開できる共通骨格を分けて説明できる
+- handover を入口にした再開構造が整理されている
+- Phase 1 の EVE 実行系 plan を支える上位骨格が整っている
+
+現在の plan
+
+- notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+
 ### Phase 1: Prototype / MVP
 
 目的
@@ -112,7 +155,10 @@ EVE の最小実行系を成立させる。
 
 位置づけ
 
-この phase では、
+この phase は、
+Phase 0 で整備した共通骨格の上で、
+EVE の最小実行系を成立させる段階とする。
+
 既存 API を使いながら、
 タスク管理、予定確認、通知の最小ループを成立させる。
 
@@ -344,28 +390,12 @@ design review は monthly review の一部として実施する。
 
 ---
 
-## 現在の進捗認識
+## 現在地
 
-### Phase 1
+現在は Phase 0 を進行中とし、
+Phase 1 の主要 plan 群を準備済みとする。
 
-進行中。
-
-以下は整理・着手済み、または plan 化済み。
-
-- Todoist / Outlook foundation の plan 化
-- schedule proposal / Outlook write の plan 化
-- Teams / Obsidian light use の plan 化
-
-対象 plan
-
-- notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
-- notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
-- notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
-
-### Phase 2 以降
-
-上位方針は整理済みだが、
-詳細は今後の plan で具体化する。
+詳細な進捗は notes/03_plan と notes/04_operations を参照する。
 
 ---
 
@@ -391,7 +421,7 @@ design review は monthly review の一部として実施する。
 
 ## 判断基準
 
-- EVE 全体の進化段階として自然か
+- AI Work OS / EVE 全体の進化段階として自然か
 - roadmap と plan と operations の階層が崩れていないか
 - 正本と view の役割分離が明確か
 - 今すぐ必要な機能と将来の拡張が混線していないか
@@ -403,6 +433,7 @@ design review は monthly review の一部として実施する。
 ## 関連
 
 - notes/03_plan/README.md
+- notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
 - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
 - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
 - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
@@ -413,4 +444,4 @@ design review は monthly review の一部として実施する。
 
 ---
 
-最終更新: 2026-04-03
+最終更新: 2026-04-04
