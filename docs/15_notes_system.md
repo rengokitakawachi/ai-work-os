@@ -151,17 +151,20 @@ roadmap と operations の中間に位置する。
 
 #### operations モデル
 
-operations は以下の2状態のみを持つ
+operations は以下のファイル構造を持つ
 
-- active  
-  現在実行対象
+- active_operations.md  
+  Day0〜Day6 を持つ 7日ローリングの正本
 
-- archive  
-  実行対象から外れたもの
+- next_operations.md  
+  active の次に来る近未来候補
+
+- archive_operations.md  
+  今週の完了タスクの一時アーカイブ
 
 operations は future には置かない。
 
-archive 判定は weekly review で行う。
+archive_operations は weekly review で snapshot 保存する。
 
 ---
 
@@ -207,7 +210,7 @@ reports は review と強く結びつく。
 ### 09_content
 
 将来の記事執筆や発信のための素材、ネタ、記事ドラフトを蓄積するレイヤー。
-日々の設計、実装、振り返りから、 あとで記事化できる論点や学びを保存する。
+日々の設計、実装、振り返りから、あとで記事化できる論点や学びを保存する。
 
 ---
 
@@ -241,6 +244,10 @@ future は archive ではない。
 ### 99_archive
 
 役目を終えた情報の退避先。
+
+operations の週次履歴は以下に保存する。
+
+notes/99_archive/operations/
 
 ---
 
@@ -280,9 +287,9 @@ operations
 ## operations 運用
 
 - operations は短期実行順の正本
-- active / archive のみを持つ
+- active / next / archive_operations の3構造を持つ
 - future には置かない
-- archive 判定は weekly review で行う
+- weekly review で archive_operations を snapshot 保存する
 
 ---
 
