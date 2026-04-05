@@ -224,6 +224,7 @@ operations は短期実行順の正本。
 
 - operations は短期実行順であり、同時に 7日ローリング実行計画を持つ
 - operations は schedule ではない（時刻は持たない）
+- Outlook は schedule の正本とする
 
 ## 構造
 
@@ -231,7 +232,8 @@ operations は以下の構造を持つ
 
 - active_operations（正本）
   - Day0〜Day6
-- standby_operations（退避）
+- next_operations（近未来候補）
+- archive_operations（一時アーカイブ）
 
 ## Dayルール
 
@@ -246,13 +248,23 @@ daily review により以下を行う
 - Day0 の実績確認
 - 未完了の繰り上げ
 - Day6 の再補充
-- 溢れたタスクは standby に移動
+- 近未来候補は next_operations に移動
+- 完了タスクは必要に応じて archive_operations に移動
 
-## standby
+## next_operations
 
-- 7日内に収まらないタスクを格納する
-- 整理しない
+- active にまだ入れない近未来候補を格納する
+- active の次に来る候補プールとして扱う
 - Day6 の候補プールとして扱う
+- backlog 化しない
+- future の代替にしない
+
+## archive_operations
+
+- 今週の完了タスクを一時的に格納する
+- weekly review で内容を整理せず、そのまま snapshot 保存する
+- 保存先は `notes/99_archive/operations/YYYY-MM-DD_weekly_operations.md` とする
+- 保存後は空にする
 
 ## 生成ルール
 
@@ -270,6 +282,7 @@ operations は以下から生成される
 - 今日や次に進めることは operations を確認する
 - handover 後は operations を見て再開順を揃える
 - Todoist は状態、operations は実行順として分離する
+- Outlook は schedule の正本として分離する
 
 ---
 
