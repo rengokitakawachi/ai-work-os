@@ -26,3 +26,14 @@
 - impact: high
 - status: open
 - created_at: 2026-04-05
+
+### 20260406-009
+- title: operations rolling の生成規律と優先順位づけを再設計する必要がある
+- category: operating_model
+- description: 現行の operations は 7日ローリングの器はあるが、何を候補として抽出し、どの条件で operations 化し、どの重みづけで active / next / issue に配置するかの規律が弱い。そのため、適当に埋めているように見えやすく、roadmap / plan から落ちてきた短期実行順としての接続感も薄い。operations は単なる短期 TODO ではなく、上位計画を実行に落としつつ、実行結果を上位へ返す短期実行正本として再設計する必要がある。
+- context: 議論を通じて、operations は roadmap → plan → operations の下位層であるだけでなく、実行結果を plan / roadmap に返す観測点でもあると整理された。また、A / B / C の案件分類は性質分類であり、active / next / issue への配置は分類だけでなく重みづけで決めるべきだと確認された。特に、plan / roadmap への効き具合、ブロッカー解消度、quick win 性、依存関係、今やる必然性を踏まえた優先順位づけが必要である。C案件も分類だけで除外するのではなく、重みづけ結果によって active や next に入ることを許容する。
+- related_dev_memo:
+  - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
+- impact: high
+- status: open
+- created_at: 2026-04-06
