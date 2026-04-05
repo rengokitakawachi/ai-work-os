@@ -14,11 +14,12 @@
     - notes/02_design/2026-04-03_plan_layer_operating_spec.md
     - notes/02_design/2026-04-03_review_system_operating_spec.md
 
-- standby_operations の改名論点を「後続判断項目」として切り分ける
+- operations 実体の移行差分を洗い出す
   source_ref:
-    - notes/01_issues/idea_log.md#20260404-003
-    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
-    - notes/00_inbox/dev_memo/2026-04-04_19-05-00_operations_eve_execution_intelligence_memo.md
+    - notes/01_issues/idea_log.md#20260405-008
+    - notes/02_design/2026-04-05_operations_next_archive_snapshot_model.md
+    - notes/04_operations/active_operations.md
+    - notes/04_operations/standby_operations.md
 
 ## Day1（04/06 月）
 
@@ -94,15 +95,17 @@
 
 ## Day6（04/11 土）
 
-- standby_operations の候補を見直して次の Day0 候補を補充する
+- next_operations の候補を見直して次の Day0 候補を補充する
   source_ref:
-    - notes/04_operations/standby_operations.md
+    - notes/04_operations/next_operations.md
     - notes/04_operations/active_operations.md
+    - notes/02_design/2026-04-05_operations_next_archive_snapshot_model.md
 
 - next_operations 論点の再判定条件を整理する
   source_ref:
     - notes/01_issues/idea_log.md#20260404-003
     - notes/00_inbox/dev_memo/2026-04-04_19-05-00_operations_eve_execution_intelligence_memo.md
+    - notes/02_design/2026-04-05_operations_next_archive_snapshot_model.md
 
 ---
 
@@ -114,5 +117,6 @@
 - 日付表示は daily review 時に更新する
 - operations の各タスクは source_ref を持つ
 - 未完了タスクは翌日以降へ移動する
-- 溢れたタスクは standby_operations に移す
+- 近未来候補は next_operations に移す
+- 完了タスクは必要に応じて archive_operations に移す
 - Phase 0 中は構造整合を優先する
