@@ -8,8 +8,9 @@
     - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
     - notes/02_design/2026-04-04_operations_active_archive_model_light_draft.md
 
-- operations の正本構造案を 1つに絞る
+- `2026-04-05_operations_next_archive_snapshot_model.md` を operations 正本構造の採用案として固定する
   source_ref:
+    - notes/02_design/2026-04-05_operations_next_archive_snapshot_model.md
     - notes/02_design/2026-04-04_operations_active_archive_model_light_draft.md
     - notes/02_design/2026-04-03_plan_layer_operating_spec.md
     - notes/02_design/2026-04-03_review_system_operating_spec.md
