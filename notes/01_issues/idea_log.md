@@ -17,3 +17,12 @@
 - impact: high
 - status: open
 - created_at: 2026-04-04
+
+### 20260405-008
+- title: operations 実体を active / next / archive snapshot モデルへ移行する必要がある
+- category: architecture
+- description: operations については、過去の design と最新の整理を踏まえると、`active_operations.md`、`next_operations.md`、`archive_operations.md` を `notes/04_operations/` 配下に持ち、weekly review で `archive_operations.md` をそのまま `notes/99_archive/operations/YYYY-MM-DD_weekly_operations.md` へ保存する運用が最も継続しやすい。このため、現行の `standby_operations` 前提の実体とルールを、新しい3ファイル構成へ移行する必要がある。
+- context: 既存 design では `standby_operations` や `99_archive` 直保存が混在していたが、議論を通じて `next_operations` の方が意味に合い、archive は weekly に整理せず snapshot 保存する方が運用コストが低いと判断した。design は `02_design/2026-04-05_operations_next_archive_snapshot_model.md` に作成済みであり、次は issue と operations 実体を揃える段階に入っている。
+- impact: high
+- status: open
+- created_at: 2026-04-05
