@@ -20,7 +20,14 @@ weekly review までの短期履歴置き場であり、
 
 ## タスク
 
-- 
+- `2026-04-05_operations_next_archive_snapshot_model.md` を operations 正本構造の採用案として固定した
+- operations 実体の移行差分を洗い出した
+- `next_operations.md` を作成した
+- `archive_operations.md` を作成した
+- `standby_operations.md` を廃止した
+- `config/ai/adam_instruction.md` の operations 利用ルールを最小差分で更新した
+- `docs/15_notes_system.md` を新 operations モデルへ更新した
+- `docs/17_operations_system.md` を新 operations モデルへ更新した
 
 ---
 
