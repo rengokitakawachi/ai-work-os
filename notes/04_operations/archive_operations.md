@@ -28,6 +28,7 @@ weekly review までの短期履歴置き場であり、
 - `config/ai/adam_instruction.md` の operations 利用ルールを最小差分で更新した
 - `docs/15_notes_system.md` を新 operations モデルへ更新した
 - `docs/17_operations_system.md` を新 operations モデルへ更新した
+- `operations_generation_rules.md` の役割を rolling spec へ統合し、`notes/99_archive/design/operations_generation_rules.md` へ移動した
 
 ---
 
