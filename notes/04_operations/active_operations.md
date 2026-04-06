@@ -61,19 +61,6 @@
 
 ## Day2（04/08 水）
 
-- task: operations_generation_rules を Flow Control と ranking model に合わせて更新する
-  source_ref:
-    - notes/02_design/operations_generation_rules.md
-    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
-    - notes/02_design/2026-04-06_flow_control_and_usecase_architecture.md
-  rolling_day: Day2
-  why_now:
-    - operations 候補生成の旧モデルが残っており、現行設計と不整合
-  due_date: 2026-04-08
-  due_type: soft
-  notes:
-    - issue / design 起点だけでなく複数流入元モデルへ揃える
-
 - task: classification_and_routing_spec の扱いを決める
   source_ref:
     - notes/02_design/classification_and_routing_spec.md
