@@ -225,6 +225,7 @@ operations は短期実行順の正本。
 - operations は短期実行順であり、同時に 7日ローリング実行計画を持つ
 - operations は schedule ではない（時刻は持たない）
 - Outlook は schedule の正本とする
+- operations は候補を優先順位で並べ、7日枠に入るものを active_operations とする
 
 ## 構造
 
@@ -240,20 +241,29 @@ operations は以下の構造を持つ
 - 各 Day は順序付きタスクを持つ
 - 日付は参考であり拘束ではない
 - 「いつ頃やるか」の仮配置とする
+- active_operations は 7日枠に採用された集合とする
 
 ## ローリング
 
 daily review により以下を行う
 
-- Day0 の実績確認
-- 未完了の繰り上げ
-- Day6 の再補充
-- 近未来候補は next_operations に移動
-- 完了タスクは必要に応じて archive_operations に移動
+- 候補を収集する
+- 候補を優先順位で並べる
+- 7日枠に入るものを active_operations に置く
+- active に入らなかった上位候補を next_operations に置く
+- 完了タスクは必要に応じて archive_operations に移動する
+
+## 優先順位づけ
+
+- スコアは補助であり、決定ではない
+- 優先順位は候補全体に対する相対順位で決める
+- 文脈（phase / 今週の重点 / 状況）を考慮する
+- A / B / C は性質分類であり、配置を直接決めない
+- C案件でも順位が高ければ active / next に入れてよい
 
 ## next_operations
 
-- active にまだ入れない近未来候補を格納する
+- active に入らなかった上位候補を格納する
 - active の次に来る候補プールとして扱う
 - Day6 の候補プールとして扱う
 - backlog 化しない
@@ -268,14 +278,16 @@ daily review により以下を行う
 
 ## 生成ルール
 
-operations は以下から生成される
+operations の候補は以下から生成される
 
 - plan
 - issue
+- design
+- dev_memo
 - adam（会話）
 - review
 
-会話から直接 operations が生成されることを許容する
+会話から直接 operations 候補が生成されることを許容する
 
 ## 利用ルール
 
@@ -283,6 +295,40 @@ operations は以下から生成される
 - handover 後は operations を見て再開順を揃える
 - Todoist は状態、operations は実行順として分離する
 - Outlook は schedule の正本として分離する
+
+---
+
+# Flow Control利用ルール
+
+Flow Control は、routing と operations rolling を支える共通処理基盤。
+
+## 基本原則
+
+- routing と operations rolling は、Flow Control 上の異なる usecase として扱う
+- 共通処理は Flow Control に集約する
+- 用途別ロジックは usecase に閉じる
+- ルールはプログラムに寄せる
+- 判断は ADAM に寄せる
+- API は薄く保つ
+
+## プログラムの責務
+
+- candidate collection
+- normalization
+- rule evaluation
+- helper scoring
+- placement preparation
+
+## ADAMの責務
+
+- 意味理解
+- 論点分解
+- テーマ統合
+- 優先順位判断
+- why_now 判断
+- 例外処理
+- 上位整合判断
+- 最終配置決定
 
 ---
 
@@ -295,6 +341,7 @@ routing は review とは別処理。
 - routing は入力や論点を次レイヤーへ送る処理とする
 - review は進行中資産の見直しと更新を担う
 - routing と review を混在させない
+- intake routing / issue routing は、単純な一覧振り分けではなく再構成を伴う
 
 ## intake routing
 
@@ -302,6 +349,7 @@ routing は review とは別処理。
 - issue / design / future に振り分ける
 - 現 phase / 次期 phase より先のものは future へ送る
 - future から active に戻すときは routing を再実行する
+- チャンク分解 → テーマ統合 → 1テーマ1メモ生成を行う
 
 ## issue routing
 
@@ -311,6 +359,7 @@ routing は review とは別処理。
 - 中期計画へ上げるべきか
 - 追加設計が必要か
   を判断する
+- 論点分解 → 類似論点統合 → 1テーマ1判断単位への再構成を行う
 
 ## routing 後処理
 
