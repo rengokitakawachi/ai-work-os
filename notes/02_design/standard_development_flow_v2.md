@@ -11,16 +11,17 @@
 
 inbox  
 ↓  
-intake review  
+intake routing  
 ↓  
 archive（同一構造で移動）  
 ↓  
-分岐  
+
+routing による分岐  
 
 A: 今やる  
   → issue  
   → design  
-  → operations  
+  → operations候補生成  
 
 B: 今やらない  
   → future  
@@ -28,11 +29,15 @@ B: 今やらない
 C: 役目終了  
   → archive  
 
-↓
+↓  
+
+operations rolling（順位づけ）  
+
+↓  
 
 実行  
 
-↓
+↓  
 
 docs / code  
 
@@ -69,16 +74,29 @@ docs / code
 
 ### future
 
-将来フェーズの保持レイヤー。
+未来に関係する要素を保持するレイヤー。
 
 構造:
 
 future/
   inbox/
-    web/
-    dev_memo/
   issue/
   design/
+  plan/
+
+定義:
+
+- `future/inbox/`
+  - 未整理だが未来の開発に関係しそうな情報
+- `future/issue/`
+  - 未来に対応予定の課題
+- `future/design/`
+  - 未来に対応予定の設計
+- `future/plan/`
+  - 未来に実行予定の計画
+
+future の要素は現時点では active ではないが、
+将来 active に移行する可能性を前提とする。
 
 ---
 
@@ -90,23 +108,13 @@ future/
 - 実行対象ではない
 - 再活性化対象でもない（参照専用）
 
-構造:
-
-archive/
-  inbox/
-    web/
-    dev_memo/
-  issue/
-  design/
-  operations/
-
 ---
 
-## intake review
+## intake routing
 
 ### 役割
 
-未整理入力を構造化し、適切なレイヤーへ分配する。
+未整理入力を再構成し、適切なレイヤーへ振り分ける。
 
 ---
 
@@ -136,35 +144,109 @@ archive/
 
 ---
 
+## issue routing
+
+issue を plan / operations / design / future / archive へ送る。
+
+必要に応じて、
+
+- 論点分解
+- 類似論点統合
+- 1テーマ1判断単位への再構成
+
+を行う。
+
+---
+
+## operations 候補生成
+
+operations 候補は、単一ルートではなく複数の流入元から生成される。
+
+主な流入元:
+
+- plan
+- issue
+- design
+- dev_memo
+- 会話
+- review
+
+補足:
+
+- issue / design は主要な流入元だが、それだけに限定しない
+- plan 直結の短期実行候補もある
+- review による再配置や、会話・dev_memo 起点の候補化もありうる
+
+---
+
+## operations rolling
+
+収集した候補を優先順位で並べ、7日枠に入るものを active_operations とする。
+
+フロー:
+
+operations 候補収集  
+↓  
+優先順位づけ  
+↓  
+7日枠に入るもの  
+= active_operations  
+
+残りの上位候補  
+= next_operations  
+
+---
+
+## future 再活性化
+
+### inbox 系
+
+future/inbox  
+↓  
+intake routing 再実行  
+↓  
+issue / design / future  
+
+### issue / design 系
+
+future/issue または future/design  
+↓  
+issue routing または design review / routing再判定  
+↓  
+plan / operations / design / future / archive  
+
+### plan 系
+
+future/plan  
+↓  
+weekly / monthly review  
+↓  
+active plan / 継続 / archive  
+
+---
+
+## review の役割
+
+review は進行中資産の見直しと再判定を担う。
+
+- daily review: operations 更新
+- weekly review: plan / operations / future 調整
+- monthly review: roadmap / phase 整合
+- design review: design の継続 / 昇格 / future / archive 判断
+
+---
+
 ## source_ref
 
 出自追跡のための参照情報。
 
 ---
 
-## operations 生成
-
-issue / design を実行可能なタスクへ変換する。
-
----
-
-## future 再活性化
-
-future  
-↓  
-再活性化トリガー  
-↓  
-intake review（再実行）  
-↓  
-issue / design / operations  
-
----
-
 ## archive の原則
 
-- active / future と同一構造を持つ
-- パス構造を維持したまま移動する
-- 内容は変更しない（スナップショット）
+- スナップショットとして保存する
+- 内容は変更しない
+- 参照専用とする
 
 ---
 
@@ -178,7 +260,7 @@ issue / design / operations
 
 ## 基本原則
 
-- レイヤーを混在させない
+- routing と review を分離する
 - issue / design を直接実行しない
 - operations のみ実行対象とする
 - inbox は常に空に戻す
@@ -197,4 +279,4 @@ operations:
 何をやるか
 
 future:
-今やらない
+未来に関係する要素を保持する
