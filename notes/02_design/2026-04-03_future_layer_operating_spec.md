@@ -5,7 +5,7 @@
 `80_future` レイヤーの役割と運用方針を定義する。
 
 特に、
-インテークレビュー時にどのような入力を `80_future` へ送るか、
+intake routing 時にどのような入力を `80_future` へ送るか、
 また plan のうちどのようなものを `80_future` へ移すかを明文化する。
 
 本仕様は、
@@ -19,7 +19,7 @@
 - 実フォルダ名は `80_future/` とする
 - future は archive と似た位置にあるが、意味は異なる
 - future は「今は扱わないが、将来また扱う可能性があるもの」を置く
-- intake review により future へ送られる入力がある
+- intake routing により future へ送られる入力がある
 - active plan のうち deferred なものも future へ送る
 - 最初の内部構成は `plan/` `inbox/` を基本とする
 
@@ -93,11 +93,11 @@ inbox/
 
 ---
 
-## intake review との関係
+## intake routing との関係
 
-future は intake review と強く関係する。
+future は intake routing と強く関係する。
 
-インテークレビュー時には、
+intake routing 時には、
 未整理入力を読んだ結果、
 現フェーズや次期フェーズでは扱わないと判断したものを
 future へ送る。
@@ -105,14 +105,14 @@ future へ送る。
 ### 基本方針
 
 - inbox は未整理入力の入口
-- intake review は入力をテーマ単位で再構成する
+- intake routing は入力をチャンク分解し、テーマ単位へ再構成する
 - 今やる必要がないものを無理に issue / design 化しない
 - ただし削除もしない
 - その受け皿として future を使う
 
 ---
 
-## intake review で future に移す対象
+## intake routing で future に移す対象
 
 ### 1. 次期フェーズより先で使う未整理入力
 
@@ -198,21 +198,35 @@ active plan のうち、
 ## 再活性化ルール
 
 future に置かれたものは、
-直接 active に戻してはならない。
+active layers や operations に直接戻してはならない。
 
-再活性化時は review を通して再判定する。
+再活性化時は、対象レイヤーに応じた再判定を行う。
 
 ### inbox 系
 
 `80_future/inbox/` にあるものは、
-再度 intake review を実行して
-issue / design / plan / operations への再配置を判断する。
+intake routing を再実行して
+issue / design / plan / future への再配置を判断する。
+
+必要条件:
+
+- 前提条件が整備された
+- 優先順位が上昇した
+- 関連する issue / design が発生した
+- review により再評価対象となった
 
 ### plan 系
 
 `80_future/plan/` にあるものは、
 weekly review または monthly review で
-active plan に戻すかを判断する。
+active plan に戻すか、
+引き続き future に残すかを判断する。
+
+### 禁止事項
+
+- `80_future/inbox/` から active layers / operations への直接移動
+- `80_future/plan/` から operations への直接移動
+- 再評価なしの再利用
 
 ---
 
@@ -224,6 +238,7 @@ weekly review では以下を確認する。
 - defer する plan を `80_future/plan/` に送るか
 - operations の対象外になったテーマがないか
 - 今 phase では扱わない論点が増えていないか
+- `80_future/plan/` から active plan に戻すものがあるか
 
 weekly review は、
 active と future の境界を調整する場でもある。
@@ -237,6 +252,18 @@ monthly review では以下を確認する。
 - future に送った要素の再評価要否
 - roadmap 上の phase 進行により active 化すべき future の有無
 - future と archive の誤配置がないか
+- `80_future/plan/` の継続 / 戻し / archive 化の必要性
+
+---
+
+## routing / review の役割分離
+
+- intake routing は未整理入力の再構成と振り分けを担う
+- weekly / monthly review は進行中資産の見直しと再判定を担う
+
+future の運用では、
+未整理入力系は routing を通し、
+plan 系は review を通す。
 
 ---
 
@@ -254,8 +281,10 @@ future は未整理または deferred なレイヤーだが、
 - future は archive と区別して採用する
 - 実体化する場合は `80_future/` とする
 - 最初は `plan/` `inbox/` で始める
-- intake review 時に future へ移動する対象があることを正式に扱う
+- intake routing 時に future へ移動する対象があることを正式に扱う
 - deferred な plan の受け皿としても future を使う
+- `80_future/inbox/` は intake routing 再実行で戻す
+- `80_future/plan/` は weekly / monthly review で戻す
 
 ---
 
@@ -265,3 +294,5 @@ future は未整理または deferred なレイヤーだが、
 - notes/02_design/intake_review_and_source_ref_spec.md
 - notes/02_design/2026-04-03_plan_layer_operating_spec.md
 - notes/03_plan/README.md
+- notes/02_design/2026-04-03_review_system_operating_spec.md
+- notes/02_design/2026-04-06_flow_control_and_usecase_architecture.md
