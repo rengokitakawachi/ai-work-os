@@ -1,128 +1,131 @@
 # active_operations
 
-## Day0（04/06 月）
-
-- task: active_operations を schema 準拠で再構築する
-  source_ref:
-    - notes/02_design/2026-04-06_operations_task_schema.md
-    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day0
-  why_now:
-    - operations の実体を現行 schema / rolling モデルへ合わせる必要がある
-  notes:
-    - task / source_ref / rolling_day / why_now を最低限揃える
+## Day0（04/07 火）
 
 - task: next_operations を schema 準拠で再構成する
   source_ref:
     - notes/02_design/2026-04-06_operations_task_schema.md
+    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
     - notes/04_operations/next_operations.md
     - notes/04_operations/active_operations.md
   rolling_day: Day0
   why_now:
-    - active に入らなかった上位候補を next に正しく保持する必要がある
+    - active 側の実行原則を固定したため、次候補プール側も同じ schema と運用前提へ揃える必要がある
   notes:
-    - next の位置づけを backlog ではなく近未来候補に揃える
+    - task / source_ref を必須として再確認し、近未来候補としての位置づけを明確にする
 
-- task: Flow Control / routing / operations の整合を確認する
+- task: active-first execution 原則で operations 運用を 1 周試す
   source_ref:
-    - notes/02_design/2026-04-06_flow_control_and_usecase_architecture.md
-    - notes/02_design/standard_development_flow_v2.md
+    - notes/04_operations/active_operations.md
     - code/config/ai/adam_instruction.md
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
   rolling_day: Day0
   why_now:
-    - 主要 design と instruction の間にズレが残ると後続修正基準がぶれる
+    - ルールを入れただけでは実効性が分からないため、実運用で横入り防止と reroll 規律が成立するか確認する必要がある
   notes:
-    - intake routing / issue routing / operations rolling の接続を確認する
+    - 会話中に新規候補が出た場合の reroll 手順も含めて確認する
 
-## Day1（04/07 火）
+## Day1（04/08 水）
 
-- task: future_layer_operating_spec に残る旧用語と旧フローを現行モデルへ修正する
+- task: conversation routing を 1 件フルフローで実運用検証する
   source_ref:
-    - notes/02_design/2026-04-03_future_layer_operating_spec.md
-    - notes/02_design/2026-04-06_flow_control_and_usecase_architecture.md
-    - notes/02_design/standard_development_flow_v2.md
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+    - code/config/ai/adam_instruction.md
+    - notes/01_issues/idea_log.md
+    - notes/04_operations/active_operations.md
   rolling_day: Day1
   why_now:
-    - future の定義が他の設計の基準になるため、早めに揃える必要がある
+    - design と instruction への反映は完了したため、次は issue 起点 → 派生 → rolling → 保存の実地確認が必要である
   notes:
-    - intake review 系の旧表現を routing / review 分離へ揃える
-
-- task: standard_development_flow_v2 を現行 routing / rolling モデルへ更新する
-  source_ref:
-    - notes/02_design/standard_development_flow_v2.md
-    - notes/02_design/2026-04-06_flow_control_and_usecase_architecture.md
-    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
-  rolling_day: Day1
-  why_now:
-    - 全体フローの骨格文書を現行構造へ揃える必要がある
-  notes:
-    - future 定義、operations 候補生成、review 分離を反映する
-
-## Day2（04/08 水）
+    - 会話から出た論点を issue 中心で扱い、operations candidate の reroll を経て保存まで通す
 
 - task: classification_and_routing_spec の扱いを決める
   source_ref:
     - notes/02_design/classification_and_routing_spec.md
     - notes/02_design/2026-04-06_flow_control_and_usecase_architecture.md
-    - notes/01_issues/idea_log.md
-  rolling_day: Day2
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+  rolling_day: Day1
   why_now:
-    - 旧 routing 観点の設計を現行モデルへ残すか退避するか判断が必要
+    - conversation routing を formalize したことで、旧 routing spec を更新・archive・future のどれに送るか判断できる段階に入った
   notes:
-    - 更新・future・archive のどれに送るか決める
+    - 現行 routing 群との重複と残す価値を確認する
 
-## Day3（04/09 木）
+## Day2（04/09 木）
 
 - task: scoring knowledge の蓄積方針を dev_memo か design に整理する
   source_ref:
     - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
     - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
     - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
-  rolling_day: Day3
+  rolling_day: Day2
   why_now:
-    - 手動 rolling で得た迷いを知見化しないと後で失われる
+    - reroll 運用を始める前に、優先順位判断で生じる迷いをどこへ知見化するかを決める必要がある
   notes:
-    - scoring は補助であり、知見蓄積の対象として扱う
-
-## Day4（04/10 金）
+    - score は決定ではなく補助である前提を維持する
 
 - task: 手動 rolling 1周目で迷った点を抽出し、program に寄せる責務候補を整理する
   source_ref:
     - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
     - notes/02_design/2026-04-06_flow_control_and_usecase_architecture.md
     - code/config/ai/adam_instruction.md
-  rolling_day: Day4
+  rolling_day: Day2
   why_now:
-    - hybrid 実装前に、何を program 化すべきかを運用結果から切り出す必要がある
+    - reroll の実運用で program 側に寄せるべき判断点を見極めないと hybrid control の責務分離が進まない
   notes:
-    - 迷いの多い判断点を責務分離の候補にする
+    - 迷いの多い判断点を収集し、共通処理候補を切り出す
 
-## Day5（04/11 土）
+## Day3（04/10 金）
 
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/04_operations/active_operations.md
-    - notes/01_issues/idea_log.md
-  rolling_day: Day5
+    - notes/04_operations/next_operations.md
+  rolling_day: Day3
   why_now:
-    - 直近作業が Phase 0 をどう前進させているかを確認する必要がある
+    - conversation routing と active-first execution を入れた結果、直近作業が Phase 0 完了条件へどう効くかを再確認する必要がある
   notes:
-    - review 項目になる前に、operations 側の接続を見直す
+    - plan と operations の対応が読める状態に揃える
 
-## Day6（04/12 日）
+## Day4（04/11 土）
 
 - task: weekly review 前提で active / next / archive の更新準備をする
   source_ref:
     - notes/04_operations/active_operations.md
     - notes/04_operations/next_operations.md
     - notes/04_operations/archive_operations.md
+  rolling_day: Day4
+  why_now:
+    - active-first 運用試験の結果を weekly review に返すため、繰越・完了・snapshot の材料を整理する必要がある
+  notes:
+    - reroll で動いた差分をそのまま週次へ渡せる形にする
+
+## Day5（04/12 日）
+
+- task: docs 反映候補として execution governance 変更点を整理する
+  source_ref:
+    - code/config/ai/adam_instruction.md
+    - notes/04_operations/active_operations.md
+    - docs/13_dev_workflow.md
+    - docs/15_notes_system.md
+  rolling_day: Day5
+  why_now:
+    - instruction と operations で試験運用した結果を見てから docs へ反映する方針のため、候補整理を後段に置く
+  notes:
+    - active-first execution と reroll 原則の有効性・副作用を評価材料としてまとめる
+
+## Day6（04/13 月）
+
+- task: conversation routing と execution governance の試験結果を handover / report に返す準備をする
+  source_ref:
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+    - code/config/ai/adam_instruction.md
+    - notes/07_reports/daily/2026-04-06.md
   rolling_day: Day6
   why_now:
-    - 1回目の手動 rolling 結果を weekly review へ返す準備が必要
+    - 再開時に試験運用の結果と次判断が追えるように、返却先を先に意識して整理する必要がある
   notes:
-    - snapshot 保存と次週繰越の材料を揃える
+    - report / handover / docs 候補への返却観点を揃える
 
 ---
 
