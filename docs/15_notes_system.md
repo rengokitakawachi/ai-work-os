@@ -49,19 +49,16 @@ docs 更新前に design を経由する
 
 ## レイヤー構造
 
-notes には、情報の状態と位置づけを区別するために
-以下のレイヤー区分を設ける。
+notes は時間軸と状態に基づいて以下に分かれる。
 
 - active layers  
   今扱っている情報
 
 - 80_future  
-  今は扱わないが、将来扱う可能性がある情報
+  将来扱う可能性がある情報（時間軸レイヤー）
 
 - 99_archive  
   役目を終えた情報
-
-これらは遷移順を表すものではない。
 
 ---
 
@@ -147,11 +144,10 @@ roadmap と operations の中間に位置する。
 
 短期実行順の正本。
 
-今何をやるかを管理する。
+operations は単なる task 一覧ではなく、
+rolling（生成・優先順位づけ・配置）によって生成される。
 
 #### operations モデル
-
-operations は以下のファイル構造を持つ
 
 - active_operations.md  
   Day0〜Day6 を持つ 7日ローリングの正本
@@ -162,9 +158,10 @@ operations は以下のファイル構造を持つ
 - archive_operations.md  
   今週の完了タスクの一時アーカイブ
 
-operations は future には置かない。
+#### 特徴
 
-archive_operations は weekly review で snapshot 保存する。
+- operations は future には置かない
+- archive_operations は weekly review で snapshot 保存する
 
 ---
 
@@ -192,7 +189,7 @@ archive_operations は weekly review で snapshot 保存する。
   当日の実行、意思決定、学び、次アクション
 
 - weekly  
-  roadmap / plan / operations の整合確認と方針整理
+  roadmap / plan / operations / future の整合確認と方針整理
 
 - monthly  
   全体進捗と構造の見直し
@@ -210,7 +207,9 @@ reports は review と強く結びつく。
 ### 09_content
 
 将来の記事執筆や発信のための素材、ネタ、記事ドラフトを蓄積するレイヤー。
-日々の設計、実装、振り返りから、あとで記事化できる論点や学びを保存する。
+
+日々の設計、実装、振り返りから、
+あとで記事化できる論点や学びを保存する。
 
 ---
 
@@ -222,22 +221,40 @@ reports は review と強く結びつく。
 
 ### 80_future
 
+時間軸レイヤー。
+
 将来扱う可能性があるが、
-現時点では扱わない情報を保持するレイヤー。
+現時点では active ではない要素を保持する。
 
-#### 基本構成
+#### 構造
 
-80_future/
-plan/
-inbox/
+future/
+  inbox/
+  issue/
+  design/
+  plan/
 
-- plan  
-  deferred な plan
+#### 定義
 
-- inbox  
-  将来向け未整理入力
+- future/inbox  
+  将来向け未整理入力  
+  - web  
+  - dev_memo  
+  
+- future/issue  
+  将来扱う課題
 
-future は archive ではない。
+- future/design  
+  将来扱う設計
+
+- future/plan  
+  将来実行する計画
+
+#### 特徴
+
+- routing の結果として生成される
+- operations に入らなかった要素の主要な行き先
+- archive とは異なる
 
 ---
 
@@ -256,50 +273,41 @@ notes/99_archive/operations/
 ### intake routing
 
 未整理入力を構造化し、
-適切なレイヤーへ振り分ける。
 
 - issue
 - design
 - plan
 - future
+- archive
 
-今扱わないものは future へ送る。
-
----
-
-### issue からの展開
-
-issue は以下の流れで展開される
-
-issue
-↓
-design
-↓
-plan
-↓
-operations
-
-すべてがこの順序を必須とするわけではないが、
-基本的な昇格経路とする。
+へ振り分ける。
 
 ---
 
-## operations 運用
+### operations rolling
 
-- operations は短期実行順の正本
-- active / next / archive_operations の3構造を持つ
-- future には置かない
-- weekly review で archive_operations を snapshot 保存する
+複数の流入元から候補を収集し、
+
+- generation
+- ranking
+- placement
+
+を一体で行い、
+
+- active_operations
+- next_operations
+- archive_operations
+
+を生成する。
 
 ---
 
-## reports 運用
+### review
 
-- daily：実行と記録
-- weekly：整合確認と再編
-- monthly：構造見直し
-
-reports は operations と連動する。
+- daily review: operations 更新
+- weekly review: plan / operations / future 調整
+- monthly review: 全体整合
+- design review: design の継続 / 昇格 / future / archive 判断
 
 ---
 
