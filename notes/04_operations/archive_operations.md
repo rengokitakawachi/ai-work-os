@@ -30,6 +30,14 @@ weekly review までの短期履歴置き場であり、
 - `docs/17_operations_system.md` を新 operations モデルへ更新した
 - `operations_generation_rules.md` の役割を rolling spec へ統合し、`notes/99_archive/design/operations_generation_rules.md` へ移動した
 
+--- 再構築に伴うアーカイブ ---
+
+- active_operations を schema 準拠で再構築した（再構築により置換）
+- next_operations を schema 準拠で再構成した（旧版・再構築前）
+- Flow Control / routing / operations の整合を確認した（初期整合作業）
+- future_layer_operating_spec に残る旧用語修正（進展済み）
+- standard_development_flow_v2 更新（進展済み）
+
 ---
 
 ## ルール
