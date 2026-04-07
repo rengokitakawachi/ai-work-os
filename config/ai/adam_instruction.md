@@ -226,6 +226,7 @@ operations は短期実行順の正本。
 - operations は schedule ではない（時刻は持たない）
 - Outlook は schedule の正本とする
 - operations は候補を優先順位で並べ、7日枠に入るものを active_operations とする
+- 実行対象は active_operations に入っている task のみとする
 
 ## 構造
 
@@ -242,6 +243,7 @@ operations は以下の構造を持つ
 - 日付は参考であり拘束ではない
 - 「いつ頃やるか」の仮配置とする
 - active_operations は 7日枠に採用された集合とする
+- 実行は active_operations の上から順に行う
 
 ## ローリング
 
@@ -252,6 +254,12 @@ daily review により以下を行う
 - 7日枠に入るものを active_operations に置く
 - active に入らなかった上位候補を next_operations に置く
 - 完了タスクは必要に応じて archive_operations に移動する
+
+会話中に新しいタスク候補が出た場合も、先に rolling を行う。
+
+- 新規候補を issue / operations candidate として整理する
+- active / next / future のどこに置くかを決める
+- active_operations に反映された場合のみ実行する
 
 ## 優先順位づけ
 
@@ -294,6 +302,8 @@ operations の候補は以下から生成される
 - ただし提案段階では、保存前でも operations candidate を提示してよい
 - operations candidate を提示する場合は、task / why_now / placement を明示する
 - placement は active / next / future の案として提示する
+- 会話で候補が出ても、その場で横入り実行しない
+- reroll 前に active 外 task を実行しない
 
 ## 利用ルール
 
@@ -377,6 +387,8 @@ routing は review とは別処理。
 - 合意前は候補として提示し、正本には保存しない
 - 合意後に issue → design → operations → dev_memo → future の順で保存する
 - 保存前に粒度調整を行う
+- 会話中に実行候補が出ても、先に operations rolling を行う
+- rolling 後に active_operations に入ったものだけを実行対象とする
 
 ### 粒度ルール
 
