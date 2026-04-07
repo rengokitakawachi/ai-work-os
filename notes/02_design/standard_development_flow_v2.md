@@ -13,17 +13,15 @@ inbox
 ↓  
 intake routing  
 ↓  
-archive（同一構造で移動）  
-↓  
 
 routing による分岐  
 
-A: 今やる  
+A: 今扱う  
   → issue  
-  → design  
-  → operations候補生成  
+  → issue routing  
+  → design / plan / operations / future / archive  
 
-B: 今やらない  
+B: 今は扱わない  
   → future  
 
 C: 役目終了  
@@ -31,7 +29,18 @@ C: 役目終了
 
 ↓  
 
-operations rolling（順位づけ）  
+operations rolling  
+  - candidate collection
+  - normalization
+  - generation 条件判定
+  - decomposition
+  - helper scoring
+  - ranking
+  - placement
+
+↓  
+
+active_operations / next_operations / archive_operations  
 
 ↓  
 
@@ -39,7 +48,11 @@ operations rolling（順位づけ）
 
 ↓  
 
-docs / code  
+review  
+
+↓  
+
+docs / code
 
 ---
 
@@ -66,9 +79,26 @@ docs / code
 
 ---
 
+### plan
+
+一定期間の重点テーマを保持するレイヤー。
+
+roadmap と operations の中間に位置する。
+
+---
+
 ### operations
 
-実行対象を管理するレイヤー。
+短期実行順を管理するレイヤー。
+
+operations は単なる task 一覧ではなく、
+候補生成・優先順位づけ・配置を経て生成される短期実行正本とする。
+
+構造:
+
+- active_operations
+- next_operations
+- archive_operations
 
 ---
 
@@ -104,7 +134,8 @@ future の要素は現時点では active ではないが、
 
 過去の状態を保持するレイヤー。
 
-- active のスナップショットとして保存
+- 役目を終えた要素を保持する
+- snapshot として保存する
 - 実行対象ではない
 - 再活性化対象でもない（参照専用）
 
@@ -138,9 +169,12 @@ future の要素は現時点では active ではないが、
 2. 設計対象か  
   → design候補  
 
-3. 今やるか  
-  → yes: issue / design  
+3. 今扱うか  
+  → yes: issue / design / plan  
   → no: future  
+
+4. 役目終了か  
+  → archive  
 
 ---
 
@@ -158,9 +192,10 @@ issue を plan / operations / design / future / archive へ送る。
 
 ---
 
-## operations 候補生成
+## operations rolling
 
-operations 候補は、単一ルートではなく複数の流入元から生成される。
+operations は、単一ルートではなく複数の流入元から候補を集め、
+generation / ranking / placement を一体で行って生成する。
 
 主な流入元:
 
@@ -170,30 +205,32 @@ operations 候補は、単一ルートではなく複数の流入元から生成
 - dev_memo
 - 会話
 - review
+- inbox（必要に応じて）
 
-補足:
-
-- issue / design は主要な流入元だが、それだけに限定しない
-- plan 直結の短期実行候補もある
-- review による再配置や、会話・dev_memo 起点の候補化もありうる
-
----
-
-## operations rolling
-
-収集した候補を優先順位で並べ、7日枠に入るものを active_operations とする。
-
-フロー:
+### フロー
 
 operations 候補収集  
 ↓  
-優先順位づけ  
+normalization  
 ↓  
-7日枠に入るもの  
-= active_operations  
+generation 条件判定  
+↓  
+decomposition  
+↓  
+helper scoring  
+↓  
+ranking（相対順位）  
+↓  
+placement（7日枠）  
+↓  
+active_operations / next_operations / archive_operations
 
-残りの上位候補  
-= next_operations  
+### 原則
+
+- operations は候補を優先順位で並べ、7日枠に入るものを active_operations とする
+- active に入らなかった上位候補を next_operations に置く
+- スコアは補助であり、決定ではない
+- generation / ranking / placement は分けずに一体処理として扱う
 
 ---
 
@@ -205,7 +242,7 @@ future/inbox
 ↓  
 intake routing 再実行  
 ↓  
-issue / design / future  
+issue / design / plan / future / archive  
 
 ### issue / design 系
 
@@ -233,6 +270,13 @@ review は進行中資産の見直しと再判定を担う。
 - weekly review: plan / operations / future 調整
 - monthly review: roadmap / phase 整合
 - design review: design の継続 / 昇格 / future / archive 判断
+
+また、operations の実行結果を上位へ返す役割を持つ。
+
+- plan 更新
+- roadmap 補正候補
+- issue close / split
+- design 更新
 
 ---
 
@@ -263,6 +307,7 @@ review は進行中資産の見直しと再判定を担う。
 - routing と review を分離する
 - issue / design を直接実行しない
 - operations のみ実行対象とする
+- operations は rolling によって生成する
 - inbox は常に空に戻す
 
 ---
