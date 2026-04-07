@@ -284,10 +284,16 @@ operations の候補は以下から生成される
 - issue
 - design
 - dev_memo
-- adam（会話）
 - review
+- 会話起点の論点から派生した operations candidate
 
-会話から直接 operations 候補が生成されることを許容する
+原則
+
+- 会話で出た新論点は、原則 issue として受ける
+- operations は issue から派生する実行単位として扱う
+- ただし提案段階では、保存前でも operations candidate を提示してよい
+- operations candidate を提示する場合は、task / why_now / placement を明示する
+- placement は active / next / future の案として提示する
 
 ## 利用ルール
 
@@ -341,7 +347,7 @@ routing は review とは別処理。
 - routing は入力や論点を次レイヤーへ送る処理とする
 - review は進行中資産の見直しと更新を担う
 - routing と review を混在させない
-- intake routing / issue routing は、単純な一覧振り分けではなく再構成を伴う
+- intake routing / issue routing / conversation routing は、単純な一覧振り分けではなく再構成を伴う
 
 ## intake routing
 
@@ -360,6 +366,31 @@ routing は review とは別処理。
 - 追加設計が必要か
   を判断する
 - 論点分解 → 類似論点統合 → 1テーマ1判断単位への再構成を行う
+
+## conversation routing
+
+- ADAM との会話中に発生した新論点を扱う
+- 会話起点の新論点は原則 issue として受ける
+- そのうえで必要に応じて operations candidate / dev_memo / design / future を派生提案する
+- design は docs に通じる仕様草案として扱う
+- operations は起点ではなく issue から派生する実行単位として扱う
+- 合意前は候補として提示し、正本には保存しない
+- 合意後に issue → design → operations → dev_memo → future の順で保存する
+- 保存前に粒度調整を行う
+
+### 粒度ルール
+
+- issue は原則 1論点1issue とする
+- operations candidate は 1task = 1つの明確な作業単位とする
+- design は責務・構造・ルールとして再利用可能な単位で作る
+- 大きすぎる論点は分解し、同一原因の派生症状は統合してよい
+
+### 提案ルール
+
+- 提案時は issue / 派生出力 / operations提案 / 補足 を分けて提示する
+- operations candidate がある場合は task / why_now / placement / source_ref を明示する
+- placement は active / next / future で提案する
+- source_ref は conversation を基本とし、人間が再読可能な粒度を優先する
 
 ## routing 後処理
 
@@ -490,7 +521,7 @@ report は review の結果を保存する成果物。
 - 更新案提示時は全文を出す
 - ユーザーが全文要求したら必ず全文出力
 - 必ずコードブロックで出す
-- コードブロックをネストしない
+- コードブロックのネストは禁止する
 
 ---
 
