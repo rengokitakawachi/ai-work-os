@@ -2,158 +2,227 @@
 
 ## 目的
 
-ADAM との会話中に新たな問題、設計論点、実行候補が発生したとき、
-それを構造的に扱うための標準フローを定義する。
+ADAM との会話中に新たな課題・設計論点・実行候補が発生したとき、
+それを notes システムの構造に沿って一貫して扱うための標準フローを定義する。
 
 ---
 
 ## 結論
 
-会話中に新論点が発生した場合、以下のフローで扱う。
+会話起点の論点は、原則として issue として受ける。
+
+そのうえで、必要に応じて以下を派生生成する。
+
+- operations candidate（実行単位）
+- dev_memo（詳細記録）
+- design（解決策の構造化）
+- future（時間軸的に後回し）
+
+---
+
+## 全体フロー
 
 ```text
-会話で新論点発生
+会話
 ↓
-candidate 抽出
+論点抽出
 ↓
-主分類判定
+issue として課題定義
 ↓
 派生出力判定
+  - operations candidate
+  - dev_memo
+  - design
+  - future
 ↓
 （operations candidate がある場合）rolling 提案
 ↓
+提案提示（未保存）
+↓
 合意
 ↓
-保存
-↓
-継続
+保存（複数レイヤー）
 ```
 
 ---
 
-## 主分類と派生出力
+## issue（主入口）
+
+### 定義
+
+会話から抽出された「何が問題か」「何を課題として扱うか」を保持する。
 
 ### 原則
 
-- 分類は単一選択ではない
-- 主分類を決めた上で、必要に応じて複数レイヤーへ展開する
-
----
-
-## 主分類
-
-以下から1つを主分類として選ぶ。
-
-- issue
-- design
-- dev_memo
-- operations candidate
-- future candidate
+- 会話起点の新論点は、原則 issue として受ける
+- 曖昧な段階でも issue として保持する
+- いきなり design や operations に直接落とさない
 
 ---
 
 ## 派生出力
 
-主分類とは別に、必要に応じて以下を追加生成してよい。
-
-- issue
-- design
-- operations candidate
-- future
-
----
-
-## 分類ルール
-
-### issue
-
-何が問題かを保持する。
-
----
-
-### design
-
-どう解くかを構造化する。
-
----
-
-### dev_memo
-
-まだ固定しない観察と思考断片。
+issue を起点として、以下を必要に応じて生成する。
 
 ---
 
 ### operations candidate
 
-rolling にかける実行候補。
+#### 定義
 
-重要:
+短期実行順へ接続可能な実行単位。
 
-operations candidate は終点ではない。
-必要に応じて issue や design を並行して生成する。
+#### 生成条件
 
----
+- 実行可能粒度である
+- 明確な対象がある
+- 1セッションで進められる
 
-### future candidate
+#### 原則
 
-今ではないが将来扱う可能性があるもの。
-
----
-
-## 判断ロジック
-
-ADAM は以下の順で判断する。
-
-1. 主分類を決定する
-2. 派生出力が必要かを判定する
-
-### 例
-
-#### パターン1
-
-- 主: operations candidate
-- 派生: なし
-
-#### パターン2
-
-- 主: issue
-- 派生: operations candidate
-
-#### パターン3
-
-- 主: design
-- 派生: operations candidate + issue
+- operations は起点ではなく issue から派生する
+- operations candidate は rolling に接続される
 
 ---
 
-## operations candidate の扱い
+### dev_memo
 
-operations candidate が存在する場合は必ず以下を行う。
+#### 定義
 
-1. candidate として提示する
-2. why_now を明示する
-3. source_ref を整理する
-4. active / next / future の配置案を提示する
-5. rolling 提案を行う
+詳細に記録して残すべき観察・思考・判断材料。
+
+#### 生成条件
+
+- 後で参照価値がある
+- 即時構造化しないが消すべきではない
+- 比較・迷い・仮説が含まれる
+
+#### 原則
+
+- issue / design を補助するレイヤーとして扱う
+- 正本ではない
 
 ---
 
-## 保存原則
+### design
+
+#### 定義
+
+issue に対する解決策を構造化したもの。
+
+#### 特性
+
+- docs に通じる仕様草案である
+- 責務・構造・ルールを持つ
+
+#### 生成条件
+
+- 解決策が構造として整理されている
+- 再利用可能な形で説明できる
+
+#### 原則
+
+- design は乱発しない
+- issue を経由して昇格する
+
+---
+
+### future
+
+#### 定義
+
+現時点では扱わないが、将来扱う可能性があるもの。
+
+#### 条件
+
+- 今は優先度が低い
+- 前提条件が未整備
+- phase が異なる
+
+---
+
+## operations 接続
+
+operations candidate がある場合、必ず以下を行う。
+
+```text
+- task 明示
+- source_ref 設定（会話起点）
+- why_now 明示
+- placement 案提示（active / next / future）
+- rolling 提案
+```
+
+---
+
+## 提案フェーズ（未保存）
+
+### 原則
+
+- この段階では正本に書き込まない
+- すべて候補として提示する
+
+### 提案フォーマット
+
+```text
+[issue]
+- xxx
+
+[派生出力]
+- operations:
+- dev_memo:
+- design:
+- future:
+
+[operations提案]
+- task:
+- why_now:
+- placement:
+```
+
+---
+
+## 保存ルール
 
 ### 合意前
 
+- 保存しない
 - 候補として扱う
-- 正本に書き込まない
 
 ### 合意後
 
-- 各レイヤーへ保存する
-- operations は rolling 結果を反映する
+以下の順で保存する。
+
+```text
+1. issue
+2. design（ある場合）
+3. operations（rolling 反映）
+4. dev_memo（必要に応じて）
+5. future（必要に応じて）
+```
+
+---
+
+## source_ref
+
+```text
+type: conversation
+thread_id: xxx
+message_range: xxx
+```
+
+---
+
+## 他usecaseとの関係
+
+| usecase | 役割 |
+|--------|------|
+| intake routing | 未整理入力の構造化 |
+| issue routing | issue の再配置 |
+| conversation routing | 新規論点の生成 |
 
 ---
 
 ## 一文定義
 
-会話起点の論点は、主分類と派生出力を分離して扱い、
-必要に応じて複数レイヤーへ展開し、
-operations candidate は rolling を経て正本へ反映する。
+会話起点の論点は原則 issue として受け、そこから operations / dev_memo / design / future を派生生成し、operations は rolling を経て短期実行順へ接続する。
