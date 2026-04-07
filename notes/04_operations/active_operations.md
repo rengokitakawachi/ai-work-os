@@ -128,7 +128,8 @@
 
 ## ルール
 
-- 上から順に実行優先度とする
+- 実行対象は active_operations に入っている task のみとする
+- 実行は上から順に行う
 - Day は仮配置であり固定日付ではない
 - 日付と曜日は人間可読性のために付与する
 - 日付表示は daily review 時に更新する
@@ -137,6 +138,9 @@
 - operations は候補を優先順位で並べ、7日枠に入るものを active_operations とする
 - active に入らなかった上位候補を next_operations に置く
 - スコアは補助であり、決定ではない
+- 会話中に新規タスク候補が発生した場合は、先に operations rolling を行う
+- 新規候補は active / next / future のどこに置くか決めてから扱う
+- reroll 前に active 外タスクを実行しない
 - 未完了タスクは翌日以降へ移動する
 - 完了タスクは必要に応じて archive_operations に移す
 - Phase 0 中は Flow Control / routing / operations の実運用整合を優先する
