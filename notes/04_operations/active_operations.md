@@ -2,18 +2,6 @@
 
 ## Day0（04/07 火）
 
-- task: next_operations を schema 準拠で再構成する
-  source_ref:
-    - notes/02_design/2026-04-06_operations_task_schema.md
-    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
-    - notes/04_operations/next_operations.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day0
-  why_now:
-    - active 側の実行原則を固定したため、次候補プール側も同じ schema と運用前提へ揃える必要がある
-  notes:
-    - task / source_ref を必須として再確認し、近未来候補としての位置づけを明確にする
-
 - task: active-first execution 原則で operations 運用を 1 周試す
   source_ref:
     - notes/04_operations/active_operations.md
