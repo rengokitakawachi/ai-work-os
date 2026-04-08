@@ -12,6 +12,19 @@ active_operations に入らなかった上位候補を保持する。
 
 ## タスク
 
+- task: latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する
+  source_ref:
+    - notes/06_handover/2026-04-08_17-30-00_summary.md
+    - notes/04_operations/active_operations.md
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+    - code/config/ai/adam_instruction.md
+    - notes/01_issues/idea_log.md
+  why_now:
+    - 再開時に handover と active のどちらをどう読むかが揺れると、active-first execution と次作業選定の整合が崩れるため、近い将来の設計整理候補として保持する必要がある
+  notes:
+    - handover の next action を active task の未完部分として読める条件を明確にする
+    - 競合時に active / next / future のどこへ送るかの判断も含める
+
 - task: ADAM で試す 05_decisions の最小運用モデルを design に整理する
   source_ref:
     - notes/05_decisions/README.md
