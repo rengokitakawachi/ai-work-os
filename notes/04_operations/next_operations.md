@@ -12,6 +12,16 @@ active_operations に入らなかった上位候補を保持する。
 
 ## タスク
 
+- task: ADAM で試す 05_decisions の最小運用モデルを design に整理する
+  source_ref:
+    - notes/05_decisions/README.md
+    - notes/01_issues/idea_log.md
+    - notes/04_operations/active_operations.md
+  why_now:
+    - EVE 本実装前に decision の集約モデルを ADAM で試す方針が出たため、抽出元、集約先、最小 schema、相互参照の設計を先に整理する必要がある
+  notes:
+    - docs / issue / design / plan / operations / dev_memo を紐づけ元とする前提で整理する
+
 - task: stale active の整合回復ルールを design に整理する
   source_ref:
     - notes/00_inbox/dev_memo/2026-04-08_active_first_execution_trial.md
