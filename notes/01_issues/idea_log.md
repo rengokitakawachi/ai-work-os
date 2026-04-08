@@ -37,3 +37,14 @@
 - impact: high
 - status: open
 - created_at: 2026-04-06
+
+### 20260408-010
+- title: stale な active_operations を先に整合回復してから先頭 task を実行する補足ルールが必要
+- category: operating_model
+- description: active-first execution 原則の試験運用により、latest handover では完了済みの task が active 先頭に残る stale 状態が発生しうることが判明した。この場合、そのまま先頭 task を実行すると operations 正本との整合が崩れ、active-first execution 自体が形骸化する。したがって、再開時または実行開始時に active 先頭が stale と判定された場合は、先に active_operations の整合回復を行い、その後に現時点の先頭 task を実行する補足ルールが必要である。
+- context: 2026-04-08 の再開セッションでは、`next_operations.md` 再構成が handover / archive で完了扱いだった一方、`active_operations.md` では同 task が Day0 先頭に残っていた。この不整合を解消したうえで初めて、Day0 の実際の先頭 task として `active-first execution 原則で operations 運用を 1 周試す` を実行対象に確定できた。今回の観察から、reroll before execution 原則とは別に、stale active の整合回復を先に行う前処理ルールが必要だと分かった。
+- related_dev_memo:
+  - notes/00_inbox/dev_memo/2026-04-08_active_first_execution_trial.md
+- impact: medium
+- status: open
+- created_at: 2026-04-08
