@@ -48,3 +48,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-08
+
+### 20260408-011
+- title: EVE 前提の decision 抽出履歴モデルを ADAM で先行試験する必要がある
+- category: operating_model
+- description: 一般業務では、過去に「なぜそう判断したか」「何を前提にしたか」「他にどんな案があったか」を後からたどれることが重要である。そのため、EVE では docs / issue / design / plan / operations / dev_memo を紐づけ元とする重要判断の抽出履歴を `notes/05_decisions/` に集約するモデルが必要になる可能性が高い。いきなり EVE に実装するのではなく、まずは ADAM で最小運用モデルを試す必要がある。
+- context: 現状の `notes/05_decisions/README.md` は意思決定ログの役割を示しているが、抽出元、集約先、相互参照、最小 schema、保存条件までは整理されていない。一方、operations 運用強化や conversation routing の実運用を進める中でも、重要な判断を後から追える構造の必要性が見えてきた。EVE に広げる前に、ADAM で 05_decisions の最小運用モデルを定義し、実際の判断を少数件で試すのが自然である。
+- impact: medium
+- status: open
+- created_at: 2026-04-08
