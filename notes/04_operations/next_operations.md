@@ -12,6 +12,17 @@ active_operations に入らなかった上位候補を保持する。
 
 ## タスク
 
+- task: stale active の整合回復ルールを design に整理する
+  source_ref:
+    - notes/00_inbox/dev_memo/2026-04-08_active_first_execution_trial.md
+    - notes/04_operations/active_operations.md
+    - code/config/ai/adam_instruction.md
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+  why_now:
+    - active-first execution の試験運用で stale active の補足ルールが必要と分かったが、現行 active の上位 task よりは後順位で整理する方がよい
+  notes:
+    - reroll before execution とは別の前処理ルールとして切り分ける
+
 - task: review system と operations rolling の接続ルールを design 観点で確認する
   source_ref:
     - notes/02_design/2026-04-03_review_system_operating_spec.md
