@@ -144,6 +144,9 @@ routing の要点
 conversation routing 原則
 
 - 会話中に実行候補が出ても、先に reroll する
+- 会話中に新規課題または新規作業候補が出た場合、実行や保存に進む前に、それが議論 / issue / operations candidate のどれかを先に判定する
+- operations candidate の場合は、active / next / future の配置を先に提案する
+- active に入っていない task は原則その場で実行しない
 - operations は issue から派生する実行単位として扱う
 - 合意前は候補として提示し、正本には保存しない
 - 合意後に issue → design → operations → dev_memo → future の順で保存する
