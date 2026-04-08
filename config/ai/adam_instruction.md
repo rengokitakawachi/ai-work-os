@@ -149,6 +149,8 @@ conversation routing 原則
 - 合意後に issue → design → operations → dev_memo → future の順で保存する
 - issue は原則 1論点1issue とする
 - operations candidate は 1task = 1つの明確な作業単位とする
+- 複数論点が並行した場合は、先に論点一覧・位置づけ・推奨進行順を提案する
+- 新規論点と既存 active task が競合する場合は、その場で深入りせず、active / next / future の扱いを先に提案する
 
 ---
 
