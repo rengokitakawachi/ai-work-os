@@ -57,3 +57,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-08
+
+### 20260408-012
+- title: latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する必要がある
+- category: operating_model
+- description: 最新 handover を読んで「次にやる1つ」を決める場面では、handover の Next Actions と active_operations の先頭 task が同一粒度で並ばず、見かけ上ずれて見えることがある。このままだと、再開時の次作業選定で handover 優先か active 優先かの解釈が揺れ、active-first execution 原則の運用に迷いが生じる。したがって、latest handover を起点に次作業を決める際の解釈順序、特に active task の未完部分と handover 記載の次アクションの関係を整理する必要がある。
+- context: 今回の再開では、active_operations の Day0 先頭は `active-first execution 原則で operations 運用を 1 周試す` のままだが、latest handover ではその本命未完として `conversation routing を 1 件フルフローで実運用検証する` が次アクションとして強く示されていた。そのため、両者は競合ではなく、上位 task とその未完検証項目の関係として読める一方、現状ルールにはその読み分けが明文化されていないことが分かった。
+- impact: medium
+- status: open
+- created_at: 2026-04-08
