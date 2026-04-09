@@ -214,6 +214,7 @@ export async function createTask(input, context = {}) {
   const body = {
     content: input.content,
     ...(input.description ? { description: input.description } : {}),
+    ...(input.project_id ? { project_id: input.project_id } : {}),
     ...(input.due_string ? { due_string: input.due_string } : {}),
     ...(Array.isArray(input.labels) && input.labels.length > 0
       ? { labels: input.labels }
