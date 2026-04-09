@@ -37,7 +37,7 @@ Todoist と domain / strategy / operations 相当の正本との
 - ADAM が operations 正本を更新する主体とする
 - Todoist 側の更新を operations 正本へ自動反映しない
 - 今回は片方向 projection とする
-- projection の対象操作は create / update / close とする
+- projection の対象操作は create / update / close / delete とする
 - 外部サービス固有仕様は service / adapter に閉じる
 
 ---
@@ -49,6 +49,7 @@ Todoist と domain / strategy / operations 相当の正本との
 - create
 - update
 - close
+- delete
 
 ### 対象データ
 
@@ -71,7 +72,7 @@ Todoist と domain / strategy / operations 相当の正本との
 - まずは軽く始める方が安全
 - active は実行対象として意味が明確
 - next まで含めると投影量と更新頻度が増える
-- create / update / close の基本挙動確認を先に優先する
+- create / update / close / delete の基本挙動確認を先に優先する
 
 ---
 
@@ -80,7 +81,6 @@ Todoist と domain / strategy / operations 相当の正本との
 - Todoist → operations の自動反映
 - 双方向同期
 - webhook / polling による逆方向同期
-- delete 同期
 - 高度な競合解決
 - 親子関係の高度対応
 - due / priority / duration の完全同期
@@ -105,7 +105,7 @@ Todoist と domain / strategy / operations 相当の正本との
 
 - operations 正本を更新する
 - 必要に応じて Todoist への投影を指示する
-- create / update / close のどれを行うか決める
+- create / update / close / delete のどれを行うか決める
 - 片方向制約を維持する
 
 ### Todoist 側の役割
@@ -119,7 +119,7 @@ Todoist と domain / strategy / operations 相当の正本との
 - Todoist API パラメータへの変換
 - 外部 ID 管理
 - 二重作成防止
-- update / close 実行
+- update / close / delete 実行
 - エラー処理
 - Todoist 固有仕様の吸収
 
@@ -130,7 +130,7 @@ Todoist と domain / strategy / operations 相当の正本との
 operations → Todoist projection とは、
 ADAM が更新した operations 正本の task を、
 Todoist execution view に
-片方向で create / update / close 反映することである。
+片方向で create / update / close / delete 反映することである。
 
 ---
 
@@ -167,7 +167,7 @@ operations task 本文に近接して保持する。
 ### 方針
 
 - `todoist_task_id` は operations task 本文の `external` に保持する
-- create 後の update / close は `external.todoist_task_id` を主キーとして扱う
+- create 後の update / close / delete は `external.todoist_task_id` を主キーとして扱う
 - 今回のプロトタイプでは `external` を最小に保ち、補助状態は持たない
 - 将来の EVE でも operations と Todoist task 管理が密接につながる前提を優先する
 
@@ -195,7 +195,7 @@ rolling 時の追従更新コストはあるが、
 
 理由は以下。
 
-- create / update / close の最小プロトタイプ成立に不要
+- create / update / close / delete の最小プロトタイプ成立に不要
 - Todoist task ID があれば対象特定は十分できる
 - 補助状態を先に持つと schema と更新処理が重くなる
 - 必要になった時点で後から追加しても破綻しにくい
@@ -292,7 +292,7 @@ ref: notes/04_operations/active_operations.md
 - active_operations に存在する task である
 - external.todoist_task_id が設定済み
 - title / description / status に変更がある
-- close 条件に該当しない
+- close / delete 条件に該当しない
 
 ### close 条件
 
@@ -301,12 +301,30 @@ ref: notes/04_operations/active_operations.md
 - かつ operations 上で完了扱いになった
 - external.todoist_task_id が設定済み
 
-### close 条件の補足
+### delete 条件（現行プロトタイプ）
 
-active から外れたことだけでは close しない。
+- 前回は active に存在した
+- 今回は active から外れた
+- operations 上で完了扱いではない
+- external.todoist_task_id が設定済み
 
-順位変更や繰越で active 外になっただけの task は、
-Todoist 上で即 close しない。
+### 補足
+
+現行プロトタイプでは、
+Todoist の execution view は active を映す面として扱う。
+
+そのため、
+完了以外の理由で active から外れた task も、
+Todoist 上では削除対象とする。
+
+### 将来運用への拡張方針
+
+将来、投影対象を `active + next` に広げた場合は
+以下のルールへ拡張する。
+
+- active + next から外れたら delete
+- active ⇔ next の移動では delete しない
+- 完了して外れた場合は close を優先する
 
 ---
 
@@ -369,7 +387,7 @@ operations 正本の更新主体は ADAM に限定する。
 - ADAM が operations rolling を行う
 - active_operations が更新される
 - rolling 後の active task に対して projection 条件を判定する
-- 条件を満たす場合は、そのまま続けて Todoist に create / update / close を反映する
+- 条件を満たす場合は、そのまま続けて Todoist に create / update / close / delete を反映する
 
 これは完全自動同期ではない。
 
@@ -380,7 +398,7 @@ operations 正本の更新主体は ADAM に限定する。
 ### 採用理由
 
 - active の確定点が rolling だから
-- create / update / close 判定を一箇所に集約できる
+- create / update / close / delete 判定を一箇所に集約できる
 - active のみ対象なら誤投影範囲も限定できる
 - 日常運用の区切りとして分かりやすい
 - まずは最小の実運用価値を早く出せる
@@ -424,6 +442,17 @@ active から外れた task を確認
 その task が operations 上で完了扱いなら
 Todoist close
 
+### delete
+
+operations rolling
+↓
+前回 active と今回 active を比較
+↓
+active から外れた task を確認
+↓
+その task が operations 上で未完了なら
+Todoist delete
+
 ---
 
 ## operations に external を持つ理由
@@ -438,7 +467,7 @@ operations task 本文に持たせる方が自然である。
 理由は以下。
 
 - task と外部 Todoist task の対応が一箇所で見える
-- create 後の update / close 判定が単純になる
+- create 後の update / close / delete 判定が単純になる
 - 別 state ファイルとの突合が不要になる
 - EVE へ移植する際のモデル連続性が高い
 - operations を execution 正本として扱う考えと整合しやすい
@@ -456,7 +485,7 @@ Todoist 固有仕様を service / adapter に閉じる。
 - Todoist client
 - operations task → Todoist payload 変換
 - operations task 内 `external.todoist_task_id` の読取 / 書込
-- create / update / close の分岐
+- create / update / close / delete の分岐
 
 今回の design では、
 具体 API 形状までは固定しない。
@@ -495,20 +524,15 @@ Todoist 固有仕様を service / adapter に閉じる。
 - active_operations の task を Todoist に create できる
 - active_operations の更新を Todoist に update できる
 - active_operations の完了を Todoist に close できる
+- active から外れた未完了 task を Todoist から delete できる
 - 二重作成を最低限防げる
 - Todoist を正本にしない運用が維持できる
 - 将来の双方向同期方針と矛盾しない
 
 ---
 
-## 未決事項
-
-- active から外れた未完了 task を Todoist 上でどう扱うか
-
----
-
 ## 次に落とす作業
 
 - operations task から Todoist payload への変換項目を確定する
-- create / update / close の最小 service インターフェースを切る
+- create / update / close / delete の最小 service インターフェースを切る
 - active の 1 task で rolling 起点の半自動投影を試す
