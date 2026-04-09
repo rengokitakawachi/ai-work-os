@@ -352,6 +352,65 @@ components:
             - open
             - closed
 
+    OperationTaskSchema:
+      type: object
+      additionalProperties: true
+      properties:
+        task:
+          type: string
+        source_ref:
+          type: array
+          items:
+            type: string
+        rolling_day:
+          type: string
+        why_now:
+          type: array
+          items:
+            type: string
+        notes:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+        completed:
+          type: boolean
+        external:
+          type: object
+          additionalProperties: true
+          properties:
+            todoist_task_id:
+              type: string
+
+    ProjectTasksRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - target
+        - mode
+        - current_active_tasks
+      properties:
+        target:
+          type: string
+          enum:
+            - active
+        mode:
+          type: string
+          enum:
+            - dry_run
+            - apply
+        project_id:
+          type: string
+        previous_active_tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/OperationTaskSchema"
+        current_active_tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/OperationTaskSchema"
+
     TaskListResponse:
       type: object
       additionalProperties: true
@@ -404,6 +463,32 @@ components:
               type: string
             status:
               type: string
+        request_id:
+          $ref: "#/components/schemas/RequestId"
+      required:
+        - ok
+        - data
+
+    TaskProjectResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          additionalProperties: true
+          properties:
+            target:
+              type: string
+            mode:
+              type: string
+            results:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
         request_id:
           $ref: "#/components/schemas/RequestId"
       required:
@@ -693,6 +778,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TaskCreateResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/tasks/project:
+    post:
+      operationId: projectTasks
+      summary: Project operations tasks to Todoist execution view
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectTasksRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskProjectResponse"
         "400":
           description: Invalid request
           content:
