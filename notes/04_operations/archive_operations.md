@@ -38,6 +38,11 @@ weekly review までの短期履歴置き場であり、
 - future_layer_operating_spec に残る旧用語修正（進展済み）
 - standard_development_flow_v2 更新（進展済み）
 
+--- 2026-04-09 daily review ---
+
+- `conversation routing を 1 件フルフローで実運用検証する` を完了した
+- `active-first execution 原則で operations 運用を 1 周試す` を完了した
+
 ---
 
 ## ルール
