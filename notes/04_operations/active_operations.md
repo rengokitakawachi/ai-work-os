@@ -1,19 +1,6 @@
 # active_operations
 
-## Day0（04/07 火）
-
-- task: active-first execution 原則で operations 運用を 1 周試す
-  source_ref:
-    - notes/04_operations/active_operations.md
-    - code/config/ai/adam_instruction.md
-    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
-  rolling_day: Day0
-  why_now:
-    - ルールを入れただけでは実効性が分からないため、実運用で横入り防止と reroll 規律が成立するか確認する必要がある
-  notes:
-    - 会話中に新規候補が出た場合の reroll 手順も含めて確認する
-
-## Day1（04/08 水）
+## Day0（04/09 木）
 
 - task: conversation routing を 1 件フルフローで実運用検証する
   source_ref:
@@ -21,11 +8,32 @@
     - code/config/ai/adam_instruction.md
     - notes/01_issues/idea_log.md
     - notes/04_operations/active_operations.md
+    - notes/07_reports/daily/2026-04-08.md
+  rolling_day: Day0
+  why_now:
+    - 4/8 時点で active-first execution の基本ケースは確認できたが、本命ケースである issue 起点 → 派生 → rolling → 保存の full flow は未完のため、今日の先頭 task として閉じる必要がある
+  notes:
+    - 新規論点発生
+    - 議論 / issue / operations candidate 判定
+    - active / next / future 提案
+    - active 外なら実行しない
+    - 保存順序
+    を明示的に確認する
+
+## Day1（04/10 金）
+
+- task: active-first execution 原則で operations 運用を 1 周試す
+  source_ref:
+    - notes/04_operations/active_operations.md
+    - code/config/ai/adam_instruction.md
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+    - notes/07_reports/daily/2026-04-08.md
   rolling_day: Day1
   why_now:
-    - design と instruction への反映は完了したため、次は issue 起点 → 派生 → rolling → 保存の実地確認が必要である
+    - 基本ケースは確認済みだが、本命ケースを通したうえで active-first execution を 1 周完了として閉じる必要がある
   notes:
-    - 会話から出た論点を issue 中心で扱い、operations candidate の reroll を経て保存まで通す
+    - 4/8 に stale active 整合回復と新規候補なしケースは確認済み
+    - Day0 の full flow 検証結果を踏まえて完了判定する
 
 - task: classification_and_routing_spec の扱いを決める
   source_ref:
@@ -38,7 +46,7 @@
   notes:
     - 現行 routing 群との重複と残す価値を確認する
 
-## Day2（04/09 木）
+## Day2（04/11 土）
 
 - task: scoring knowledge の蓄積方針を dev_memo か design に整理する
   source_ref:
@@ -62,7 +70,7 @@
   notes:
     - 迷いの多い判断点を収集し、共通処理候補を切り出す
 
-## Day3（04/10 金）
+## Day3（04/12 日）
 
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
@@ -75,7 +83,7 @@
   notes:
     - plan と operations の対応が読める状態に揃える
 
-## Day4（04/11 土）
+## Day4（04/13 月）
 
 - task: weekly review 前提で active / next / archive の更新準備をする
   source_ref:
@@ -88,7 +96,7 @@
   notes:
     - reroll で動いた差分をそのまま週次へ渡せる形にする
 
-## Day5（04/12 日）
+## Day5（04/14 火）
 
 - task: docs 反映候補として execution governance 変更点を整理する
   source_ref:
@@ -102,13 +110,13 @@
   notes:
     - active-first execution と reroll 原則の有効性・副作用を評価材料としてまとめる
 
-## Day6（04/13 月）
+## Day6（04/15 水）
 
 - task: conversation routing と execution governance の試験結果を handover / report に返す準備をする
   source_ref:
     - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
     - code/config/ai/adam_instruction.md
-    - notes/07_reports/daily/2026-04-06.md
+    - notes/07_reports/daily/2026-04-08.md
   rolling_day: Day6
   why_now:
     - 再開時に試験運用の結果と次判断が追えるように、返却先を先に意識して整理する必要がある
