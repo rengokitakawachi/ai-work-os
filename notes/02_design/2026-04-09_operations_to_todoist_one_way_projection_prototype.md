@@ -9,7 +9,7 @@ Todoist の execution view へ片方向で投影する
 今回の目的は、
 「今の task を Todoist 上で見えるようにし、
 ADAM が operations を更新した結果として
-Todoist 側にも create / update / close を反映できる状態」
+Todoist 側にも create / update / close / delete を反映できる状態」
 を最小構成で成立させることにある。
 
 ---
@@ -455,6 +455,141 @@ Todoist delete
 
 ---
 
+## 最小 service interface（repo 接続版）
+
+今回の projection service は、
+現状 repo の tasks API / service / Todoist client に接続できる形で切る。
+
+方針は以下。
+
+- projection 判定ロジックは新しい projection service に置く
+- Todoist API 呼び出しは既存 `src/services/todoist/client.js` を土台にする
+- close は独立ロジックとして考えるが、client interface は現状互換で `updateTask(..., { completed: true })` を使う
+- delete は現状 client にないため、最小追加として定義する
+
+### 層構成
+
+```text
+operations rolling
+  ↓
+projection service
+  ↓
+tasks service / todoist client
+  ↓
+Todoist API
+```
+
+### projection service の役割
+
+- rolling 前後の active 差分を受ける
+- task ごとの action を判定する
+- Todoist payload を組み立てる
+- Todoist 実行結果を operations task の `external.todoist_task_id` に反映する
+
+### projection service の最小 entrypoint
+
+```ts
+projectActiveOperations(params: {
+  previousActiveTasks: OperationTask[]
+  currentActiveTasks: OperationTask[]
+}): Promise<ProjectionExecutionResult[]>
+```
+
+### ProjectionExecutionResult
+
+```ts
+type ProjectionExecutionResult = {
+  action: "create" | "update" | "close" | "delete" | "noop"
+  taskKey: string
+  todoistTaskId?: string
+  applied: boolean
+  reason: string
+}
+```
+
+### projection service の内部補助関数
+
+```ts
+decideProjectionAction(params: {
+  previousTask?: OperationTask
+  currentTask?: OperationTask
+}): {
+  action: "create" | "update" | "close" | "delete" | "noop"
+  reason: string
+}
+```
+
+```ts
+buildProjectionPayload(task: OperationTask): {
+  content: string
+  description: string
+}
+```
+
+```ts
+applyTodoistTaskId(params: {
+  task: OperationTask
+  todoistTaskId: string
+}): OperationTask
+```
+
+### 既存 repo に合わせた Todoist client interface
+
+現状 code を踏まえると、
+Todoist client の最小 interface は以下とする。
+
+```ts
+createTask(input: {
+  content: string
+  description: string
+}): Promise<{ id: string }>
+```
+
+```ts
+updateTask(
+  todoistTaskId: string,
+  input: {
+    content?: string
+    description?: string
+    completed?: true
+  }
+): Promise<unknown>
+```
+
+```ts
+listTasks(input: {
+  project_id?: string
+  section_id?: string
+  parent_id?: string
+  label?: string
+  cursor?: string
+  limit?: number
+}): Promise<unknown>
+```
+
+```ts
+deleteTask(todoistTaskId: string): Promise<void>
+```
+
+### close の扱い
+
+現状 repo では close 専用 client は持たず、
+`updateTask(todoistTaskId, { completed: true })`
+で Todoist close endpoint を叩く構造になっている。
+
+そのため、projection service 側では action を `close` として扱ってよいが、
+client 呼び出しは現状互換で行う。
+
+### interface 方針
+
+- projection service は action 判定に責務集中する
+- tasks API は薄いままにする
+- Todoist 固有の request shape は client に閉じる
+- repo 既存の `createTask / updateTask / listTasks` 命名は尊重する
+- delete のみ最小追加で拡張する
+
+---
+
 ## operations に external を持つ理由
 
 今回の方針では、
@@ -487,14 +622,9 @@ Todoist 固有仕様を service / adapter に閉じる。
 - operations task 内 `external.todoist_task_id` の読取 / 書込
 - create / update / close / delete の分岐
 
-今回の design では、
-具体 API 形状までは固定しない。
-
-まずは
-「どういう制約で何を反映するか」
-と
-「外部IDをどこに持つか」
-を先に固定する。
+今回の段階では、
+tasks API 全体の再設計は行わず、
+operations projection を差し込める最小 interface を先に固定する。
 
 ---
 
@@ -533,6 +663,7 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 次に落とす作業
 
-- operations task から Todoist payload への変換項目を確定する
-- create / update / close / delete の最小 service インターフェースを切る
+- `OperationTask` の最小 shape を code 実装前提で切る
+- `projectActiveOperations` の入出力例を 1 ケース書く
+- `src/services/todoist/client.js` に必要な最小追加差分を確認する
 - active の 1 task で rolling 起点の半自動投影を試す
