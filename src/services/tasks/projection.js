@@ -178,6 +178,7 @@ export async function projectActiveOperations(
   const allKeys = new Set([...previousMap.keys(), ...currentMap.keys()]);
   const results = [];
   const projectionProjectId = getProjectionProjectId(context);
+  const dryRun = context.dryRun === true;
 
   for (const key of allKeys) {
     const previousTask = previousMap.get(key);
@@ -197,18 +198,29 @@ export async function projectActiveOperations(
     try {
       if (decision.action === 'create') {
         const payload = buildProjectionPayload(currentTask);
-        const created = await createTodoistTask(
-          {
-            ...payload,
-            ...(projectionProjectId ? { project_id: projectionProjectId } : {}),
-          },
-          {
-            ...context,
-            step: context.step || 'projectActiveOperations',
+        const createInput = {
+          ...payload,
+          ...(projectionProjectId ? { project_id: projectionProjectId } : {}),
+        };
+
+        if (dryRun) {
+          results.push({
             action: 'create',
-            resource: 'tasks',
-          }
-        );
+            taskKey: key,
+            applied: false,
+            dryRun: true,
+            reason: decision.reason,
+            payload: createInput,
+          });
+          continue;
+        }
+
+        const created = await createTodoistTask(createInput, {
+          ...context,
+          step: context.step || 'projectActiveOperations',
+          action: 'create',
+          resource: 'tasks',
+        });
 
         results.push({
           action: 'create',
@@ -227,6 +239,19 @@ export async function projectActiveOperations(
       if (decision.action === 'update') {
         const todoistTaskId = getTodoistTaskId(currentTask);
         const payload = buildProjectionPayload(currentTask);
+
+        if (dryRun) {
+          results.push({
+            action: 'update',
+            taskKey: key,
+            todoistTaskId,
+            applied: false,
+            dryRun: true,
+            reason: decision.reason,
+            payload,
+          });
+          continue;
+        }
 
         await updateTodoistTask(
           todoistTaskId,
@@ -255,6 +280,18 @@ export async function projectActiveOperations(
       if (decision.action === 'close') {
         const todoistTaskId = getTodoistTaskId(previousTask);
 
+        if (dryRun) {
+          results.push({
+            action: 'close',
+            taskKey: key,
+            todoistTaskId,
+            applied: false,
+            dryRun: true,
+            reason: decision.reason,
+          });
+          continue;
+        }
+
         await updateTodoistTask(
           todoistTaskId,
           { completed: true },
@@ -278,6 +315,18 @@ export async function projectActiveOperations(
 
       if (decision.action === 'delete') {
         const todoistTaskId = getTodoistTaskId(previousTask);
+
+        if (dryRun) {
+          results.push({
+            action: 'delete',
+            taskKey: key,
+            todoistTaskId,
+            applied: false,
+            dryRun: true,
+            reason: decision.reason,
+          });
+          continue;
+        }
 
         await deleteTodoistTask(todoistTaskId, {
           ...context,
