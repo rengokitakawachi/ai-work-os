@@ -33,6 +33,20 @@
 
 ## Day1（04/10 金）
 
+- task: web 版 GPT editor で ADAM instruction の最新変更を反映する
+  source_ref:
+    - code/config/ai/adam_instruction.md
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - config/ai/adam_schema.yaml
+    - notes/07_reports/daily/2026-04-09.md
+  rolling_day: Day1
+  why_now:
+    - review 実行ルールの再発防止変更を実運用へ反映しないと、明日以降も同じ逸脱を繰り返すリスクがある
+  notes:
+    - まず instruction 反映を最優先とする
+    - 必要に応じて同じ流れで最新 schema 反映も確認する
+    - iPhone では編集できないため web 版前提で進める
+
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
