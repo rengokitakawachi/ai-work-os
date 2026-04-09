@@ -305,6 +305,39 @@ export async function updateTask(taskId, input, context = {}) {
   );
 }
 
+export async function deleteTask(taskId, context = {}) {
+  const id = String(taskId || '').trim();
+
+  if (!id) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'task id required',
+      category: 'validation',
+      step: context.step || 'deleteTask',
+      resource: context.resource || 'tasks',
+      action: context.action || 'delete',
+      retryable: false,
+      details: {
+        field: 'id',
+      },
+    });
+  }
+
+  await todoistRequest(
+    `/tasks/${encodeURIComponent(id)}`,
+    {
+      method: 'DELETE',
+    },
+    {
+      ...context,
+      step: context.step || 'todoistRequest',
+      action: context.action || 'delete',
+      resource: context.resource || 'tasks',
+    }
+  );
+}
+
 export async function listTasks(input = {}, context = {}) {
   const query = {
     project_id: input.project_id,
