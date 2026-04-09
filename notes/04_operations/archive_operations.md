@@ -42,6 +42,9 @@ weekly review までの短期履歴置き場であり、
 
 - `conversation routing を 1 件フルフローで実運用検証する` を完了した
 - `active-first execution 原則で operations 運用を 1 周試す` を完了した
+- `classification_and_routing_spec の扱いを決める` を完了した
+  - 結論: archive
+  - archive 先: `notes/99_archive/design/classification_and_routing_spec.md`
 
 ---
 
