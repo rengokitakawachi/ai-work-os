@@ -137,11 +137,6 @@ operations task 本文に近接して保持する。
 - notes または description 生成元
 - external.todoist_task_id（未設定可）
 
-必要に応じて以下も持てる。
-
-- external.projection_status
-- external.last_projected_at
-
 ### 想定 shape
 
 ```yaml
@@ -153,15 +148,13 @@ operations task 本文に近接して保持する。
     - operations が正本
   external:
     todoist_task_id:
-    projection_status:
-    last_projected_at:
 ```
 
 ### 方針
 
 - `todoist_task_id` は operations task 本文の `external` に保持する
 - create 後の update / close は `external.todoist_task_id` を主キーとして扱う
-- projection 状態は task の外ではなく task に近接して持つ
+- 今回のプロトタイプでは `external` を最小に保ち、補助状態は持たない
 - 将来の EVE でも operations と Todoist task 管理が密接につながる前提を優先する
 
 ### 補足
@@ -173,6 +166,25 @@ operations task 本文に近接して保持する。
 rolling 時の追従更新コストはあるが、
 現段階では致命的ではなく、
 別 state 管理による分散参照コストより許容しやすい。
+
+---
+
+## external 最小化方針
+
+今回の `external` は
+`todoist_task_id` のみを持つ。
+
+持たないもの:
+
+- projection_status
+- last_projected_at
+
+理由は以下。
+
+- create / update / close の最小プロトタイプ成立に不要
+- Todoist task ID があれば対象特定は十分できる
+- 補助状態を先に持つと schema と更新処理が重くなる
+- 必要になった時点で後から追加しても破綻しにくい
 
 ---
 
@@ -343,8 +355,6 @@ operations 更新
 差分判定
 ↓
 Todoist update
-↓
-必要に応じて `external.last_projected_at` 更新
 
 ### close
 
@@ -353,8 +363,6 @@ operations で完了
 `external.todoist_task_id` 確認
 ↓
 Todoist close
-↓
-必要に応じて `external.projection_status` 更新
 
 ---
 
@@ -435,7 +443,6 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 未決事項
 
-- `external` に `projection_status` / `last_projected_at` まで持つか
 - active のみ投影するか、選択投影も許すか
 - projection 実行タイミングを手動にするか、半自動にするか
 
@@ -443,7 +450,6 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 次に落とす作業
 
-- operations task の `external` schema を最小確定する
 - operations task から Todoist payload への変換項目を確定する
 - create / update / close の最小 service インターフェースを切る
 - 手動実行フローで 1 task 投影を試す
