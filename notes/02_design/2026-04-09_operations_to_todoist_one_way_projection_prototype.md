@@ -85,6 +85,7 @@ Todoist と domain / strategy / operations 相当の正本との
 - task の内容更新
 - 完了判定
 - 投影対象 task の決定
+- Todoist との対応情報を task の `external` に保持する
 
 ### ADAM の責務
 
@@ -121,27 +122,57 @@ Todoist execution view に
 
 ## 最小データモデル
 
-### operations 側で必要な情報
+### operations task 本文で必要な情報
+
+今回のプロトタイプでは、
+Todoist との対応情報を別 state に分離せず、
+operations task 本文に近接して保持する。
 
 各 task に対して、少なくとも以下を扱える必要がある。
 
-- logical_task_key
-- title
-- notes または description 生成元
+- task
 - source_ref
-- status
+- rolling_day
+- status 相当情報
+- notes または description 生成元
 - external.todoist_task_id（未設定可）
+
+必要に応じて以下も持てる。
+
+- external.projection_status
+- external.last_projected_at
+
+### 想定 shape
+
+```yaml
+- task: operations → Todoist 片方向 projection プロトタイプの最小仕様を design に整理する
+  source_ref:
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+  rolling_day: Day0
+  notes:
+    - operations が正本
+  external:
+    todoist_task_id:
+    projection_status:
+    last_projected_at:
+```
+
+### 方針
+
+- `todoist_task_id` は operations task 本文の `external` に保持する
+- create 後の update / close は `external.todoist_task_id` を主キーとして扱う
+- projection 状態は task の外ではなく task に近接して持つ
+- 将来の EVE でも operations と Todoist task 管理が密接につながる前提を優先する
 
 ### 補足
 
-初期段階では、
-`logical_task_key` は
-task title と source_ref の組み合わせ、
-あるいは別途安定 ID を持つ方法を比較対象とする。
+可読性は多少落ちるが、
+今回の operations は人間向け読み物ではなく短期実行正本であるため、
+外部 ID を近接保持する不利益は限定的とみなす。
 
-ただし title だけに依存すると
-rename 時に二重作成リスクがあるため、
-永続的には title 単独判定を避ける。
+rolling 時の追従更新コストはあるが、
+現段階では致命的ではなく、
+別 state 管理による分散参照コストより許容しやすい。
 
 ---
 
@@ -170,24 +201,26 @@ rename 時に二重作成リスクがあるため、
 
 最小段階では以下の順で扱う。
 
-1.  
-operations task に `external.todoist_task_id` がある場合は
+1.
+operations task の `external.todoist_task_id` がある場合は
 既存 Todoist task を更新対象とみなす
 
-2.  
+2.
 ID がない場合は、
-暫定的に logical_task_key に基づく照合を行う
+暫定的に task title と source_ref を用いて既存 task を照合する
 
-3.  
-照合で既存 task が見つかれば ID を回収する
+3.
+照合で既存 task が見つかれば
+その ID を `external.todoist_task_id` に保存する
 
-4.  
+4.
 見つからなければ create する
 
 ### 方針
 
-- まずは `todoist_task_id` を最優先キーとする
-- 暫定照合は補助であり、恒久キーの代替にしない
+- 最優先キーは `external.todoist_task_id` とする
+- title / source_ref 照合は初回 create 時の補助に留める
+- rename に弱い補助照合へ依存し続けない
 - 二重作成が起きた場合はログで検知できるようにする
 
 ---
@@ -238,11 +271,11 @@ operations 更新
 ↓
 投影対象判定
 ↓
-todoist_task_id 未設定確認
+`external.todoist_task_id` 未設定確認
 ↓
 Todoist create
 ↓
-todoist_task_id 保存
+`external.todoist_task_id` 保存
 
 ### update
 
@@ -252,17 +285,36 @@ operations 更新
 ↓
 Todoist update
 ↓
-必要に応じて同期ログ更新
+必要に応じて `external.last_projected_at` 更新
 
 ### close
 
 operations で完了
 ↓
-todoist_task_id 確認
+`external.todoist_task_id` 確認
 ↓
 Todoist close
 ↓
-必要に応じて projection 状態更新
+必要に応じて `external.projection_status` 更新
+
+---
+
+## operations に external を持つ理由
+
+今回の方針では、
+operations と Todoist task 管理は将来 EVE で密接につながる前提を取る。
+
+そのため、
+`todoist_task_id` を別管理にせず、
+operations task 本文に持たせる方が自然である。
+
+理由は以下。
+
+- task と外部 Todoist task の対応が一箇所で見える
+- create 後の update / close 判定が単純になる
+- 別 state ファイルとの突合が不要になる
+- EVE へ移植する際のモデル連続性が高い
+- operations を execution 正本として扱う考えと整合しやすい
 
 ---
 
@@ -276,7 +328,7 @@ Todoist 固有仕様を service / adapter に閉じる。
 - projection service
 - Todoist client
 - operations task → Todoist payload 変換
-- todoist_task_id 保存箇所の決定
+- operations task 内 `external.todoist_task_id` の読取 / 書込
 - create / update / close の分岐
 
 今回の design では、
@@ -284,6 +336,8 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 まずは
 「どういう制約で何を反映するか」
+と
+「外部IDをどこに持つか」
 を先に固定する。
 
 ---
@@ -322,8 +376,7 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 未決事項
 
-- logical_task_key をどう安定化させるか
-- todoist_task_id を operations のどこに保持するか
+- `external` に `projection_status` / `last_projected_at` まで持つか
 - description の最小フォーマット
 - active のみ投影するか、選択投影も許すか
 - projection 実行タイミングを手動にするか、半自動にするか
@@ -332,7 +385,7 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 次に落とす作業
 
-- external.todoist_task_id の保持位置を決める
+- operations task の `external` schema を最小確定する
 - operations task から Todoist payload への変換項目を確定する
 - create / update / close の最小 service インターフェースを切る
 - 手動実行フローで 1 task 投影を試す
