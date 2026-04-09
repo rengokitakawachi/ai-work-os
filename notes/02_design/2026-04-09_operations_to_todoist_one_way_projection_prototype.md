@@ -296,8 +296,17 @@ ref: notes/04_operations/active_operations.md
 
 ### close 条件
 
-- active_operations に存在していた task が operations 側で完了扱いになった
+- 前回は active に存在した
+- 今回は active から外れた
+- かつ operations 上で完了扱いになった
 - external.todoist_task_id が設定済み
+
+### close 条件の補足
+
+active から外れたことだけでは close しない。
+
+順位変更や繰越で active 外になっただけの task は、
+Todoist 上で即 close しない。
 
 ---
 
@@ -352,25 +361,28 @@ operations 正本の更新主体は ADAM に限定する。
 
 ## 半自動実行方針
 
-今回の projection 実行タイミングは半自動とする。
+今回の projection 実行タイミングは半自動とし、
+主トリガーは operations rolling とする。
 
 意味は以下。
 
-- ADAM が operations 正本を更新する
-- active task に対して projection 条件を判定する
+- ADAM が operations rolling を行う
+- active_operations が更新される
+- rolling 後の active task に対して projection 条件を判定する
 - 条件を満たす場合は、そのまま続けて Todoist に create / update / close を反映する
 
 これは完全自動同期ではない。
 
 - Todoist 側の変更を監視しない
 - 外部起点の逆流はしない
-- ADAM が operations を更新した文脈の中でのみ投影する
+- ADAM が rolling を通して operations 正本を更新した文脈の中でのみ投影する
 
 ### 採用理由
 
-- 手動より運用が軽い
-- 片方向制約を維持しやすい
+- active の確定点が rolling だから
+- create / update / close 判定を一箇所に集約できる
 - active のみ対象なら誤投影範囲も限定できる
+- 日常運用の区切りとして分かりやすい
 - まずは最小の実運用価値を早く出せる
 
 ---
@@ -379,7 +391,9 @@ operations 正本の更新主体は ADAM に限定する。
 
 ### create
 
-operations 更新
+operations rolling
+↓
+active 更新
 ↓
 投影対象判定
 ↓
@@ -391,7 +405,9 @@ Todoist create
 
 ### update
 
-operations 更新
+operations rolling
+↓
+active 更新
 ↓
 差分判定
 ↓
@@ -399,10 +415,13 @@ Todoist update
 
 ### close
 
-operations で完了
+operations rolling
 ↓
-`external.todoist_task_id` 確認
+前回 active と今回 active を比較
 ↓
+active から外れた task を確認
+↓
+その task が operations 上で完了扱いなら
 Todoist close
 
 ---
@@ -484,7 +503,6 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 未決事項
 
-- 半自動を operations 更新のどのタイミングで走らせるか
 - active から外れた未完了 task を Todoist 上でどう扱うか
 
 ---
@@ -493,5 +511,4 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 - operations task から Todoist payload への変換項目を確定する
 - create / update / close の最小 service インターフェースを切る
-- 半自動の発火タイミングを決める
-- active の 1 task で手動起点の半自動投影を試す
+- active の 1 task で rolling 起点の半自動投影を試す
