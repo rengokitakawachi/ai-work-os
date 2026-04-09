@@ -4,6 +4,7 @@ import {
   normalizeCreateInput,
   normalizeListInput,
   normalizeUpdateInput,
+  normalizeProjectInput,
 } from './validate.js';
 
 import {
@@ -11,6 +12,8 @@ import {
   listTasks,
   updateTask,
 } from './service.js';
+
+import { projectActiveOperations } from './projection.js';
 
 export async function dispatchCreate(body, context) {
   const input = normalizeCreateInput(body);
@@ -37,4 +40,29 @@ export async function dispatchUpdate(params, body, context) {
     ...context,
     step: 'updateTask',
   });
+}
+
+export async function dispatchProject(body, context) {
+  const input = normalizeProjectInput(body);
+
+  const results = await projectActiveOperations(
+    {
+      previousActiveTasks: input.previous_active_tasks,
+      currentActiveTasks: input.current_active_tasks,
+    },
+    {
+      ...context,
+      step: 'projectActiveOperations',
+      action: 'project',
+      resource: 'tasks',
+      dryRun: input.mode === 'dry_run',
+      project_id: input.project_id,
+    }
+  );
+
+  return {
+    target: input.target,
+    mode: input.mode,
+    results,
+  };
 }
