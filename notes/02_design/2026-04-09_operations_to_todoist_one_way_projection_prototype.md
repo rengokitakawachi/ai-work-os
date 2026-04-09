@@ -176,6 +176,82 @@ rolling 時の追従更新コストはあるが、
 
 ---
 
+## payload 最小仕様
+
+今回のプロトタイプでは、
+Todoist へ送る payload は最小構成に絞る。
+
+採用する項目:
+
+- content
+- description
+
+今回見送る項目:
+
+- priority
+- due
+- labels
+- deadline
+- duration
+- parent_id
+
+### content 方針
+
+`content` には operations の `task` をそのまま使う。
+
+これは Todoist 上の主表示項目であり、
+最も重要な識別面でもある。
+
+### description 方針
+
+`description` には、
+operations 上の補足情報を短く圧縮して入れる。
+
+最小フォーマットは以下とする。
+
+```text
+why_now: <1行要約>
+notes: <先頭1〜2項目を短く要約>
+source_ref: <主要1〜2件>
+ref: notes/04_operations/<file>
+```
+
+### description 生成ルール
+
+- `why_now` があれば先頭に 1 行で入れる
+- `notes` は長文を避け、先頭 1〜2 件だけを短く入れる
+- `source_ref` は全文列挙せず、主要 1〜2 件だけを入れる
+- 最後に正本参照先として operations ファイルを明記する
+- 文字数が長くなりすぎる場合は `notes` より `why_now` を優先する
+
+### 例
+
+```text
+why_now: いまの task を Todoist で見える化する価値が大きい
+notes: operations が正本 / create・update・close を含む
+source_ref: notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md, notes/02_design/2026-03-25_strategy_api_and_tasks_boundary.md
+ref: notes/04_operations/active_operations.md
+```
+
+### 見送る理由
+
+- `priority`:
+  operations 側に安定した優先度 schema がまだない
+
+- `due` / `deadline`:
+  operations 上の日付と Todoist の due / deadline semantics がまだ一致していない
+
+- `labels`:
+  現時点では execution view の最小成立に不要
+
+- `duration`:
+  今回の投影目的に対して優先度が低い
+
+- `parent_id`:
+  親子関係の高度対応は今回の非対象
+
+---
+
 ## projection 対象判定
 
 ### create 条件
@@ -222,23 +298,6 @@ ID がない場合は、
 - title / source_ref 照合は初回 create 時の補助に留める
 - rename に弱い補助照合へ依存し続けない
 - 二重作成が起きた場合はログで検知できるようにする
-
----
-
-## description 方針
-
-Todoist に送る description は最小構成とする。
-
-含める候補:
-
-- operations 上の notes 要約
-- source_ref の抜粋
-- rolling_day
-- 正本参照が notes/04_operations にあることの明記
-
-ただし、
-長すぎる source_ref 全文をそのまま送らず、
-実行時に必要な最小情報へ圧縮する。
 
 ---
 
@@ -377,7 +436,6 @@ Todoist 固有仕様を service / adapter に閉じる。
 ## 未決事項
 
 - `external` に `projection_status` / `last_projected_at` まで持つか
-- description の最小フォーマット
 - active のみ投影するか、選択投影も許すか
 - projection 実行タイミングを手動にするか、半自動にするか
 
