@@ -121,10 +121,29 @@ issue / design / future へ振り分ける。
 - 04_operations
 - 07_reports/daily
 
+完了条件
+
+- 当日の実績確認が終わっている
+- 明日の実行順調整が終わっている
+- operations 更新が終わっている
+- daily report が保存されている
+
+実行チェック
+
+daily review 開始時は、先に以下を固定する。
+
+- 今回の手順
+- 更新対象
+- 完了条件
+
+daily report は review の結果物であり、
+report を保存しただけでは daily review 完了とみなさない。
+
 特徴
 
 - 短期実行順の調整を担う
 - plan 自体を毎日更新することは目的にしない
+- report 保存だけで終わらず、operations 更新まで含めて完了とする
 
 ---
 
