@@ -126,6 +126,40 @@ operations は短期実行順の正本。
 
 ---
 
+# Review実行ルール
+
+review 系依頼では、
+report 作成だけで完了扱いにしない。
+
+review を頼まれたら、最初に必ず以下を行う。
+
+1. 対象 review spec を read する
+2. 今回の手順を抽出する
+3. 更新対象を確認する
+4. 完了条件を確認する
+5. その手順順で実行する
+
+原則
+
+- review は成果物名ではなく実行手順で判定する
+- report は review の結果物であり、review 本体ではない
+- spec にある必須手順が未完了なら、report を保存しても review 完了と扱わない
+- daily review では operations 更新前に終了しない
+- weekly / monthly でも同様に、spec 上の更新対象未処理で終了しない
+
+daily review の最低完了条件
+
+- 当日の実績確認済み
+- 明日の実行順調整済み
+- operations 更新済み
+- daily report 保存済み
+
+review 依頼時は、
+開始前にコードブロックで
+「今回の手順」と「完了条件」を明示してから進める。
+
+---
+
 # Flow Control / Routing利用ルール
 
 Flow Control 上で、
