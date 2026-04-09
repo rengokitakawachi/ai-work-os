@@ -204,6 +204,214 @@ function assertListStatus(value, context) {
   }
 }
 
+function isPlainObject(value) {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function assertOperationTask(task, field, context) {
+  if (!isPlainObject(task)) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field} item must be object`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field },
+    });
+  }
+
+  if (task.task !== undefined && typeof task.task !== 'string') {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field}.task must be string`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: `${field}.task` },
+    });
+  }
+
+  if (task.source_ref !== undefined && !Array.isArray(task.source_ref)) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field}.source_ref must be array`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: `${field}.source_ref` },
+    });
+  }
+
+  if (task.source_ref !== undefined) {
+    const invalid = task.source_ref.find((item) => typeof item !== 'string');
+    if (invalid !== undefined) {
+      throw createError({
+        status: 400,
+        code: 'INVALID_REQUEST',
+        message: `${field}.source_ref must contain strings`,
+        category: 'validation',
+        step: context.step,
+        resource: context.resource,
+        action: context.action,
+        retryable: false,
+        details: { field: `${field}.source_ref` },
+      });
+    }
+  }
+
+  const optionalStringArrayFields = ['why_now', 'notes'];
+  for (const key of optionalStringArrayFields) {
+    if (task[key] !== undefined && !Array.isArray(task[key])) {
+      throw createError({
+        status: 400,
+        code: 'INVALID_REQUEST',
+        message: `${field}.${key} must be array`,
+        category: 'validation',
+        step: context.step,
+        resource: context.resource,
+        action: context.action,
+        retryable: false,
+        details: { field: `${field}.${key}` },
+      });
+    }
+
+    if (Array.isArray(task[key])) {
+      const invalid = task[key].find((item) => typeof item !== 'string');
+      if (invalid !== undefined) {
+        throw createError({
+          status: 400,
+          code: 'INVALID_REQUEST',
+          message: `${field}.${key} must contain strings`,
+          category: 'validation',
+          step: context.step,
+          resource: context.resource,
+          action: context.action,
+          retryable: false,
+          details: { field: `${field}.${key}` },
+        });
+      }
+    }
+  }
+
+  if (task.rolling_day !== undefined && typeof task.rolling_day !== 'string') {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field}.rolling_day must be string`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: `${field}.rolling_day` },
+    });
+  }
+
+  if (task.external !== undefined && !isPlainObject(task.external)) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field}.external must be object`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: `${field}.external` },
+    });
+  }
+
+  if (
+    task.external?.todoist_task_id !== undefined &&
+    typeof task.external.todoist_task_id !== 'string'
+  ) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field}.external.todoist_task_id must be string`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: `${field}.external.todoist_task_id` },
+    });
+  }
+}
+
+function assertOperationTaskArray(value, field, context, required = false) {
+  if (value === undefined || value === null) {
+    if (required) {
+      throw createError({
+        status: 400,
+        code: 'INVALID_REQUEST',
+        message: `${field} required`,
+        category: 'validation',
+        step: context.step,
+        resource: context.resource,
+        action: context.action,
+        retryable: false,
+        details: { field },
+      });
+    }
+    return;
+  }
+
+  if (!Array.isArray(value)) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field} must be array`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field },
+    });
+  }
+
+  value.forEach((task, index) => {
+    assertOperationTask(task, `${field}[${index}]`, context);
+  });
+}
+
+function normalizeOperationTask(task) {
+  return {
+    ...(task?.task !== undefined ? { task: ensureString(task.task) } : {}),
+    ...(task?.source_ref !== undefined
+      ? { source_ref: ensureOptionalArray(task.source_ref).map((item) => ensureString(item)) }
+      : {}),
+    ...(task?.rolling_day !== undefined ? { rolling_day: ensureString(task.rolling_day) } : {}),
+    ...(task?.why_now !== undefined
+      ? { why_now: ensureOptionalArray(task.why_now).map((item) => ensureString(item)) }
+      : {}),
+    ...(task?.notes !== undefined
+      ? { notes: ensureOptionalArray(task.notes).map((item) => ensureString(item)) }
+      : {}),
+    ...(task?.status !== undefined ? { status: ensureString(task.status) } : {}),
+    ...(task?.completed !== undefined ? { completed: task.completed === true } : {}),
+    ...(task?.external !== undefined
+      ? {
+          external: {
+            ...(task.external?.todoist_task_id !== undefined
+              ? { todoist_task_id: ensureString(task.external.todoist_task_id) }
+              : {}),
+          },
+        }
+      : {}),
+  };
+}
+
 export function validateCreate(body, context) {
   assertNonEmptyString(body?.title, 'title', context);
 
@@ -306,13 +514,7 @@ export function validateList(query, context) {
   assertAssignee(query?.assignee, context);
   assertListStatus(query?.status, context);
 
-  const stringFields = [
-    'project_id',
-    'section_id',
-    'parent_id',
-    'label',
-    'cursor',
-  ];
+  const stringFields = ['project_id', 'section_id', 'parent_id', 'label', 'cursor'];
 
   for (const field of stringFields) {
     const value = query?.[field];
@@ -418,6 +620,56 @@ export function validateUpdate(params, body, context) {
   assertStatus(body?.status, context);
 }
 
+export function validateProject(body, context) {
+  const target = ensureString(body?.target);
+  const mode = ensureString(body?.mode);
+
+  if (target !== 'active') {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'target must be active',
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: 'target', supported: ['active'] },
+    });
+  }
+
+  if (!['dry_run', 'apply'].includes(mode)) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'mode must be dry_run or apply',
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: 'mode', supported: ['dry_run', 'apply'] },
+    });
+  }
+
+  if (body?.project_id !== undefined && typeof body.project_id !== 'string') {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'project_id must be string',
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: 'project_id' },
+    });
+  }
+
+  assertOperationTaskArray(body?.previous_active_tasks, 'previous_active_tasks', context, false);
+  assertOperationTaskArray(body?.current_active_tasks, 'current_active_tasks', context, true);
+}
+
 export function normalizeCreateInput(body) {
   return {
     title: ensureString(body?.title),
@@ -461,5 +713,19 @@ export function normalizeUpdateInput(params, body) {
     priority:
       body?.priority === undefined ? undefined : ensureOptionalInteger(body.priority),
     status: body?.status === undefined ? undefined : ensureString(body.status),
+  };
+}
+
+export function normalizeProjectInput(body) {
+  return {
+    target: ensureString(body?.target),
+    mode: ensureString(body?.mode),
+    project_id: ensureOptionalString(body?.project_id),
+    previous_active_tasks: ensureOptionalArray(body?.previous_active_tasks).map((task) =>
+      normalizeOperationTask(task)
+    ),
+    current_active_tasks: ensureOptionalArray(body?.current_active_tasks).map((task) =>
+      normalizeOperationTask(task)
+    ),
   };
 }
