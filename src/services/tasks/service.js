@@ -23,6 +23,7 @@ export async function createTask(input, context) {
     const {
       title,
       description,
+      project_id,
       due_string,
       labels,
       priority,
@@ -33,6 +34,7 @@ export async function createTask(input, context) {
     const parent = await createTodoistTask({
       content: title,
       description,
+      project_id,
       due_string,
       labels,
       priority,
