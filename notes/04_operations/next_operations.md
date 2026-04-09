@@ -12,22 +12,17 @@ active_operations に入らなかった上位候補を保持する。
 
 ## タスク
 
-- task: operations → Todoist 片方向 projection プロトタイプの最小仕様を design に整理する
+- task: scoring knowledge の蓄積方針を dev_memo か design に整理する
   source_ref:
-    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
-    - notes/02_design/2026-03-25_strategy_todoist_sync_phase1.md
-    - notes/02_design/2026-03-25_strategy_api_and_tasks_boundary.md
+    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
+    - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
+    - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
     - notes/04_operations/active_operations.md
-    - notes/01_issues/idea_log.md
   why_now:
-    - ユーザー要求が明確で価値が高く、将来の双方向同期とは別に ADAM 用プロトタイプ制約を早めに固定しないと、create 限定と誤解したり双方向方針と混線したりするため
+    - 重要ではあるが、いまの task を Todoist で見える化する価値よりは後順位であり、まずは実用価値の高い投影プロトタイプを先に固める方がよい
   notes:
-    - operations が正本
-    - Todoist は execution view
-    - 片方向
-    - create / update / close を含む
-    - 更新主体は ADAM
-    - Todoist から operations への自動逆流は行わない
+    - score は決定ではなく補助である前提を維持する
+    - dev_memo に残す条件と design に昇格する条件を見極める
 
 - task: daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する
   source_ref:
