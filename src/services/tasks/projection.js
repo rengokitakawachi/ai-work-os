@@ -23,6 +23,10 @@ function takeFirst(items, limit = 2) {
   return Array.isArray(items) ? items.slice(0, limit) : [];
 }
 
+function getProjectionProjectId(context = {}) {
+  return String(context.todoistProjectId || context.project_id || '').trim();
+}
+
 function buildDescription(task) {
   const lines = [];
 
@@ -173,6 +177,7 @@ export async function projectActiveOperations(
   const currentMap = toTaskMap(currentActiveTasks);
   const allKeys = new Set([...previousMap.keys(), ...currentMap.keys()]);
   const results = [];
+  const projectionProjectId = getProjectionProjectId(context);
 
   for (const key of allKeys) {
     const previousTask = previousMap.get(key);
@@ -192,12 +197,18 @@ export async function projectActiveOperations(
     try {
       if (decision.action === 'create') {
         const payload = buildProjectionPayload(currentTask);
-        const created = await createTodoistTask(payload, {
-          ...context,
-          step: context.step || 'projectActiveOperations',
-          action: 'create',
-          resource: 'tasks',
-        });
+        const created = await createTodoistTask(
+          {
+            ...payload,
+            ...(projectionProjectId ? { project_id: projectionProjectId } : {}),
+          },
+          {
+            ...context,
+            step: context.step || 'projectActiveOperations',
+            action: 'create',
+            resource: 'tasks',
+          }
+        );
 
         results.push({
           action: 'create',
