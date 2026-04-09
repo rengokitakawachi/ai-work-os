@@ -12,6 +12,20 @@ active_operations に入らなかった上位候補を保持する。
 
 ## タスク
 
+- task: daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する
+  source_ref:
+    - notes/07_reports/README.md
+    - notes/07_reports/daily/2026-04-08.md
+    - notes/09_content/README.md
+    - notes/04_operations/active_operations.md
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/01_issues/idea_log.md
+  why_now:
+    - 日報を書いた後に content 抽出と rolling をどう接続するかが会話依存だと、daily review の出力運用が安定しないため、近い将来の設計整理候補として保持する必要がある
+  notes:
+    - report 保存で終わらず、content 抽出条件と operations 更新の接続点を整理する
+    - review と routing の責務分離を崩さない前提で扱う
+
 - task: latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する
   source_ref:
     - notes/06_handover/2026-04-08_17-30-00_summary.md
