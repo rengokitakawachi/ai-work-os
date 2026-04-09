@@ -53,12 +53,25 @@ Todoist と domain / strategy / operations 相当の正本との
 ### 対象データ
 
 - active_operations にある task
-- 必要に応じて明示的に選択された task
 - title
 - 補助 description
 - status 相当情報
 - source_ref の要約または参照情報
 - projection 識別子
+
+### 対象範囲方針
+
+今回のプロトタイプでは、
+投影対象を `active_operations` の task に限定する。
+
+`next_operations` は今回の投影対象に含めない。
+
+理由は以下。
+
+- まずは軽く始める方が安全
+- active は実行対象として意味が明確
+- next まで含めると投影量と更新頻度が増える
+- create / update / close の基本挙動確認を先に優先する
 
 ---
 
@@ -73,6 +86,7 @@ Todoist と domain / strategy / operations 相当の正本との
 - due / priority / duration の完全同期
 - ユーザーが Todoist 側で行った更新の正本反映
 - operations 全層の自動一括投影
+- next_operations の task 投影
 
 ---
 
@@ -268,19 +282,21 @@ ref: notes/04_operations/active_operations.md
 
 ### create 条件
 
+- active_operations に存在する task である
 - projection 対象 task である
 - external.todoist_task_id が未設定
 - Todoist 側に既存対応がない
 
 ### update 条件
 
+- active_operations に存在する task である
 - external.todoist_task_id が設定済み
 - title / description / status に変更がある
 - close 条件に該当しない
 
 ### close 条件
 
-- operations 側で task が完了扱いになった
+- active_operations に存在していた task が operations 側で完了扱いになった
 - external.todoist_task_id が設定済み
 
 ---
@@ -331,6 +347,31 @@ operations 正本の更新主体は ADAM に限定する。
 
 この制約により、
 正本の所在を曖昧にせずにプロトタイプを成立させる。
+
+---
+
+## 半自動実行方針
+
+今回の projection 実行タイミングは半自動とする。
+
+意味は以下。
+
+- ADAM が operations 正本を更新する
+- active task に対して projection 条件を判定する
+- 条件を満たす場合は、そのまま続けて Todoist に create / update / close を反映する
+
+これは完全自動同期ではない。
+
+- Todoist 側の変更を監視しない
+- 外部起点の逆流はしない
+- ADAM が operations を更新した文脈の中でのみ投影する
+
+### 採用理由
+
+- 手動より運用が軽い
+- 片方向制約を維持しやすい
+- active のみ対象なら誤投影範囲も限定できる
+- まずは最小の実運用価値を早く出せる
 
 ---
 
@@ -432,9 +473,9 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 成功条件
 
-- operations task を Todoist に create できる
-- operations 更新を Todoist に update できる
-- operations 完了を Todoist に close できる
+- active_operations の task を Todoist に create できる
+- active_operations の更新を Todoist に update できる
+- active_operations の完了を Todoist に close できる
 - 二重作成を最低限防げる
 - Todoist を正本にしない運用が維持できる
 - 将来の双方向同期方針と矛盾しない
@@ -443,8 +484,8 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 ## 未決事項
 
-- active のみ投影するか、選択投影も許すか
-- projection 実行タイミングを手動にするか、半自動にするか
+- 半自動を operations 更新のどのタイミングで走らせるか
+- active から外れた未完了 task を Todoist 上でどう扱うか
 
 ---
 
@@ -452,4 +493,5 @@ Todoist 固有仕様を service / adapter に閉じる。
 
 - operations task から Todoist payload への変換項目を確定する
 - create / update / close の最小 service インターフェースを切る
-- 手動実行フローで 1 task 投影を試す
+- 半自動の発火タイミングを決める
+- active の 1 task で手動起点の半自動投影を試す
