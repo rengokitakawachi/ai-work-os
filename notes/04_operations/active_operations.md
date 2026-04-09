@@ -2,18 +2,23 @@
 
 ## Day0（04/09 木）
 
-- task: scoring knowledge の蓄積方針を dev_memo か design に整理する
+- task: operations → Todoist 片方向 projection プロトタイプの最小仕様を design に整理する
   source_ref:
-    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
-    - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
-    - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/02_design/2026-03-25_strategy_todoist_sync_phase1.md
+    - notes/02_design/2026-03-25_strategy_api_and_tasks_boundary.md
     - notes/04_operations/active_operations.md
+    - notes/01_issues/idea_log.md
   rolling_day: Day0
   why_now:
-    - routing 系の旧 spec 整理が一段落したため、次は reroll 運用で生じる判断知見をどこへ蓄積するかを決める必要がある
+    - いまの task を Todoist で見える化する価値が大きく、ユーザー要求も明確なため、将来の双方向同期とは別に ADAM 用プロトタイプ制約を先に固定する価値が高い
   notes:
-    - score は決定ではなく補助である前提を維持する
-    - dev_memo に残す条件と design に昇格する条件を見極める
+    - operations が正本
+    - Todoist は execution view
+    - 片方向
+    - create / update / close を含む
+    - 更新主体は ADAM
+    - Todoist から operations への自動逆流は行わない
 
 - task: 手動 rolling 1周目で迷った点を抽出し、program に寄せる責務候補を整理する
   source_ref:
