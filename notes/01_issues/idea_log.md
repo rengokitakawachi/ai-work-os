@@ -66,3 +66,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-08
+
+### 20260409-013
+- title: daily review の出力から content 抽出と operations rolling をどう接続するか整理する必要がある
+- category: operating_model
+- description: daily review では reports を保存して終わりではなく、価値化できる論点は content に抽出し、同時に operations を更新する必要がある。しかし現状は、日報から何を content に上げるか、どの時点で operations rolling に反映するか、review の出力としてどこまでを一連処理とみなすかが明文化されていない。このままだと、日報は書かれても content 抽出や rolling 連携が会話依存になりやすい。したがって、daily review の出力から content 抽出と operations 更新をどう接続するか整理する必要がある。
+- context: 今回の 2026-04-08 日報作成では、先に daily report を作成し、その後に content 抽出価値の有無を確認し、さらに active_operations の rolling を行った。この順は実務上自然だった一方で、review system spec には「日報を書く」「operations を更新する」まではあるが、content 抽出の位置づけは reports README 側の運用原則に留まっている。日報 → content → rolling の接続点を整理すると、review 出力の扱いがより安定する可能性がある。
+- impact: medium
+- status: open
+- created_at: 2026-04-09
