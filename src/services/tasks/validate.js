@@ -223,6 +223,22 @@ export function validateCreate(body, context) {
     });
   }
 
+  if (body?.project_id !== undefined && typeof body.project_id !== 'string') {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'project_id must be string',
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: {
+        field: 'project_id',
+      },
+    });
+  }
+
   if (body?.due_string !== undefined && typeof body.due_string !== 'string') {
     throw createError({
       status: 400,
@@ -406,6 +422,7 @@ export function normalizeCreateInput(body) {
   return {
     title: ensureString(body?.title),
     description: ensureOptionalString(body?.description),
+    project_id: ensureOptionalString(body?.project_id),
     due_string: ensureOptionalString(body?.due_string),
     labels: ensureOptionalArray(body?.labels).map((item) => ensureString(item)),
     assignee: ensureOptionalString(body?.assignee),
