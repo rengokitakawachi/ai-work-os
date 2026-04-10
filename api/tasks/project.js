@@ -1,17 +1,17 @@
 // api/tasks/project.js
 
-import { authorizeInternalRequest } from '../../../src/lib/auth.js';
-import { applyCors, handlePreflight } from '../../../src/lib/http.js';
+import { authorizeInternalRequest } from '../../src/lib/auth.js';
+import { applyCors, handlePreflight } from '../../src/lib/http.js';
 
 import {
   createRequestId,
   createError,
   normalizeError,
   logError,
-} from '../../../src/services/tasks/error.js';
+} from '../../src/services/tasks/error.js';
 
-import { validateProject } from '../../../src/services/tasks/validate.js';
-import { dispatchProject } from '../../../src/services/tasks/dispatch.js';
+import { validateProject } from '../../src/services/tasks/validate.js';
+import { dispatchProject } from '../../src/services/tasks/dispatch.js';
 
 function ensureString(value) {
   return typeof value === 'string' ? value.trim() : '';
