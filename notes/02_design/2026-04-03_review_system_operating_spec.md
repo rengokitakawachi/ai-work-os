@@ -21,6 +21,11 @@ routing は review とは別の処理として扱う。
 
 - intake routing は未整理入力の構造化と振り分けを担う
 
+operations の日中運用は review と分離する。
+
+- 会話中は active 内の優先順位変更や並び替えを行うことがある
+- archive への移動と rolling の確定は daily review で行う
+
 ---
 
 ## 全体構造
@@ -107,9 +112,12 @@ issue / design / future へ振り分ける。
 手順
 
 1. 当日の実績を確認する
-2. 明日の実行順を調整する
-3. operations を更新する
-4. 日報を書く
+2. 完了 task を archive へ移す
+3. 未完了 task の繰越を判断する
+4. 明日の実行順を調整する
+5. operations rolling を実行する
+6. operations を更新する
+7. 日報を書く
 
 出力
 
@@ -124,6 +132,8 @@ issue / design / future へ振り分ける。
 完了条件
 
 - 当日の実績確認が終わっている
+- 完了 task の archive 移動が終わっている
+- 未完了 task の繰越判断が終わっている
 - 明日の実行順調整が終わっている
 - operations 更新が終わっている
 - daily report が保存されている
@@ -144,6 +154,9 @@ report を保存しただけでは daily review 完了とみなさない。
 - 短期実行順の調整を担う
 - plan 自体を毎日更新することは目的にしない
 - report 保存だけで終わらず、operations 更新まで含めて完了とする
+- 日中は active の完了認識や優先順位変更を行ってよい
+- ただし archive 移動と rolling 確定は daily review で行う
+- daily review 前に Day 再編成や archive 退避を確定させない
 
 ---
 
