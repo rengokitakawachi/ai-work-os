@@ -316,6 +316,37 @@ function assertOperationTask(task, field, context) {
     });
   }
 
+  if (task.due_date !== undefined && typeof task.due_date !== 'string') {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field}.due_date must be string`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: `${field}.due_date` },
+    });
+  }
+
+  if (
+    task.due_type !== undefined &&
+    !['date', 'deadline'].includes(ensureString(task.due_type))
+  ) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field}.due_type must be date or deadline`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: { field: `${field}.due_type` },
+    });
+  }
+
   if (task.external !== undefined && !isPlainObject(task.external)) {
     throw createError({
       status: 400,
@@ -398,6 +429,8 @@ function normalizeOperationTask(task) {
     ...(task?.notes !== undefined
       ? { notes: ensureOptionalArray(task.notes).map((item) => ensureString(item)) }
       : {}),
+    ...(task?.due_date !== undefined ? { due_date: ensureString(task.due_date) } : {}),
+    ...(task?.due_type !== undefined ? { due_type: ensureString(task.due_type) } : {}),
     ...(task?.status !== undefined ? { status: ensureString(task.status) } : {}),
     ...(task?.completed !== undefined ? { completed: task.completed === true } : {}),
     ...(task?.external !== undefined
