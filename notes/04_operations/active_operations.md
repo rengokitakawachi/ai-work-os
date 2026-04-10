@@ -32,6 +32,8 @@
     - conversation routing と active-first execution を通した結果、直近作業が Phase 0 完了条件へどう効くかを再確認する必要がある
   notes:
     - plan と operations の対応が読める状態に揃える
+  due_date: 2026-04-10
+  due_type: date
   external:
     todoist_task_id: 6gMJc6pFXHq3wwJR
 
@@ -49,6 +51,8 @@
     - web 版 GPT editor 前提
     - 反映対象は instruction の最新変更
     - 他 task より先に着手する
+  due_date: 2026-04-11
+  due_type: date
   external:
     todoist_task_id: 6gMJc6whX4GQwW82
 
@@ -62,6 +66,8 @@
     - active-first 運用試験の結果を weekly review に返すため、繰越・完了・snapshot の材料を整理する必要がある
   notes:
     - reroll で動いた差分をそのまま週次へ渡せる形にする
+  due_date: 2026-04-11
+  due_type: date
   external:
     todoist_task_id: 6gMJc6wgfF6cHJrR
 
@@ -78,6 +84,8 @@
     - instruction と operations で試験運用した結果を見てから docs へ反映する方針のため、候補整理を後段に置く
   notes:
     - active-first execution と reroll 原則の有効性・副作用を評価材料としてまとめる
+  due_date: 2026-04-12
+  due_type: date
   external:
     todoist_task_id: 6gMJc73FGmh6Q4V2
 
@@ -94,6 +102,8 @@
     - 試験運用の結果と次判断が追えるように、返却先を意識して整理する必要がある
   notes:
     - report / handover / docs 候補への返却観点を揃える
+  due_date: 2026-04-13
+  due_type: date
   external:
     todoist_task_id: 6gMJc733R6Fhj8vR
 
@@ -111,6 +121,8 @@
     - handover 起点解釈論点
     - decision 最小運用モデル論点
     を再評価対象に含める
+  due_date: 2026-04-14
+  due_type: date
   external:
     todoist_task_id: 6gMJc74JX58cJ3cR
 
@@ -126,6 +138,8 @@
     - active の完了が進んだため、次の 7 日枠補充方針を先に見ておく必要がある
   notes:
     - next / plan / issue から補充候補を比較する
+  due_date: 2026-04-15
+  due_type: date
   external:
     todoist_task_id: 6gMJc796JxmPPWR2
 
