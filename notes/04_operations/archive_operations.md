@@ -46,6 +46,13 @@ weekly review までの短期履歴置き場であり、
   - 結論: archive
   - archive 先: `notes/99_archive/design/classification_and_routing_spec.md`
 
+--- 2026-04-10 daily review ---
+
+- `web 版 GPT editor で ADAM instruction の最新変更を反映する` を完了した
+  - web 版 GPT editor への instruction 反映を確認した
+  - operations → Todoist projection を EVE開発 project へ接続した
+  - Todoist task の再作成と date 反映まで確認した
+
 ---
 
 ## ルール
