@@ -2,6 +2,24 @@
 
 ## Day0（04/10 金）
 
+- task: web 版 GPT editor で ADAM instruction の最新変更を反映する
+  source_ref:
+    - code/config/ai/adam_instruction.md
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - config/ai/adam_schema.yaml
+    - notes/07_reports/daily/2026-04-09.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day0
+  why_now:
+    - review 実行ルールの再発防止変更を実運用へ反映しないと、明日以降も同じ逸脱を繰り返すリスクがある
+    - active operation の内容を Todoist execution view に反映する流れは着手済みだが未完了であり、正本と execution view の整合をこの task 内で完結させる必要がある
+  notes:
+    - GPT editor 上の instruction / schema 反映と Todoist task 作成は実施済み
+    - ただし active operation 内容の Todoist 反映は未完了として扱う
+    - EVE開発 project に作成した Todoist task を継続利用する
+  external:
+    todoist_task_id: 6gMJ3RpPwXh5WJxR
+
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
