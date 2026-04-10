@@ -216,6 +216,7 @@ export async function createTask(input, context = {}) {
     ...(input.description ? { description: input.description } : {}),
     ...(input.project_id ? { project_id: input.project_id } : {}),
     ...(input.due_string ? { due_string: input.due_string } : {}),
+    ...(input.deadline_date ? { deadline_date: input.deadline_date } : {}),
     ...(Array.isArray(input.labels) && input.labels.length > 0
       ? { labels: input.labels }
       : {}),
@@ -286,6 +287,7 @@ export async function updateTask(taskId, input, context = {}) {
     ...(typeof input.description === 'string' ? { description: input.description } : {}),
     ...(input.due_string ? { due_string: input.due_string } : {}),
     ...(input.due_date ? { due_date: input.due_date } : {}),
+    ...(input.deadline_date ? { deadline_date: input.deadline_date } : {}),
     ...(Array.isArray(input.labels) ? { labels: input.labels } : {}),
     ...(input.priority ? { priority: input.priority } : {}),
     ...(input.assignee_id ? { assignee_id: input.assignee_id } : {}),
