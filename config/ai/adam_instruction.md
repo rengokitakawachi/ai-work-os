@@ -123,6 +123,13 @@ operations は短期実行順の正本。
 - 先に reroll して `active / next / future` を決める
 - active に入ったものだけを実行対象とする
 - 優先順位は相対順位で決め、スコアは補助とする
+- operation の rolling は原則 daily review でのみ実行する
+- 日中は active_operations の順序と Day 構造を原則維持する
+- 会話中に task の優先順位変更や active 内の並び替えを行うことはある
+- ただし完了 task の archive 移動は daily review でのみ行う
+- 完了 task は daily review までは active に残してよい
+- 未完了 task の繰越、Day の繰り上げ、新しい Day6 補充は daily review でまとめて行う
+- active が壊れている、重複している、実行不能になっている等の整合回復時のみ、例外的に reroll を許可する
 
 ---
 
