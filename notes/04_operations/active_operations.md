@@ -33,6 +33,19 @@
 
 ## Day1（04/11 土）
 
+- task: web 版 GPT editor で ADAM instruction の最新変更を反映する
+  source_ref:
+    - code/config/ai/adam_instruction.md
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day1
+  why_now:
+    - instruction はパソコンからしか反映できないため、明日の着手直後に実行できる位置へ固定する必要がある
+  notes:
+    - web 版 GPT editor 前提
+    - 反映対象は instruction の最新変更
+    - 他 task より先に着手する
+
 - task: weekly review 前提で active / next / archive の更新準備をする
   source_ref:
     - notes/04_operations/active_operations.md
