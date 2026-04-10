@@ -5,14 +5,30 @@ import {
   createTask as createTodoistTask,
   updateTask as updateTodoistTask,
   deleteTask as deleteTodoistTask,
+  listTasks as listTodoistTasks,
 } from '../todoist/client.js';
 
+function ensureString(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
 function getTaskKey(task) {
-  return String(task?.task || '').trim();
+  const todoistTaskId = getTodoistTaskId(task);
+  if (todoistTaskId) {
+    return `id:${todoistTaskId}`;
+  }
+
+  const rollingDay = ensureString(task?.rolling_day);
+  const taskName = ensureString(task?.task);
+  return `task:${rollingDay}:${taskName}`;
 }
 
 function getTodoistTaskId(task) {
   return String(task?.external?.todoist_task_id || '').trim();
+}
+
+function getTodoistItemId(task) {
+  return String(task?.id || '').trim();
 }
 
 function isCompletedTask(task) {
@@ -25,6 +41,30 @@ function takeFirst(items, limit = 2) {
 
 function getProjectionProjectId(context = {}) {
   return String(context.todoistProjectId || context.project_id || '').trim();
+}
+
+function normalizeListedTasks(result) {
+  if (Array.isArray(result)) {
+    return result;
+  }
+
+  if (Array.isArray(result?.results)) {
+    return result.results;
+  }
+
+  return [];
+}
+
+function buildTodoistTaskMap(tasks = []) {
+  const map = new Map();
+  for (const task of tasks) {
+    const id = getTodoistItemId(task);
+    if (!id) {
+      continue;
+    }
+    map.set(id, task);
+  }
+  return map;
 }
 
 function buildDescription(task) {
@@ -50,7 +90,68 @@ function buildDescription(task) {
   return lines.join('\n');
 }
 
-function tasksDiffer(previousTask, currentTask) {
+function getTaskDatePayload(task, context = {}) {
+  const dueDate = ensureString(task?.due_date);
+  const dueType = ensureString(task?.due_type);
+  const rollingDayDate = ensureString(context?.rollingDayDate);
+
+  if (dueDate && dueType === 'deadline') {
+    return {
+      deadline_date: dueDate,
+    };
+  }
+
+  if (dueDate) {
+    return {
+      due_string: dueDate,
+    };
+  }
+
+  if (rollingDayDate) {
+    return {
+      due_string: rollingDayDate,
+    };
+  }
+
+  return {};
+}
+
+function getTodoistTaskSnapshot(task) {
+  return {
+    content: ensureString(task?.content),
+    description: typeof task?.description === 'string' ? task.description : '',
+    due_string: ensureString(task?.due?.date || task?.due?.string),
+    deadline_date: ensureString(task?.deadline?.date),
+  };
+}
+
+function payloadDiffersFromTodoist(payload, todoistTask) {
+  if (!todoistTask) {
+    return false;
+  }
+
+  const snapshot = getTodoistTaskSnapshot(todoistTask);
+
+  if (payload.content !== snapshot.content) {
+    return true;
+  }
+
+  if (payload.description !== snapshot.description) {
+    return true;
+  }
+
+  if (ensureString(payload.due_string) !== snapshot.due_string) {
+    return true;
+  }
+
+  if (ensureString(payload.deadline_date) !== snapshot.deadline_date) {
+    return true;
+  }
+
+  return false;
+}
+
+function tasksDiffer(previousTask, currentTask, context = {}) {
   if (!previousTask || !currentTask) {
     return false;
   }
@@ -63,10 +164,10 @@ function tasksDiffer(previousTask, currentTask) {
     return true;
   }
 
-  const previousDescription = buildDescription(previousTask);
-  const currentDescription = buildDescription(currentTask);
+  const previousPayload = buildProjectionPayload(previousTask, context);
+  const currentPayload = buildProjectionPayload(currentTask, context);
 
-  return previousDescription !== currentDescription;
+  return JSON.stringify(previousPayload) !== JSON.stringify(currentPayload);
 }
 
 function toTaskMap(tasks = []) {
@@ -83,16 +184,50 @@ function toTaskMap(tasks = []) {
   return map;
 }
 
-export function buildProjectionPayload(task) {
+function findUniqueTodoistTaskMatch(todoistTasks = [], task, usedTodoistTaskIds = new Set()) {
+  const taskName = ensureString(task?.task);
+  if (!taskName) {
+    return null;
+  }
+
+  const candidates = todoistTasks.filter((item) => {
+    const itemId = getTodoistItemId(item);
+    if (!itemId || usedTodoistTaskIds.has(itemId)) {
+      return false;
+    }
+
+    return ensureString(item?.content) === taskName;
+  });
+
+  if (candidates.length !== 1) {
+    return null;
+  }
+
+  return candidates[0];
+}
+
+export function buildProjectionPayload(task, context = {}) {
   return {
     content: String(task?.task || '').trim(),
     description: buildDescription(task),
+    ...getTaskDatePayload(task, context),
   };
 }
 
-export function decideProjectionAction({ previousTask, currentTask }) {
+export function decideProjectionAction({ previousTask, currentTask, currentTodoistTask, rollingDayDate }) {
+  const payloadContext = {
+    rollingDayDate,
+  };
+
   if (!previousTask && currentTask) {
     const todoistTaskId = getTodoistTaskId(currentTask);
+
+    if (!todoistTaskId && currentTodoistTask) {
+      return {
+        action: 'update',
+        reason: '対応する Todoist task が事前参照で見つかったため',
+      };
+    }
 
     if (!todoistTaskId) {
       return {
@@ -133,6 +268,13 @@ export function decideProjectionAction({ previousTask, currentTask }) {
   if (previousTask && currentTask) {
     const todoistTaskId = getTodoistTaskId(currentTask);
 
+    if (!todoistTaskId && currentTodoistTask) {
+      return {
+        action: 'update',
+        reason: '対応する Todoist task が事前参照で見つかったため',
+      };
+    }
+
     if (!todoistTaskId) {
       return {
         action: 'create',
@@ -140,10 +282,18 @@ export function decideProjectionAction({ previousTask, currentTask }) {
       };
     }
 
-    if (tasksDiffer(previousTask, currentTask)) {
+    if (tasksDiffer(previousTask, currentTask, payloadContext)) {
       return {
         action: 'update',
-        reason: 'task / rolling_day / description に変更があるため',
+        reason: 'task / rolling_day / payload に変更があるため',
+      };
+    }
+
+    const payload = buildProjectionPayload(currentTask, payloadContext);
+    if (payloadDiffersFromTodoist(payload, currentTodoistTask)) {
+      return {
+        action: 'update',
+        reason: 'Todoist 現状と payload に差分があるため',
       };
     }
 
@@ -170,7 +320,7 @@ export function applyTodoistTaskId({ task, todoistTaskId }) {
 }
 
 export async function projectActiveOperations(
-  { previousActiveTasks = [], currentActiveTasks = [] },
+  { previousActiveTasks = [], currentActiveTasks = [], rollingDayDates = {} },
   context = {}
 ) {
   const previousMap = toTaskMap(previousActiveTasks);
@@ -180,10 +330,58 @@ export async function projectActiveOperations(
   const projectionProjectId = getProjectionProjectId(context);
   const dryRun = context.dryRun === true;
 
+  const listedTodoistTasks = projectionProjectId
+    ? normalizeListedTasks(
+        await listTodoistTasks(
+          {
+            project_id: projectionProjectId,
+            limit: 200,
+          },
+          {
+            ...context,
+            step: context.step || 'projectActiveOperations',
+            action: 'list',
+            resource: 'tasks',
+          }
+        )
+      )
+    : [];
+
+  const todoistTaskMap = buildTodoistTaskMap(listedTodoistTasks);
+  const usedTodoistTaskIds = new Set();
+
   for (const key of allKeys) {
     const previousTask = previousMap.get(key);
     const currentTask = currentMap.get(key);
-    const decision = decideProjectionAction({ previousTask, currentTask });
+    const candidateTask = currentTask || previousTask;
+    const rollingDayDate = ensureString(rollingDayDates?.[candidateTask?.rolling_day || '']);
+
+    const explicitTodoistTaskId = getTodoistTaskId(candidateTask);
+    let currentTodoistTask = explicitTodoistTaskId
+      ? todoistTaskMap.get(explicitTodoistTaskId)
+      : null;
+
+    if (!currentTodoistTask && currentTask) {
+      currentTodoistTask = findUniqueTodoistTaskMatch(
+        listedTodoistTasks,
+        currentTask,
+        usedTodoistTaskIds
+      );
+    }
+
+    if (currentTodoistTask) {
+      const matchedId = getTodoistItemId(currentTodoistTask);
+      if (matchedId) {
+        usedTodoistTaskIds.add(matchedId);
+      }
+    }
+
+    const decision = decideProjectionAction({
+      previousTask,
+      currentTask,
+      currentTodoistTask,
+      rollingDayDate,
+    });
 
     if (decision.action === 'noop') {
       results.push({
@@ -197,7 +395,7 @@ export async function projectActiveOperations(
 
     try {
       if (decision.action === 'create') {
-        const payload = buildProjectionPayload(currentTask);
+        const payload = buildProjectionPayload(currentTask, { rollingDayDate });
         const createInput = {
           ...payload,
           ...(projectionProjectId ? { project_id: projectionProjectId } : {}),
@@ -237,14 +435,15 @@ export async function projectActiveOperations(
       }
 
       if (decision.action === 'update') {
-        const todoistTaskId = getTodoistTaskId(currentTask);
-        const payload = buildProjectionPayload(currentTask);
+        const matchedTodoistTaskId =
+          getTodoistTaskId(currentTask) || getTodoistItemId(currentTodoistTask);
+        const payload = buildProjectionPayload(currentTask, { rollingDayDate });
 
         if (dryRun) {
           results.push({
             action: 'update',
             taskKey: key,
-            todoistTaskId,
+            todoistTaskId: matchedTodoistTaskId,
             applied: false,
             dryRun: true,
             reason: decision.reason,
@@ -254,10 +453,12 @@ export async function projectActiveOperations(
         }
 
         await updateTodoistTask(
-          todoistTaskId,
+          matchedTodoistTaskId,
           {
             content: payload.content,
             description: payload.description,
+            ...(payload.due_string ? { due_string: payload.due_string } : {}),
+            ...(payload.deadline_date ? { deadline_date: payload.deadline_date } : {}),
           },
           {
             ...context,
@@ -270,9 +471,17 @@ export async function projectActiveOperations(
         results.push({
           action: 'update',
           taskKey: key,
-          todoistTaskId,
+          todoistTaskId: matchedTodoistTaskId,
           applied: true,
           reason: decision.reason,
+          ...(getTodoistTaskId(currentTask)
+            ? {}
+            : {
+                task: applyTodoistTaskId({
+                  task: currentTask,
+                  todoistTaskId: matchedTodoistTaskId,
+                }),
+              }),
         });
         continue;
       }
