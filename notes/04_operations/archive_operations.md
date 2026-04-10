@@ -46,12 +46,6 @@ weekly review までの短期履歴置き場であり、
   - 結論: archive
   - archive 先: `notes/99_archive/design/classification_and_routing_spec.md`
 
---- 2026-04-10 projection apply ---
-
-- `web 版 GPT editor で ADAM instruction の最新変更を反映する` を完了した
-  - projection apply 先: `EVE開発`
-  - todoist_task_id: `6gMJ3RpPwXh5WJxR`
-
 ---
 
 ## ルール
