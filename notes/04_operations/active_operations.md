@@ -20,7 +20,7 @@
   due_date: 2026-04-10
   due_type: date
   external:
-    todoist_task_id: 6gMJ3RpPwXh5WJxR
+    todoist_task_id: 6gMJc6rQj7g64v6R
 
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
@@ -33,7 +33,7 @@
   notes:
     - plan と operations の対応が読める状態に揃える
   external:
-    todoist_task_id: 6gMJ8Xw2fxCRgR4R
+    todoist_task_id: 6gMJc6pFXHq3wwJR
 
 ## Day1（04/11 土）
 
@@ -50,7 +50,7 @@
     - 反映対象は instruction の最新変更
     - 他 task より先に着手する
   external:
-    todoist_task_id: 6gMJ8XrG3fc7CHX2
+    todoist_task_id: 6gMJc6whX4GQwW82
 
 - task: weekly review 前提で active / next / archive の更新準備をする
   source_ref:
@@ -63,7 +63,7 @@
   notes:
     - reroll で動いた差分をそのまま週次へ渡せる形にする
   external:
-    todoist_task_id: 6gMJ8c38wMMMw48R
+    todoist_task_id: 6gMJc6wgfF6cHJrR
 
 ## Day2（04/12 日）
 
@@ -79,7 +79,7 @@
   notes:
     - active-first execution と reroll 原則の有効性・副作用を評価材料としてまとめる
   external:
-    todoist_task_id: 6gMJ8c932Vh9Ghp2
+    todoist_task_id: 6gMJc73FGmh6Q4V2
 
 ## Day3（04/13 月）
 
@@ -95,7 +95,7 @@
   notes:
     - report / handover / docs 候補への返却観点を揃える
   external:
-    todoist_task_id: 6gMJ8cF64mW4WjJ2
+    todoist_task_id: 6gMJc733R6Fhj8vR
 
 ## Day4（04/14 火）
 
@@ -112,7 +112,7 @@
     - decision 最小運用モデル論点
     を再評価対象に含める
   external:
-    todoist_task_id: 6gMJ8cGxJj3qRcG2
+    todoist_task_id: 6gMJc74JX58cJ3cR
 
 ## Day5（04/15 水）
 
@@ -127,7 +127,7 @@
   notes:
     - next / plan / issue から補充候補を比較する
   external:
-    todoist_task_id: 6gMJ8cJW5w33gPXR
+    todoist_task_id: 6gMJc796JxmPPWR2
 
 ---
 
