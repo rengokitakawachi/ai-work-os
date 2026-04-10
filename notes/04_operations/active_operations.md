@@ -17,6 +17,8 @@
     - GPT editor 上の instruction / schema 反映と Todoist task 作成は実施済み
     - ただし active operation 内容の Todoist 反映は未完了として扱う
     - EVE開発 project に作成した Todoist task を継続利用する
+  due_date: 2026-04-10
+  due_type: date
   external:
     todoist_task_id: 6gMJ3RpPwXh5WJxR
 
