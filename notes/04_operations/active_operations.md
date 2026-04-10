@@ -32,6 +32,8 @@
     - conversation routing と active-first execution を通した結果、直近作業が Phase 0 完了条件へどう効くかを再確認する必要がある
   notes:
     - plan と operations の対応が読める状態に揃える
+  external:
+    todoist_task_id: 6gMJ8Xw2fxCRgR4R
 
 ## Day1（04/11 土）
 
@@ -47,6 +49,8 @@
     - web 版 GPT editor 前提
     - 反映対象は instruction の最新変更
     - 他 task より先に着手する
+  external:
+    todoist_task_id: 6gMJ8XrG3fc7CHX2
 
 - task: weekly review 前提で active / next / archive の更新準備をする
   source_ref:
@@ -58,6 +62,8 @@
     - active-first 運用試験の結果を weekly review に返すため、繰越・完了・snapshot の材料を整理する必要がある
   notes:
     - reroll で動いた差分をそのまま週次へ渡せる形にする
+  external:
+    todoist_task_id: 6gMJ8c38wMMMw48R
 
 ## Day2（04/12 日）
 
@@ -72,6 +78,8 @@
     - instruction と operations で試験運用した結果を見てから docs へ反映する方針のため、候補整理を後段に置く
   notes:
     - active-first execution と reroll 原則の有効性・副作用を評価材料としてまとめる
+  external:
+    todoist_task_id: 6gMJ8c932Vh9Ghp2
 
 ## Day3（04/13 月）
 
@@ -86,6 +94,8 @@
     - 試験運用の結果と次判断が追えるように、返却先を意識して整理する必要がある
   notes:
     - report / handover / docs 候補への返却観点を揃える
+  external:
+    todoist_task_id: 6gMJ8cF64mW4WjJ2
 
 ## Day4（04/14 火）
 
@@ -101,6 +111,8 @@
     - handover 起点解釈論点
     - decision 最小運用モデル論点
     を再評価対象に含める
+  external:
+    todoist_task_id: 6gMJ8cGxJj3qRcG2
 
 ## Day5（04/15 水）
 
@@ -114,6 +126,8 @@
     - active の完了が進んだため、次の 7 日枠補充方針を先に見ておく必要がある
   notes:
     - next / plan / issue から補充候補を比較する
+  external:
+    todoist_task_id: 6gMJ8cJW5w33gPXR
 
 ---
 
