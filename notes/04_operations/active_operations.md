@@ -15,6 +15,8 @@
     - まず instruction 反映を最優先とする
     - 必要に応じて同じ流れで最新 schema 反映も確認する
     - iPhone では編集できないため web 版前提で進める
+  external:
+    todoist_task_id: 6gMJ3RpPwXh5WJxR
 
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
