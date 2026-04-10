@@ -206,6 +206,68 @@ function findUniqueTodoistTaskMatch(todoistTasks = [], task, usedTodoistTaskIds 
   return candidates[0];
 }
 
+function shouldRetryWithoutDeadline(error, payload) {
+  return (
+    Boolean(payload?.deadline_date) &&
+    error?.code === 'UNAUTHORIZED' &&
+    Number(error?.details?.upstream_status) === 403
+  );
+}
+
+function omitDeadline(payload = {}) {
+  const nextPayload = { ...payload };
+  delete nextPayload.deadline_date;
+  return nextPayload;
+}
+
+async function createWithDeadlineFallback(createInput, requestContext) {
+  try {
+    const created = await createTodoistTask(createInput, requestContext);
+    return {
+      created,
+      appliedPayload: createInput,
+      deadlineSkipped: false,
+      deadlineSkipReason: '',
+    };
+  } catch (error) {
+    if (!shouldRetryWithoutDeadline(error, createInput)) {
+      throw error;
+    }
+
+    const fallbackInput = omitDeadline(createInput);
+    const created = await createTodoistTask(fallbackInput, requestContext);
+    return {
+      created,
+      appliedPayload: fallbackInput,
+      deadlineSkipped: true,
+      deadlineSkipReason: 'Todoist プラン制約により deadline を反映せず継続',
+    };
+  }
+}
+
+async function updateWithDeadlineFallback(todoistTaskId, updateInput, requestContext) {
+  try {
+    await updateTodoistTask(todoistTaskId, updateInput, requestContext);
+    return {
+      appliedPayload: updateInput,
+      deadlineSkipped: false,
+      deadlineSkipReason: '',
+    };
+  } catch (error) {
+    if (!shouldRetryWithoutDeadline(error, updateInput)) {
+      throw error;
+    }
+
+    const fallbackInput = omitDeadline(updateInput);
+    await updateTodoistTask(todoistTaskId, fallbackInput, requestContext);
+    return {
+      appliedPayload: fallbackInput,
+      deadlineSkipped: true,
+      deadlineSkipReason: 'Todoist プラン制約により deadline を反映せず継続',
+    };
+  }
+}
+
 export function buildProjectionPayload(task, context = {}) {
   return {
     content: String(task?.task || '').trim(),
@@ -413,7 +475,7 @@ export async function projectActiveOperations(
           continue;
         }
 
-        const created = await createTodoistTask(createInput, {
+        const createResult = await createWithDeadlineFallback(createInput, {
           ...context,
           step: context.step || 'projectActiveOperations',
           action: 'create',
@@ -423,12 +485,18 @@ export async function projectActiveOperations(
         results.push({
           action: 'create',
           taskKey: key,
-          todoistTaskId: created?.id ? String(created.id) : '',
+          todoistTaskId: createResult.created?.id ? String(createResult.created.id) : '',
           applied: true,
           reason: decision.reason,
+          ...(createResult.deadlineSkipped
+            ? {
+                deadlineSkipped: true,
+                deadlineSkipReason: createResult.deadlineSkipReason,
+              }
+            : {}),
           task: applyTodoistTaskId({
             task: currentTask,
-            todoistTaskId: created?.id,
+            todoistTaskId: createResult.created?.id,
           }),
         });
         continue;
@@ -438,6 +506,12 @@ export async function projectActiveOperations(
         const matchedTodoistTaskId =
           getTodoistTaskId(currentTask) || getTodoistItemId(currentTodoistTask);
         const payload = buildProjectionPayload(currentTask, { rollingDayDate });
+        const updateInput = {
+          content: payload.content,
+          description: payload.description,
+          ...(payload.due_string ? { due_string: payload.due_string } : {}),
+          ...(payload.deadline_date ? { deadline_date: payload.deadline_date } : {}),
+        };
 
         if (dryRun) {
           results.push({
@@ -452,14 +526,9 @@ export async function projectActiveOperations(
           continue;
         }
 
-        await updateTodoistTask(
+        const updateResult = await updateWithDeadlineFallback(
           matchedTodoistTaskId,
-          {
-            content: payload.content,
-            description: payload.description,
-            ...(payload.due_string ? { due_string: payload.due_string } : {}),
-            ...(payload.deadline_date ? { deadline_date: payload.deadline_date } : {}),
-          },
+          updateInput,
           {
             ...context,
             step: context.step || 'projectActiveOperations',
@@ -474,6 +543,12 @@ export async function projectActiveOperations(
           todoistTaskId: matchedTodoistTaskId,
           applied: true,
           reason: decision.reason,
+          ...(updateResult.deadlineSkipped
+            ? {
+                deadlineSkipped: true,
+                deadlineSkipReason: updateResult.deadlineSkipReason,
+              }
+            : {}),
           ...(getTodoistTaskId(currentTask)
             ? {}
             : {
