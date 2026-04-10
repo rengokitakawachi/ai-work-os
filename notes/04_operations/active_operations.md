@@ -1,26 +1,6 @@
 # active_operations
 
-## Day0（04/10 金）
-
-- task: web 版 GPT editor で ADAM instruction の最新変更を反映する
-  source_ref:
-    - code/config/ai/adam_instruction.md
-    - notes/02_design/2026-04-03_review_system_operating_spec.md
-    - config/ai/adam_schema.yaml
-    - notes/07_reports/daily/2026-04-09.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day0
-  why_now:
-    - review 実行ルールの再発防止変更を実運用へ反映しないと、明日以降も同じ逸脱を繰り返すリスクがある
-    - active operation の内容を Todoist execution view に反映する流れは着手済みだが未完了であり、正本と execution view の整合をこの task 内で完結させる必要がある
-  notes:
-    - GPT editor 上の instruction / schema 反映と Todoist task 作成は実施済み
-    - ただし active operation 内容の Todoist 反映は未完了として扱う
-    - EVE開発 project に作成した Todoist task を継続利用する
-  due_date: 2026-04-10
-  due_type: date
-  external:
-    todoist_task_id: 6gMJc6rQj7g64v6R
+## Day0（04/11 土）
 
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
@@ -32,29 +12,12 @@
     - conversation routing と active-first execution を通した結果、直近作業が Phase 0 完了条件へどう効くかを再確認する必要がある
   notes:
     - plan と operations の対応が読める状態に揃える
-  due_date: 2026-04-10
+  due_date: 2026-04-11
   due_type: date
   external:
     todoist_task_id: 6gMJc6pFXHq3wwJR
 
-## Day1（04/11 土）
-
-- task: web 版 GPT editor で ADAM instruction の最新変更を反映する
-  source_ref:
-    - code/config/ai/adam_instruction.md
-    - notes/02_design/2026-04-03_review_system_operating_spec.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day1
-  why_now:
-    - instruction はパソコンからしか反映できないため、明日の着手直後に実行できる位置へ固定する必要がある
-  notes:
-    - web 版 GPT editor 前提
-    - 反映対象は instruction の最新変更
-    - 他 task より先に着手する
-  due_date: 2026-04-11
-  due_type: date
-  external:
-    todoist_task_id: 6gMJc6whX4GQwW82
+## Day1（04/12 日）
 
 - task: weekly review 前提で active / next / archive の更新準備をする
   source_ref:
@@ -66,12 +29,12 @@
     - active-first 運用試験の結果を weekly review に返すため、繰越・完了・snapshot の材料を整理する必要がある
   notes:
     - reroll で動いた差分をそのまま週次へ渡せる形にする
-  due_date: 2026-04-11
+  due_date: 2026-04-12
   due_type: date
   external:
     todoist_task_id: 6gMJc6wgfF6cHJrR
 
-## Day2（04/12 日）
+## Day2（04/13 月）
 
 - task: docs 反映候補として execution governance 変更点を整理する
   source_ref:
@@ -84,12 +47,12 @@
     - instruction と operations で試験運用した結果を見てから docs へ反映する方針のため、候補整理を後段に置く
   notes:
     - active-first execution と reroll 原則の有効性・副作用を評価材料としてまとめる
-  due_date: 2026-04-12
+  due_date: 2026-04-13
   due_type: date
   external:
     todoist_task_id: 6gMJc73FGmh6Q4V2
 
-## Day3（04/13 月）
+## Day3（04/14 火）
 
 - task: conversation routing と execution governance の試験結果を handover / report に返す準備をする
   source_ref:
@@ -102,12 +65,12 @@
     - 試験運用の結果と次判断が追えるように、返却先を意識して整理する必要がある
   notes:
     - report / handover / docs 候補への返却観点を揃える
-  due_date: 2026-04-13
+  due_date: 2026-04-14
   due_type: date
   external:
     todoist_task_id: 6gMJc733R6Fhj8vR
 
-## Day4（04/14 火）
+## Day4（04/15 水）
 
 - task: next_operations 上位候補を再評価する
   source_ref:
@@ -121,12 +84,12 @@
     - handover 起点解釈論点
     - decision 最小運用モデル論点
     を再評価対象に含める
-  due_date: 2026-04-14
+  due_date: 2026-04-15
   due_type: date
   external:
     todoist_task_id: 6gMJc74JX58cJ3cR
 
-## Day5（04/15 水）
+## Day5（04/16 木）
 
 - task: Day6 補充候補を reroll 観点で選定する
   source_ref:
@@ -138,7 +101,7 @@
     - active の完了が進んだため、次の 7 日枠補充方針を先に見ておく必要がある
   notes:
     - next / plan / issue から補充候補を比較する
-  due_date: 2026-04-15
+  due_date: 2026-04-16
   due_type: date
   external:
     todoist_task_id: 6gMJc796JxmPPWR2
