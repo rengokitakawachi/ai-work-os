@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.1.4"
+  version: "2.1.5"
   description: AI Work OS repo access API and Todoist Tasks API
 
 servers:
@@ -374,8 +374,10 @@ components:
             type: string
         status:
           type: string
+          description: Optional execution status for projection and reporting. Do not use status alone to infer structural changes in active_operations.
         completed:
           type: boolean
+          description: True means the task work itself is complete. A completed task may remain in active_operations until daily review; completed state and structural placement must be judged separately.
         external:
           type: object
           additionalProperties: true
@@ -404,10 +406,12 @@ components:
           type: string
         previous_active_tasks:
           type: array
+          description: Previous active snapshot used for projection diffing. Active snapshot history does not imply that completed tasks have already been archived.
           items:
             $ref: "#/components/schemas/OperationTaskSchema"
         current_active_tasks:
           type: array
+          description: Current active snapshot for projection. During daytime operation, completed tasks may still appear here until daily review updates archive and day structure.
           items:
             $ref: "#/components/schemas/OperationTaskSchema"
 
