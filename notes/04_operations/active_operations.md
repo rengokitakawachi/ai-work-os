@@ -1,5 +1,21 @@
 # active_operations
 
+## Phase 0 位置づけ
+
+### Phase 0 直結 task
+
+- `Phase 0 plan に対する現行 operations の接続を見直す`
+- `weekly review 前提で active / next / archive の更新準備をする`
+- `docs 反映候補として execution governance 変更点を整理する`
+- `conversation routing と execution governance の試験結果を handover / report に返す準備をする`
+
+### 補助 task
+
+- `web 版 GPT editor で ADAM instruction の最新変更を反映する`
+- `web 版 GPT editor に ADAM instruction と schema の今回の更新を反映する`
+- `next_operations 上位候補を再評価する`
+- `Day6 補充候補を reroll 観点で選定する`
+
 ## Day0（04/11 土）
 
 - task: web 版 GPT editor で ADAM instruction の最新変更を反映する
