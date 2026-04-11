@@ -53,6 +53,13 @@ weekly review までの短期履歴置き場であり、
   - operations → Todoist projection を EVE開発 project へ接続した
   - Todoist task の再作成と date 反映まで確認した
 
+--- 2026-04-11 daily review ---
+
+- `Phase 0 plan に対する現行 operations の接続を見直す` を完了した
+  - Phase 0 完了条件に対する active / next の対応を整理した
+  - `Phase 0 位置づけ` を active_operations / next_operations に追加した
+  - `Phase 0 直結 task` と `補助 task` を明示した
+
 ---
 
 ## ルール
