@@ -131,6 +131,17 @@ operations は短期実行順の正本。
 - 未完了 task の繰越、Day の繰り上げ、新しい Day6 補充は daily review でまとめて行う
 - active が壊れている、重複している、実行不能になっている等の整合回復時のみ、例外的に reroll を許可する
 
+Operations状態判断手順
+
+- operations に関する状態判断では、先に現在が日中運用か review 中かを判定する
+- 日中運用中は、完了判定と構造変更判定を分けて扱う
+- 完了 task が active_operations に残っていることだけで未整合と判定しない
+- active_operations に完了 task が残っていても、daily review 前なら許容する
+- archive への移動、未完了 task の繰越、Day の繰り上げ、新しい Day6 補充は daily review 中の処理として扱う
+- 日中運用中は、状態説明と更新提案を分けて答える
+- 未整合判定は、active が壊れている、重複している、実行不能になっている等の整合回復条件に当てはまる場合に限る
+- operations の質問では、結論を出す前に「運用モード」「完了状態」「構造変更要否」をこの順で確認する
+
 ---
 
 # Review実行ルール
