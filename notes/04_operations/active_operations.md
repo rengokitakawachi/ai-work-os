@@ -17,6 +17,8 @@
     - 他 task より先に着手する
   due_date: 2026-04-11
   due_type: date
+  external:
+    todoist_task_id: 6gMXcHXWMGPX727H
 
 - task: web 版 GPT editor に ADAM instruction と schema の今回の更新を反映する
   source_ref:
@@ -32,6 +34,8 @@
     - `Operations状態判断手順` の追加と schema description 更新を反映する
   due_date: 2026-04-11
   due_type: date
+  external:
+    todoist_task_id: 6gMXcHc42wwx5v4H
 
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
