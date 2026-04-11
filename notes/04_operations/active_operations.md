@@ -18,6 +18,21 @@
   due_date: 2026-04-11
   due_type: date
 
+- task: web 版 GPT editor に ADAM instruction と schema の今回の更新を反映する
+  source_ref:
+    - code/config/ai/adam_instruction.md
+    - code/config/ai/adam_schema.yaml
+    - notes/04_operations/active_operations.md
+  rolling_day: Day0
+  why_now:
+    - repo 側で更新した instruction / schema を GPT editor 側にも揃えないと、今回追加した状態判断ルールが実運用へ反映されない
+  notes:
+    - web 版 GPT editor 前提
+    - 反映対象は `config/ai/adam_instruction.md` と `config/ai/adam_schema.yaml`
+    - `Operations状態判断手順` の追加と schema description 更新を反映する
+  due_date: 2026-04-11
+  due_type: date
+
 - task: Phase 0 plan に対する現行 operations の接続を見直す
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
