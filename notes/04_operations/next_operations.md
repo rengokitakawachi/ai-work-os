@@ -10,6 +10,24 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
+## Phase 0 位置づけ
+
+### Phase 0 直結 task
+
+- `review system と operations rolling の接続ルールを design 観点で確認する`
+- `Phase 0 完了条件に対する未充足項目を洗い出す`
+
+### 補助 task
+
+- `scoring knowledge の蓄積方針を dev_memo か design に整理する`
+- `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する`
+- `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する`
+- `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
+- `stale active の整合回復ルールを design に整理する`
+- `docs / notes / instruction の operations 周辺未反映差分を一覧化する`
+- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
+- `Phase 1 各 plan と operations 接続案を並べる`
+
 ## タスク
 
 - task: scoring knowledge の蓄積方針を dev_memo か design に整理する
