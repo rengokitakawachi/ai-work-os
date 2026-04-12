@@ -14,39 +14,43 @@ active_operations に入らなかった上位候補を保持する。
 
 ### Phase 0 直結 task
 
-- なし（4/12 daily review 時点では active 再構成を優先）
+- なし（現時点では Phase 0 の接続弱化修正を優先）
 
 ### 補助 task
 
-- なし（旧 next は active へ繰り上げ済み）
+- `Phase 1 各 plan と operations 接続案を並べる`
 
-## 再評価結果（2026-04-12 daily review）
+## 再評価結果（2026-04-12 再調整）
 
 ### active へ繰り上げ済み
 
-- `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する`
-- `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する`
-- `stale active の整合回復ルールを design に整理する`
-- `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
-- `scoring knowledge の蓄積方針を dev_memo か design に整理する`
-- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
+- `plan から operations への接続弱化ポイントと重要 issue の埋没防止ルールを design に整理する`
+
+理由
+
+- plan にある重要論点であり、issue にも明示化されたが operations へ落ちていなかったため、active 前半へ繰り上げた
+- Phase 0 を前進させるには、まず plan → issue → operations の接続弱化を補正する方が優先である
+
+### 現在の上位候補
+
 - `Phase 1 各 plan と operations 接続案を並べる`
 
 理由
 
-- 4/12 までに旧 active が実質完了したため、daily review で旧 next をそのまま次週の active へ繰り上げた
-
-### 現在の上位候補
-
-- なし
-
-理由
-
-- 追加候補の再評価は次回 reroll / review で行う
+- 重要ではあるが、まずは Phase 0 内の接続弱化ポイントを整理してから扱う方が自然である
 
 ## タスク
 
-- なし
+- task: Phase 1 各 plan と operations 接続案を並べる
+  source_ref:
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
+    - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
+    - notes/04_operations/active_operations.md
+  why_now:
+    - 次 phase への接続には必要だが、まずは Phase 0 の接続弱化修正を優先する
+  notes:
+    - Todoist / Outlook 接続の前段として保持する
 
 ---
 
