@@ -14,8 +14,7 @@ active_operations に入らなかった上位候補を保持する。
 
 ### Phase 0 直結 task
 
-- `review system と operations rolling の接続ルールを design 観点で確認する`
-- `Phase 0 完了条件に対する未充足項目を洗い出す`
+- なし（上位 2件は active へ繰り上げ済み）
 
 ### 補助 task
 
@@ -30,17 +29,17 @@ active_operations に入らなかった上位候補を保持する。
 
 ## 再評価結果（2026-04-12）
 
-### 上位に固定する候補
+### active へ繰り上げ済み
 
 - `review system と operations rolling の接続ルールを design 観点で確認する`
 - `Phase 0 完了条件に対する未充足項目を洗い出す`
 
 理由
 
-- どちらも Phase 0 直結であり、
-  weekly review / execution governance / plan 完了条件の確認に直結するため
+- D5 / D6 の誤混入 task を削除したため、
+  next の最上位から Phase 0 直結 task を active へ補充した
 
-### 次点で近い将来に見る候補
+### 現在の上位候補
 
 - `docs / notes / instruction の operations 周辺未反映差分を一覧化する`
 - `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する`
@@ -49,7 +48,6 @@ active_operations に入らなかった上位候補を保持する。
 
 - docs 反映候補整理と report 返却準備が終わったため、
   次は未反映差分と再開解釈の明文化価値が高い
-- ただし Phase 0 直結 2件よりは一段下げる
 
 ### 後段でよい候補
 
@@ -66,26 +64,6 @@ active_operations に入らなかった上位候補を保持する。
 - repo 全体整合や Phase 1 論点は後段でも構わない
 
 ## タスク
-
-- task: review system と operations rolling の接続ルールを design 観点で確認する
-  source_ref:
-    - notes/02_design/2026-04-03_review_system_operating_spec.md
-    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
-    - notes/04_operations/active_operations.md
-  why_now:
-    - active 側で reroll と試験運用を進めた後、review にどう返すかを next で控えておく必要がある
-  notes:
-    - daily / weekly review の返却点と operations 更新点を明確にする
-
-- task: Phase 0 完了条件に対する未充足項目を洗い出す
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
-    - notes/04_operations/active_operations.md
-  why_now:
-    - active の試験運用結果を踏まえて、Phase 0 完了条件の残差分を次順位で確認する必要がある
-  notes:
-    - execution governance と conversation routing を含めて再評価する
 
 - task: docs / notes / instruction の operations 周辺未反映差分を一覧化する
   source_ref:
