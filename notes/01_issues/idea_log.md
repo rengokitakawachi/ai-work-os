@@ -17,3 +17,12 @@
 - impact: high
 - status: open
 - created_at: 2026-04-12
+
+### 20260412-017
+- title: plan から operations への接続が弱く重要 issue が埋もれる恐れがある
+- category: operations
+- description: Phase 0 plan にある重要論点が issue として記録されても、operations candidate 化されず active / next に落ちない場合、plan を前進させるための operations rolling が機能しなくなる。issue routing が未完成な現段階では特に、重要 issue を issue に残しただけで満足すると埋没しやすい。したがって、plan → issue → operations の接続弱化ポイントを明らかにし、重要 issue の位置づけ判定、operations candidate 化、再評価地点をどう最小運用するかを整理する必要がある。
+- context: `2026-04_phase0_adam_to_eve_common_operating_model.md` では issue routing と roadmap / plan / operations の接続整理が主要論点に含まれているが、4/12 時点の active / next にはこの論点が明示的に入っていなかった。会話では、`operations rolling は next から取ってくることではなく、roadmap / plan を前進させる優先順位決定であり、next は素材の一つにすぎない` と修正されており、この論点は rolling と issue routing の両方にまたがる重要課題として扱う必要がある。
+- impact: high
+- status: open
+- created_at: 2026-04-12
