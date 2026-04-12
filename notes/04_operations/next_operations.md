@@ -14,7 +14,7 @@ active_operations に入らなかった上位候補を保持する。
 
 ### Phase 0 直結 task
 
-- なし（上位 2件は active へ繰り上げ済み）
+- なし（上位 3件は active へ繰り上げ済み）
 
 ### 補助 task
 
@@ -23,7 +23,6 @@ active_operations に入らなかった上位候補を保持する。
 - `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する`
 - `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
 - `stale active の整合回復ルールを design に整理する`
-- `docs / notes / instruction の operations 周辺未反映差分を一覧化する`
 - `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
 - `Phase 1 各 plan と operations 接続案を並べる`
 
@@ -33,25 +32,25 @@ active_operations に入らなかった上位候補を保持する。
 
 - `review system と operations rolling の接続ルールを design 観点で確認する`
 - `Phase 0 完了条件に対する未充足項目を洗い出す`
+- `docs / notes / instruction の operations 周辺未反映差分を一覧化する`
 
 理由
 
-- D5 / D6 の誤混入 task を削除したため、
-  next の最上位から Phase 0 直結 task を active へ補充した
+- D5 / D6 の誤混入 task を削除した後、
+  active が尽きたため、next の上位から Phase 0 直結 task を順に active へ補充した
 
 ### 現在の上位候補
 
-- `docs / notes / instruction の operations 周辺未反映差分を一覧化する`
 - `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する`
+- `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する`
 
 理由
 
-- docs 反映候補整理と report 返却準備が終わったため、
-  次は未反映差分と再開解釈の明文化価値が高い
+- docs / notes / instruction 差分一覧化を active へ繰り上げたため、
+  次は再開解釈と review 出力接続の明文化価値が高い
 
 ### 後段でよい候補
 
-- `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する`
 - `stale active の整合回復ルールを design に整理する`
 - `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
 - `scoring knowledge の蓄積方針を dev_memo か design に整理する`
@@ -64,16 +63,6 @@ active_operations に入らなかった上位候補を保持する。
 - repo 全体整合や Phase 1 論点は後段でも構わない
 
 ## タスク
-
-- task: docs / notes / instruction の operations 周辺未反映差分を一覧化する
-  source_ref:
-    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
-    - notes/02_design/2026-04-02_docs_15_notes_system_update_draft.md
-    - code/config/ai/adam_instruction.md
-  why_now:
-    - docs 反映前の差分把握は必要だが、まずは instruction / active 側の試験運用結果を見てから整理する方がよい
-  notes:
-    - active-first execution と conversation routing の反映漏れ観点を含める
 
 - task: latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する
   source_ref:
