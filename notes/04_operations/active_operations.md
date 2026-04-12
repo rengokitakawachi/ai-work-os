@@ -7,13 +7,13 @@
 - `weekly review 前提で active / next / archive の更新準備をする`
 - `docs 反映候補として execution governance 変更点を整理する`
 - `conversation routing と execution governance の試験結果を handover / report に返す準備をする`
+- `review system と operations rolling の接続ルールを design 観点で確認する`
+- `Phase 0 完了条件に対する未充足項目を洗い出す`
 
 ### 補助 task
 
 - `next_operations 上位候補を再評価する`
 - `Day6 補充候補を reroll 観点で選定する`
-- `web 版 GPT editor で ADAM instruction の最新変更を反映する`
-- `web 版 GPT editor に ADAM instruction と schema の今回の更新を反映する`
 
 ## Day0（04/12 日）
 
@@ -106,43 +106,45 @@
 
 ## Day5（04/17 金）
 
-- task: web 版 GPT editor で ADAM instruction の最新変更を反映する
+- task: review system と operations rolling の接続ルールを design 観点で確認する
   source_ref:
-    - code/config/ai/adam_instruction.md
-    - config/ai/adam_schema.yaml
     - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
     - notes/04_operations/active_operations.md
+    - notes/04_operations/next_operations.md
+    - notes/04_operations/2026-04-12_day6_refill_candidate_selection.md
   rolling_day: Day5
   why_now:
-    - instruction / schema はパソコンからしか反映できないため、PC 利用可能時にまとめて反映できる位置へ置く必要がある
+    - D5 / D6 の不正 task を active から除去したため、next の最上位から Phase 0 直結 task を補充する
+    - execution governance の試験結果を review system 側へ返す接続点として最優先である
   notes:
-    - web 版 GPT editor 前提
-    - 反映対象は instruction と schema の最新変更
-    - PC 利用可能時に着手する
+    - reroll による active 補充
+    - daily / weekly review の返却点と operations 更新点を明確にする
   due_date: 2026-04-17
   due_type: date
   external:
-    todoist_task_id: 6gMXcHXWMGPX727H
+    todoist_task_id: 6gMmpj5CfJcjgxf2
 
 ## Day6（04/18 土）
 
-- task: web 版 GPT editor に ADAM instruction と schema の今回の更新を反映する
+- task: Phase 0 完了条件に対する未充足項目を洗い出す
   source_ref:
-    - code/config/ai/adam_instruction.md
-    - code/config/ai/adam_schema.yaml
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
     - notes/04_operations/active_operations.md
+    - notes/04_operations/next_operations.md
+    - notes/04_operations/2026-04-12_day6_refill_candidate_selection.md
   rolling_day: Day6
   why_now:
-    - repo 側で更新した instruction / schema を GPT editor 側にも揃えないと、今回追加した状態判断ルールが実運用へ反映されない
+    - D5 / D6 の不正 task 削除後の reroll で、Phase 0 直結の次点候補を active へ補充する
+    - review と operations の接続確認の次に、Phase 0 の残差分を確認する流れが自然である
   notes:
-    - web 版 GPT editor 前提
-    - 反映対象は `config/ai/adam_instruction.md` と `config/ai/adam_schema.yaml`
-    - `Operations状態判断手順` の追加と schema description 更新を反映する
-    - PC 利用可能時に着手する
+    - reroll による active 補充
+    - execution governance と conversation routing を含めて再評価する
   due_date: 2026-04-18
   due_type: date
   external:
-    todoist_task_id: 6gMXcHc42wwx5v4H
+    todoist_task_id: 6gMmpjVMH4pgvgPR
 
 ---
 
