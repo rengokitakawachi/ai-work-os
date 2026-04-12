@@ -9,6 +9,7 @@
 - `conversation routing と execution governance の試験結果を handover / report に返す準備をする`
 - `review system と operations rolling の接続ルールを design 観点で確認する`
 - `Phase 0 完了条件に対する未充足項目を洗い出す`
+- `docs / notes / instruction の operations 周辺未反映差分を一覧化する`
 
 ### 補助 task
 
@@ -145,6 +146,29 @@
   due_type: date
   external:
     todoist_task_id: 6gMmpjVMH4pgvgPR
+
+## Day6 例外補充（04/12 日中-2）
+
+- task: docs / notes / instruction の operations 周辺未反映差分を一覧化する
+  source_ref:
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+    - notes/02_design/2026-04-02_docs_15_notes_system_update_draft.md
+    - code/config/ai/adam_instruction.md
+    - docs/15_notes_system.md
+    - docs/17_operations_system.md
+  rolling_day: Day6_refill_2
+  why_now:
+    - active の既存 task は会話上すでに完了認識済みで、日中の実行対象が尽きている
+    - `docs/05_roadmap.md` はすでに Phase 0 反映済みであり、次は next_operations の最上位へ戻るのが自然
+    - operations 周辺の docs / notes / instruction の未反映差分を横断で一覧化する価値が高い
+  notes:
+    - 例外 reroll による active 補充
+    - docs 15 / 17 と instruction / related design の反映漏れを比較する
+    - archive 移動や Day 再編成は still daily review まで保留
+  due_date: 2026-04-12
+  due_type: date
+  external:
+    todoist_task_id: 6gMmwXgHXxh86wjR
 
 ---
 
