@@ -4,171 +4,146 @@
 
 ### Phase 0 直結 task
 
-- `weekly review 前提で active / next / archive の更新準備をする`
-- `docs 反映候補として execution governance 変更点を整理する`
-- `conversation routing と execution governance の試験結果を handover / report に返す準備をする`
-- `review system と operations rolling の接続ルールを design 観点で確認する`
-- `Phase 0 完了条件に対する未充足項目を洗い出す`
-- `docs / notes / instruction の operations 周辺未反映差分を一覧化する`
+- なし（4/12 daily review で旧直結 task 群を完了アーカイブ済み）
 
 ### 補助 task
 
-- `next_operations 上位候補を再評価する`
-- `Day6 補充候補を reroll 観点で選定する`
+- `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する`
+- `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する`
+- `stale active の整合回復ルールを design に整理する`
+- `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
+- `scoring knowledge の蓄積方針を dev_memo か design に整理する`
+- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
+- `Phase 1 各 plan と operations 接続案を並べる`
 
-## Day0（04/12 日）
+## Day0（04/13 月）
 
-- task: weekly review 前提で active / next / archive の更新準備をする
+- task: latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する
   source_ref:
+    - notes/06_handover/2026-04-08_17-30-00_summary.md
     - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-    - notes/04_operations/archive_operations.md
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+    - code/config/ai/adam_instruction.md
+    - notes/01_issues/idea_log.md
   rolling_day: Day0
   why_now:
-    - active-first 運用試験の結果を weekly review に返すため、繰越・完了・snapshot の材料を整理する必要がある
+    - 再開時に handover と active のどちらをどう読むかが揺れると、active-first execution と次作業選定の整合が崩れるため、近い将来の設計整理候補として保持する必要がある
   notes:
-    - reroll で動いた差分をそのまま週次へ渡せる形にする
-  due_date: 2026-04-12
-  due_type: date
-  external:
-    todoist_task_id: 6gMJc6wgfF6cHJrR
-
-## Day1（04/13 月）
-
-- task: docs 反映候補として execution governance 変更点を整理する
-  source_ref:
-    - code/config/ai/adam_instruction.md
-    - notes/04_operations/active_operations.md
-    - docs/13_dev_workflow.md
-    - docs/15_notes_system.md
-  rolling_day: Day1
-  why_now:
-    - instruction と operations で試験運用した結果を見てから docs へ反映する方針のため、候補整理を後段に置く
-  notes:
-    - active-first execution と reroll 原則の有効性・副作用を評価材料としてまとめる
+    - handover の next action を active task の未完部分として読める条件を明確にする
+    - 競合時に active / next / future のどこへ送るかの判断も含める
   due_date: 2026-04-13
   due_type: date
   external:
-    todoist_task_id: 6gMJc73FGmh6Q4V2
+    todoist_task_id: 6gMr5M54Mwxw95XR
 
-## Day2（04/14 火）
+## Day1（04/14 火）
 
-- task: conversation routing と execution governance の試験結果を handover / report に返す準備をする
+- task: daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する
   source_ref:
-    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
-    - code/config/ai/adam_instruction.md
+    - notes/07_reports/README.md
     - notes/07_reports/daily/2026-04-08.md
-    - notes/04_operations/archive_operations.md
-  rolling_day: Day2
+    - notes/09_content/README.md
+    - notes/04_operations/active_operations.md
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/01_issues/idea_log.md
+  rolling_day: Day1
   why_now:
-    - 試験運用の結果と次判断が追えるように、返却先を意識して整理する必要がある
+    - 日報を書いた後に content 抽出と rolling をどう接続するかが会話依存だと、daily review の出力運用が安定しないため、近い将来の設計整理候補として保持する必要がある
   notes:
-    - report / handover / docs 候補への返却観点を揃える
+    - report 保存で終わらず、content 抽出条件と operations 更新の接続点を整理する
+    - review と routing の責務分離を崩さない前提で扱う
   due_date: 2026-04-14
   due_type: date
   external:
-    todoist_task_id: 6gMJc733R6Fhj8vR
+    todoist_task_id: 6gMr5Mj7cJvC5VH2
 
-## Day3（04/15 水）
+## Day2（04/15 水）
 
-- task: next_operations 上位候補を再評価する
+- task: stale active の整合回復ルールを design に整理する
   source_ref:
-    - notes/04_operations/next_operations.md
+    - notes/00_inbox/dev_memo/2026-04-08_active_first_execution_trial.md
     - notes/04_operations/active_operations.md
-  rolling_day: Day3
+    - code/config/ai/adam_instruction.md
+    - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+  rolling_day: Day2
   why_now:
-    - conversation routing 実運用で生じた新規 next 候補を含め、近未来候補の相対順位を見直す必要がある
+    - active-first execution の試験運用で stale active の補足ルールが必要と分かったが、現行 active の上位 task よりは後順位で整理する方がよい
   notes:
-    - daily review の出力接続論点
-    - handover 起点解釈論点
-    - decision 最小運用モデル論点
-    を再評価対象に含める
+    - reroll before execution とは別の前処理ルールとして切り分ける
   due_date: 2026-04-15
   due_type: date
   external:
-    todoist_task_id: 6gMJc74JX58cJ3cR
+    todoist_task_id: 6gMr5PFQM8fC3XrR
 
-## Day4（04/16 木）
+## Day3（04/16 木）
 
-- task: Day6 補充候補を reroll 観点で選定する
+- task: ADAM で試す 05_decisions の最小運用モデルを design に整理する
   source_ref:
-    - notes/04_operations/next_operations.md
+    - notes/05_decisions/README.md
+    - notes/01_issues/idea_log.md
     - notes/04_operations/active_operations.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day4
+  rolling_day: Day3
   why_now:
-    - active の完了が進んだため、次の 7 日枠補充方針を先に見ておく必要がある
+    - EVE 本実装前に decision の集約モデルを ADAM で試す方針が出たため、抽出元、集約先、最小 schema、相互参照の設計を先に整理する必要がある
   notes:
-    - next / plan / issue から補充候補を比較する
+    - docs / issue / design / plan / operations / dev_memo を紐づけ元とする前提で整理する
   due_date: 2026-04-16
   due_type: date
   external:
-    todoist_task_id: 6gMJc796JxmPPWR2
+    todoist_task_id: 6gMr5Pc8j95X8GfR
 
-## Day5（04/17 金）
+## Day4（04/17 金）
 
-- task: review system と operations rolling の接続ルールを design 観点で確認する
+- task: scoring knowledge の蓄積方針を dev_memo か design に整理する
   source_ref:
-    - notes/02_design/2026-04-03_review_system_operating_spec.md
     - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
+    - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
+    - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
     - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-    - notes/04_operations/2026-04-12_day6_refill_candidate_selection.md
-  rolling_day: Day5
+  rolling_day: Day4
   why_now:
-    - D5 / D6 の不正 task を active から除去したため、next の最上位から Phase 0 直結 task を補充する
-    - execution governance の試験結果を review system 側へ返す接続点として最優先である
+    - 重要ではあるが、いまの task を Todoist で見える化する価値よりは後順位であり、まずは実用価値の高い投影プロトタイプを先に固める方がよい
   notes:
-    - reroll による active 補充
-    - daily / weekly review の返却点と operations 更新点を明確にする
+    - score は決定ではなく補助である前提を維持する
+    - dev_memo に残す条件と design に昇格する条件を見極める
   due_date: 2026-04-17
   due_type: date
   external:
-    todoist_task_id: 6gMmpj5CfJcjgxf2
+    todoist_task_id: 6gMr5QWWx4JW5vQR
 
-## Day6（04/18 土）
+## Day5（04/18 土）
 
-- task: Phase 0 完了条件に対する未充足項目を洗い出す
+- task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
   source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
-    - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-    - notes/04_operations/2026-04-12_day6_refill_candidate_selection.md
-  rolling_day: Day6
+    - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
+  rolling_day: Day5
   why_now:
-    - D5 / D6 の不正 task 削除後の reroll で、Phase 0 直結の次点候補を active へ補充する
-    - review と operations の接続確認の次に、Phase 0 の残差分を確認する流れが自然である
+    - repo 全体整合には必要だが、Phase 0 の execution governance 試験よりは後順位
   notes:
-    - reroll による active 補充
-    - execution governance と conversation routing を含めて再評価する
+    - docs 15 / 16 系の衝突整理を含む
   due_date: 2026-04-18
   due_type: date
   external:
-    todoist_task_id: 6gMmpjVMH4pgvgPR
+    todoist_task_id: 6gMr5QwRGxpmCRF2
 
-## Day6 例外補充（04/12 日中-2）
+## Day6（04/19 日）
 
-- task: docs / notes / instruction の operations 周辺未反映差分を一覧化する
+- task: Phase 1 各 plan と operations 接続案を並べる
   source_ref:
-    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
-    - notes/02_design/2026-04-02_docs_15_notes_system_update_draft.md
-    - code/config/ai/adam_instruction.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-  rolling_day: Day6_refill_2
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
+    - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day6
   why_now:
-    - active の既存 task は会話上すでに完了認識済みで、日中の実行対象が尽きている
-    - `docs/05_roadmap.md` はすでに Phase 0 反映済みであり、次は next_operations の最上位へ戻るのが自然
-    - operations 周辺の docs / notes / instruction の未反映差分を横断で一覧化する価値が高い
+    - 次 phase への接続には必要だが、Phase 0 の骨格と execution governance の安定化が先である
   notes:
-    - 例外 reroll による active 補充
-    - docs 15 / 17 と instruction / related design の反映漏れを比較する
-    - archive 移動や Day 再編成は still daily review まで保留
-  due_date: 2026-04-12
+    - Todoist / Outlook 接続の前段として保持する
+  due_date: 2026-04-19
   due_type: date
   external:
-    todoist_task_id: 6gMmwXgHXxh86wjR
+    todoist_task_id: 6gMr5RGcRm22HHJ2
 
 ---
 
