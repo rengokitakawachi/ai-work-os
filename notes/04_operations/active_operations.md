@@ -4,7 +4,7 @@
 
 ### Phase 0 直結 task
 
-- なし（4/12 daily review で旧直結 task 群を完了アーカイブ済み）
+- `plan から operations への接続弱化ポイントと重要 issue の埋没防止ルールを design に整理する`
 
 ### 補助 task
 
@@ -14,7 +14,6 @@
 - `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
 - `scoring knowledge の蓄積方針を dev_memo か design に整理する`
 - `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
-- `Phase 1 各 plan と operations 接続案を並べる`
 
 ## Day0（04/13 月）
 
@@ -38,6 +37,26 @@
 
 ## Day1（04/14 火）
 
+- task: plan から operations への接続弱化ポイントと重要 issue の埋没防止ルールを design に整理する
+  source_ref:
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/01_issues/idea_log.md
+    - notes/04_operations/active_operations.md
+    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
+  rolling_day: Day1
+  why_now:
+    - Phase 0 plan にある重要論点が issue には残る一方、operations candidate 化されず active / next から漏れる状態が見えた
+    - plan を前進させるための operations rolling を機能させるには、plan → issue → operations の接続弱化ポイントと issue routing 未完成期の埋没防止ルールを早めに整理する必要がある
+  notes:
+    - operations rolling を next の繰り上げとして誤認しない前提で扱う
+    - 重要 issue の位置づけ判定、operations candidate 化、再評価地点の最小ルールを含める
+  due_date: 2026-04-14
+  due_type: date
+  external:
+    todoist_task_id: 6gMrGx59jvw96rr2
+
+## Day2（04/15 水）
+
 - task: daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する
   source_ref:
     - notes/07_reports/README.md
@@ -46,18 +65,18 @@
     - notes/04_operations/active_operations.md
     - notes/02_design/2026-04-03_review_system_operating_spec.md
     - notes/01_issues/idea_log.md
-  rolling_day: Day1
+  rolling_day: Day2
   why_now:
     - 日報を書いた後に content 抽出と rolling をどう接続するかが会話依存だと、daily review の出力運用が安定しないため、近い将来の設計整理候補として保持する必要がある
   notes:
     - report 保存で終わらず、content 抽出条件と operations 更新の接続点を整理する
     - review と routing の責務分離を崩さない前提で扱う
-  due_date: 2026-04-14
+  due_date: 2026-04-15
   due_type: date
   external:
     todoist_task_id: 6gMr5Mj7cJvC5VH2
 
-## Day2（04/15 水）
+## Day3（04/16 木）
 
 - task: stale active の整合回復ルールを design に整理する
   source_ref:
@@ -65,34 +84,34 @@
     - notes/04_operations/active_operations.md
     - code/config/ai/adam_instruction.md
     - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
-  rolling_day: Day2
+  rolling_day: Day3
   why_now:
     - active-first execution の試験運用で stale active の補足ルールが必要と分かったが、現行 active の上位 task よりは後順位で整理する方がよい
   notes:
     - reroll before execution とは別の前処理ルールとして切り分ける
-  due_date: 2026-04-15
+  due_date: 2026-04-16
   due_type: date
   external:
     todoist_task_id: 6gMr5PFQM8fC3XrR
 
-## Day3（04/16 木）
+## Day4（04/17 金）
 
 - task: ADAM で試す 05_decisions の最小運用モデルを design に整理する
   source_ref:
     - notes/05_decisions/README.md
     - notes/01_issues/idea_log.md
     - notes/04_operations/active_operations.md
-  rolling_day: Day3
+  rolling_day: Day4
   why_now:
     - EVE 本実装前に decision の集約モデルを ADAM で試す方針が出たため、抽出元、集約先、最小 schema、相互参照の設計を先に整理する必要がある
   notes:
     - docs / issue / design / plan / operations / dev_memo を紐づけ元とする前提で整理する
-  due_date: 2026-04-16
+  due_date: 2026-04-17
   due_type: date
   external:
     todoist_task_id: 6gMr5Pc8j95X8GfR
 
-## Day4（04/17 金）
+## Day5（04/18 土）
 
 - task: scoring knowledge の蓄積方針を dev_memo か design に整理する
   source_ref:
@@ -100,50 +119,32 @@
     - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
     - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
     - notes/04_operations/active_operations.md
-  rolling_day: Day4
+  rolling_day: Day5
   why_now:
     - 重要ではあるが、いまの task を Todoist で見える化する価値よりは後順位であり、まずは実用価値の高い投影プロトタイプを先に固める方がよい
   notes:
     - score は決定ではなく補助である前提を維持する
     - dev_memo に残す条件と design に昇格する条件を見極める
-  due_date: 2026-04-17
+  due_date: 2026-04-18
   due_type: date
   external:
     todoist_task_id: 6gMr5QWWx4JW5vQR
 
-## Day5（04/18 土）
+## Day6（04/19 日）
 
 - task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
   source_ref:
     - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
     - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
-  rolling_day: Day5
+  rolling_day: Day6
   why_now:
     - repo 全体整合には必要だが、Phase 0 の execution governance 試験よりは後順位
   notes:
     - docs 15 / 16 系の衝突整理を含む
-  due_date: 2026-04-18
-  due_type: date
-  external:
-    todoist_task_id: 6gMr5QwRGxpmCRF2
-
-## Day6（04/19 日）
-
-- task: Phase 1 各 plan と operations 接続案を並べる
-  source_ref:
-    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
-    - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
-    - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day6
-  why_now:
-    - 次 phase への接続には必要だが、Phase 0 の骨格と execution governance の安定化が先である
-  notes:
-    - Todoist / Outlook 接続の前段として保持する
   due_date: 2026-04-19
   due_type: date
   external:
-    todoist_task_id: 6gMr5RGcRm22HHJ2
+    todoist_task_id: 6gMr5QwRGxpmCRF2
 
 ---
 
