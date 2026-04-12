@@ -60,6 +60,25 @@ weekly review までの短期履歴置き場であり、
   - `Phase 0 位置づけ` を active_operations / next_operations に追加した
   - `Phase 0 直結 task` と `補助 task` を明示した
 
+--- 2026-04-12 daily review ---
+
+- `weekly review 前提で active / next / archive の更新準備をする` を完了した
+  - weekly review へ渡す繰越 / 完了 / snapshot 材料を整理した
+- `docs 反映候補として execution governance 変更点を整理する` を完了した
+  - docs 反映候補と docs 反映順を整理した
+- `conversation routing と execution governance の試験結果を handover / report に返す準備をする` を完了した
+  - report / handover / docs 候補への返却観点を整理した
+- `next_operations 上位候補を再評価する` を完了した
+  - next の上位候補と後段候補を再評価した
+- `Day6 補充候補を reroll 観点で選定する` を完了した
+  - Day6 補充の第一候補と次点候補を固定した
+- `review system と operations rolling の接続ルールを design 観点で確認する` を完了した
+  - daily / weekly review と rolling の接続ルールを整理した
+- `Phase 0 完了条件に対する未充足項目を洗い出す` を完了した
+  - Phase 0 の true gap を整理した
+- `docs / notes / instruction の operations 周辺未反映差分を一覧化する` を完了した
+  - docs/17 と docs/15 を優先反映対象として固定した
+
 ---
 
 ## ルール
