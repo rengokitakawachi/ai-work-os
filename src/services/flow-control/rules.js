@@ -16,7 +16,6 @@ export function evaluateCandidate(candidate = {}, context = {}) {
   const phase = ensureString(candidate?.phase);
   const currentPhase = ensureString(context?.phase);
   const candidateType = ensureString(candidate?.candidate_type);
-  const importance = ensureString(candidate?.importance) || 'medium';
 
   if (phase && currentPhase && phase !== currentPhase) {
     return {
@@ -51,13 +50,13 @@ export function evaluateCandidate(candidate = {}, context = {}) {
     };
   }
 
-  if (candidateType === 'operations' && importance === 'high') {
+  if (candidateType === 'operations') {
     return {
       candidate_id: ensureString(candidate?.candidate_id),
       route_to: 'operations',
       in_scope: true,
       needs_task_generation: true,
-      reason: 'operations candidate として扱う価値が高いため',
+      reason: 'operations candidate として扱うため',
       review_at: resolveReviewAt('operations'),
     };
   }
