@@ -16,7 +16,8 @@ notes 構造説明と現行運用の差のうち、
 - `04_operations` の日中運用 / review 時運用の違いを補強する
 - `06_handover` は再開入口だが、短期実行順正本は operations である点を補強する
 - `07_reports` は review の結果物であり、保存だけでは review 完了ではない点を補強する
-- intake / issue routing に routing 後処理を追加する
+- intake / issue routing / operations rolling の最小責務を追加する
+- routing 後処理と future / archive の使い分けを補強する
 - ADAM 固有の応答制御文言は docs に上げない
 
 ---
@@ -39,6 +40,7 @@ notes 構造説明と現行運用の差のうち、
 - active には完了認識済み task が daily review まで残りうる
 - archive 移動と rolling 確定は review 時に行う
 - next は backlog ではなく近未来候補プール
+- rolling は candidate source の比較と配置を含む
 
 ### 3. `06_handover` の補強
 
@@ -56,12 +58,13 @@ notes 構造説明と現行運用の差のうち、
 - report は review の結果物
 - 保存だけでは review 完了とはみなさない
 
-### 5. intake routing の補強
+### 5. routing の補強
 
 追加する内容
 
-- 未整理入力を構造化し、issue / design / future / archive へ振り分ける
-- routing 後は振り分けた先を処理する
+- intake routing は未整理入力を issue / design / future / archive へ振り分ける
+- issue routing は issue を operations / design / future / archive / issue に送る
+- routing 後は振り分けた先の処理を行う
 - 役目終了なら archive
 - 判断に迷うなら先送りして残す
 
@@ -84,6 +87,7 @@ notes 構造説明と現行運用の差のうち、
 - reports は review の結果物である点
 - active に完了 task が残りうる点
 - archive 移動と rolling 確定は review 時に行う点
+- intake routing / issue routing / operations rolling の最小責務
 - routing 後処理
   - 役目終了なら archive
   - 迷うなら残す
@@ -95,6 +99,7 @@ notes 構造説明と現行運用の差のうち、
 - GPT editor 前提の操作
 - 特定 task 名や Day 配置
 - routing の細かな会話判断フロー
+- 現行 code の関数名そのもの
 
 ---
 
@@ -230,6 +235,10 @@ routing により後続レイヤーへ送る前段として扱う。
 issue は保持だけでなく、
 後続レイヤーへ展開される前提の中間状態とする。
 
+issue routing では、
+issue を `operations / design / future / archive / issue`
+のどこへ送るかを判定する。
+
 ---
 
 ### 02_design
@@ -238,6 +247,8 @@ issue は保持だけでなく、
 
 docs 直前の構造整理レイヤー。
 
+実装より先に構造整理が必要な論点を保持する。
+
 ---
 
 ### 03_plan
@@ -245,6 +256,9 @@ docs 直前の構造整理レイヤー。
 一定期間の重点テーマを整理するレイヤー。
 
 roadmap と operations の中間に位置する。
+
+plan は、
+operations rolling における重要な candidate source とする。
 
 ---
 
@@ -404,13 +418,29 @@ routing 後は、
 元入力や元 issue が役目を終えた場合は archive に移し、
 判断に迷う場合は先送りして残す。
 
----
+### issue routing
+
+issue を評価し、
+
+- operations
+- design
+- future
+- archive
+- issue
+
+のどこへ送るかを判定する。
+
+重要 issue は、
+issue に残すだけで終わらせず、
+operations candidate 化の要否と再評価地点を明示する。
 
 ### operations rolling
 
 複数の流入元から候補を収集し、
 
-- generation
+- candidate collection
+- normalization
+- rule evaluation
 - ranking
 - placement
 
@@ -459,3 +489,4 @@ notes → docs
 - reports は review の結果物
 - routing 後は処理を行い、役目終了なら archive、迷うなら残す
 - review と routing は分けて扱う
+- operations rolling は candidate source の比較と配置を含む
