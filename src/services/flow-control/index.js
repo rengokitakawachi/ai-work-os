@@ -15,3 +15,4 @@ export {
 } from './adapters.js';
 export { generateRollingCandidates } from './rolling.js';
 export { generateRollingCandidatesFromNotes } from './orchestrate.js';
+export { routeIssueCandidates, routeSingleIssueCandidate } from './issue-routing.js';
