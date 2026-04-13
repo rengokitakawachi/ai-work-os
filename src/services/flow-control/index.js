@@ -7,3 +7,9 @@ export {
   buildPlacementDecisions,
 } from './placement.js';
 export { rankOperationsCandidates, splitRankedCandidates } from './ranking.js';
+export {
+  buildPlanSourceBundle,
+  buildIssueSourceBundle,
+  buildNextOperationsSourceBundle,
+  buildRollingSourceBundles,
+} from './adapters.js';
