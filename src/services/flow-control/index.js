@@ -13,3 +13,5 @@ export {
   buildNextOperationsSourceBundle,
   buildRollingSourceBundles,
 } from './adapters.js';
+export { generateRollingCandidates } from './rolling.js';
+export { generateRollingCandidatesFromNotes } from './orchestrate.js';
