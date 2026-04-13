@@ -5,7 +5,8 @@
 `docs/17_operations_system.md` の更新差分案を作成する。
 
 本差分案では、
-execution governance の試験運用結果のうち、
+execution governance の試験運用結果と、
+Phase 0 の flow-control / rolling 最小実装で確定した内容のうち、
 共通骨格として docs に上げてよい内容だけを整理する。
 
 ---
@@ -16,6 +17,7 @@ execution governance の試験運用結果のうち、
 - 日中運用と review 時運用の境界を明確化する
 - `next_operations` を backlog ではなく候補プールとして明文化する
 - 完了判定と構造変更判定を分ける
+- rolling を `next の繰り上げ` ではなく、候補比較と配置の処理として明文化する
 - 例外 reroll は整合回復時のみとする
 - ADAM 固有の会話制御文言や回答順は docs に上げない
 
@@ -47,8 +49,21 @@ execution governance の試験運用結果のうち、
 - next は backlog ではない
 - active が実行不能な場合の補充候補プール
 - daily / weekly review で再評価する近未来候補
+- rolling 時の candidate source の一つであり、決定権を持つ正本ではない
 
-### 4. daily review の役割補強
+### 4. rolling の責務補強
+
+追加する内容
+
+- candidate collection
+- normalization
+- rule evaluation
+- ranking
+- placement
+
+を rolling の最小責務として明記する
+
+### 5. daily review の役割補強
 
 追加する内容
 
@@ -58,7 +73,7 @@ execution governance の試験運用結果のうち、
 - active / next の更新
 - 新しい Day6 補充
 
-### 5. weekly review の役割補強
+### 6. weekly review の役割補強
 
 追加する内容
 
@@ -66,7 +81,7 @@ execution governance の試験運用結果のうち、
 - active / next の次週再設計
 - archive_operations の snapshot 保存
 
-### 6. 例外 reroll の追加
+### 7. 例外 reroll の追加
 
 追加する内容
 
@@ -84,6 +99,7 @@ execution governance の試験運用結果のうち、
 - 完了判定と構造変更判定の分離
 - active に完了 task が残ってよい条件
 - next_operations の候補プールとしての意味
+- rolling の最小責務
 - daily review / weekly review の役割補強
 - 例外 reroll は整合回復時のみという原則
 
@@ -94,6 +110,7 @@ execution governance の試験運用結果のうち、
 - GPT editor 前提の操作
 - 特定 task 名や Day 配置
 - 具体事例の細かい列挙
+- 現行 code の関数名そのもの
 
 ---
 
@@ -250,6 +267,36 @@ archive_operations は、
 
 この場合のみ、
 例外的に reroll を行ってよい。
+
+---
+
+## operations rolling の最小責務
+
+operations rolling は、
+`next_operations` の先頭をそのまま繰り上げる処理ではない。
+
+operations rolling は、
+roadmap / plan を前進させるために、
+候補を比較して短期実行順を決める処理とする。
+
+最小責務は次の通り。
+
+- candidate collection
+- normalization
+- rule evaluation
+- ranking
+- placement
+
+candidate source の例
+
+- plan の主要論点や直近作業
+- open issue
+- design 未反映差分
+- next_operations
+- future からの再活性化候補
+
+next_operations は candidate source の一つであり、
+決定権を持つ正本ではない。
 
 ---
 
