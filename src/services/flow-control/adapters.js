@@ -103,6 +103,7 @@ export function buildIssueSourceBundle({ content = '', sourceRef = '' } = {}) {
   const items = extractIssueBlocks(content)
     .map((block) => {
       const title = extractField(block, 'title');
+      const category = extractField(block, 'category').toLowerCase();
       const impact = extractField(block, 'impact').toLowerCase();
       const status = extractField(block, 'status').toLowerCase();
       const description = extractField(block, 'description');
@@ -118,10 +119,13 @@ export function buildIssueSourceBundle({ content = '', sourceRef = '' } = {}) {
         candidate_type: 'operations',
         importance: 'high',
         phase: 'phase0',
-        why_now: ['重要 issue を operations 比較対象に上げるため'],
+        why_now: ['重要 issue を routing 比較対象に上げるため'],
         metadata: {
           extracted_from: 'idea_log',
           issue_id: issueId,
+          category,
+          impact,
+          status,
         },
       };
     })
