@@ -79,6 +79,15 @@ weekly review までの短期履歴置き場であり、
 - `docs / notes / instruction の operations 周辺未反映差分を一覧化する` を完了した
   - docs/17 と docs/15 を優先反映対象として固定した
 
+--- 2026-04-13 daily review ---
+
+- `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する` を完了した
+  - handover は新スレッド再開時の入口、active_operations は短期実行順の正本と整理した
+  - `notes/02_design/2026-04-13_handover_entry_and_active_head_interpretation_rule.md` を作成した
+- `plan から operations への接続弱化ポイントと重要 issue の埋没防止ルールを design に整理する` を完了した
+  - plan → issue → operations の接続弱化と重要 issue の埋没防止ルールを整理した
+  - `notes/02_design/2026-04-13_plan_to_operations_connection_and_important_issue_escalation_rule.md` を作成した
+
 ---
 
 ## ルール
