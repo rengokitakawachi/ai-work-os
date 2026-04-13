@@ -4,6 +4,7 @@
 
 ### Phase 0 直結 task
 
+- `docs-ready draft を基に docs/17_operations_system.md と docs/15_notes_system.md の本体反映を進める`
 - `plan から operations への接続弱化ポイントと重要 issue の埋没防止ルールを design に整理する`
 - `plan→issue→operations 接続弱化の暫定運用を instruction / docs / operations に反映する`
 
@@ -16,6 +17,21 @@
 - `scoring knowledge の蓄積方針を dev_memo か design に整理する`
 
 ## Day0（04/13 月）
+
+- task: docs-ready draft を基に docs/17_operations_system.md と docs/15_notes_system.md の本体反映を進める
+  source_ref:
+    - notes/02_design/2026-04-12_docs_17_operations_system_update_draft.md
+    - notes/02_design/2026-04-12_docs_15_notes_system_update_draft.md
+    - docs/17_operations_system.md
+    - docs/15_notes_system.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day0
+  why_now:
+    - A/B/C/D の最小実装とテスト結果が揃ったため、運用正本と docs 正本の差分を早めに閉じる価値が高い
+    - docs 本体反映を先頭で進めることで、Phase 0 の共通骨格を仕様として固定しやすくなる
+  notes:
+    - docs 直接 write 不可のため、まず docs-ready draft を正本反映ベースとして扱う
+    - docs/17 と docs/15 を先行し、必要なら docs/13 差分へ接続する
 
 - task: latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する
   source_ref:
