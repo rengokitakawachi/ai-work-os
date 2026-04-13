@@ -5,6 +5,7 @@
 ### Phase 0 直結 task
 
 - `plan から operations への接続弱化ポイントと重要 issue の埋没防止ルールを design に整理する`
+- `plan→issue→operations 接続弱化の暫定運用を instruction / docs / operations に反映する`
 
 ### 補助 task
 
@@ -13,7 +14,6 @@
 - `stale active の整合回復ルールを design に整理する`
 - `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
 - `scoring knowledge の蓄積方針を dev_memo か design に整理する`
-- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
 
 ## Day0（04/13 月）
 
@@ -57,6 +57,25 @@
 
 ## Day2（04/15 水）
 
+- task: plan→issue→operations 接続弱化の暫定運用を instruction / docs / operations に反映する
+  source_ref:
+    - notes/02_design/2026-04-13_plan_to_operations_connection_and_important_issue_escalation_rule.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/04_operations/active_operations.md
+    - notes/01_issues/idea_log.md
+  rolling_day: Day2
+  why_now:
+    - design が固まった直後に実運用へ反映しないと、重要 issue を issue に残すだけで終える再発を防げない
+    - issue routing 未完成期の暫定実装として、instruction / docs / operations に最小差分を入れる価値が高い
+  notes:
+    - instruction 反映、docs 反映候補、operations ルール反映の順で最小差分を検討する
+  due_date: 2026-04-13
+  due_type: date
+  external:
+    todoist_task_id: 6gP2JjQ2x3rWHqV2
+
+## Day3（04/16 木）
+
 - task: daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する
   source_ref:
     - notes/07_reports/README.md
@@ -65,7 +84,7 @@
     - notes/04_operations/active_operations.md
     - notes/02_design/2026-04-03_review_system_operating_spec.md
     - notes/01_issues/idea_log.md
-  rolling_day: Day2
+  rolling_day: Day3
   why_now:
     - 日報を書いた後に content 抽出と rolling をどう接続するかが会話依存だと、daily review の出力運用が安定しないため、近い将来の設計整理候補として保持する必要がある
   notes:
@@ -76,7 +95,7 @@
   external:
     todoist_task_id: 6gMr5Mj7cJvC5VH2
 
-## Day3（04/16 木）
+## Day4（04/17 金）
 
 - task: stale active の整合回復ルールを design に整理する
   source_ref:
@@ -84,7 +103,7 @@
     - notes/04_operations/active_operations.md
     - code/config/ai/adam_instruction.md
     - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
-  rolling_day: Day3
+  rolling_day: Day4
   why_now:
     - active-first execution の試験運用で stale active の補足ルールが必要と分かったが、現行 active の上位 task よりは後順位で整理する方がよい
   notes:
@@ -94,14 +113,14 @@
   external:
     todoist_task_id: 6gMr5PFQM8fC3XrR
 
-## Day4（04/17 金）
+## Day5（04/18 土）
 
 - task: ADAM で試す 05_decisions の最小運用モデルを design に整理する
   source_ref:
     - notes/05_decisions/README.md
     - notes/01_issues/idea_log.md
     - notes/04_operations/active_operations.md
-  rolling_day: Day4
+  rolling_day: Day5
   why_now:
     - EVE 本実装前に decision の集約モデルを ADAM で試す方針が出たため、抽出元、集約先、最小 schema、相互参照の設計を先に整理する必要がある
   notes:
@@ -111,7 +130,7 @@
   external:
     todoist_task_id: 6gMr5Pc8j95X8GfR
 
-## Day5（04/18 土）
+## Day6（04/19 日）
 
 - task: scoring knowledge の蓄積方針を dev_memo か design に整理する
   source_ref:
@@ -119,7 +138,7 @@
     - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
     - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
     - notes/04_operations/active_operations.md
-  rolling_day: Day5
+  rolling_day: Day6
   why_now:
     - 重要ではあるが、いまの task を Todoist で見える化する価値よりは後順位であり、まずは実用価値の高い投影プロトタイプを先に固める方がよい
   notes:
@@ -129,22 +148,6 @@
   due_type: date
   external:
     todoist_task_id: 6gMr5QWWx4JW5vQR
-
-## Day6（04/19 日）
-
-- task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
-  source_ref:
-    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
-    - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
-  rolling_day: Day6
-  why_now:
-    - repo 全体整合には必要だが、Phase 0 の execution governance 試験よりは後順位
-  notes:
-    - docs 15 / 16 系の衝突整理を含む
-  due_date: 2026-04-19
-  due_type: date
-  external:
-    todoist_task_id: 6gMr5QwRGxpmCRF2
 
 ---
 
