@@ -12,10 +12,46 @@ function resolveReviewAt(routeTo) {
   return 'daily_review';
 }
 
+function evaluateIssueCandidate(candidate = {}) {
+  const category = ensureString(candidate?.metadata?.category).toLowerCase();
+
+  if (category === 'architecture') {
+    return {
+      candidate_id: ensureString(candidate?.candidate_id),
+      route_to: 'design',
+      in_scope: true,
+      needs_task_generation: false,
+      reason: 'architecture 系 issue のため、先に design で構造整理する',
+      review_at: 'weekly_review',
+    };
+  }
+
+  if (category === 'operations') {
+    return {
+      candidate_id: ensureString(candidate?.candidate_id),
+      route_to: 'operations',
+      in_scope: true,
+      needs_task_generation: true,
+      reason: 'operations 系 issue のため、operations 比較対象に入れる',
+      review_at: 'daily_review',
+    };
+  }
+
+  return {
+    candidate_id: ensureString(candidate?.candidate_id),
+    route_to: 'issue',
+    in_scope: true,
+    needs_task_generation: false,
+    reason: 'issue は保持するが、追加判定が必要なため一段保留する',
+    review_at: 'daily_review',
+  };
+}
+
 export function evaluateCandidate(candidate = {}, context = {}) {
   const phase = ensureString(candidate?.phase);
   const currentPhase = ensureString(context?.phase);
   const candidateType = ensureString(candidate?.candidate_type);
+  const sourceType = ensureString(candidate?.source_type);
 
   if (phase && currentPhase && phase !== currentPhase) {
     return {
@@ -48,6 +84,10 @@ export function evaluateCandidate(candidate = {}, context = {}) {
       reason: '先に構造整理が必要なため',
       review_at: 'weekly_review',
     };
+  }
+
+  if (sourceType === 'issue') {
+    return evaluateIssueCandidate(candidate);
   }
 
   if (candidateType === 'operations') {
