@@ -6,3 +6,4 @@ export {
   buildPlacementDecision,
   buildPlacementDecisions,
 } from './placement.js';
+export { rankOperationsCandidates, splitRankedCandidates } from './ranking.js';
