@@ -4,18 +4,21 @@
 
 `latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する`
 の成果物として、
-再開時に handover と active_operations をどう読むかの最小ルールを固定する。
+handover と active_operations の使い分けを固定する。
 
 本メモは、
-handover を再開入口として使いつつ、
-短期実行順の正本は operations である
-という原則を崩さないための整理である。
+- 新スレッド再開時に handover をどう使うか
+- 日々の同一スレッド内の再開では何を正本として読むか
+
+を分けて整理するためのものである。
 
 ---
 
 ## 結論
 
-再開時の読取順は次の通りとする。
+結論は次の通り。
+
+### 新スレッド再開時
 
 1.
 latest handover を読む
@@ -29,11 +32,23 @@ active_operations を読む
 4.
 active 先頭 task を現在の実行対象として確定する
 
-つまり、
-handover は再開入口であり、
-実行順そのものの正本ではない。
+### 日々の同一スレッド内の再開時
 
-短期実行順の正本は常に active_operations とする。
+1.
+active_operations を読む
+
+2.
+active 先頭 task を現在の実行対象として確定する
+
+3.
+必要に応じて関連 design / issue / report を補助参照する
+
+つまり、
+
+- handover は新スレッド再開時の入口
+- active_operations は短期実行順の正本
+
+である。
 
 ---
 
@@ -41,7 +56,7 @@ handover は再開入口であり、
 
 ### handover
 
-handover は再開入口である。
+handover は新スレッド再開時の入口である。
 
 役割
 
@@ -52,7 +67,7 @@ handover は再開入口である。
 - 再開時の注意点
 
 handover は、
-再開時の初期認知を揃えるための入り口として使う。
+新しい会話スレッドで文脈を再接続するために使う。
 
 ### active_operations
 
@@ -65,12 +80,12 @@ active_operations は短期実行順の正本である。
 - 日中運用の基準になる
 
 したがって、
-再開後に「実際に何をやるか」は
-active_operations で確定する。
+「実際に何をやるか」は
+常に active_operations で確定する。
 
 ---
 
-## 再開時の基本フロー
+## 新スレッド再開時の基本フロー
 
 ```text
 latest handover
@@ -92,10 +107,28 @@ active 先頭 task を現在の実行対象とする
 
 ---
 
+## 日々の同一スレッド内の再開フロー
+
+```text
+active_operations
+↓
+active 先頭 task を現在の実行対象とする
+↓
+必要なら関連 design / issue / report を補助参照する
+```
+
+重要なのは次。
+
+- 同一スレッド内の日々の再開では latest handover を使わない
+- handover は日々の再開の正本ではない
+- その場の実行判断は active 先頭で確定する
+
+---
+
 ## handover の next action の解釈
 
 handover に書かれた next action は、
-次のどちらかとして読む。
+新スレッド再開時に次のどちらかとして読む。
 
 ### 1. active 先頭 task の説明
 
@@ -154,27 +187,15 @@ handover に書いてあるだけでは例外にしない。
 
 ---
 
-## handover と active の関係
-
-関係は次の通り。
-
-- handover
-  - 再開入口
-  - 前回セッションの圧縮表現
-
-- active
-  - 実行順の正本
-  - 今回セッションの実行基準
-
-したがって、
-handover は active を読む前提を助けるが、
-active の代わりにはならない。
-
----
-
 ## 何をその場で実行してよいか
 
-再開後、そのまま実行してよいのは次。
+### 新スレッド再開時
+
+- active 先頭 task
+- active 先頭 task に必要な source 読取
+- active 先頭 task の成果物作成
+
+### 日々の同一スレッド内の再開時
 
 - active 先頭 task
 - active 先頭 task に必要な source 読取
@@ -195,7 +216,7 @@ active の代わりにはならない。
 
 ### issue
 
-- handover や active の背景論点確認に使う
+- active の背景論点確認に使う
 - 新しい論点の起点確認に使う
 
 ### next
@@ -214,9 +235,11 @@ active の代わりにはならない。
 
 ## 最小ルール
 
-- handover は再開入口
+- handover は新スレッド再開時の入口
+- 日々の同一スレッド内の再開では handover を使わない
 - active_operations は短期実行順の正本
-- 再開時は handover → related sources → active の順で読む
+- 新スレッド再開時は handover → related sources → active の順で読む
+- 日々の再開時は active から読む
 - 実行対象は active 先頭で確定する
 - handover の next action は説明または stale メモとして扱う
 - 競合時は active 優先
@@ -226,6 +249,7 @@ active の代わりにはならない。
 
 ## この整理で防げる誤り
 
+- 日々の再開で latest handover を読み始める
 - handover の next action をそのまま実行してしまう
 - active を読まずに前回の流れを再開してしまう
 - next や issue を見て横入り実行してしまう
@@ -236,17 +260,14 @@ active の代わりにはならない。
 ## 判断
 
 再開品質を安定させるには、
-handover を「入口」、
-active_operations を「実行正本」
+- handover を新スレッド再開の入口
+- active_operations を実行正本
+
 として明確に分ける必要がある。
 
 したがって、
-再開時の正しい問いは
 
-- handover に何が書いてあるか
+- 新スレッド再開時は handover から入る
+- 日々の作業再開時は active から入る
 
-ではなく、
-
-- handover を踏まえて、現行 active の先頭は何か
-
-である。
+が正しい。
