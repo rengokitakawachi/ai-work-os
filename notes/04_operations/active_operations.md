@@ -31,6 +31,7 @@
   notes:
     - docs 直接 write 不可のため、まず docs-ready draft を正本反映ベースとして扱う
     - docs/17 と docs/15 を先行し、必要なら docs/13 差分へ接続する
+    - 次回 daily review で operations を rolling する際は、issue routing の続きを優先候補として扱う
 
 ## Day1（04/15 水）
 
@@ -160,3 +161,4 @@
 - 未完了タスクは翌日以降へ移動する
 - 完了タスクは必要に応じて archive_operations に移す
 - Phase 0 中は Flow Control / routing / operations の実運用整合を優先する
+- 直近の daily review rolling では、issue routing の継続実装と後処理統合を優先候補として扱う
