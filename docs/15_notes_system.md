@@ -37,13 +37,16 @@ docs 更新前に design を経由する
 短期実行順の正本は 04_operations とする
 
 6  
-再開時の正本は 06_handover とする
+06_handover は再開入口とする
 
 7  
 実績と振り返りは 07_reports に残す
 
 8  
 意思決定は 05_decisions に残す
+
+9  
+report は review の結果物として扱う
 
 ---
 
@@ -113,6 +116,9 @@ README.md
 
 web や dev_memo を含む。
 
+未整理入力は、
+routing により後続レイヤーへ送る前段として扱う。
+
 ---
 
 ### 01_issues
@@ -122,6 +128,10 @@ web や dev_memo を含む。
 issue は保持だけでなく、
 後続レイヤーへ展開される前提の中間状態とする。
 
+issue routing では、
+issue を `operations / design / future / archive / issue`
+のどこへ送るかを判定する。
+
 ---
 
 ### 02_design
@@ -130,6 +140,8 @@ issue は保持だけでなく、
 
 docs 直前の構造整理レイヤー。
 
+実装より先に構造整理が必要な論点を保持する。
+
 ---
 
 ### 03_plan
@@ -137,6 +149,9 @@ docs 直前の構造整理レイヤー。
 一定期間の重点テーマを整理するレイヤー。
 
 roadmap と operations の中間に位置する。
+
+plan は、
+operations rolling における重要な candidate source とする。
 
 ---
 
@@ -161,6 +176,9 @@ rolling（生成・優先順位づけ・配置）によって生成される。
 #### 特徴
 
 - operations は future には置かない
+- active には完了認識済み task が daily review まで残りうる
+- archive への移動と rolling 確定は review 時に行う
+- next_operations は backlog ではなく近未来候補プールとして扱う
 - archive_operations は weekly review で snapshot 保存する
 
 ---
@@ -173,9 +191,12 @@ rolling（生成・優先順位づけ・配置）によって生成される。
 
 ### 06_handover
 
-スレッド再開時の正本。
+スレッド再開時の入口。
 
 関連 docs / notes / code を読み直す起点となる。
+
+ただし、
+短期実行順の正本は 04_operations とする。
 
 ---
 
@@ -195,6 +216,9 @@ rolling（生成・優先順位づけ・配置）によって生成される。
   全体進捗と構造の見直し
 
 reports は review と強く結びつく。
+
+report は review の結果物であり、
+保存だけでは review 完了とはみなさない。
 
 ---
 
@@ -276,19 +300,40 @@ notes/99_archive/operations/
 
 - issue
 - design
-- plan
 - future
 - archive
 
 へ振り分ける。
 
----
+routing 後は、
+振り分けた先の処理を行う。
+
+元入力や元 issue が役目を終えた場合は archive に移し、
+判断に迷う場合は先送りして残す。
+
+### issue routing
+
+issue を評価し、
+
+- operations
+- design
+- future
+- archive
+- issue
+
+のどこへ送るかを判定する。
+
+重要 issue は、
+issue に残すだけで終わらせず、
+operations candidate 化の要否と再評価地点を明示する。
 
 ### operations rolling
 
 複数の流入元から候補を収集し、
 
-- generation
+- candidate collection
+- normalization
+- rule evaluation
 - ranking
 - placement
 
@@ -309,6 +354,9 @@ notes/99_archive/operations/
 - monthly review: 全体整合
 - design review: design の継続 / 昇格 / future / archive 判断
 
+review は進行中資産の更新を担い、
+routing の代替ではない。
+
 ---
 
 ## 昇格ルール
@@ -321,3 +369,17 @@ notes → docs
 - 命名が確定
 - 例外が見えている
 - 実装方針が説明できる
+
+---
+
+## 判断
+
+`docs/15_notes_system.md` では、
+現行運用との差分として以下を反映するのが自然である。
+
+- operations は短期実行順正本
+- handover は再開入口
+- reports は review の結果物
+- routing 後は処理を行い、役目終了なら archive、迷うなら残す
+- review と routing は分けて扱う
+- operations rolling は candidate source の比較と配置を含む
