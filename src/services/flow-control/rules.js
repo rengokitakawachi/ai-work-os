@@ -14,6 +14,41 @@ function resolveReviewAt(routeTo) {
 
 function evaluateIssueCandidate(candidate = {}) {
   const category = ensureString(candidate?.metadata?.category).toLowerCase();
+  const status = ensureString(candidate?.metadata?.status).toLowerCase();
+  const impact = ensureString(candidate?.metadata?.impact).toLowerCase();
+
+  if (status === 'closed') {
+    return {
+      candidate_id: ensureString(candidate?.candidate_id),
+      route_to: 'archive',
+      in_scope: false,
+      needs_task_generation: false,
+      reason: 'closed issue のため、archive 扱いにする',
+      review_at: 'daily_review',
+    };
+  }
+
+  if (status && status !== 'open') {
+    return {
+      candidate_id: ensureString(candidate?.candidate_id),
+      route_to: 'future',
+      in_scope: false,
+      needs_task_generation: false,
+      reason: 'open ではないため、今は future に送る',
+      review_at: 'weekly_review',
+    };
+  }
+
+  if (impact && impact !== 'high') {
+    return {
+      candidate_id: ensureString(candidate?.candidate_id),
+      route_to: 'issue',
+      in_scope: true,
+      needs_task_generation: false,
+      reason: 'high impact ではないため、issue に残して再評価する',
+      review_at: 'daily_review',
+    };
+  }
 
   if (category === 'architecture') {
     return {
