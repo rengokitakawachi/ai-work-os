@@ -1,11 +1,9 @@
-import {
-  collectCandidates,
-  normalizeCandidates,
-  evaluateCandidates,
-  buildPlacementDecisions,
-  buildIssueRoutingSourceBundle,
-} from './index.js';
 import { ensureString } from './common.js';
+import { collectCandidates } from './candidate.js';
+import { normalizeCandidates } from './normalize.js';
+import { evaluateCandidates } from './rules.js';
+import { buildPlacementDecisions } from './placement.js';
+import { buildIssueRoutingSourceBundle } from './adapters.js';
 
 function groupRoutingDecisions(decisions = []) {
   const grouped = {
