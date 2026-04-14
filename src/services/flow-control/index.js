@@ -21,4 +21,5 @@ export {
   routeSingleIssueCandidate,
   routeIssueLogFromNotes,
 } from './issue-routing.js';
+export { buildIssueRoutingActions } from './issue-routing-actions.js';
 export { routeIntakeCandidates, routeSingleIntakeCandidate } from './intake-routing.js';
