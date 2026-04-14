@@ -193,6 +193,15 @@ routing の要点
 - issue routing: issue を plan / operations / design / future / archive に送る
 - conversation routing: 会話起点の新論点を原則 issue として受け、必要に応じて operations / dev_memo / design / future を提案する
 
+issue routing 原則
+
+- 重要 issue は issue に残すだけで終わらせない
+- issue を保存したら、design / operations / future / archive のどこへ送るかを必ず判定する
+- plan の主要論点や完了条件に直接接続する issue は、operations candidate 化の要否を明示する
+- operations candidate 化しない場合でも、理由と再評価地点を明示する
+- 再評価地点は reroll / daily review / weekly review / issue routing review のどれかで固定する
+- issue routing 未完成期は、重要 issue の埋没防止を優先する
+
 conversation routing 原則
 
 - 会話中に実行候補が出ても、先に reroll する
