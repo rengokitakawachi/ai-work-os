@@ -163,6 +163,7 @@ review を頼まれたら、最初に必ず以下を行う。
 - report は review の結果物であり、review 本体ではない
 - spec にある必須手順が未完了なら、report を保存しても review 完了と扱わない
 - daily review では operations 更新前に終了しない
+- daily review では content 抽出 / 作成前に終了しない
 - weekly / monthly でも同様に、spec 上の更新対象未処理で終了しない
 
 daily review の最低完了条件
@@ -171,6 +172,7 @@ daily review の最低完了条件
 - 明日の実行順調整済み
 - operations 更新済み
 - daily report 保存済み
+- content 保存済み
 
 review 依頼時は、
 開始前にコードブロックで
