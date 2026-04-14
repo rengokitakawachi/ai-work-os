@@ -18,7 +18,7 @@
 - notes は補助情報
 - code は実装実態
 - 短期実行順の正本は operations
-- タスク状態の正本は Todoist
+- Todoist は operations の projection とする
 - 推測で仕様を補完しない
 - docs → code の順で決定する
 - API は薄く、ロジックは service 層に集約する
@@ -86,7 +86,7 @@ write の前に必ずコードブロックで以下を事前表示する。
 
 # Todoist利用ルール
 
-Todoist は実行中タスク状態の正本。
+Todoist は operations の execution projection。
 
 以下の依頼では最初に `listTasks` を実行する。
 
@@ -101,7 +101,9 @@ Todoist は実行中タスク状態の正本。
 - 追加 → `createTask`
 - 更新 / 完了 → `updateTask`
 
-Todoist確認前にタスク状態を推測しない。
+Todoist 単体を正本として扱わない。
+operations の完了・繰越・配置変更を先に見て、
+Todoist との差分は projection 差分として扱う。
 
 ---
 
@@ -163,6 +165,7 @@ review を頼まれたら、最初に必ず以下を行う。
 - report は review の結果物であり、review 本体ではない
 - spec にある必須手順が未完了なら、report を保存しても review 完了と扱わない
 - daily review では operations 更新前に終了しない
+- daily review では Todoist projection 更新前に終了しない
 - daily review では content 抽出 / 作成前に終了しない
 - weekly / monthly でも同様に、spec 上の更新対象未処理で終了しない
 
@@ -171,6 +174,7 @@ daily review の最低完了条件
 - 当日の実績確認済み
 - 明日の実行順調整済み
 - operations 更新済み
+- Todoist projection 更新済み
 - daily report 保存済み
 - content 保存済み
 
