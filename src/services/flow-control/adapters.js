@@ -98,37 +98,58 @@ function extractField(block, field) {
   return match ? ensureString(match[1]) : '';
 }
 
+function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
+  const title = extractField(block, 'title');
+  const category = extractField(block, 'category').toLowerCase();
+  const impact = extractField(block, 'impact').toLowerCase();
+  const status = extractField(block, 'status').toLowerCase();
+  const description = extractField(block, 'description');
+  const issueId = ensureString(block.match(/^###\s+(\d{8}-\d{3})/u)?.[1]);
+
+  if (!title) {
+    return null;
+  }
+
+  if (includeOnlyOpenHigh && (status !== 'open' || impact !== 'high')) {
+    return null;
+  }
+
+  return {
+    title,
+    summary: description || 'issue_log から抽出した candidate',
+    candidate_type: 'operations',
+    importance: impact === 'high' ? 'high' : 'medium',
+    phase: 'phase0',
+    why_now: ['issue routing 比較対象として扱うため'],
+    metadata: {
+      extracted_from: 'idea_log',
+      issue_id: issueId,
+      category,
+      impact,
+      status,
+      description,
+      title,
+    },
+  };
+}
+
 export function buildIssueSourceBundle({ content = '', sourceRef = '' } = {}) {
   const safeSourceRef = ensureString(sourceRef);
   const items = extractIssueBlocks(content)
-    .map((block) => {
-      const title = extractField(block, 'title');
-      const category = extractField(block, 'category').toLowerCase();
-      const impact = extractField(block, 'impact').toLowerCase();
-      const status = extractField(block, 'status').toLowerCase();
-      const description = extractField(block, 'description');
-      const issueId = ensureString(block.match(/^###\s+(\d{8}-\d{3})/u)?.[1]);
+    .map((block) => mapIssueBlockToItem(block, { includeOnlyOpenHigh: true }))
+    .filter(Boolean);
 
-      if (!title || status !== 'open' || impact !== 'high') {
-        return null;
-      }
+  return {
+    source_type: 'issue',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    items,
+  };
+}
 
-      return {
-        title,
-        summary: description || 'open / high issue から抽出した candidate',
-        candidate_type: 'operations',
-        importance: 'high',
-        phase: 'phase0',
-        why_now: ['重要 issue を routing 比較対象に上げるため'],
-        metadata: {
-          extracted_from: 'idea_log',
-          issue_id: issueId,
-          category,
-          impact,
-          status,
-        },
-      };
-    })
+export function buildIssueRoutingSourceBundle({ content = '', sourceRef = '' } = {}) {
+  const safeSourceRef = ensureString(sourceRef);
+  const items = extractIssueBlocks(content)
+    .map((block) => mapIssueBlockToItem(block, { includeOnlyOpenHigh: false }))
     .filter(Boolean);
 
   return {
