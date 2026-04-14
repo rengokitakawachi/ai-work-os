@@ -14,42 +14,33 @@ active_operations に入らなかった上位候補を保持する。
 
 ### Phase 0 直結 task
 
-- なし（現時点では Phase 0 の docs 反映と暫定運用反映を優先）
+- なし（現時点では issue routing 継続と content / review 接続整理を優先）
 
 ### 補助 task
 
-- `Phase 1 各 plan と operations 接続案を並べる`
+- なし
 
-## 再評価結果（2026-04-13 daily review）
+## 再評価結果（2026-04-14 daily review）
 
 ### active へ繰り上げ済み
 
-- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
-
-理由
-
-- active の 7日枠を維持しつつ、repo 全体整合に関する近未来候補として妥当だったため
-
-### 現在の上位候補
-
 - `Phase 1 各 plan と operations 接続案を並べる`
 
 理由
 
-- 次 phase への接続には必要だが、まずは Phase 0 の docs 反映と暫定運用反映を優先する方が自然である
+- active の 7日枠を維持しつつも、まずは Phase 0 の issue routing 継続を優先したうえで、次 phase 接続候補を Day6 補充へ使う方が自然だったため
+
+### 現在の上位候補
+
+- なし
+
+理由
+
+- 直近 review 時点では、Phase 0 の issue routing 継続実装を優先するため、next に残すより active へ繰り上げた方が妥当だった
 
 ## タスク
 
-- task: Phase 1 各 plan と operations 接続案を並べる
-  source_ref:
-    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
-    - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
-    - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
-    - notes/04_operations/active_operations.md
-  why_now:
-    - 次 phase への接続には必要だが、まずは Phase 0 の docs 反映と暫定運用反映を優先する
-  notes:
-    - Todoist / Outlook 接続の前段として保持する
+- なし
 
 ---
 
