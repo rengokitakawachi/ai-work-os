@@ -26,6 +26,11 @@ operations の日中運用は review と分離する。
 - 会話中は active 内の優先順位変更や並び替えを行うことがある
 - archive への移動と rolling の確定は daily review で行う
 
+Todoist は operations の projection として扱う。
+
+daily review では、
+operations 更新結果を Todoist projection に反映するところまでを含めて扱う。
+
 ---
 
 ## 全体構造
@@ -45,6 +50,8 @@ operations
 daily review
 ↓
 operations 更新
+↓
+Todoist projection 更新
 ↓
 weekly review
 ↓
@@ -117,17 +124,23 @@ issue / design / future へ振り分ける。
 4. 明日の実行順を調整する
 5. operations rolling を実行する
 6. operations を更新する
-7. 日報を書く
+7. Todoist projection を更新する
+8. 日報を書く
+9. content を作成する
 
 出力
 
 - 更新済み operations
+- 更新済み Todoist projection
 - daily report
+- content draft
 
 更新対象
 
 - 04_operations
 - 07_reports/daily
+- 09_content/drafts
+- Todoist
 
 完了条件
 
@@ -136,7 +149,9 @@ issue / design / future へ振り分ける。
 - 未完了 task の繰越判断が終わっている
 - 明日の実行順調整が終わっている
 - operations 更新が終わっている
+- Todoist projection 更新が終わっている
 - daily report が保存されている
+- content が保存されている
 
 実行チェック
 
@@ -153,7 +168,7 @@ report を保存しただけでは daily review 完了とみなさない。
 
 - 短期実行順の調整を担う
 - plan 自体を毎日更新することは目的にしない
-- report 保存だけで終わらず、operations 更新まで含めて完了とする
+- report 保存だけで終わらず、operations 更新と Todoist projection 更新まで含めて完了とする
 - 日中は active の完了認識や優先順位変更を行ってよい
 - ただし archive 移動と rolling 確定は daily review で行う
 - daily review 前に Day 再編成や archive 退避を確定させない
