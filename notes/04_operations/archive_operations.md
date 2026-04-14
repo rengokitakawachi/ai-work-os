@@ -88,6 +88,16 @@ weekly review までの短期履歴置き場であり、
   - plan → issue → operations の接続弱化と重要 issue の埋没防止ルールを整理した
   - `notes/02_design/2026-04-13_plan_to_operations_connection_and_important_issue_escalation_rule.md` を作成した
 
+--- 2026-04-14 daily review ---
+
+- `docs-ready draft を基に docs/17_operations_system.md と docs/15_notes_system.md の本体反映を進める` を完了した
+  - docs/17 と docs/15 の本体更新を完了した
+  - docs/13_dev_workflow.md の差分作成と本体更新も完了した
+- `plan→issue→operations 接続弱化の暫定運用を instruction / docs / operations に反映する` を完了した
+  - adam_instruction.md に issue 保存と issue routing の責務分離を含む暫定原則を反映した
+  - issue routing の実データ dry run、decision schema、action plan 分離まで進めた
+  - `notes/02_design/2026-04-14_issue_routing_end_state_first_and_incremental_implementation.md` を作成した
+
 ---
 
 ## ルール
