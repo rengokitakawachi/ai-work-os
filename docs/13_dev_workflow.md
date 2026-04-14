@@ -1,4 +1,4 @@
-# 13_dev_workflow.md
+# 13 Dev Workflow
 
 ## 目的
 
@@ -18,6 +18,12 @@ docs は SSOT である。
 
 notes は検討メモであり、SSOT ではない。
 
+operations は短期実行順の正本である。
+
+handover は再開入口であり、execution 正本ではない。
+
+reports は review の結果を保存する成果物である。
+
 docs の更新は人間の判断を前提とする。
 
 ---
@@ -30,6 +36,8 @@ docs の更新は人間の判断を前提とする。
 - 更新は差分最小で行う
 - 未確定事項は docs に書かない
 - docs 更新は notes/design を経由する
+- routing と review を混同しない
+- execution 正本は operations とする
 
 ---
 
@@ -42,6 +50,14 @@ docs の更新は人間の判断を前提とする。
 notes に記録  
 ↓  
 設計整理（notes/design）  
+↓  
+intake routing / issue routing  
+↓  
+operations rolling  
+↓  
+execution（operations）  
+↓  
+review  
 ↓  
 docs に反映（人間判断）  
 ↓  
@@ -63,7 +79,7 @@ docs 更新（必要な場合・人間判断）
 
 課題やアイデアを notes に記録する。
 
-未整理の内容は notes/inbox に格納する。
+未整理の内容は 00_inbox に格納する。
 
 ---
 
@@ -75,7 +91,79 @@ notes/design にて仕様案を整理する。
 
 ---
 
-#### 4 docs への反映
+#### 4 routing
+
+未整理入力や issue を構造化し、
+適切なレイヤーへ送る。
+
+- intake routing
+  - 未整理入力を issue / design / future / archive へ振り分ける
+
+- issue routing
+  - issue を operations / design / future / archive / issue へ再配置する
+
+routing は保存先判定と初期処理を担う。
+
+routing は review の代替ではない。
+
+---
+
+#### 5 operations rolling
+
+複数の流入元から候補を収集し、
+短期実行順を生成する。
+
+operations rolling の最小責務は以下とする。
+
+- candidate collection
+- normalization
+- rule evaluation
+- ranking
+- placement
+
+この結果として、
+active_operations / next_operations / archive_operations を更新する。
+
+---
+
+#### 6 execution
+
+実行は operations に基づいて行う。
+
+execution 正本は active_operations とする。
+
+会話中の実行は、
+active に入っている task を前提とする。
+
+---
+
+#### 7 review
+
+review は進行中資産の見直しと更新を担う。
+
+- daily review
+  - 当日の実績確認
+  - 完了 task の archive 移動
+  - 未完了 task の繰越判断
+  - 明日の実行順調整
+  - operations 更新
+  - daily report 保存
+
+- weekly review
+  - roadmap / plan / operations / future の整合確認
+  - 次週方針の整理
+  - weekly report 保存
+
+- monthly review
+  - roadmap / phase / plan 群の見直し
+  - monthly report 保存
+
+report は review の結果物であり、
+保存だけでは review 完了とはみなさない。
+
+---
+
+#### 8 docs への反映
 
 仕様が確定した内容のみ docs に反映する。
 
@@ -85,7 +173,7 @@ docs は SSOT である。
 
 ---
 
-#### 5 実装
+#### 9 実装
 
 docs に基づいて実装を行う。
 
@@ -93,7 +181,7 @@ docs に基づいて実装を行う。
 
 ---
 
-#### 6 docs 更新
+#### 10 docs 更新
 
 実装後に docs と差異があれば修正する。
 
@@ -126,9 +214,12 @@ GET /api/docs により docs 一覧を取得
 notes/design に整理  
 
 7  
-人間レビュー  
+実装・運用差分を確認する  
 
 8  
+人間レビュー  
+
+9  
 docs 反映  
 
 ---
@@ -142,6 +233,7 @@ AI は以下を担当する。
 - 差分検出
 - 修正案の生成
 - notes/design への整理
+- routing / review / operations の境界整理
 
 ---
 
@@ -162,7 +254,7 @@ AI は以下を担当する。
 ### Docs取得ルール
 
 - docs は必ず API 経由で取得する
-- docs は /api/docs-read により本文取得する
+- docs は本文を直接確認する
 - 過去の会話で代替しない
 - 不明な場合は再取得する
 
@@ -175,26 +267,12 @@ AI は以下を担当する。
 
 ---
 
-### 11準拠
-
-- 11_doc_style.md を事前に取得する
-- docs の記述は 11 に完全準拠する
-
----
-
 ### 出力ルール
 
 - 必ず全文出力する
 - 部分出力は禁止する
 - コードブロック内で出力する
 - コードブロックのネストは禁止する
-
----
-
-### コード制約
-
-- 現状コードは API 取得不可
-- 構造把握のうえ全文出力する
 
 ---
 
@@ -230,4 +308,4 @@ Docs Driven Development
 ↓  
 実装  
 ↓  
-仕様更新  
+仕様更新
