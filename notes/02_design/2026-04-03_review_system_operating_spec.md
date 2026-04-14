@@ -28,8 +28,8 @@ operations の日中運用は review と分離する。
 
 Todoist は operations の projection として扱う。
 
-daily review では、
-operations 更新結果を Todoist projection に反映するところまでを含めて扱う。
+- operations 更新後に projection を同期する
+- Todoist 単体を正本として扱わない
 
 ---
 
@@ -133,14 +133,14 @@ issue / design / future へ振り分ける。
 - 更新済み operations
 - 更新済み Todoist projection
 - daily report
-- content draft
+- content
 
 更新対象
 
 - 04_operations
 - 07_reports/daily
 - 09_content/drafts
-- Todoist
+- Todoist projection
 
 完了条件
 
@@ -168,7 +168,8 @@ report を保存しただけでは daily review 完了とみなさない。
 
 - 短期実行順の調整を担う
 - plan 自体を毎日更新することは目的にしない
-- report 保存だけで終わらず、operations 更新と Todoist projection 更新まで含めて完了とする
+- report 保存だけで終わらず、operations 更新まで含めて完了とする
+- Todoist は operations の projection であり、daily review では projection 同期まで閉じる
 - 日中は active の完了認識や優先順位変更を行ってよい
 - ただし archive 移動と rolling 確定は daily review で行う
 - daily review 前に Day 再編成や archive 退避を確定させない
