@@ -26,3 +26,21 @@
 - impact: high
 - status: open
 - created_at: 2026-04-12
+
+### 20260414-018
+- title: instruction に書かれた active-first 原則を外した運用違反の再発防止が必要
+- category: operations
+- description: active_operations 外の新規論点について、その場で実装提案や次アクション提案へ進んでしまった。現行 instruction には、実行対象は active_operations に入っている task のみ、会話中に新規候補が出てもその場で横入り実行しない、先に reroll して active / next / future を決める、と明記されている。それにもかかわらず、repo 履歴 API の話題で「作れるか」と「今やるか」を分離できず、active 外実行を誘発する提案を行った。これは原則違反として重く扱い、再発防止として、新規論点では必ず位置づけ判定を先に行い、active 外なら実行提案を止める統制を明示化する必要がある。
+- context: 2026-04-14 の会話で、repo の履歴確認 API は技術的には作れると説明した後、そのまま最小 spec や実装順の話へ進み、active_operations に入っていない task を実行対象のように扱ってしまった。ユーザーから「実行は常にactive operation」「そこから外れて実行するのは違反」と指摘され、instruction にも同原則が書かれていることを確認した。単なる注意ではなく、判定順序と提案制限の形で再発防止を整理する必要がある。
+- impact: high
+- status: open
+- created_at: 2026-04-14
+
+### 20260414-019
+- title: repo の履歴確認 API を issue として検討する必要がある
+- category: architecture
+- description: 現在の repoResource 系アクセスでは、instruction や docs の現在内容は読めるが、履歴そのものには直接アクセスできない。そのため、「いつ何が変わったか」「過去版の instruction はどうだったか」を検証するには限界がある。repo の履歴一覧、特定 ref 時点の本文読取、2時点差分取得を行える API があれば、instruction / docs / notes / code の変更経緯を検証しやすくなる。現時点では active_operations 外の新規論点なので即実装はせず、まず issue として位置づけを残す。
+- context: 2026-04-14 の会話で、instruction の履歴には直接アクセスできないことを確認した後、repo の履歴にアクセスできる API を作れるかが論点になった。技術的には repoResource 系の拡張として history list / history read / history diff を追加する構想が出たが、その場で実行提案へ進むのは active-first 原則に反するため停止した。次回以降、必要なら design または operations candidate として再評価するため、issue として記録しておく。
+- impact: medium
+- status: open
+- created_at: 2026-04-14
