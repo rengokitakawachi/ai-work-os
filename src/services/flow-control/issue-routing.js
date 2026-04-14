@@ -3,7 +3,9 @@ import {
   normalizeCandidates,
   evaluateCandidates,
   buildPlacementDecisions,
+  buildIssueRoutingSourceBundle,
 } from './index.js';
+import { ensureString } from './common.js';
 
 function groupRoutingDecisions(decisions = []) {
   const grouped = {
@@ -49,6 +51,41 @@ function groupRoutingDecisions(decisions = []) {
   return grouped;
 }
 
+function deriveKeepIssueOpen(routeTo = '') {
+  return ['issue', 'design', 'operations', 'future'].includes(routeTo);
+}
+
+function deriveNextAction(routeTo = '') {
+  if (routeTo === 'operations') {
+    return 'generate_operations_candidate';
+  }
+
+  if (routeTo === 'design') {
+    return 'create_or_update_design';
+  }
+
+  if (routeTo === 'future') {
+    return 'defer_and_recheck_later';
+  }
+
+  if (routeTo === 'archive') {
+    return 'archive_issue';
+  }
+
+  return 'keep_issue_open';
+}
+
+function buildRoutingDecision(candidate = {}, decision = {}) {
+  const routeTo = ensureString(decision?.route_to);
+
+  return {
+    ...candidate,
+    ...decision,
+    keep_issue_open: deriveKeepIssueOpen(routeTo),
+    next_action: deriveNextAction(routeTo),
+  };
+}
+
 export function routeIssueCandidates({ sourceBundles = [], phase = '' } = {}) {
   const rawCandidates = collectCandidates(sourceBundles);
   const normalizedCandidates = normalizeCandidates(rawCandidates);
@@ -65,14 +102,16 @@ export function routeIssueCandidates({ sourceBundles = [], phase = '' } = {}) {
     placementDecisions.map((decision) => [decision.candidate_id, decision])
   );
 
-  const mergedDecisions = normalizedCandidates.map((candidate) => ({
-    ...candidate,
-    ...(decisionMap.get(candidate.candidate_id) || {}),
-  }));
+  const routedCandidates = normalizedCandidates.map((candidate) =>
+    buildRoutingDecision(
+      candidate,
+      decisionMap.get(candidate.candidate_id) || {}
+    )
+  );
 
   return {
-    routed_candidates: mergedDecisions,
-    grouped: groupRoutingDecisions(mergedDecisions),
+    routed_candidates: routedCandidates,
+    grouped: groupRoutingDecisions(routedCandidates),
   };
 }
 
@@ -90,5 +129,21 @@ export function routeSingleIssueCandidate({
         items: [item],
       },
     ],
+  });
+}
+
+export function routeIssueLogFromNotes({
+  issueLogContent = '',
+  issueLogSourceRef = '',
+  phase = '',
+} = {}) {
+  const sourceBundle = buildIssueRoutingSourceBundle({
+    content: issueLogContent,
+    sourceRef: issueLogSourceRef,
+  });
+
+  return routeIssueCandidates({
+    phase,
+    sourceBundles: [sourceBundle],
   });
 }
