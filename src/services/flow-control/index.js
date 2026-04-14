@@ -10,10 +10,15 @@ export { rankOperationsCandidates, splitRankedCandidates } from './ranking.js';
 export {
   buildPlanSourceBundle,
   buildIssueSourceBundle,
+  buildIssueRoutingSourceBundle,
   buildNextOperationsSourceBundle,
   buildRollingSourceBundles,
 } from './adapters.js';
 export { generateRollingCandidates } from './rolling.js';
 export { generateRollingCandidatesFromNotes } from './orchestrate.js';
-export { routeIssueCandidates, routeSingleIssueCandidate } from './issue-routing.js';
+export {
+  routeIssueCandidates,
+  routeSingleIssueCandidate,
+  routeIssueLogFromNotes,
+} from './issue-routing.js';
 export { routeIntakeCandidates, routeSingleIntakeCandidate } from './intake-routing.js';
