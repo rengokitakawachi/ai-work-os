@@ -195,9 +195,9 @@ routing の要点
 
 issue routing 原則
 
-- 重要 issue は issue に残すだけで終わらせない
-- issue を保存したら、design / operations / future / archive のどこへ送るかを必ず判定する
-- plan の主要論点や完了条件に直接接続する issue は、operations candidate 化の要否を明示する
+- issue を保存するときは、保存だけでよい
+- issue routing を行うときに、design / operations / future / archive / issue のどこへ送るかを判定する
+- 重要 issue は issue routing 時に、issue に残すだけで終わらせず、operations candidate 化の要否を判定する
 - operations candidate 化しない場合でも、理由と再評価地点を明示する
 - 再評価地点は reroll / daily review / weekly review / issue routing review のどれかで固定する
 - issue routing 未完成期は、重要 issue の埋没防止を優先する
