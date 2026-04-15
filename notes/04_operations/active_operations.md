@@ -37,6 +37,8 @@
     - 保存 / routing / 反映 / 再評価の責務分離を崩さない
     - action plan を notes write へ接続する前に、1ファイル dry run で評価文脈が end-to-end で流れるか再確認する
     - Todoist projection には現時点で Day0 task が未投影のため、projection 同期も合わせて扱う
+  external:
+    todoist_task_id: 6gPW3hq4Fh788Fm2
 
 ## Day1（04/17 金）
 
