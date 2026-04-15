@@ -12,10 +12,35 @@ function resolveReviewAt(routeTo) {
   return 'daily_review';
 }
 
+function resolveImpactNow(candidate = {}) {
+  return ensureString(
+    candidate?.assessment?.impact_now ||
+      candidate?.metadata?.default_impact ||
+      candidate?.metadata?.impact
+  ).toLowerCase();
+}
+
+function resolveUrgencyNow(candidate = {}) {
+  return ensureString(
+    candidate?.assessment?.urgency_now ||
+      candidate?.metadata?.default_urgency ||
+      candidate?.metadata?.urgency
+  ).toLowerCase();
+}
+
+function buildDecisionMeta(candidate = {}) {
+  return {
+    evaluated_at: new Date().toISOString(),
+    impact_now: resolveImpactNow(candidate),
+    urgency_now: resolveUrgencyNow(candidate),
+  };
+}
+
 function evaluateIssueCandidate(candidate = {}) {
   const category = ensureString(candidate?.metadata?.category).toLowerCase();
   const status = ensureString(candidate?.metadata?.status).toLowerCase();
-  const impact = ensureString(candidate?.metadata?.impact).toLowerCase();
+  const impactNow = resolveImpactNow(candidate);
+  const decisionMeta = buildDecisionMeta(candidate);
 
   if (status === 'closed') {
     return {
@@ -25,6 +50,7 @@ function evaluateIssueCandidate(candidate = {}) {
       needs_task_generation: false,
       reason: 'closed issue のため、archive 扱いにする',
       review_at: 'daily_review',
+      ...decisionMeta,
     };
   }
 
@@ -36,10 +62,11 @@ function evaluateIssueCandidate(candidate = {}) {
       needs_task_generation: false,
       reason: 'open ではないため、今は future に送る',
       review_at: 'weekly_review',
+      ...decisionMeta,
     };
   }
 
-  if (impact && impact !== 'high') {
+  if (impactNow && impactNow !== 'high') {
     return {
       candidate_id: ensureString(candidate?.candidate_id),
       route_to: 'issue',
@@ -47,6 +74,7 @@ function evaluateIssueCandidate(candidate = {}) {
       needs_task_generation: false,
       reason: 'high impact ではないため、issue に残して再評価する',
       review_at: 'daily_review',
+      ...decisionMeta,
     };
   }
 
@@ -58,6 +86,7 @@ function evaluateIssueCandidate(candidate = {}) {
       needs_task_generation: false,
       reason: 'architecture 系 issue のため、先に design で構造整理する',
       review_at: 'weekly_review',
+      ...decisionMeta,
     };
   }
 
@@ -69,6 +98,7 @@ function evaluateIssueCandidate(candidate = {}) {
       needs_task_generation: true,
       reason: 'operations 系 issue のため、operations 比較対象に入れる',
       review_at: 'daily_review',
+      ...decisionMeta,
     };
   }
 
@@ -79,6 +109,7 @@ function evaluateIssueCandidate(candidate = {}) {
     needs_task_generation: false,
     reason: 'issue は保持するが、追加判定が必要なため一段保留する',
     review_at: 'daily_review',
+    ...decisionMeta,
   };
 }
 
@@ -87,6 +118,7 @@ export function evaluateCandidate(candidate = {}, context = {}) {
   const currentPhase = ensureString(context?.phase);
   const candidateType = ensureString(candidate?.candidate_type);
   const sourceType = ensureString(candidate?.source_type);
+  const decisionMeta = buildDecisionMeta(candidate);
 
   if (phase && currentPhase && phase !== currentPhase) {
     return {
@@ -96,6 +128,7 @@ export function evaluateCandidate(candidate = {}, context = {}) {
       needs_task_generation: false,
       reason: '現在の phase 対象外のため',
       review_at: 'weekly_review',
+      ...decisionMeta,
     };
   }
 
@@ -107,6 +140,7 @@ export function evaluateCandidate(candidate = {}, context = {}) {
       needs_task_generation: false,
       reason: '役目終了として扱うため',
       review_at: 'daily_review',
+      ...decisionMeta,
     };
   }
 
@@ -118,6 +152,7 @@ export function evaluateCandidate(candidate = {}, context = {}) {
       needs_task_generation: false,
       reason: '先に構造整理が必要なため',
       review_at: 'weekly_review',
+      ...decisionMeta,
     };
   }
 
@@ -133,6 +168,7 @@ export function evaluateCandidate(candidate = {}, context = {}) {
       needs_task_generation: true,
       reason: 'operations candidate として扱うため',
       review_at: resolveReviewAt('operations'),
+      ...decisionMeta,
     };
   }
 
@@ -144,6 +180,7 @@ export function evaluateCandidate(candidate = {}, context = {}) {
       needs_task_generation: false,
       reason: '将来扱う候補のため',
       review_at: 'weekly_review',
+      ...decisionMeta,
     };
   }
 
@@ -154,6 +191,7 @@ export function evaluateCandidate(candidate = {}, context = {}) {
     needs_task_generation: false,
     reason: '判定保留として issue に残すため',
     review_at: resolveReviewAt('issue'),
+    ...decisionMeta,
   };
 }
 
