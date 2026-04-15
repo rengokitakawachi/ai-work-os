@@ -24,6 +24,10 @@ export function buildPlacementDecision(candidate = {}, evaluation = {}) {
     route_to: ensureString(evaluation?.route_to),
     reason: ensureString(evaluation?.reason),
     review_at: ensureString(evaluation?.review_at),
+    needs_task_generation: Boolean(evaluation?.needs_task_generation),
+    evaluated_at: ensureString(evaluation?.evaluated_at),
+    impact_now: ensureString(evaluation?.impact_now),
+    urgency_now: ensureString(evaluation?.urgency_now),
     ...(taskDraft ? { task_draft: taskDraft } : {}),
   });
 }
