@@ -101,7 +101,8 @@ function extractField(block, field) {
 function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
   const title = extractField(block, 'title');
   const category = extractField(block, 'category').toLowerCase();
-  const impact = extractField(block, 'impact').toLowerCase();
+  const defaultImpact = extractField(block, 'impact').toLowerCase();
+  const defaultUrgency = extractField(block, 'urgency').toLowerCase();
   const status = extractField(block, 'status').toLowerCase();
   const description = extractField(block, 'description');
   const issueId = ensureString(block.match(/^###\s+(\d{8}-\d{3})/u)?.[1]);
@@ -110,7 +111,7 @@ function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
     return null;
   }
 
-  if (includeOnlyOpenHigh && (status !== 'open' || impact !== 'high')) {
+  if (includeOnlyOpenHigh && (status !== 'open' || defaultImpact !== 'high')) {
     return null;
   }
 
@@ -118,14 +119,16 @@ function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
     title,
     summary: description || 'issue_log から抽出した candidate',
     candidate_type: 'operations',
-    importance: impact === 'high' ? 'high' : 'medium',
+    importance: defaultImpact === 'high' ? 'high' : 'medium',
     phase: 'phase0',
     why_now: ['issue routing 比較対象として扱うため'],
     metadata: {
       extracted_from: 'idea_log',
       issue_id: issueId,
       category,
-      impact,
+      impact: defaultImpact,
+      default_impact: defaultImpact,
+      default_urgency: defaultUrgency,
       status,
       description,
       title,
