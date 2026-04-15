@@ -27,6 +27,7 @@ export function normalizeCandidate(rawCandidate = {}) {
   const reviewAt = ensureString(rawItem?.review_at);
   const whyNow = ensureStringArray(rawItem?.why_now);
   const metadata = ensureObject(rawItem?.metadata);
+  const assessment = ensureObject(rawItem?.assessment);
 
   return compactObject({
     candidate_id: buildCandidateId({
@@ -44,6 +45,7 @@ export function normalizeCandidate(rawCandidate = {}) {
     review_at: reviewAt,
     why_now: whyNow,
     metadata,
+    assessment,
   });
 }
 
