@@ -11,6 +11,7 @@ export {
   buildPlanSourceBundle,
   buildIssueSourceBundle,
   buildIssueRoutingSourceBundle,
+  buildActiveOperationsSourceBundle,
   buildNextOperationsSourceBundle,
   buildOperationsQueueSourceBundle,
   buildRollingSourceBundles,
