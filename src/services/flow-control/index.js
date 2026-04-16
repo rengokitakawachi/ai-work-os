@@ -12,10 +12,14 @@ export {
   buildIssueSourceBundle,
   buildIssueRoutingSourceBundle,
   buildNextOperationsSourceBundle,
+  buildOperationsQueueSourceBundle,
   buildRollingSourceBundles,
 } from './adapters.js';
 export { generateRollingCandidates } from './rolling.js';
-export { generateRollingCandidatesFromNotes } from './orchestrate.js';
+export {
+  generateRollingCandidatesFromNotes,
+  generateRollingCandidatesFromQueue,
+} from './orchestrate.js';
 export {
   routeIssueCandidates,
   routeSingleIssueCandidate,
