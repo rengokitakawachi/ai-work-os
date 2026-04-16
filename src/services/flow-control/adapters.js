@@ -1,4 +1,4 @@
-import { ensureString } from './common.js';
+import { ensureObject, ensureString, ensureStringArray } from './common.js';
 
 function extractSection(content, heading) {
   const safeContent = ensureString(content);
@@ -206,6 +206,56 @@ export function buildNextOperationsSourceBundle({ content = '', sourceRef = '' }
   };
 }
 
+function mapOperationsQueuePayloadToItem(payload = {}) {
+  const candidateDraft = ensureObject(payload?.candidate_draft);
+  const task = ensureString(candidateDraft?.task) || ensureString(payload?.title);
+  const sourceRef = ensureStringArray(candidateDraft?.source_ref);
+  const notes = ensureStringArray(candidateDraft?.notes);
+  const reason = ensureString(payload?.reason);
+  const impactNow = ensureString(payload?.impact_now).toLowerCase();
+  const urgencyNow = ensureString(payload?.urgency_now).toLowerCase();
+  const issueId = ensureString(payload?.derived_from_issue_id);
+
+  if (!task) {
+    return null;
+  }
+
+  return {
+    title: task,
+    summary: reason || 'issue routing queue から渡された operations candidate',
+    candidate_type: 'operations',
+    importance: impactNow || 'medium',
+    urgency: urgencyNow,
+    phase: 'phase0',
+    why_now: reason ? [reason] : [],
+    source_ref: sourceRef,
+    metadata: {
+      generated_from: 'issue_routing_queue',
+      generated_from_issue_id: issueId,
+      evaluated_at: ensureString(payload?.evaluated_at),
+      impact_now: impactNow,
+      urgency_now: urgencyNow,
+      notes,
+      action_type: ensureString(payload?.action_type),
+      route_to: ensureString(payload?.route_to),
+      write_status: ensureString(payload?.write_status),
+    },
+  };
+}
+
+export function buildOperationsQueueSourceBundle({ queuePayloads = [], sourceRef = '' } = {}) {
+  const safeSourceRef = ensureString(sourceRef);
+  const items = (Array.isArray(queuePayloads) ? queuePayloads : [])
+    .map((payload) => mapOperationsQueuePayloadToItem(payload))
+    .filter(Boolean);
+
+  return {
+    source_type: 'operations_queue',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    items,
+  };
+}
+
 export function buildRollingSourceBundles({
   planContent = '',
   planSourceRef = '',
@@ -213,6 +263,8 @@ export function buildRollingSourceBundles({
   issueLogSourceRef = '',
   nextOperationsContent = '',
   nextOperationsSourceRef = '',
+  operationsQueuePayloads = [],
+  operationsQueueSourceRef = '',
 } = {}) {
   return [
     buildPlanSourceBundle({
@@ -226,6 +278,10 @@ export function buildRollingSourceBundles({
     buildNextOperationsSourceBundle({
       content: nextOperationsContent,
       sourceRef: nextOperationsSourceRef,
+    }),
+    buildOperationsQueueSourceBundle({
+      queuePayloads: operationsQueuePayloads,
+      sourceRef: operationsQueueSourceRef,
     }),
   ].filter((bundle) => Array.isArray(bundle.items) && bundle.items.length > 0);
 }
