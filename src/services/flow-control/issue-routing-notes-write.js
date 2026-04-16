@@ -31,11 +31,22 @@ function resolveCandidateForActionItem(actionItem = {}, routedCandidateMap = new
   return routedCandidateMap.get(candidateId) || {};
 }
 
+function uniqueStrings(values = []) {
+  return Array.from(new Set(ensureStringArray(values))).filter(Boolean);
+}
+
 function mergeSourceRef(actionItem = {}, context = {}) {
-  return [
+  return uniqueStrings([
     ...ensureStringArray(actionItem?.source_ref),
     ...ensureStringArray(context?.sourceRef),
-  ].filter((item, index, array) => array.indexOf(item) === index);
+  ]);
+}
+
+function mergeRelatedRefs(actionItem = {}, context = {}) {
+  return uniqueStrings([
+    ...mergeSourceRef(actionItem, context),
+    ...ensureStringArray(actionItem?.metadata?.context_refs),
+  ]);
 }
 
 function buildBody({
@@ -49,6 +60,8 @@ function buildBody({
   urgencyNow = '',
   nextAction = '',
   summary = '',
+  relatedContext = '',
+  relatedContextRefs = [],
 } = {}) {
   return [
     `# ${ensureString(title) || 'Untitled'}`,
@@ -74,6 +87,12 @@ function buildBody({
     '',
     ensureString(summary),
     '',
+    '## related context',
+    '',
+    ...ensureStringArray(relatedContextRefs).map((item) => `- ${item}`),
+    '',
+    ensureString(relatedContext),
+    '',
   ].join('\n');
 }
 
@@ -81,6 +100,7 @@ function buildDesignWrite(actionItem = {}, routedCandidate = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
   const sourceRef = mergeSourceRef(actionItem, context);
+  const relatedContextRefs = mergeRelatedRefs(actionItem, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -114,6 +134,8 @@ function buildDesignWrite(actionItem = {}, routedCandidate = {}, context = {}) {
         ensureString(routedCandidate?.summary) ||
         ensureString(metadata?.description) ||
         'design draft generated from issue routing action plan',
+      relatedContext: ensureString(metadata?.context),
+      relatedContextRefs,
     }),
   });
 }
@@ -144,6 +166,7 @@ function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
   const sourceRef = mergeSourceRef(actionItem, context);
+  const relatedContextRefs = mergeRelatedRefs(actionItem, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -177,6 +200,8 @@ function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
         ensureString(routedCandidate?.summary) ||
         ensureString(metadata?.description) ||
         'future draft generated from issue routing action plan',
+      relatedContext: ensureString(metadata?.context),
+      relatedContextRefs,
     }),
   });
 }
@@ -185,6 +210,7 @@ function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) 
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
   const sourceRef = mergeSourceRef(actionItem, context);
+  const relatedContextRefs = mergeRelatedRefs(actionItem, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -218,6 +244,8 @@ function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) 
         ensureString(routedCandidate?.summary) ||
         ensureString(metadata?.description) ||
         'archive draft generated from issue routing action plan',
+      relatedContext: ensureString(metadata?.context),
+      relatedContextRefs,
     }),
   });
 }
