@@ -4,6 +4,7 @@ import {
   ensureString,
   ensureStringArray,
 } from './common.js';
+import { readNote, createNote, updateNote } from '../repo-resource/notes.js';
 
 function slugify(value) {
   return ensureString(value)
@@ -244,7 +245,71 @@ function createRoutedCandidateMap(routedCandidates = []) {
   );
 }
 
-export function applyIssueRoutingActionPlan({
+async function applyDesignWrite(designWrite = {}, context = {}) {
+  const suggestedFile = ensureString(designWrite?.suggested_file);
+  const body = ensureString(designWrite?.body);
+
+  if (!suggestedFile || !body) {
+    return {
+      ...designWrite,
+      write_status: 'invalid_payload',
+    };
+  }
+
+  try {
+    const existing = await readNote(suggestedFile);
+    const result = await updateNote(
+      suggestedFile,
+      body,
+      `update ${suggestedFile} from issue routing action plan`,
+      ensureString(existing?.sha)
+    );
+
+    return {
+      ...designWrite,
+      write_status: 'updated',
+      path: result?.path || '',
+      sha: result?.sha || '',
+    };
+  } catch (error) {
+    if (error?.code !== 'NOT_FOUND') {
+      return {
+        ...designWrite,
+        write_status: 'error',
+        error: {
+          code: ensureString(error?.code) || 'UNKNOWN_ERROR',
+          message: ensureString(error?.message) || 'Unknown error',
+        },
+      };
+    }
+  }
+
+  try {
+    const result = await createNote(
+      suggestedFile,
+      body,
+      `create ${suggestedFile} from issue routing action plan`
+    );
+
+    return {
+      ...designWrite,
+      write_status: 'created',
+      path: result?.path || '',
+      sha: result?.sha || '',
+    };
+  } catch (error) {
+    return {
+      ...designWrite,
+      write_status: 'error',
+      error: {
+        code: ensureString(error?.code) || 'UNKNOWN_ERROR',
+        message: ensureString(error?.message) || 'Unknown error',
+      },
+    };
+  }
+}
+
+export async function applyIssueRoutingActionPlan({
   routedCandidates = [],
   actionPlan = {},
   sourceRef = [],
@@ -261,7 +326,7 @@ export function applyIssueRoutingActionPlan({
   const routedCandidateMap = createRoutedCandidateMap(routedCandidates);
   const safeActionPlan = ensureObject(actionPlan);
 
-  return {
+  const result = {
     mode: safeMode,
     design_writes: (Array.isArray(safeActionPlan.design_updates)
       ? safeActionPlan.design_updates
@@ -309,4 +374,14 @@ export function applyIssueRoutingActionPlan({
     ).map((actionItem) => buildKeptIssue(actionItem)),
     skipped: Array.isArray(safeActionPlan.skipped) ? safeActionPlan.skipped : [],
   };
+
+  if (safeMode !== 'apply') {
+    return result;
+  }
+
+  result.design_writes = await Promise.all(
+    result.design_writes.map((designWrite) => applyDesignWrite(designWrite, context))
+  );
+
+  return result;
 }
