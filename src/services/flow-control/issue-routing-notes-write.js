@@ -49,6 +49,65 @@ function mergeRelatedRefs(actionItem = {}, context = {}) {
   ]);
 }
 
+function buildSourceIssueSection({ sourceIssueId = '' } = {}) {
+  return [
+    '## source issue',
+    '',
+    `- issue_id: ${ensureString(sourceIssueId)}`,
+    '',
+  ];
+}
+
+function buildSourceRefSection({ sourceRef = [] } = {}) {
+  return [
+    '## source_ref',
+    '',
+    ...ensureStringArray(sourceRef).map((item) => `- ${item}`),
+    '',
+  ];
+}
+
+function buildRoutingDecisionSection({
+  routeTo = '',
+  reason = '',
+  evaluatedAt = '',
+  impactNow = '',
+  urgencyNow = '',
+  nextAction = '',
+} = {}) {
+  return [
+    '## routing decision',
+    '',
+    `- route_to: ${ensureString(routeTo)}`,
+    `- reason: ${ensureString(reason)}`,
+    `- evaluated_at: ${ensureString(evaluatedAt)}`,
+    `- impact_now: ${ensureString(impactNow)}`,
+    `- urgency_now: ${ensureString(urgencyNow)}`,
+    `- next_action: ${ensureString(nextAction)}`,
+    '',
+  ];
+}
+
+function buildRawSummarySection({ summary = '' } = {}) {
+  return [
+    '## raw summary',
+    '',
+    ensureString(summary),
+    '',
+  ];
+}
+
+function buildRelatedContextSection({ relatedContext = '', relatedContextRefs = [] } = {}) {
+  return [
+    '## related context',
+    '',
+    ...ensureStringArray(relatedContextRefs).map((item) => `- ${item}`),
+    '',
+    ensureString(relatedContext),
+    '',
+  ];
+}
+
 function buildBody({
   title = '',
   sourceIssueId = '',
@@ -66,33 +125,18 @@ function buildBody({
   return [
     `# ${ensureString(title) || 'Untitled'}`,
     '',
-    '## source issue',
-    '',
-    `- issue_id: ${ensureString(sourceIssueId)}`,
-    '',
-    '## source_ref',
-    '',
-    ...ensureStringArray(sourceRef).map((item) => `- ${item}`),
-    '',
-    '## routing decision',
-    '',
-    `- route_to: ${ensureString(routeTo)}`,
-    `- reason: ${ensureString(reason)}`,
-    `- evaluated_at: ${ensureString(evaluatedAt)}`,
-    `- impact_now: ${ensureString(impactNow)}`,
-    `- urgency_now: ${ensureString(urgencyNow)}`,
-    `- next_action: ${ensureString(nextAction)}`,
-    '',
-    '## raw summary',
-    '',
-    ensureString(summary),
-    '',
-    '## related context',
-    '',
-    ...ensureStringArray(relatedContextRefs).map((item) => `- ${item}`),
-    '',
-    ensureString(relatedContext),
-    '',
+    ...buildSourceIssueSection({ sourceIssueId }),
+    ...buildSourceRefSection({ sourceRef }),
+    ...buildRoutingDecisionSection({
+      routeTo,
+      reason,
+      evaluatedAt,
+      impactNow,
+      urgencyNow,
+      nextAction,
+    }),
+    ...buildRawSummarySection({ summary }),
+    ...buildRelatedContextSection({ relatedContext, relatedContextRefs }),
   ].join('\n');
 }
 
