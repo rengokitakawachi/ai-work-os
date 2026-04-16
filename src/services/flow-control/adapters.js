@@ -184,6 +184,96 @@ function extractTaskTitles(content) {
     .filter((line) => line.length > 0);
 }
 
+function parseIndentedList(block, field) {
+  const lines = ensureString(block).split('\n');
+  const startIndex = lines.findIndex((line) => line.trim() === `${field}:`);
+
+  if (startIndex < 0) {
+    return [];
+  }
+
+  const items = [];
+  for (let index = startIndex + 1; index < lines.length; index += 1) {
+    const trimmed = lines[index].trim();
+    if (!trimmed) {
+      continue;
+    }
+    if (!lines[index].startsWith('  ') && !lines[index].startsWith('    ')) {
+      break;
+    }
+    if (trimmed.startsWith('- ')) {
+      items.push(trimmed.replace(/^-\s+/, '').trim());
+      continue;
+    }
+    if (/^[a-z_]+:/i.test(trimmed)) {
+      break;
+    }
+  }
+
+  return items;
+}
+
+function extractSimpleTaskField(block, field) {
+  const pattern = new RegExp(`^\\s*${field}:\\s+(.+)$`, 'mu');
+  const match = ensureString(block).match(pattern);
+  return match ? ensureString(match[1]) : '';
+}
+
+function parseActiveOperationBlocks(content = '') {
+  return ensureString(content)
+    .split(/\n(?=- task:\s+)/u)
+    .map((block) => block.trimEnd())
+    .filter((block) => /^- task:\s+/u.test(block.trimStart()));
+}
+
+function mapActiveOperationBlockToItem(block) {
+  const title = extractSimpleTaskField(block, 'task');
+  if (!title) {
+    return null;
+  }
+
+  const sourceRef = parseIndentedList(block, 'source_ref');
+  const whyNow = parseIndentedList(block, 'why_now');
+  const notes = parseIndentedList(block, 'notes');
+  const rollingDay = extractSimpleTaskField(block, 'rolling_day');
+  const dueDate = extractSimpleTaskField(block, 'due_date');
+  const dueType = extractSimpleTaskField(block, 'due_type');
+  const targetDate = extractSimpleTaskField(block, 'target_date');
+
+  return {
+    title,
+    summary: 'active_operations から reroll candidate として戻した task',
+    candidate_type: 'operations',
+    importance: 'high',
+    phase: 'phase0',
+    why_now: whyNow,
+    source_ref: sourceRef,
+    metadata: {
+      generated_from: 'active_operations',
+      already_active: true,
+      existing_rolling_day: rollingDay,
+      active_continuity: 'light',
+      notes,
+      due_date: dueDate,
+      due_type: dueType,
+      target_date: targetDate,
+    },
+  };
+}
+
+export function buildActiveOperationsSourceBundle({ content = '', sourceRef = '' } = {}) {
+  const safeSourceRef = ensureString(sourceRef);
+  const items = parseActiveOperationBlocks(content)
+    .map((block) => mapActiveOperationBlockToItem(block))
+    .filter(Boolean);
+
+  return {
+    source_type: 'active',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    items,
+  };
+}
+
 export function buildNextOperationsSourceBundle({ content = '', sourceRef = '' } = {}) {
   const safeSourceRef = ensureString(sourceRef);
   const items = extractTaskTitles(content).map((title) => ({
@@ -261,6 +351,8 @@ export function buildRollingSourceBundles({
   planSourceRef = '',
   issueLogContent = '',
   issueLogSourceRef = '',
+  activeOperationsContent = '',
+  activeOperationsSourceRef = '',
   nextOperationsContent = '',
   nextOperationsSourceRef = '',
   operationsQueuePayloads = [],
@@ -274,6 +366,10 @@ export function buildRollingSourceBundles({
     buildIssueSourceBundle({
       content: issueLogContent,
       sourceRef: issueLogSourceRef,
+    }),
+    buildActiveOperationsSourceBundle({
+      content: activeOperationsContent,
+      sourceRef: activeOperationsSourceRef,
     }),
     buildNextOperationsSourceBundle({
       content: nextOperationsContent,
