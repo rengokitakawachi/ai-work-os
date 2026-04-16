@@ -115,9 +115,9 @@ error.details は解析補助情報を示す。
 - POST /api/repo-resource?action=delete&resource=notes：実装済み
 - GET /api/repo-resource?action=tree&resource=code：実装済み
 - GET /api/repo-resource?action=read&resource=code：実装済み
+- GET /api/repo-resource?action=bulk&resource=code：実装済み
 - POST /api/repo-resource?action=create&resource=code：実装済み
 - POST /api/repo-resource?action=update&resource=code：実装済み
-- GET /api/repo-resource?action=bulk&resource=code：未実装
 - docs の update：当面は実装しない
 
 ### resource 定義
@@ -437,9 +437,9 @@ GET /api/repo-resource?action=bulk&resource=code&files=FILENAME1,FILENAME2,...
 
 補足
 
-現時点では未実装である。
+現時点で実装済みである。
 
-導入時は件数とサイズの制御を前提とする。
+将来的には件数とサイズの制御を追加してよい。
 
 ### code 作成
 
@@ -737,6 +737,7 @@ step の例
 - updateNote
 - deleteNote
 - readCode
+- bulkReadCode
 - createCode
 - updateCode
 
