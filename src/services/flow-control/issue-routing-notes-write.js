@@ -30,6 +30,13 @@ function resolveCandidateForActionItem(actionItem = {}, routedCandidateMap = new
   return routedCandidateMap.get(candidateId) || {};
 }
 
+function mergeSourceRef(actionItem = {}, context = {}) {
+  return [
+    ...ensureStringArray(actionItem?.source_ref),
+    ...ensureStringArray(context?.sourceRef),
+  ].filter((item, index, array) => array.indexOf(item) === index);
+}
+
 function buildBody({
   title = '',
   sourceIssueId = '',
@@ -72,7 +79,7 @@ function buildBody({
 function buildDesignWrite(actionItem = {}, routedCandidate = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
-  const sourceRef = ensureStringArray(actionItem?.source_ref);
+  const sourceRef = mergeSourceRef(actionItem, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -125,7 +132,7 @@ function buildOperationsCandidateWrite(actionItem = {}, routedCandidate = {}, co
     candidate_draft:
       ensureObject(routedCandidate?.task_draft) || {
         task: ensureString(actionItem?.title),
-        source_ref: ensureStringArray(actionItem?.source_ref),
+        source_ref: mergeSourceRef(actionItem, context),
         notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
       },
     mode: context.mode,
@@ -135,7 +142,7 @@ function buildOperationsCandidateWrite(actionItem = {}, routedCandidate = {}, co
 function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
-  const sourceRef = ensureStringArray(actionItem?.source_ref);
+  const sourceRef = mergeSourceRef(actionItem, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -176,7 +183,7 @@ function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
 function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
-  const sourceRef = ensureStringArray(actionItem?.source_ref);
+  const sourceRef = mergeSourceRef(actionItem, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -256,7 +263,10 @@ export function applyIssueRoutingActionPlan({
 
   return {
     mode: safeMode,
-    design_writes: ensureStringArray([]) && (Array.isArray(safeActionPlan.design_updates) ? safeActionPlan.design_updates : []).map((actionItem) =>
+    design_writes: (Array.isArray(safeActionPlan.design_updates)
+      ? safeActionPlan.design_updates
+      : []
+    ).map((actionItem) =>
       buildDesignWrite(
         actionItem,
         resolveCandidateForActionItem(actionItem, routedCandidateMap),
