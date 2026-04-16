@@ -20,6 +20,7 @@ import {
 import {
   treeCode,
   readCode,
+  bulkReadCode,
   createCode,
   updateCode,
 } from '../src/services/repo-resource/code.js';
@@ -158,7 +159,7 @@ function validateGet(resource, action, query) {
   if (resource === 'notes' || resource === 'code') {
     if (
       (resource === 'notes' && !['tree', 'read', 'bulk'].includes(action)) ||
-      (resource === 'code' && !['tree', 'read'].includes(action))
+      (resource === 'code' && !['tree', 'read', 'bulk'].includes(action))
     ) {
       throw createError({
         status: 400,
@@ -180,7 +181,7 @@ function validateGet(resource, action, query) {
       });
     }
 
-    if (resource === 'notes' && action === 'bulk') {
+    if (action === 'bulk') {
       parseFilesParam(query.files, {
         step: 'validateGet',
         resource,
@@ -337,6 +338,16 @@ async function dispatchGet(resource, action, query) {
     if (action === 'read') {
       return readCode(
         requireFile(query.file, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        })
+      );
+    }
+
+    if (action === 'bulk') {
+      return bulkReadCode(
+        parseFilesParam(query.files, {
           step: 'dispatchGet',
           resource,
           action,
