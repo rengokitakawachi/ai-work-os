@@ -21,8 +21,6 @@ Tasks API 全体の再設計論点を整理することを目的とする。
 ## source_ref
 
 - notes/01_issues/idea_log.md
-- notes/02_design/2026-03-25_strategy_api_and_tasks_boundary.md
-- notes/02_design/2026-03-25_tasks_api_alignment_design.md
 
 ## routing decision
 
@@ -47,6 +45,13 @@ Execution View 前提の責務境界、
 projection service との接続、
 close / delete の意味づけ、
 正本との関係を再設計する必要がある。
+
+## related context
+
+- 2026-03-25_strategy_api_and_tasks_boundary.md
+- 2026-03-25_tasks_api_alignment_design.md
+
+`2026-03-25_strategy_api_and_tasks_boundary.md` では Tasks API を Todoist 直接操作 API から execution projection API へ移行する構想が示されており、`2026-03-25_tasks_api_alignment_design.md` でも API は薄く、変換は service 層に集約し、外部依存仕様は service に閉じる原則が置かれている。今回の operations projection design では、まずは現状 repo に接続できる最小差分で projection service を導入する方針を採ったが、これはあくまで途中形であり、Tasks API 全体の再定義は独立論点として残すべきである。
 
 ---
 
