@@ -76,6 +76,48 @@ export async function readCode(file) {
   }
 }
 
+export async function bulkReadCode(files) {
+  if (!Array.isArray(files) || files.length === 0) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'files required',
+      category: 'validation',
+      step: 'bulkReadCode',
+      resource: 'code',
+      action: 'bulk',
+      retryable: false,
+      details: {
+        field: 'files',
+      },
+    });
+  }
+
+  const results = await Promise.all(
+    files.map(async (file) => {
+      try {
+        const data = await readCode(file);
+        return {
+          ok: true,
+          file,
+          ...data,
+        };
+      } catch (error) {
+        return {
+          ok: false,
+          file,
+          error: {
+            code: error?.code || 'UNKNOWN_ERROR',
+            message: error?.message || 'Unknown error',
+          },
+        };
+      }
+    })
+  );
+
+  return results;
+}
+
 export async function createCode(file, content, message = '') {
   const path = buildCodePath(file, {
     step: 'createCode',
