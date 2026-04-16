@@ -108,6 +108,33 @@ function buildRelatedContextSection({ relatedContext = '', relatedContextRefs = 
   ];
 }
 
+function buildWhyDeferredSection({ whyDeferred = '' } = {}) {
+  return [
+    '## why deferred',
+    '',
+    ensureString(whyDeferred),
+    '',
+  ];
+}
+
+function buildRecheckPointSection({ recheckPoint = '' } = {}) {
+  return [
+    '## recheck point',
+    '',
+    ensureString(recheckPoint),
+    '',
+  ];
+}
+
+function buildArchiveReasonSection({ archiveReason = '' } = {}) {
+  return [
+    '## archive reason',
+    '',
+    ensureString(archiveReason),
+    '',
+  ];
+}
+
 function buildBody({
   title = '',
   sourceIssueId = '',
@@ -121,6 +148,7 @@ function buildBody({
   summary = '',
   relatedContext = '',
   relatedContextRefs = [],
+  extraSections = [],
 } = {}) {
   return [
     `# ${ensureString(title) || 'Untitled'}`,
@@ -137,6 +165,7 @@ function buildBody({
     }),
     ...buildRawSummarySection({ summary }),
     ...buildRelatedContextSection({ relatedContext, relatedContextRefs }),
+    ...extraSections.flat(),
   ].join('\n');
 }
 
@@ -246,6 +275,16 @@ function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
         'future draft generated from issue routing action plan',
       relatedContext: ensureString(metadata?.context),
       relatedContextRefs,
+      extraSections: [
+        buildWhyDeferredSection({
+          whyDeferred:
+            ensureString(actionItem?.reason) ||
+            'currently not promoted to active operations',
+        }),
+        buildRecheckPointSection({
+          recheckPoint: ensureString(actionItem?.review_at) || 'weekly_review',
+        }),
+      ],
     }),
   });
 }
@@ -290,6 +329,12 @@ function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) 
         'archive draft generated from issue routing action plan',
       relatedContext: ensureString(metadata?.context),
       relatedContextRefs,
+      extraSections: [
+        buildArchiveReasonSection({
+          archiveReason:
+            ensureString(actionItem?.reason) || 'archived after routing decision',
+        }),
+      ],
     }),
   });
 }
