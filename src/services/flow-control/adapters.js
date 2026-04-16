@@ -47,6 +47,16 @@ function uniqueByTitle(items = []) {
   });
 }
 
+function extractContextRefs(context = '') {
+  return Array.from(
+    new Set(
+      Array.from(ensureString(context).matchAll(/`([^`]+)`/g)).map((match) =>
+        ensureString(match?.[1])
+      )
+    )
+  ).filter(Boolean);
+}
+
 export function buildPlanSourceBundle({ content = '', sourceRef = '' } = {}) {
   const safeSourceRef = ensureString(sourceRef);
   const phase = toPhaseKey(extractPhaseLabel(content));
@@ -105,6 +115,7 @@ function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
   const defaultUrgency = extractField(block, 'urgency').toLowerCase();
   const status = extractField(block, 'status').toLowerCase();
   const description = extractField(block, 'description');
+  const context = extractField(block, 'context');
   const issueId = ensureString(block.match(/^###\s+(\d{8}-\d{3})/u)?.[1]);
 
   if (!title) {
@@ -131,6 +142,8 @@ function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
       default_urgency: defaultUrgency,
       status,
       description,
+      context,
+      context_refs: extractContextRefs(context),
       title,
     },
   };
