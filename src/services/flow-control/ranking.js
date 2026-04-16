@@ -3,10 +3,12 @@ import { ensureString } from './common.js';
 const SOURCE_TYPE_PRIORITY = {
   plan: 0,
   issue: 1,
-  design: 2,
-  next: 3,
-  future: 4,
-  conversation: 5,
+  active: 2,
+  design: 3,
+  next: 4,
+  operations_queue: 5,
+  future: 6,
+  conversation: 7,
   unknown: 9,
 };
 
