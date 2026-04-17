@@ -57,6 +57,35 @@ function extractContextRefs(context = '') {
   ).filter(Boolean);
 }
 
+function normalizeComparableText(value = '') {
+  return ensureString(value)
+    .toLowerCase()
+    .replace(/[\p{P}\p{S}]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function tokenizeComparableText(value = '') {
+  return normalizeComparableText(value)
+    .split(' ')
+    .map((token) => token.trim())
+    .filter((token) => token.length >= 2);
+}
+
+function hasMeaningfulTitleOverlap(title = '', planTitle = '') {
+  const leftTokens = tokenizeComparableText(title);
+  const rightTokens = tokenizeComparableText(planTitle);
+
+  if (leftTokens.length === 0 || rightTokens.length === 0) {
+    return false;
+  }
+
+  const rightSet = new Set(rightTokens);
+  const overlapCount = leftTokens.filter((token) => rightSet.has(token)).length;
+
+  return overlapCount >= 1;
+}
+
 function derivePlanAlignment({ sourceType = '', sourceRef = [] } = {}) {
   if (ensureString(sourceType) === 'plan') {
     return 'direct';
@@ -73,6 +102,54 @@ function derivePlanAlignment({ sourceType = '', sourceRef = [] } = {}) {
 function normalizeQuickWin(value = '') {
   const safeValue = ensureString(value).toLowerCase();
   return ['high', 'medium', 'low'].includes(safeValue) ? safeValue : '';
+}
+
+function buildPlanTitleIndex(bundles = []) {
+  return Array.from(
+    new Set(
+      (Array.isArray(bundles) ? bundles : [])
+        .filter((bundle) => ensureString(bundle?.source_type) === 'plan')
+        .flatMap((bundle) => (Array.isArray(bundle?.items) ? bundle.items : []))
+        .map((item) => ensureString(item?.title))
+        .filter(Boolean)
+    )
+  );
+}
+
+function enrichBundlePlanAlignmentFromPlanTitles(bundle = {}, planTitleIndex = []) {
+  if (ensureString(bundle?.source_type) === 'plan') {
+    return bundle;
+  }
+
+  const items = (Array.isArray(bundle?.items) ? bundle.items : []).map((item) => {
+    const metadata = ensureObject(item?.metadata);
+    if (ensureString(metadata?.plan_alignment)) {
+      return item;
+    }
+
+    const title = ensureString(item?.title);
+    const matchedPlanTitle = planTitleIndex.find((planTitle) =>
+      hasMeaningfulTitleOverlap(title, planTitle)
+    );
+
+    if (!matchedPlanTitle) {
+      return item;
+    }
+
+    return {
+      ...item,
+      metadata: {
+        ...metadata,
+        plan_alignment: 'linked',
+        matched_plan_title: matchedPlanTitle,
+      },
+    };
+  });
+
+  return {
+    ...bundle,
+    items,
+  };
 }
 
 export function buildPlanSourceBundle({ content = '', sourceRef = '' } = {}) {
@@ -389,7 +466,7 @@ export function buildRollingSourceBundles({
   operationsQueuePayloads = [],
   operationsQueueSourceRef = '',
 } = {}) {
-  return [
+  const bundles = [
     buildPlanSourceBundle({
       content: planContent,
       sourceRef: planSourceRef,
@@ -411,4 +488,9 @@ export function buildRollingSourceBundles({
       sourceRef: operationsQueueSourceRef,
     }),
   ].filter((bundle) => Array.isArray(bundle.items) && bundle.items.length > 0);
+
+  const planTitleIndex = buildPlanTitleIndex(bundles);
+  return bundles.map((bundle) =>
+    enrichBundlePlanAlignmentFromPlanTitles(bundle, planTitleIndex)
+  );
 }
