@@ -14,33 +14,50 @@ active_operations に入らなかった上位候補を保持する。
 
 ### Phase 0 直結 task
 
-- なし（現時点では issue routing 継続と content / review 接続整理を優先）
+- なし（現時点では reroll dry_run / design routing 後段 / review 接続整理を優先）
 
 ### 補助 task
 
-- なし
+- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
+- `Phase 1 各 plan と operations 接続案を並べる`
 
-## 再評価結果（2026-04-14 daily review）
+## 再評価結果（2026-04-18 active split）
 
-### active へ繰り上げ済み
+### next へ退避
 
+- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
 - `Phase 1 各 plan と operations 接続案を並べる`
 
 理由
 
-- active の 7日枠を維持しつつも、まずは Phase 0 の issue routing 継続を優先したうえで、次 phase 接続候補を Day6 補充へ使う方が自然だったため
-
-### 現在の上位候補
-
-- なし
-
-理由
-
-- 直近 review 時点では、Phase 0 の issue routing 継続実装を優先するため、next に残すより active へ繰り上げた方が妥当だった
+- Day0 本丸が 30分〜1.5時間程度の作業単位へ分割され、active 7日枠を維持するために後順位 2件を next に戻す方が自然だったため
 
 ## タスク
 
-- なし
+- task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
+  source_ref:
+    - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
+    - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
+    - notes/04_operations/next_operations.md
+  why_now:
+    - repo 全体整合には必要だが、直近は reroll dry_run / design routing 後段 / review 接続整理を優先したい
+  notes:
+    - docs 15 / 16 系の衝突整理を含む
+  due_date: 2026-04-25
+  due_type: date
+
+- task: Phase 1 各 plan と operations 接続案を並べる
+  source_ref:
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
+    - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
+    - notes/04_operations/next_operations.md
+  why_now:
+    - 次 phase への接続には必要だが、直近は Phase 0 の粒度調整後の active task 群を優先したい
+  notes:
+    - Todoist / Outlook 接続の前段として保持する
+  due_date: 2026-04-26
+  due_type: date
 
 ---
 
