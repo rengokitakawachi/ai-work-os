@@ -1,3 +1,5 @@
+# docs/15_notes_system.md
+
 # 15 Notes System
 
 ## 目的
@@ -327,6 +329,30 @@ issue を評価し、
 issue に残すだけで終わらせず、
 operations candidate 化の要否と再評価地点を明示する。
 
+### design routing
+
+design を評価し、
+
+- docs
+- design
+- future/design
+- archive
+- operations candidate
+
+のどこへ送るかを判定する。
+
+design routing は、
+昇格先や保存先の判定を担う。
+
+docs 昇格条件を満たす design は docs 候補とし、
+まだ草案段階のものは design に残す。
+
+将来向けのものは future/design へ送り、
+役目を終えたものは archive へ送る。
+
+実行候補として落とす価値がある design は、
+operations candidate 化を検討する。
+
 ### operations rolling
 
 複数の流入元から候補を収集し、
@@ -352,7 +378,7 @@ operations candidate 化の要否と再評価地点を明示する。
 - daily review: operations 更新
 - weekly review: plan / operations / future 調整
 - monthly review: 全体整合
-- design review: design の継続 / 昇格 / future / archive 判断
+- design review: design layer の棚卸し・整合確認・routing 候補抽出
 
 review は進行中資産の更新を担い、
 routing の代替ではない。
