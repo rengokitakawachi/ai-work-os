@@ -16,8 +16,13 @@ function normalizeImportance(value) {
 
 export function normalizeCandidate(rawCandidate = {}) {
   const sourceType = ensureString(rawCandidate?.source_type);
-  const sourceRef = ensureStringArray(rawCandidate?.source_ref);
   const rawItem = ensureObject(rawCandidate?.raw_item);
+  const sourceRef = Array.from(
+    new Set([
+      ...ensureStringArray(rawCandidate?.source_ref),
+      ...ensureStringArray(rawItem?.source_ref),
+    ])
+  );
 
   const title = ensureString(rawItem?.title);
   const summary = ensureString(rawItem?.summary);
