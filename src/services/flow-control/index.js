@@ -11,6 +11,7 @@ export {
   buildPlanSourceBundle,
   buildIssueSourceBundle,
   buildIssueRoutingSourceBundle,
+  buildDesignRoutingSourceBundle,
   buildActiveOperationsSourceBundle,
   buildNextOperationsSourceBundle,
   buildOperationsQueueSourceBundle,
@@ -26,6 +27,11 @@ export {
   routeSingleIssueCandidate,
   routeIssueLogFromNotes,
 } from './issue-routing.js';
+export {
+  routeDesignCandidates,
+  routeSingleDesignCandidate,
+  routeDesignNotes,
+} from './design-routing.js';
 export { buildIssueRoutingActions } from './issue-routing-actions.js';
 export { applyIssueRoutingActionPlan } from './issue-routing-notes-write.js';
 export { routeIntakeCandidates, routeSingleIntakeCandidate } from './intake-routing.js';
