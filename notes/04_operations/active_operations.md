@@ -10,6 +10,7 @@
 
 ### 補助 task
 
+- `operations task の粒度ルールと day 容量モデルを整理する`
 - `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する`
 - `stale active の整合回復ルールを design に整理する`
 - `ADAM で試す 05_decisions の最小運用モデルを design に整理する`
@@ -43,6 +44,24 @@
   due_type: date
   external:
     todoist_task_id: 6gPW3hq4Fh788Fm2
+
+- task: operations task の粒度ルールと day 容量モデルを整理する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
+    - docs/17_operations_system.md
+    - docs/15_notes_system.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day0
+  why_now:
+    - task 粒度が曖昧だと完了条件がぼやけ、daily review と reroll の両方が不安定になる
+    - Day は複数 task を置ける箱であり、1日実行枠の見方も合わせて整理する必要がある
+  notes:
+    - task は 0.5〜1.5時間程度を目安にする
+    - Day は 1 task 固定ではなく複数 task を置いてよい
+    - 1日2時間前後は固定仕様ではなく将来の知見蓄積対象として扱う
+  due_date: 2026-04-18
+  due_type: date
 
 ## Day1（04/19 日）
 
