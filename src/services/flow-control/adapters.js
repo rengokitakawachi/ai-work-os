@@ -70,6 +70,11 @@ function derivePlanAlignment({ sourceType = '', sourceRef = [] } = {}) {
   return '';
 }
 
+function normalizeQuickWin(value = '') {
+  const safeValue = ensureString(value).toLowerCase();
+  return ['high', 'medium', 'low'].includes(safeValue) ? safeValue : '';
+}
+
 export function buildPlanSourceBundle({ content = '', sourceRef = '' } = {}) {
   const safeSourceRef = ensureString(sourceRef);
   const phase = toPhaseKey(extractPhaseLabel(content));
@@ -257,6 +262,7 @@ function mapActiveOperationBlockToItem(block) {
   const dueDate = extractSimpleTaskField(block, 'due_date');
   const dueType = extractSimpleTaskField(block, 'due_type');
   const targetDate = extractSimpleTaskField(block, 'target_date');
+  const quickWin = normalizeQuickWin(extractSimpleTaskField(block, 'quick_win'));
 
   return {
     title,
@@ -272,6 +278,7 @@ function mapActiveOperationBlockToItem(block) {
       existing_rolling_day: rollingDay,
       active_continuity: 'light',
       plan_alignment: derivePlanAlignment({ sourceType: 'active', sourceRef }),
+      quick_win: quickWin,
       notes,
       due_date: dueDate,
       due_type: dueType,
@@ -324,6 +331,9 @@ function mapOperationsQueuePayloadToItem(payload = {}) {
   const impactNow = ensureString(payload?.impact_now).toLowerCase();
   const urgencyNow = ensureString(payload?.urgency_now).toLowerCase();
   const issueId = ensureString(payload?.derived_from_issue_id);
+  const quickWin =
+    normalizeQuickWin(payload?.quick_win) ||
+    normalizeQuickWin(candidateDraft?.quick_win);
 
   if (!task) {
     return null;
@@ -345,6 +355,7 @@ function mapOperationsQueuePayloadToItem(payload = {}) {
       impact_now: impactNow,
       urgency_now: urgencyNow,
       plan_alignment: derivePlanAlignment({ sourceType: 'operations_queue', sourceRef }),
+      quick_win: quickWin,
       notes,
       action_type: ensureString(payload?.action_type),
       route_to: ensureString(payload?.route_to),
