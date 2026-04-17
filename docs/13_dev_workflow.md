@@ -1,3 +1,5 @@
+# docs/13_dev_workflow.md
+
 # 13 Dev Workflow
 
 ## 目的
@@ -51,7 +53,7 @@ notes に記録
 ↓  
 設計整理（notes/design）  
 ↓  
-intake routing / issue routing  
+intake routing / issue routing / design routing  
 ↓  
 operations rolling  
 ↓  
@@ -93,7 +95,7 @@ notes/design にて仕様案を整理する。
 
 #### 4 routing
 
-未整理入力や issue を構造化し、
+未整理入力や issue や design を構造化し、
 適切なレイヤーへ送る。
 
 - intake routing
@@ -101,6 +103,9 @@ notes/design にて仕様案を整理する。
 
 - issue routing
   - issue を operations / design / future / archive / issue へ再配置する
+
+- design routing
+  - design を docs / design / future / archive / operations candidate へ再配置する
 
 routing は保存先判定と初期処理を担う。
 
@@ -156,6 +161,8 @@ review は進行中資産の見直しと更新を担う。
 
 - monthly review
   - roadmap / phase / plan 群の見直し
+  - design layer の棚卸し
+  - design routing 対象の抽出
   - monthly report 保存
 
 report は review の結果物であり、
