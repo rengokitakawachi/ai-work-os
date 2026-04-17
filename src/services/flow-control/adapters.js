@@ -57,6 +57,48 @@ function extractContextRefs(context = '') {
   ).filter(Boolean);
 }
 
+function extractMarkdownTitle(content = '') {
+  const match = ensureString(content).match(/^#\s+(.+)$/m);
+  return match ? ensureString(match[1]) : '';
+}
+
+function extractFirstParagraph(content = '') {
+  const lines = ensureString(content)
+    .split('\n')
+    .map((line) => line.trim());
+
+  const paragraphLines = [];
+  for (const line of lines) {
+    if (!line) {
+      if (paragraphLines.length > 0) {
+        break;
+      }
+      continue;
+    }
+
+    if (line.startsWith('#')) {
+      continue;
+    }
+
+    if (line === '---') {
+      continue;
+    }
+
+    paragraphLines.push(line);
+    if (paragraphLines.length >= 3) {
+      break;
+    }
+  }
+
+  return ensureString(paragraphLines.join(' '));
+}
+
+function buildDesignIdFromSourceRef(sourceRef = '') {
+  const safeSourceRef = ensureString(sourceRef);
+  const fileName = safeSourceRef.split('/').pop() || '';
+  return ensureString(fileName.replace(/\.md$/u, ''));
+}
+
 function normalizeComparableText(value = '') {
   return ensureString(value)
     .toLowerCase()
@@ -270,6 +312,42 @@ export function buildIssueRoutingSourceBundle({ content = '', sourceRef = '' } =
 
   return {
     source_type: 'issue',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    items,
+  };
+}
+
+export function buildDesignRoutingSourceBundle({ content = '', sourceRef = '' } = {}) {
+  const safeSourceRef = ensureString(sourceRef);
+  const title = extractMarkdownTitle(content) || buildDesignIdFromSourceRef(safeSourceRef);
+  const summary = extractFirstParagraph(content) || 'design note から抽出した candidate';
+  const designId = buildDesignIdFromSourceRef(safeSourceRef) || title;
+
+  const items = title
+    ? [
+        {
+          design_id: designId,
+          title,
+          summary,
+          candidate_type: 'design',
+          phase: toPhaseKey(extractPhaseLabel(content)),
+          source_ref: safeSourceRef ? [safeSourceRef] : [],
+          metadata: {
+            extracted_from: 'design_note',
+            design_id: designId,
+            related_docs: [],
+            related_plans: [],
+            plan_alignment: derivePlanAlignment({
+              sourceType: 'design',
+              sourceRef: safeSourceRef ? [safeSourceRef] : [],
+            }),
+          },
+        },
+      ]
+    : [];
+
+  return {
+    source_type: 'design',
     source_ref: safeSourceRef ? [safeSourceRef] : [],
     items,
   };
