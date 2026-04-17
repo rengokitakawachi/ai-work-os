@@ -44,3 +44,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-14
+
+### 20260418-020
+- title: operations task の粒度と day 容量モデルを明文化する必要がある
+- category: operations
+- description: operations task は 0.5〜1.5時間くらいで一区切りつく明確な作業単位として扱うのが自然である。また、Day は 1 task 固定の slot ではなく、その日の可処分実行枠に応じて複数 task を置ける箱として扱うべきである。現時点では 1日2時間前後を目安に置くが、これは固定仕様ではなく流動的であり、将来的には review や実績からノウハウとして蓄積する対象にする必要がある。したがって、task 粒度ルールと day 容量モデルを docs / design / dev_memo の役割分担つきで明文化する必要がある。
+- context: 2026-04-18 の会話で、Day に1タスクではなく複数タスクを置いてよいこと、task 粒度は 0.5〜1.5時間程度、1日2時間前後は固定ではなく知見蓄積対象とする整理が確認された。`2026-04-06_operations_rolling_generation_and_prioritization_spec.md` には 1 task = 1つの明確な作業単位、1セッションで進められる粒度、まではあるが、day を箱として扱うことや 1日実行量をどう見るかの運用ルールはまだ弱い。
+- impact: high
+- status: open
+- created_at: 2026-04-18
