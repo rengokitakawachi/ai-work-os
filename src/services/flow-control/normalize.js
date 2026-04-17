@@ -33,6 +33,8 @@ export function normalizeCandidate(rawCandidate = {}) {
   const whyNow = ensureStringArray(rawItem?.why_now);
   const metadata = ensureObject(rawItem?.metadata);
   const assessment = ensureObject(rawItem?.assessment);
+  const designId = ensureString(rawItem?.design_id);
+  const path = ensureString(rawItem?.path);
 
   return compactObject({
     candidate_id: buildCandidateId({
@@ -51,6 +53,8 @@ export function normalizeCandidate(rawCandidate = {}) {
     why_now: whyNow,
     metadata,
     assessment,
+    design_id: designId,
+    path,
   });
 }
 
