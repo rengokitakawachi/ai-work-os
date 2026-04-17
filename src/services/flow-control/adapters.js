@@ -57,6 +57,19 @@ function extractContextRefs(context = '') {
   ).filter(Boolean);
 }
 
+function derivePlanAlignment({ sourceType = '', sourceRef = [] } = {}) {
+  if (ensureString(sourceType) === 'plan') {
+    return 'direct';
+  }
+
+  const refs = ensureStringArray(sourceRef);
+  if (refs.some((item) => item.includes('/03_plan/'))) {
+    return 'linked';
+  }
+
+  return '';
+}
+
 export function buildPlanSourceBundle({ content = '', sourceRef = '' } = {}) {
   const safeSourceRef = ensureString(sourceRef);
   const phase = toPhaseKey(extractPhaseLabel(content));
@@ -73,6 +86,7 @@ export function buildPlanSourceBundle({ content = '', sourceRef = '' } = {}) {
       why_now: ['plan の主要論点に直接接続するため'],
       metadata: {
         extracted_from: '主要論点',
+        plan_alignment: 'direct',
       },
     })),
     ...nextTasks.map((title) => ({
@@ -84,6 +98,7 @@ export function buildPlanSourceBundle({ content = '', sourceRef = '' } = {}) {
       why_now: ['plan を前進させる直近作業のため'],
       metadata: {
         extracted_from: '次に落とす作業',
+        plan_alignment: 'direct',
       },
     })),
   ]);
@@ -117,6 +132,7 @@ function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
   const description = extractField(block, 'description');
   const context = extractField(block, 'context');
   const issueId = ensureString(block.match(/^###\s+(\d{8}-\d{3})/u)?.[1]);
+  const contextRefs = extractContextRefs(context);
 
   if (!title) {
     return null;
@@ -133,6 +149,7 @@ function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
     importance: defaultImpact === 'high' ? 'high' : 'medium',
     phase: 'phase0',
     why_now: ['issue routing 比較対象として扱うため'],
+    source_ref: contextRefs,
     metadata: {
       extracted_from: 'idea_log',
       issue_id: issueId,
@@ -143,8 +160,9 @@ function mapIssueBlockToItem(block, { includeOnlyOpenHigh = false } = {}) {
       status,
       description,
       context,
-      context_refs: extractContextRefs(context),
+      context_refs: contextRefs,
       title,
+      plan_alignment: derivePlanAlignment({ sourceType: 'issue', sourceRef: contextRefs }),
     },
   };
 }
@@ -253,6 +271,7 @@ function mapActiveOperationBlockToItem(block) {
       already_active: true,
       existing_rolling_day: rollingDay,
       active_continuity: 'light',
+      plan_alignment: derivePlanAlignment({ sourceType: 'active', sourceRef }),
       notes,
       due_date: dueDate,
       due_type: dueType,
@@ -325,6 +344,7 @@ function mapOperationsQueuePayloadToItem(payload = {}) {
       evaluated_at: ensureString(payload?.evaluated_at),
       impact_now: impactNow,
       urgency_now: urgencyNow,
+      plan_alignment: derivePlanAlignment({ sourceType: 'operations_queue', sourceRef }),
       notes,
       action_type: ensureString(payload?.action_type),
       route_to: ensureString(payload?.route_to),
