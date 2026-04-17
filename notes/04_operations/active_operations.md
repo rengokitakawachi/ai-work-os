@@ -66,6 +66,7 @@
   notes:
     - report 保存で終わらず、content 抽出条件と operations 更新の接続点を整理する
     - review と routing の責務分離を崩さない前提で扱う
+  quick_win: medium
   due_date: 2026-04-18
   due_type: date
   external:
