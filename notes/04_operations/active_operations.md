@@ -14,7 +14,7 @@
 - `scoring knowledge の蓄積方針を dev_memo か design に整理する`
 - `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
 
-## Day0（04/17 金）
+## Day0（04/18 土）
 
 - task: issue routing の後処理統合と可変評価 schema の整理を進める
   source_ref:
@@ -45,12 +45,12 @@
     - 保存 / routing / 反映 / 再評価の責務分離を崩さない
     - 4/17 は active / next / plan / queue を同じ土俵に乗せた reroll の dry run 実確認を先に行う
     - future / archive apply は後段の薄い接続として残し、まず reroll 実挙動を閉じる
-  due_date: 2026-04-17
+  due_date: 2026-04-18
   due_type: date
   external:
     todoist_task_id: 6gPW3hq4Fh788Fm2
 
-## Day1（04/18 土）
+## Day1（04/19 日）
 
 - task: daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する
   source_ref:
@@ -67,12 +67,12 @@
     - report 保存で終わらず、content 抽出条件と operations 更新の接続点を整理する
     - review と routing の責務分離を崩さない前提で扱う
   quick_win: medium
-  due_date: 2026-04-18
+  due_date: 2026-04-19
   due_type: date
   external:
     todoist_task_id: 6gMr5Mj7cJvC5VH2
 
-## Day2（04/19 日）
+## Day2（04/20 月）
 
 - task: stale active の整合回復ルールを design に整理する
   source_ref:
@@ -85,12 +85,12 @@
     - active-first execution の試験運用で stale active の補足ルールが必要と分かったが、現行 active の上位 task よりは後順位で整理する方がよい
   notes:
     - reroll before execution とは別の前処理ルールとして切り分ける
-  due_date: 2026-04-19
+  due_date: 2026-04-20
   due_type: date
   external:
     todoist_task_id: 6gMr5PFQM8fC3XrR
 
-## Day3（04/20 月）
+## Day3（04/21 火）
 
 - task: ADAM で試す 05_decisions の最小運用モデルを design に整理する
   source_ref:
@@ -102,12 +102,12 @@
     - EVE 本実装前に decision の集約モデルを ADAM で試す方針が出たため、抽出元、集約先、最小 schema、相互参照の設計を先に整理する必要がある
   notes:
     - docs / issue / design / plan / operations / dev_memo を紐づけ元とする前提で整理する
-  due_date: 2026-04-20
+  due_date: 2026-04-21
   due_type: date
   external:
     todoist_task_id: 6gMr5Pc8j95X8GfR
 
-## Day4（04/21 火）
+## Day4（04/22 水）
 
 - task: scoring knowledge の蓄積方針を dev_memo か design に整理する
   source_ref:
@@ -121,12 +121,12 @@
   notes:
     - score は決定ではなく補助である前提を維持する
     - dev_memo に残す条件と design に昇格する条件を見極める
-  due_date: 2026-04-21
+  due_date: 2026-04-22
   due_type: date
   external:
     todoist_task_id: 6gMr5QWWx4JW5vQR
 
-## Day5（04/22 水）
+## Day5（04/23 木）
 
 - task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
   source_ref:
@@ -139,12 +139,12 @@
     - active の 7日枠を維持する補充候補として妥当である
   notes:
     - docs 15 / 16 系の衝突整理を含む
-  due_date: 2026-04-22
+  due_date: 2026-04-23
   due_type: date
   external:
     todoist_task_id: 6gMr5QwRGxpmCRF2
 
-## Day6（04/23 木）
+## Day6（04/24 金）
 
 - task: Phase 1 各 plan と operations 接続案を並べる
   source_ref:
@@ -158,7 +158,7 @@
     - 次 phase への接続候補として next からの補充に妥当である
   notes:
     - Todoist / Outlook 接続の前段として保持する
-  due_date: 2026-04-23
+  due_date: 2026-04-24
   due_type: date
   external:
     todoist_task_id: 6gMr5RGcRm22HHJ2
