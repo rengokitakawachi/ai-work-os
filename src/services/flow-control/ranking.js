@@ -27,9 +27,51 @@ const IMPORTANCE_PRIORITY = {
   '': 9,
 };
 
+const PLAN_ALIGNMENT_PRIORITY = {
+  direct: 0,
+  linked: 1,
+  supporting: 2,
+  '': 9,
+};
+
+const ACTIVE_CONTINUITY_PRIORITY = {
+  strong: 0,
+  light: 1,
+  '': 9,
+};
+
+const QUICK_WIN_PRIORITY = {
+  high: 0,
+  medium: 1,
+  low: 2,
+  '': 9,
+};
+
+function comparePlanAlignment(left, right) {
+  const leftValue =
+    PLAN_ALIGNMENT_PRIORITY[ensureString(left?.metadata?.plan_alignment)] ?? 9;
+  const rightValue =
+    PLAN_ALIGNMENT_PRIORITY[ensureString(right?.metadata?.plan_alignment)] ?? 9;
+  return leftValue - rightValue;
+}
+
 function compareImportance(left, right) {
   const leftValue = IMPORTANCE_PRIORITY[ensureString(left?.importance)] ?? 9;
   const rightValue = IMPORTANCE_PRIORITY[ensureString(right?.importance)] ?? 9;
+  return leftValue - rightValue;
+}
+
+function compareActiveContinuity(left, right) {
+  const leftValue =
+    ACTIVE_CONTINUITY_PRIORITY[ensureString(left?.metadata?.active_continuity)] ?? 9;
+  const rightValue =
+    ACTIVE_CONTINUITY_PRIORITY[ensureString(right?.metadata?.active_continuity)] ?? 9;
+  return leftValue - rightValue;
+}
+
+function compareQuickWin(left, right) {
+  const leftValue = QUICK_WIN_PRIORITY[ensureString(left?.metadata?.quick_win)] ?? 9;
+  const rightValue = QUICK_WIN_PRIORITY[ensureString(right?.metadata?.quick_win)] ?? 9;
   return leftValue - rightValue;
 }
 
@@ -57,9 +99,24 @@ export function rankOperationsCandidates(candidates = []) {
   }
 
   return [...candidates].sort((left, right) => {
+    const planAlignmentDiff = comparePlanAlignment(left, right);
+    if (planAlignmentDiff !== 0) {
+      return planAlignmentDiff;
+    }
+
     const importanceDiff = compareImportance(left, right);
     if (importanceDiff !== 0) {
       return importanceDiff;
+    }
+
+    const activeContinuityDiff = compareActiveContinuity(left, right);
+    if (activeContinuityDiff !== 0) {
+      return activeContinuityDiff;
+    }
+
+    const quickWinDiff = compareQuickWin(left, right);
+    if (quickWinDiff !== 0) {
+      return quickWinDiff;
     }
 
     const sourceTypeDiff = compareSourceType(left, right);
