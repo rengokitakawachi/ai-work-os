@@ -49,6 +49,17 @@ function mergeRelatedRefs(actionItem = {}, context = {}) {
   ]);
 }
 
+function resolveQuickWin(actionItem = {}, routedCandidate = {}) {
+  const value = (
+    ensureString(actionItem?.quick_win) ||
+    ensureString(actionItem?.metadata?.quick_win) ||
+    ensureString(routedCandidate?.quick_win) ||
+    ensureString(routedCandidate?.metadata?.quick_win)
+  ).toLowerCase();
+
+  return ['high', 'medium', 'low'].includes(value) ? value : '';
+}
+
 function buildSourceIssueSection({ sourceIssueId = '' } = {}) {
   return [
     '## source issue',
@@ -214,6 +225,7 @@ function buildDesignWrite(actionItem = {}, routedCandidate = {}, context = {}) {
 }
 
 function buildOperationsCandidateWrite(actionItem = {}, routedCandidate = {}, context = {}) {
+  const quickWin = resolveQuickWin(actionItem, routedCandidate);
   return compactObject({
     target_layer: '04_operations',
     title: ensureString(actionItem?.title),
@@ -225,8 +237,16 @@ function buildOperationsCandidateWrite(actionItem = {}, routedCandidate = {}, co
     urgency_now: ensureString(actionItem?.urgency_now),
     action_type: ensureString(actionItem?.action_type),
     write_status: 'draft_only',
+    quick_win: quickWin,
     candidate_draft:
-      ensureObject(routedCandidate?.task_draft) || {
+      compactObject({
+        ...(ensureObject(routedCandidate?.task_draft) || {
+          task: ensureString(actionItem?.title),
+          source_ref: mergeSourceRef(actionItem, context),
+          notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
+        }),
+        ...(quickWin ? { quick_win: quickWin } : {}),
+      }) || {
         task: ensureString(actionItem?.title),
         source_ref: mergeSourceRef(actionItem, context),
         notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
