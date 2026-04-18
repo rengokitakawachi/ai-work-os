@@ -137,6 +137,26 @@
   due_date: 2026-04-19
   due_type: date
 
+- task: src/services/todoist.js の repo 全体 usage を最終確認する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - src/services/todoist.js
+    - src/services/todoist/client.js
+    - notes/04_operations/active_operations.md
+  rolling_day: Day1
+  why_now:
+    - `src/services/todoist.js` を legacy 候補とみなす根拠は揃ったが、削除前には repo 全体 usage の最終確認が必要である
+    - tasks 本線未使用はかなり確認できたため、次は hidden import の有無だけを gate として独立確認するのが自然である
+  notes:
+    - delete 実行ではなく final gate の usage 確認を行う
+    - hidden import があれば `src/services/todoist/client.js` への移行対象を列挙する
+    - hidden import がなければ削除候補へ進める判断材料を揃える
+  due_date: 2026-04-19
+  due_type: date
+  external:
+    todoist_task_id: 6gQFC8r2G8w7VgQH
+
 ## Day2（04/20 月）
 
 - task: applyDesignRoutingActionPlan の skeleton を切る
