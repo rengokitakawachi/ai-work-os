@@ -53,6 +53,7 @@
   source_ref:
     - notes/01_issues/idea_log.md
     - notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md
+    - notes/02_design/2026-04-18_operations_task_granularity_and_day_capacity_rule.md
     - docs/17_operations_system.md
     - docs/15_notes_system.md
     - notes/04_operations/active_operations.md
@@ -64,6 +65,9 @@
     - task は 0.5〜1.5時間程度を目安にする
     - Day は 1 task 固定ではなく複数 task を置いてよい
     - 1日2時間前後は固定仕様ではなく将来の知見蓄積対象として扱う
+    - docs/17 反映案は保留だが、design で最小ルールは固定済み
+  status: completed
+  completed: true
   due_date: 2026-04-18
   due_type: date
   external:
@@ -86,6 +90,8 @@
     - 必要なら reroll sample input を流して expected output examples と照合する
   due_date: 2026-04-18
   due_type: date
+  external:
+    todoist_task_id: 6gQ82pGjp6x7w6qR
 
 ## Day1（04/19 日）
 
