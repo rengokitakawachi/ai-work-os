@@ -73,6 +73,24 @@
   external:
     todoist_task_id: 6gQ3m6XJH9WW5Jp2
 
+- task: code resource の repo root allowlist 変更要求を整理する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-18_code_resource_repo_root_allowlist_access_design.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day0
+  why_now:
+    - repo ルート直下の設定ファイルが読めないと、test runner 判定や root script 確認の精度が落ちる
+    - design routing test と reroll sample dry_run の repo 実体確認前に、最小変更要求を整理しておく価値が高い
+  notes:
+    - repo root 全開放ではなく allowlist 方式で進める
+    - 最低限 `package.json` / `vitest.config.js` / `jest.config.js` を対象にする
+    - 必要なら `tsconfig.json` / `eslint.config.js` / `pnpm-workspace.yaml` を追加候補にする
+  due_date: 2026-04-18
+  due_type: date
+  external:
+    todoist_task_id: 6gQChj4qM88v34Wq
+
 - task: パソコンで design routing test と reroll sample dry_run を実行する
   source_ref:
     - src/services/flow-control/design-routing.test.js
