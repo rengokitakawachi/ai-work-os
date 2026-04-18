@@ -1,6 +1,7 @@
 import {
   createError,
   buildCodePath,
+  isAllowedCodePath,
   getRepoTree,
   getContentFile,
   putContentFile,
@@ -9,18 +10,7 @@ import {
 } from './common.js';
 
 function filterCodeTreeItems(tree) {
-  return tree.filter((item) => {
-    if (item.path.startsWith('docs/')) return false;
-    if (item.path.startsWith('notes/')) return false;
-
-    return (
-      item.path.startsWith('src/') ||
-      item.path.startsWith('api/') ||
-      item.path.startsWith('lib/') ||
-      item.path.startsWith('scripts/') ||
-      item.path.startsWith('config/')
-    );
-  });
+  return tree.filter((item) => isAllowedCodePath(item.path));
 }
 
 export async function treeCode() {
