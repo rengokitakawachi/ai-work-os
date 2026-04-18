@@ -29,17 +29,21 @@
     - notes/02_design/2026-04-16_operations_ranking_priority_axes.md
     - notes/02_design/2026-04-16_active_operations_as_reroll_candidate_source.md
     - notes/08_analysis/2026-04-16_issue_routing_postprocess_current_state.md
+    - notes/08_analysis/2026-04-18_reroll_minimum_dry_run_io_confirmation.md
+    - notes/02_design/2026-04-18_reroll_minimum_dry_run_expected_output_examples.md
     - src/services/flow-control/orchestrate.js
     - src/services/flow-control/ranking.js
     - src/services/flow-control/adapters.js
     - notes/04_operations/active_operations.md
   rolling_day: Day0
   why_now:
-    - queue と active を含む reroll の実挙動確認が Day0 本丸の未完了残件として残っている
-    - 最小 end-to-end dry_run を先に閉じないと、後処理統合 task の完了条件が曖昧なままになる
+    - queue と active を含む reroll の実挙動確認が Day0 本丸の未完了残件として残っていた
+    - 最小 end-to-end dry_run を閉じることで、後処理統合 task の完了条件を具体化できた
   notes:
-    - plan / active / queue を同じ土俵に乗せた最小 dry_run の期待挙動を確認する
-    - apply や実 write には広げず、まず reroll の decision 層を閉じる
+    - plan / active / queue を同じ土俵に乗せた最小 dry_run の期待挙動を確認した
+    - current code snapshot を再構成した sample dry_run で、plan 優先 / active continuity 補助 / phase mismatch deferred を確認した
+  status: completed
+  completed: true
   due_date: 2026-04-18
   due_type: date
   external:
@@ -60,6 +64,26 @@
     - task は 0.5〜1.5時間程度を目安にする
     - Day は 1 task 固定ではなく複数 task を置いてよい
     - 1日2時間前後は固定仕様ではなく将来の知見蓄積対象として扱う
+  due_date: 2026-04-18
+  due_type: date
+  external:
+    todoist_task_id: 6gQ3m6XJH9WW5Jp2
+
+- task: パソコンで design routing test と reroll sample dry_run を実行する
+  source_ref:
+    - src/services/flow-control/design-routing.test.js
+    - src/services/flow-control/design-routing.js
+    - src/services/flow-control/orchestrate.js
+    - src/services/flow-control/rolling.js
+    - notes/08_analysis/2026-04-18_reroll_minimum_dry_run_io_confirmation.md
+    - notes/02_design/2026-04-18_reroll_minimum_dry_run_expected_output_examples.md
+  rolling_day: Day0
+  why_now:
+    - current code snapshot ベースの確認は完了したため、次は repo 実体で test と dry_run を走らせて差分を潰すのが自然である
+    - iPhone では code 実行確認ができないため、パソコン利用時 task として明示する
+  notes:
+    - `node --test src/services/flow-control/design-routing.test.js` を優先実行する
+    - 必要なら reroll sample input を流して expected output examples と照合する
   due_date: 2026-04-18
   due_type: date
 
