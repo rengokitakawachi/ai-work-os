@@ -187,11 +187,17 @@
     - notes/05_decisions/README.md
     - notes/01_issues/idea_log.md
     - notes/04_operations/active_operations.md
+    - notes/02_design/2026-04-18_decisions_minimum_operating_model_for_adam.md
   rolling_day: Day5
   why_now:
-    - EVE 本実装前に decision の集約モデルを ADAM で試す方針が出たため、抽出元、集約先、最小 schema、相互参照の設計を先に整理する必要がある
+    - EVE 本実装前に decision の集約モデルを ADAM で試す方針が出たため、抽出元、集約先、最小 schema、相互参照の設計を先に整理する必要があった
   notes:
-    - docs / issue / design / plan / operations / dev_memo を紐づけ元とする前提で整理する
+    - docs / issue / design / plan / operations / dev_memo を紐づけ元とする前提で整理した
+    - 1 decision 1 file
+    - source_ref と related_refs を分ける
+    - docs の代替ではなく判断履歴として使う
+  status: completed
+  completed: true
   due_date: 2026-04-23
   due_type: date
   external:
@@ -205,12 +211,19 @@
     - notes/00_inbox/dev_memo/2026-04-06_operations_rolling_gap_and_direction.md
     - notes/00_inbox/dev_memo/2026-04-06_manual_rolling_round1_notes.md
     - notes/04_operations/active_operations.md
+    - notes/02_design/2026-04-18_scoring_knowledge_accumulation_policy.md
+    - notes/02_design/2026-04-18_score_driven_operations_ranking_minimum_model.md
   rolling_day: Day6
   why_now:
-    - 重要ではあるが、いまの task を Todoist で見える化する価値よりは後順位であり、まずは実用価値の高い投影プロトタイプを先に固める方がよい
+    - scoring knowledge は将来価値が高く、score 主導モデルへ寄せる前提を先に整理する必要があった
+    - 一方で数値固定や docs 反映はまだ早いため、dev_memo と design の境界を先に固める必要があった
   notes:
-    - score は決定ではなく補助である前提を維持する
-    - dev_memo に残す条件と design に昇格する条件を見極める
+    - 迷いと比較理由は dev_memo に残す
+    - 再利用された比較軸だけを design に昇格する
+    - ranking は gate / score / override の3層モデルへ寄せる
+    - score は優先順位の主材料に寄せるが、1本の点数に全責務を押し込まない
+  status: completed
+  completed: true
   due_date: 2026-04-24
   due_type: date
   external:
