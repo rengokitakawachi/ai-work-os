@@ -91,6 +91,112 @@ test 確認
 
 ---
 
+## 履歴上の位置づけ
+
+過去 notes を確認すると、
+`src/services/todoist.js` は
+最初から不要だった file ではない。
+
+むしろ 2026-03-22 時点では、
+Todoist 系の中心実装に近い位置づけで扱われていた。
+
+### 2026-03-22 時点の材料
+
+- `notes/06_handover/2026-03-22_09-10-00_todoist_system_design.md`
+- `notes/00_inbox/dev_memo/2026-03-22_16-20-00_phase1_todoist_api_rearchitecture_plan.md`
+
+この時点では、
+handover の related code に
+
+- `src/services/todoist.js`
+- `api/task/create.js`
+- `api/task/list.js`
+
+が並んでおり、
+旧 API / 旧 Todoist wrapper を含む構成が
+実運用中心に近い扱いを受けていた。
+
+また dev_memo でも、
+`src/services/todoist.js` は
+当時の「新系」側として列挙されている。
+
+したがって、
+`src/services/todoist.js` は
+歴史的には一度中心寄りの役割を持っていたとみなすのが自然である。
+
+### 2026-03-25 以降の材料
+
+- `notes/02_design/2026-03-25_tasks_api_alignment_design.md`
+
+この design では、
+変更箇所として
+
+- `src/services/tasks/service.js`
+- `src/services/todoist/client.js`
+
+が明示されている。
+
+これは、
+Todoist 接続責務を
+`client.js` 側へ寄せる設計意図が
+この時点で前面化していることを示す。
+
+つまり、
+`todoist.js` が中心だった時期から、
+`client.js` を正本候補とする方向へ
+責務の重心が移っている。
+
+### 2026-04-09 時点の材料
+
+- `notes/02_design/2026-04-09_operations_to_todoist_one_way_projection_prototype.md`
+
+この design では明確に、
+projection 実装は
+
+- `src/services/todoist/client.js` を土台にする
+- delete は `client.js` に最小追加する
+- create / update / list は `client.js` に接続する
+
+と整理されている。
+
+これは、
+operations → Todoist projection の正本接続先として
+`client.js` が選ばれていることを意味する。
+
+### 履歴から導ける整理
+
+履歴全体を通すと、
+位置づけは次のように読める。
+
+1.
+2026-03-22 頃
+- `src/services/todoist.js` は中心寄りの現役実装
+
+2.
+2026-03-25 頃
+- tasks API 整列の中で `client.js` が前面化
+
+3.
+2026-04-09 頃
+- projection 設計でも `client.js` を土台にすると明記
+
+4.
+現在
+- `src/services/tasks/service.js`
+- `src/services/tasks/projection.js`
+が `client.js` を参照している
+
+したがって、
+`src/services/todoist.js` は
+
+- 最初から不要だった file
+ではなく、
+- 歴史的に中心だった実装が、後段設計で `client.js` に置き換えられつつある legacy 候補
+
+と捉えるのが最も自然である。
+
+---
+
 ## 現時点で確認できる整合
 
 見えている範囲では、
