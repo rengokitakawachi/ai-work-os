@@ -110,6 +110,38 @@ legacy 候補とみなすのが自然である。
 
 ---
 
+## 追加確認できた現役導線
+
+今回追加で確認した範囲では、
+tasks 本線の現役導線は次である。
+
+- `api/tasks/index.js`
+- `api/tasks/[id].js`
+- `api/tasks/project.js`
+- `src/services/tasks/dispatch.js`
+- `src/services/tasks/service.js`
+- `src/services/tasks/projection.js`
+
+このうち、
+Todoist 接続の実体は次に寄っている。
+
+- `src/services/tasks/service.js` → `../todoist/client.js`
+- `src/services/tasks/projection.js` → `../todoist/client.js`
+
+したがって、
+少なくとも tasks 系の現役導線では
+`src/services/todoist.js` を参照していない。
+
+これは、
+`src/services/todoist.js` が
+現行 tasks 本線からは外れていることを示す強い材料である。
+
+ただし、
+repo 全体の import 使用箇所を grep 的に完全確認したわけではないため、
+`repo 全体で未使用` とまではまだ断定しない。
+
+---
+
 ## なぜ即削除しないか
 
 現時点では、
@@ -197,6 +229,41 @@ Todoist wrapper 側に限定する。
 - import が消えたことを確認
 - design / issue に参照を残す
 - file を削除する
+
+---
+
+## 削除判断 gate の現時点整理
+
+現時点で言えることは次である。
+
+### 確認済み
+
+- tasks 本線は `client.js` を正本として使っている
+- `todoist.js` は tasks service / projection / api handler からは見えていない
+- deprecated 明示は追加済み
+
+### 未確認
+
+- tasks 本線以外で `src/services/todoist.js` を参照する hidden import
+- 一時的な旧実装参照
+- docs / notes における code 参照の残存
+
+したがって、
+削除判断は次の gate を満たしてから行う。
+
+1.
+tasks 本線未使用確認
+- これは今回かなり確認できた
+
+2.
+追加 usage 確認
+- repo 全体での旧参照有無を追う
+
+3.
+test 通過
+
+4.
+削除
 
 ---
 
