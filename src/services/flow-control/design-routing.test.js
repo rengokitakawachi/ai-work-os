@@ -5,6 +5,7 @@ import {
   routeSingleDesignCandidate,
   routeDesignNotes,
 } from './design-routing.js';
+import { applyDesignRoutingActionPlan } from './design-routing-notes-write.js';
 import { buildDesignRoutingSourceBundle } from './adapters.js';
 
 function buildDesignCandidate({
@@ -150,4 +151,146 @@ test('routeDesignNotes returns dry run output shape', () => {
   assert.ok(Array.isArray(result.action_plan.archive_design));
   assert.ok(Array.isArray(result.action_plan.operations_candidates));
   assert.ok(Array.isArray(result.action_plan.skipped));
+});
+
+test('applyDesignRoutingActionPlan builds docs candidate payload in dry run', async () => {
+  const routed = routeSingleDesignCandidate({
+    item: buildDesignCandidate({
+      title: 'design-routing-output-schema',
+      summary: 'docs candidate',
+      assessment: {
+        maturity_now: 'ready',
+        execution_value_now: 'high',
+        docs_ready_now: true,
+      },
+    }),
+  });
+
+  const result = await applyDesignRoutingActionPlan({
+    routedDesignCandidates: routed.routed_design_candidates,
+    actionPlan: routed.action_plan,
+    sourceRef: ['notes/02_design/example.md'],
+    mode: 'dry_run',
+    now: '2026-04-18T00:00:00.000Z',
+  });
+
+  assert.equal(result.mode, 'dry_run');
+  assert.equal(result.docs_candidate_writes.length, 1);
+  assert.equal(result.docs_candidate_writes[0].target_layer, 'docs_candidate');
+  assert.equal(result.design_retained_results.length, 0);
+  assert.equal(result.future_writes.length, 0);
+  assert.equal(result.archive_writes.length, 0);
+  assert.equal(result.operations_candidate_writes.length, 0);
+});
+
+test('applyDesignRoutingActionPlan builds future payload in dry run', async () => {
+  const routed = routeSingleDesignCandidate({
+    item: buildDesignCandidate({
+      title: 'phase3-knowledge-integration',
+      summary: 'phase later deferred design',
+      assessment: {
+        maturity_now: 'maturing',
+        execution_value_now: 'medium',
+        review_at: 'monthly_review',
+      },
+    }),
+    phase: 'phase0',
+  });
+
+  const result = await applyDesignRoutingActionPlan({
+    routedDesignCandidates: routed.routed_design_candidates,
+    actionPlan: routed.action_plan,
+    sourceRef: ['notes/02_design/example.md'],
+    mode: 'dry_run',
+    now: '2026-04-18T00:00:00.000Z',
+  });
+
+  assert.equal(result.future_writes.length, 1);
+  assert.equal(result.future_writes[0].target_layer, '80_future/design');
+  assert.match(result.future_writes[0].suggested_file, /^80_future\/design\/2026-04-18_/);
+  assert.equal(result.future_writes[0].write_status, 'draft_only');
+});
+
+test('applyDesignRoutingActionPlan builds archive payload in dry run', async () => {
+  const routed = routeSingleDesignCandidate({
+    item: buildDesignCandidate({
+      title: 'old-routing-split',
+      summary: 'superseded design',
+      assessment: {
+        maturity_now: 'superseded',
+      },
+      metadata: {
+        superseded_by: 'new-routing-split',
+      },
+    }),
+  });
+
+  const result = await applyDesignRoutingActionPlan({
+    routedDesignCandidates: routed.routed_design_candidates,
+    actionPlan: routed.action_plan,
+    sourceRef: ['notes/02_design/example.md'],
+    mode: 'dry_run',
+    now: '2026-04-18T00:00:00.000Z',
+  });
+
+  assert.equal(result.archive_writes.length, 1);
+  assert.equal(result.archive_writes[0].target_layer, '99_archive/design');
+  assert.match(result.archive_writes[0].suggested_file, /^99_archive\/design\/2026-04-18_/);
+  assert.equal(result.archive_writes[0].write_status, 'draft_only');
+});
+
+test('applyDesignRoutingActionPlan builds operations candidate payload in dry run', async () => {
+  const routed = routeSingleDesignCandidate({
+    item: buildDesignCandidate({
+      title: 'design-routing-adapter-connection',
+      summary: 'implementation value is high',
+      assessment: {
+        maturity_now: 'maturing',
+        execution_value_now: 'high',
+        docs_ready_now: false,
+      },
+    }),
+  });
+
+  const result = await applyDesignRoutingActionPlan({
+    routedDesignCandidates: routed.routed_design_candidates,
+    actionPlan: routed.action_plan,
+    sourceRef: ['notes/02_design/example.md'],
+    mode: 'dry_run',
+    now: '2026-04-18T00:00:00.000Z',
+  });
+
+  assert.equal(result.operations_candidate_writes.length, 1);
+  assert.equal(result.operations_candidate_writes[0].target_layer, '04_operations');
+  assert.equal(
+    result.operations_candidate_writes[0].candidate_draft.task,
+    'design-routing-adapter-connection'
+  );
+  assert.equal(result.operations_candidate_writes[0].write_status, 'draft_only');
+});
+
+test('applyDesignRoutingActionPlan builds retained no-op payload in dry run', async () => {
+  const routed = routeSingleDesignCandidate({
+    item: buildDesignCandidate({
+      title: 'thinking-memo',
+      summary: 'still draft',
+      assessment: {
+        maturity_now: 'draft',
+        execution_value_now: 'low',
+        docs_ready_now: false,
+      },
+    }),
+  });
+
+  const result = await applyDesignRoutingActionPlan({
+    routedDesignCandidates: routed.routed_design_candidates,
+    actionPlan: routed.action_plan,
+    sourceRef: ['notes/02_design/example.md'],
+    mode: 'dry_run',
+    now: '2026-04-18T00:00:00.000Z',
+  });
+
+  assert.equal(result.design_retained_results.length, 1);
+  assert.equal(result.design_retained_results[0].route_to, 'design');
+  assert.equal(result.design_retained_results[0].write_status, 'no_op');
 });
