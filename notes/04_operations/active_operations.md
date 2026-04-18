@@ -138,14 +138,19 @@
     - notes/09_content/README.md
     - notes/04_operations/active_operations.md
     - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/02_design/2026-04-18_daily_review_output_to_content_and_operations_connection_rule.md
     - notes/01_issues/idea_log.md
   rolling_day: Day3
   why_now:
-    - 日報を書いた後に content 抽出と rolling をどう接続するかが会話依存だと、daily review の出力運用が安定しないため、近い将来の設計整理候補として保持する必要がある
+    - 日報を書いた後に content 抽出と rolling をどう接続するかが会話依存だと、daily review の出力運用が安定しないため、近い将来の設計整理候補として保持する必要があった
+    - review と routing を混ぜずに、operations / projection / report / content の順を固定する必要があった
   notes:
-    - report 保存で終わらず、content 抽出条件と operations 更新の接続点を整理する
-    - review と routing の責務分離を崩さない前提で扱う
+    - report 保存で終わらず、content 抽出条件と operations 更新の接続点を整理した
+    - `operations → Todoist projection → report → content` の順を固定した
+    - rolling は report の前に閉じ、content は review 本体ではなく後段抽出と整理した
   quick_win: medium
+  status: completed
+  completed: true
   due_date: 2026-04-21
   due_type: date
   external:
@@ -159,11 +164,17 @@
     - notes/04_operations/active_operations.md
     - code/config/ai/adam_instruction.md
     - notes/02_design/2026-04-07_conversation_triggered_candidate_routing_and_rolling.md
+    - notes/02_design/2026-04-08_stale_active_recovery_rule.md
   rolling_day: Day4
   why_now:
-    - active-first execution の試験運用で stale active の補足ルールが必要と分かったが、現行 active の上位 task よりは後順位で整理する方がよい
+    - active-first execution の試験運用で stale active の補足ルールが必要と分かった
+    - reroll before execution とは別の前処理ルールとして切り分ける必要があった
   notes:
-    - reroll before execution とは別の前処理ルールとして切り分ける
+    - stale active は新規実行や reroll 前に行う「正本修復」として整理済み
+    - `notes/02_design/2026-04-08_stale_active_recovery_rule.md` が最小 design として成立していることを再確認した
+    - 新規候補がない限り、整合回復後は reroll を必須にしない
+  status: completed
+  completed: true
   due_date: 2026-04-22
   due_type: date
   external:
