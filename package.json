@@ -6,6 +6,9 @@
   "engines": {
     "node": "20.x"
   },
+  "scripts": {
+    "test": "node --test"
+  },
   "dependencies": {
     "node-fetch": "^3.3.0"
   }
