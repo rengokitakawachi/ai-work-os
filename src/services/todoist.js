@@ -1,3 +1,13 @@
+// DEPRECATED:
+// この file は legacy な Todoist wrapper 候補。
+// 正本は `src/services/todoist/client.js` に寄せる方針。
+// 新規利用を追加しないこと。
+// 参照移行と test 確認の後に削除候補とする。
+// related_design:
+// - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+// related_issue:
+// - notes/01_issues/idea_log.md#20260418-022
+
 const TODOIST_BASE_URL = 'https://api.todoist.com/api/v1';
 
 function getTodoistToken() {
