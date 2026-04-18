@@ -86,6 +86,8 @@
     - repo root 全開放ではなく allowlist 方式で進める
     - 最低限 `package.json` / `vitest.config.js` / `jest.config.js` を対象にする
     - 必要なら `tsconfig.json` / `eslint.config.js` / `pnpm-workspace.yaml` を追加候補にする
+    - 完了条件は要求整理ではなく、環境側反映後に code resource から実 read 確認できること
+    - 少なくとも `package.json` と `vitest.config.js` または `jest.config.js` の read 成功を確認して閉じる
   due_date: 2026-04-18
   due_type: date
   external:
