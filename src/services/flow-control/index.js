@@ -34,4 +34,5 @@ export {
 } from './design-routing.js';
 export { buildIssueRoutingActions } from './issue-routing-actions.js';
 export { applyIssueRoutingActionPlan } from './issue-routing-notes-write.js';
+export { applyDesignRoutingActionPlan } from './design-routing-notes-write.js';
 export { routeIntakeCandidates, routeSingleIntakeCandidate } from './intake-routing.js';
