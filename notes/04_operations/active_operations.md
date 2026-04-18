@@ -78,16 +78,21 @@
     - notes/01_issues/idea_log.md
     - notes/02_design/2026-04-18_code_resource_repo_root_allowlist_access_design.md
     - notes/04_operations/active_operations.md
+    - src/services/repo-resource/common.js
+    - src/services/repo-resource/code.js
   rolling_day: Day0
   why_now:
     - repo ルート直下の設定ファイルが読めないと、test runner 判定や root script 確認の精度が落ちる
-    - design routing test と reroll sample dry_run の repo 実体確認前に、最小変更要求を整理しておく価値が高い
+    - design routing test と reroll sample dry_run の repo 実体確認前に、最小変更要求を整理しておく価値が高かった
   notes:
-    - repo root 全開放ではなく allowlist 方式で進める
-    - 最低限 `package.json` / `vitest.config.js` / `jest.config.js` を対象にする
-    - 必要なら `tsconfig.json` / `eslint.config.js` / `pnpm-workspace.yaml` を追加候補にする
-    - 完了条件は要求整理ではなく、環境側反映後に code resource から実 read 確認できること
-    - 少なくとも `package.json` と `vitest.config.js` または `jest.config.js` の read 成功を確認して閉じる
+    - repo root 全開放ではなく allowlist 方式で反映した
+    - `src/services/repo-resource/common.js` に root allowlist と helper を追加した
+    - `src/services/repo-resource/code.js` の tree filter も allowlist 連動に更新した
+    - `package.json` の code resource read 成功を確認した
+    - `vitest.config.js` / `jest.config.js` は `NOT_FOUND` で、許可境界通過後に実体不存在へ到達することを確認した
+    - code tree に `package.json` が表示されることも確認した
+  status: completed
+  completed: true
   due_date: 2026-04-18
   due_type: date
   external:
