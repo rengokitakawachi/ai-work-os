@@ -98,6 +98,26 @@ weekly review までの短期履歴置き場であり、
   - issue routing の実データ dry run、decision schema、action plan 分離まで進めた
   - `notes/02_design/2026-04-14_issue_routing_end_state_first_and_incremental_implementation.md` を作成した
 
+--- 2026-04-18 daily review ---
+
+- `reroll の最小 dry_run 入出力を確認する` を完了した
+  - plan / active / queue を同じ土俵に乗せた最小 dry_run の期待挙動を確認した
+  - current code snapshot を再構成した sample dry_run で、plan 優先 / active continuity 補助 / phase mismatch deferred を確認した
+- `operations task の粒度ルールと day 容量モデルを整理する` を完了した
+  - task は 0.5〜1.5時間程度を目安にする
+  - Day は 1 task 固定ではなく複数 task を置いてよいことを固定した
+- `code resource の repo root allowlist 変更要求を整理する` を完了した
+  - allowlist 方式で repo root config file の read/create/update を許可した
+  - `package.json` の read と code tree 反映を確認した
+- `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する` を完了した
+  - `operations → Todoist projection → report → content` の順を固定した
+- `stale active の整合回復ルールを design に整理する` を完了した
+  - stale active は reroll とは別の正本修復と整理した
+- `ADAM で試す 05_decisions の最小運用モデルを design に整理する` を完了した
+  - 1 decision 1 file と source_ref / related_refs 分離を固定した
+- `scoring knowledge の蓄積方針を dev_memo か design に整理する` を完了した
+  - gate / score / override の3層モデルへ寄せる前提を固定した
+
 ---
 
 ## ルール
