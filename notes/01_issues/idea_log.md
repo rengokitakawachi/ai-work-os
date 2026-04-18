@@ -53,3 +53,12 @@
 - impact: high
 - status: open
 - created_at: 2026-04-18
+
+### 20260418-021
+- title: code resource から repo ルート allowlist を読めるようにする必要がある
+- category: architecture
+- description: 現在の code resource では `src/`, `api/`, `lib/`, `scripts/`, `config/` 配下は読める一方、repo ルート直下の `package.json`, `vitest.config.js`, `jest.config.js` などは読めない。そのため、テストランナー判定、依存関係確認、workspace 構成確認、設定差分確認が不完全になりやすい。repo ルート全開放ではなく allowlist 方式で、少なくとも `package.json`, `vitest.config.js`, `jest.config.js` を read 対象に追加し、可能なら `tsconfig.json`, `eslint.config.js`, `pnpm-workspace.yaml` なども対象に含める必要がある。
+- context: 2026-04-18 の会話で、`package.json / vitest.config.js / jest.config.js は、この環境の code resource では読めませんでした` と確認された。これは repo 内にファイルが存在しないことではなく、repoResourceGet の code resource 側の許可範囲が repo ルート直下を含んでいないことを意味する。実運用上は mirror / snapshot / manifest で迂回できるが、本筋としては tool / 実行環境側で code resource の root allowlist を拡張する方が自然である。
+- impact: high
+- status: open
+- created_at: 2026-04-18
