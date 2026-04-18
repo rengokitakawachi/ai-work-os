@@ -1,5 +1,16 @@
 const GITHUB_API_BASE = 'https://api.github.com';
 
+export const CODE_ALLOWED_PREFIXES = ['src/', 'api/', 'lib/', 'scripts/', 'config/'];
+
+export const CODE_ALLOWED_ROOT_FILES = [
+  'package.json',
+  'vitest.config.js',
+  'jest.config.js',
+  'tsconfig.json',
+  'eslint.config.js',
+  'pnpm-workspace.yaml',
+];
+
 export function createError({
   status = 500,
   code = 'UNKNOWN_ERROR',
@@ -229,16 +240,31 @@ export function buildNotesPath(file, context = {}) {
   return `notes/${safe}`;
 }
 
+export function isAllowedCodePath(path) {
+  const safe = typeof path === 'string' ? path.trim() : '';
+
+  if (!safe) {
+    return false;
+  }
+
+  if (safe.startsWith('docs/') || safe.startsWith('notes/')) {
+    return false;
+  }
+
+  if (CODE_ALLOWED_ROOT_FILES.includes(safe)) {
+    return true;
+  }
+
+  return CODE_ALLOWED_PREFIXES.some((prefix) => safe.startsWith(prefix));
+}
+
 export function buildCodePath(file, context = {}) {
   const safe = assertSafeRelativePath(file, {
     ...context,
     resource: 'code',
   });
 
-  const allowedPrefixes = ['src/', 'api/', 'lib/', 'scripts/', 'config/'];
-  const isAllowed = allowedPrefixes.some((prefix) => safe.startsWith(prefix));
-
-  if (!isAllowed) {
+  if (!isAllowedCodePath(safe)) {
     throw createError({
       status: 400,
       code: 'INVALID_REQUEST',
@@ -250,7 +276,8 @@ export function buildCodePath(file, context = {}) {
       retryable: false,
       details: {
         file: safe,
-        allowed_prefixes: allowedPrefixes,
+        allowed_prefixes: CODE_ALLOWED_PREFIXES,
+        allowed_root_files: CODE_ALLOWED_ROOT_FILES,
       },
     });
   }
