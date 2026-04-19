@@ -20,21 +20,22 @@ active_operations に入らなかった上位候補を保持する。
 
 - なし
 
-## 再評価結果（2026-04-18 daily review）
+## 再評価結果（2026-04-19 daily review）
 
-### active へ昇格
+### active へ繰り上げ
 
 - `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
 - `Phase 1 各 plan と operations 接続案を並べる`
 
 理由
 
-- 2026-04-18 daily review で完了 task を archive へ移した結果、active 7日枠に空きが生じた
-- 次の候補として保持していた 2件を active の後段へ昇格する方が自然だった
+- 2026-04-19 daily review で Day0 / Day1 の完了 task を archive へ移した
+- active に残る task は 2 件のみであり、次の 2 件を 2026-04-20 基準の Day0 / Day1 として保持するのが自然だった
+- 現時点で active 外の近未来候補は残っていない
 
 ## タスク
 
-- なし（現時点では active に昇格済み）
+- なし
 
 ---
 
