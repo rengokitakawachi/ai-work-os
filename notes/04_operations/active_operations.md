@@ -24,12 +24,17 @@
     - src/services/flow-control/design-routing.test.js
     - src/services/flow-control/index.js
     - src/services/flow-control/normalize.js
+    - src/services/flow-control/design-routing-notes-write.js
+    - src/services/flow-control/adapters.js
   rolling_day: Day0
   why_now:
     - design routing の最小 dry_run は code へ入ったが、テスト実行前に shape と import の崩れを先に潰す価値が高い
   notes:
-    - candidate_id / design_id / action_plan key の不整合を優先確認する
-    - node 実行可否確認前に静的に見える崩れを潰す
+    - candidate_id / design_id / action_plan key の不整合を優先確認した
+    - `design-routing.js` / `design-routing-rules.js` / `design-routing-actions.js` / `design-routing-notes-write.js` / `adapters.js` の import/export と payload shape を静的確認した
+    - 致命的な shape / import 崩れは見当たらず、次はパソコンでの実行確認が本命である
+  status: completed
+  completed: true
   due_date: 2026-04-19
   due_type: date
   external:
