@@ -1,3 +1,0 @@
-https://mcpservers.org/servers/kentaroh7777/mcp-todoist
-
-`├── フロントエンド (Next.js 14) │ ├── React Server Components │ ├── Client Components │ └── API Routes ├── MCP Server Layer │ ├── Protocol Handler │ ├── Todoist API Adapter │ └── Tool Registry ├── バックエンド (Convex) │ ├── Database Functions │ ├── Mutations │ ├── Queries │ └── Actions └── 外部API └── Todoist API `# 現在のディレクトリパスを取得 CURRENT_DIR=$(pwd) # Cursor AI設定ディレクトリを作成 mkdir -p ~/.cursor # MCP設定ファイルを自動生成 cat > ~/.cursor/mcp.json << EOF { "mcpServers": { "mcp-todoist": { "command": "tsx", "args": ["$CURRENT_DIR/script/run-mcp-server.ts"], "env": { "TODOIST_API_TOKEN": "YOUR_TODOIST_API_TOKEN_HERE" } } } } EOF echo "✅ MCP設定ファイルを作成しました: ~/.cursor/mcp.json" echo "⚠️ 次のステップ: YOUR_TODOIST_API_TOKEN_HERE を実際のAPIトークンに置き換えてください" 
