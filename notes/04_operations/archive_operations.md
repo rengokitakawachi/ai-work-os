@@ -118,6 +118,20 @@ weekly review までの短期履歴置き場であり、
 - `scoring knowledge の蓄積方針を dev_memo か design に整理する` を完了した
   - gate / score / override の3層モデルへ寄せる前提を固定した
 
+--- 2026-04-19 daily review ---
+
+- `パソコンで design routing test と reroll sample dry_run を実行する` を完了した
+  - `npm test` 57 pass / 0 fail を確認した
+  - `node --test src/services/flow-control/design-routing.test.js` 12 pass を確認した
+  - reroll sample dry_run が repo 実体で正常終了し、queue payload が `operations_queue` として取り込まれることを確認した
+- `src/services/todoist.js の repo 全体 usage を最終確認する` を完了した
+  - `src/services/todoist.js` の runtime import / require は repo 全体で見つからなかった
+  - tasks 系は `src/services/todoist/client.js` へ移行済みで、legacy wrapper は delete 候補と判断できる状態になった
+- `applyDesignRoutingActionPlan の skeleton を切る` を完了した
+  - dry_run / apply の責務境界を設けた
+  - future / archive への apply 時 write dispatch 骨格を追加した
+  - `design-routing.test.js` 13 pass、`npm test` 58 pass を確認した
+
 ---
 
 ## ルール
