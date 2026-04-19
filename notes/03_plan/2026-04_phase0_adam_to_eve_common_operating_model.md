@@ -91,6 +91,34 @@ ADAM の開発運用だけでなく、
 - 直近の operations が、この plan を前進させる具体作業として読める状態になる
 - 必要に応じて後続 design や docs 更新へつなげられる
 
+## 完成の判断基準
+
+Phase 0 で扱う重点テーマは、実装が存在するだけでは完了とみなさない。
+完成は、実際に運用して効果が見えることをもって判定する。
+
+特に次の4テーマを、1つずつ運用可能な状態まで持っていく。
+
+- intake routing
+- issue routing
+- design routing
+- テストシステム
+
+### issue routing の完成条件
+
+issue routing は、次を満たしたときに完成とみなす。
+
+- 実際の issue を入力して routing できる
+- design / operations / future / archive への送付結果が実運用で確認できる
+- operations に送った候補が rolling に接続され、active / next / future のいずれかに反映される
+- keep / archive / defer の判断が、運用上も破綻しない
+- 複数件の実例で、issue が溜まるだけでなく design / operations / future / archive へ流れる効果が観測できる
+- 観測結果をもとに routing 判定軸や後処理ルールを修正できる
+
+したがって、issue routing の完成は
+「コードがあること」ではなく
+「実運用に入れて、送付先判定と後処理が実際に効いていることが観測できること」
+として扱う。
+
 ---
 
 ## 主要論点
@@ -187,6 +215,8 @@ ADAM の開発運用だけでなく、
 
 ## 次に落とす作業
 
+- issue routing の完成条件を plan / operations に反映する
+- issue routing の最小運用実験で使う issue 候補と観測項目を決める
 - docs/05_roadmap.md に Phase 0 をどう位置づけるか整理する
 - intake routing / issue routing の命名と責務を継続確認する
 - 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
