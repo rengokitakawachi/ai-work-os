@@ -32,6 +32,13 @@ writer は
 `normalized_items` と `routing_decisions`
 を参照して payload seed を作る。
 
+重要なのは、
+issue routing では**無理に issue から振り分けなくてよい**ことである。
+送付先がまだ自然でなければ、
+`route_to: issue` として issue のまま残す。
+その場合は `keep_items` bucket に入れ、
+writer は no-op として扱う。
+
 ---
 
 ## 受け渡し構造
@@ -115,6 +122,10 @@ impact / urgency / context_refs / quick_win などの補助情報。
 - `future`
 - `archive`
 - `issue`
+
+`route_to: issue` は、
+まだ自然な振り分け先がなく、
+issue のまま保持する方がよいことを意味する。
 
 ### next_action
 
@@ -233,8 +244,10 @@ action_plan は bucket 単位で持つ。
 
 用途:
 - no-op だが keep 判定を保持する
+- issue のまま残すのが自然な item を保持する
 
 最小では write を要求しない。
+writer は `keep_items` を no-op として返せばよい。
 
 ### skipped
 
@@ -291,6 +304,10 @@ issue routing では、
 `action_plan`
 に分けて扱う方が自然である。
 
+また、
+全 item を design / plan / operations / future / archive に押し出す必要はない。
+`route_to: issue` と `keep_items` は正規の結果として扱う。
+
 ---
 
 ## 最小運用ルール
@@ -300,6 +317,7 @@ issue routing では、
 - operations candidate は queue payload まで
 - rolling_day は rolling 後にしか付与しない
 - dry_run では payload seed と suggested_file まで確認できればよい
+- 送付先がまだ自然でなければ、無理に issue から出さない
 
 ---
 
@@ -318,3 +336,7 @@ bucket 化された `action_plan` である。
 routing と writing を分離しつつ、
 design / plan / operations / future / archive への接続を
 小さく前進させやすい。
+
+同時に、
+振り分け先がまだ自然でない item を
+issue のまま保持する運用も崩さずに済む。
