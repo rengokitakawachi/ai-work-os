@@ -20,21 +20,25 @@ active_operations に入らなかった上位候補を保持する。
 
 - なし
 
-## 再評価結果（2026-04-20 reroll）
+## 再評価結果（2026-04-20 daily review）
 
-### active 内の順序修正
+### archive へ移した task
 
-- `routing と document writing の責務分離方針を整理する` を `issue routing の第一バッチ運用実験を実施する` より前へ繰り上げた
-- `issue routing と writer 間の action plan 受け渡し項目を定義する` を active に追加した
-- `routing と writing を分離する最小実装を入れる` を active に追加した
-- `issue routing の第一バッチ運用実験を実施する` と `issue routing 第一バッチの観測結果を記録する` を Day3 へ後ろ倒しした
+- `routing と document writing の責務分離方針を整理する`
+- `issue routing と writer 間の action plan 受け渡し項目を定義する`
+
+### active 繰り上げ結果
+
+- `repo の adam_instruction.md 変更を ADAM instruction へ反映する`
+- `routing と writing を分離する最小実装を入れる`
+- `issue routing の第一バッチ運用実験を実施する`
+- `issue routing 第一バッチの観測結果を記録する`
 
 理由
 
-- routing と document writing の責務分離は、第一バッチ運用実験の前提を変える構造変更である
-- schema 固定だけでは不十分で、少なくとも分離の最小実装を code に入れてから実験する方が自然である
-- Day は 1 task 固定ではなく、0.5〜1.5h 程度の task を複数置いて約2h に近づける方が自然である
-- そのため、Day2 を実装日、Day3 を実験日へ再編した
+- 2026-04-20 は issue routing の構造整理が前進し、design 2件は完了扱いにできた
+- 一方で ADAM instruction への実反映と code 側の最小実装は未完了であり、第一バッチ実験前に引き続き優先すべきである
+- docs 整理と Phase 1 接続案は補助 task として 1 日後ろに保持するのが自然だった
 
 ## タスク
 
