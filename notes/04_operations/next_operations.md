@@ -26,13 +26,15 @@ active_operations に入らなかった上位候補を保持する。
 
 - `routing と document writing の責務分離方針を整理する` を `issue routing の第一バッチ運用実験を実施する` より前へ繰り上げた
 - `issue routing と writer 間の action plan 受け渡し項目を定義する` を active に追加した
-- `issue routing 第一バッチの観測結果を記録する` を active に追加した
+- `routing と writing を分離する最小実装を入れる` を active に追加した
+- `issue routing の第一バッチ運用実験を実施する` と `issue routing 第一バッチの観測結果を記録する` を Day3 へ後ろ倒しした
 
 理由
 
-- routing と document writing の責務分離は、第一バッチ運用実験の前提を変える構造変更であり、実験より先に固定する必要がある
+- routing と document writing の責務分離は、第一バッチ運用実験の前提を変える構造変更である
+- schema 固定だけでは不十分で、少なくとも分離の最小実装を code に入れてから実験する方が自然である
 - Day は 1 task 固定ではなく、0.5〜1.5h 程度の task を複数置いて約2h に近づける方が自然である
-- そのため、Day1 と Day2 を複数 task 構成へ再編し、依存順と容量の両方を修正した
+- そのため、Day2 を実装日、Day3 を実験日へ再編した
 
 ## タスク
 
