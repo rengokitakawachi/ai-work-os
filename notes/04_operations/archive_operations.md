@@ -132,6 +132,17 @@ weekly review までの短期履歴置き場であり、
   - future / archive への apply 時 write dispatch 骨格を追加した
   - `design-routing.test.js` 13 pass、`npm test` 58 pass を確認した
 
+--- 2026-04-20 daily review ---
+
+- `routing と document writing の責務分離方針を整理する` を完了した
+  - `notes/02_design/2026-04-20_routing_and_document_writing_separation.md` を作成した
+  - routing は再評価 / 分解統合 / 送付先判定 / action plan 生成までに留める方針を固定した
+  - issue routing では送付先が自然でなければ issue に残してよいことを明記した
+- `issue routing と writer 間の action plan 受け渡し項目を定義する` を完了した
+  - `notes/02_design/2026-04-20_issue_routing_action_plan_handoff_schema.md` を作成した
+  - `normalized_items / routing_decisions / action_plan` の3層受け渡しを固定した
+  - `keep_items` を no-op とし、`route_to: issue` を正規結果として扱う前提を固定した
+
 ---
 
 ## ルール
