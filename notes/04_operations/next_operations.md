@@ -20,18 +20,19 @@ active_operations に入らなかった上位候補を保持する。
 
 - なし
 
-## 再評価結果（2026-04-19 daily review）
+## 再評価結果（2026-04-20 reroll）
 
-### active へ繰り上げ
+### active 内の順序修正
 
-- `docs 番号衝突と旧 docs 群の整理方針をメモ化する`
-- `Phase 1 各 plan と operations 接続案を並べる`
+- `routing と document writing の責務分離方針を整理する` を `issue routing の第一バッチ運用実験を実施する` より前へ繰り上げた
+- `issue routing と writer 間の action plan 受け渡し項目を定義する` を active に追加した
+- `issue routing 第一バッチの観測結果を記録する` を active に追加した
 
 理由
 
-- 2026-04-19 daily review で Day0 / Day1 の完了 task を archive へ移した
-- active に残る task は 2 件のみであり、次の 2 件を 2026-04-20 基準の Day0 / Day1 として保持するのが自然だった
-- 現時点で active 外の近未来候補は残っていない
+- routing と document writing の責務分離は、第一バッチ運用実験の前提を変える構造変更であり、実験より先に固定する必要がある
+- Day は 1 task 固定ではなく、0.5〜1.5h 程度の task を複数置いて約2h に近づける方が自然である
+- そのため、Day1 と Day2 を複数 task 構成へ再編し、依存順と容量の両方を修正した
 
 ## タスク
 
