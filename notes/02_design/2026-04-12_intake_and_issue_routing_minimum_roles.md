@@ -33,6 +33,11 @@ routing 後は、
 役目が終わったものは archive へ移し、
 判断に迷うものは先送りして残す。
 
+重要なのは、
+issue routing は**無理に issue から振り分けなくてよい**ことである。
+送付先がまだ自然でなければ、
+その issue は issue のまま残してよい。
+
 ---
 
 ## 位置づけ
@@ -83,6 +88,7 @@ issue の再配置処理。
 
 出力先
 
+- `01_issues`（keep / 保留）
 - `02_design`
 - `03_plan`
 - `04_operations`（candidate 経由）
@@ -207,6 +213,9 @@ routing 後の処理を行う
 - 役目終了
   → archive
 
+- まだ振り分け先が自然でない
+  → issue に残す
+
 ### routing 後の処理
 
 routing 後は、
@@ -223,6 +232,9 @@ routing 後は、
 
 - 判断に迷う
   → 先送りして残す
+
+- 振り分け先がまだ自然でない
+  → issue のまま残す
 
 ### やらないこと
 
@@ -370,6 +382,7 @@ routing でも review でも送付先になりうる。
 - issue を起点に派生させる
 - operations 化する前に粒度を整える
 - active に入れる前に rolling を通す
+- 振り分け先がまだ自然でなければ、無理に issue から移さない
 - routing 後に元 issue を
   `archive / 残す / 保留`
   のどれかにする
@@ -423,6 +436,7 @@ ADAM 開発を先に進める前提では、
 
 - intake routing は未整理入力を構造化する
 - issue routing は issue を再配置する
+- 振り分け先がまだ自然でなければ issue のまま残してよい
 - routing 後は振り分けた先を処理する
 - 役目終了なら archive に移す
 - 迷うなら先送りして残す
