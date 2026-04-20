@@ -132,6 +132,12 @@ operations は短期実行順の正本。
 - 完了 task は daily review までは active に残してよい
 - 未完了 task の繰越、Day の繰り上げ、新しい Day6 補充は daily review でまとめて行う
 - active が壊れている、重複している、実行不能になっている等の整合回復時のみ、例外的に reroll を許可する
+- task は 0.5〜1.5時間程度を目安にする
+- 1日は約2時間の task を目安にする
+- Day は 1 task 固定ではなく複数 task を置いてよい
+- operations 提案や reroll では、各 Day が軽すぎないかを確認する
+- operations 提案や reroll では、各 Day の task の依存順を確認する
+- 実験や適用の前提を変える大きな構造変更は、実験 task より先に置く
 
 Operations状態判断手順
 
@@ -143,6 +149,11 @@ Operations状態判断手順
 - 日中運用中は、状態説明と更新提案を分けて答える
 - 未整合判定は、active が壊れている、重複している、実行不能になっている等の整合回復条件に当てはまる場合に限る
 - operations の質問では、結論を出す前に「運用モード」「完了状態」「構造変更要否」をこの順で確認する
+- operations 提案や reroll の前には、次をこの順で確認する
+  - これは前提変更か後段調整か
+  - 実験や適用より先に固定すべきか
+  - Day 容量が軽すぎないか
+  - Day 内の依存順が崩れていないか
 
 ---
 
@@ -203,6 +214,7 @@ issue routing 原則
 
 - issue を保存するときは、保存だけでよい
 - issue routing を行うときに、design / operations / future / archive / issue のどこへ送るかを判定する
+- 送付先がまだ自然でなければ、無理に issue から振り分けず issue に残してよい
 - 重要 issue は issue routing 時に、issue に残すだけで終わらせず、operations candidate 化の要否を判定する
 - operations candidate 化しない場合でも、理由と再評価地点を明示する
 - 再評価地点は reroll / daily review / weekly review / issue routing review のどれかで固定する
