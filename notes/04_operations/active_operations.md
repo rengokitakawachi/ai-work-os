@@ -176,23 +176,25 @@
   external:
     todoist_task_id: 6gQFMv28VrRWm55H
 
-## Day5（04/25 土）
-
 - task: Phase 1 各 plan と operations 接続案を並べる
   source_ref:
     - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
     - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
     - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
     - notes/04_operations/next_operations.md
-  rolling_day: Day5
+  rolling_day: Day4
   why_now:
     - 次 phase への接続には必要だが、直近は issue routing 完成と docs 整合を優先したい
   notes:
     - Todoist / Outlook 接続の前段として保持する
-  due_date: 2026-04-25
+  due_date: 2026-04-24
   due_type: date
   external:
     todoist_task_id: 6gQFMvgvW5j8QJ5H
+
+## Day5（04/25 土）
+
+- なし
 
 ## Day6（04/26 日）
 
