@@ -7,6 +7,7 @@
 - `issue routing の完成条件を plan / operations に反映する`
 - `issue routing の最小運用実験で使う issue 候補と観測項目を決める`
 - `issue routing の第一バッチ運用実験を実施する`
+- `routing と document writing の責務分離方針を整理する`
 
 ### 補助 task
 
@@ -80,22 +81,44 @@
 
 ## Day2（04/22 水）
 
+- task: routing と document writing の責務分離方針を整理する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
+    - notes/02_design/2026-04-16_issue_routing_notes_write_minimum_usecase.md
+    - notes/02_design/2026-04-16_issue_routing_operations_candidate_queue.md
+    - src/services/flow-control/issue-routing.js
+    - src/services/flow-control/issue-routing-actions.js
+    - src/services/flow-control/issue-routing-notes-write.js
+  rolling_day: Day2
+  why_now:
+    - issue routing を実運用で完成させるには、routing 自体の責務を軽く保ち、document writing を後段へ分離する必要がある
+    - 第一バッチ運用実験の観測前後で、分離方針を先に整理しておくと後続修正がしやすい
+  notes:
+    - routing は再評価 / 分解統合 / 送付先判定 / action plan 生成までに留める
+    - document writing / placement は後段 usecase に分離する
+    - 両者の間は completed document ではなく normalized payload と action plan を受け渡す
+  due_date: 2026-04-22
+  due_type: date
+
+## Day3（04/23 木）
+
 - task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
   source_ref:
     - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
     - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
     - notes/04_operations/next_operations.md
-  rolling_day: Day2
+  rolling_day: Day3
   why_now:
     - repo 全体整合には必要だが、直近は issue routing 完成を優先する
   notes:
     - docs 15 / 16 系の衝突整理を含む
-  due_date: 2026-04-22
+  due_date: 2026-04-23
   due_type: date
   external:
     todoist_task_id: 6gQFMv28VrRWm55H
 
-## Day3（04/23 木）
+## Day4（04/24 金）
 
 - task: Phase 1 各 plan と operations 接続案を並べる
   source_ref:
@@ -103,19 +126,15 @@
     - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
     - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
     - notes/04_operations/next_operations.md
-  rolling_day: Day3
+  rolling_day: Day4
   why_now:
     - 次 phase への接続には必要だが、直近は issue routing 完成と docs 整合を優先したい
   notes:
     - Todoist / Outlook 接続の前段として保持する
-  due_date: 2026-04-23
+  due_date: 2026-04-24
   due_type: date
   external:
     todoist_task_id: 6gQFMvgvW5j8QJ5H
-
-## Day4（04/24 金）
-
-- なし
 
 ## Day5（04/25 土）
 
