@@ -6,6 +6,7 @@
 
 - `issue routing の完成条件を plan / operations に反映する`
 - `issue routing の最小運用実験で使う issue 候補と観測項目を決める`
+- `issue routing の第一バッチ運用実験を実施する`
 
 ### 補助 task
 
@@ -29,6 +30,10 @@
   notes:
     - issue routing の完成を「実 issue を流して効果が観測できること」として定義する
     - coding completion ではなく operation completion を基準にする
+    - `notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md` に完成基準を反映した
+    - `notes/04_operations/active_operations.md` に優先順を反映した
+  status: completed
+  completed: true
   due_date: 2026-04-20
   due_type: date
 
@@ -47,27 +52,50 @@
   notes:
     - 実 issue を数件選び、design / operations / future / archive の期待送付先を仮置きする
     - 送付結果、rolling 接続、keep / archive / defer の妥当性を観測項目に入れる
+    - `notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md` を作成した
+    - 第一バッチは open issue 2 件を対象に開始し、route 多様性不足も観測項目に含める
+  status: completed
+  completed: true
   due_date: 2026-04-20
   due_type: date
 
 ## Day1（04/21 火）
+
+- task: issue routing の第一バッチ運用実験を実施する
+  source_ref:
+    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
+    - notes/01_issues/idea_log.md
+    - src/services/flow-control/issue-routing.js
+    - src/services/flow-control/issue-routing-actions.js
+    - src/services/flow-control/issue-routing-notes-write.js
+    - src/services/flow-control/orchestrate.js
+  rolling_day: Day1
+  why_now:
+    - issue routing の完成は実際に運用して効果が見えることなので、第一バッチの観測を回す必要がある
+  notes:
+    - `20260418-022` と `20260419-023` を第一バッチ入力として routing する
+    - route 判定、payload、operations candidate の rolling 接続可能性、route 多様性不足を記録する
+  due_date: 2026-04-21
+  due_type: date
+
+## Day2（04/22 水）
 
 - task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
   source_ref:
     - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
     - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
     - notes/04_operations/next_operations.md
-  rolling_day: Day1
+  rolling_day: Day2
   why_now:
     - repo 全体整合には必要だが、直近は issue routing 完成を優先する
   notes:
     - docs 15 / 16 系の衝突整理を含む
-  due_date: 2026-04-21
+  due_date: 2026-04-22
   due_type: date
   external:
     todoist_task_id: 6gQFMv28VrRWm55H
 
-## Day2（04/22 水）
+## Day3（04/23 木）
 
 - task: Phase 1 各 plan と operations 接続案を並べる
   source_ref:
@@ -75,19 +103,15 @@
     - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
     - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
     - notes/04_operations/next_operations.md
-  rolling_day: Day2
+  rolling_day: Day3
   why_now:
     - 次 phase への接続には必要だが、直近は issue routing 完成と docs 整合を優先したい
   notes:
     - Todoist / Outlook 接続の前段として保持する
-  due_date: 2026-04-22
+  due_date: 2026-04-23
   due_type: date
   external:
     todoist_task_id: 6gQFMvgvW5j8QJ5H
-
-## Day3（04/23 木）
-
-- なし
 
 ## Day4（04/24 金）
 
