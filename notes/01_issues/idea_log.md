@@ -17,3 +17,12 @@
 - impact: medium
 - status: open
 - created_at: 2026-04-19
+
+### 20260420-024
+- title: routing と document writing を分離し action plan で引き渡す構造へ改める必要がある
+- category: architecture
+- description: 現在の routing 論点では、情報の再評価、分解 / 統合、送付先判定、後処理、さらに design / plan / operations などの実ドキュメント作成までを一連で考えがちになっている。しかしこのままでは routing の責務が重すぎる。routing は再評価・分解統合・送付先判定・action plan 生成までに留め、実際の document writing / placement は後段 usecase に分離した方がよい。routing と document writing の間は、完成済み文書ではなく `decision + action plan + normalized payload` を受け渡す構造に改める必要がある。
+- context: 2026-04-20 の会話で、routing に再評価、分解 / 統合、design / plan / operations への振り分け、さらに実ドキュメント作成まで一気に背負わせると負荷が重すぎるのではないかという論点が出た。議論の結果、少なくとも document writing は分離すべきであり、routing と writer の間は action plan で引き渡すのが自然という整理になった。
+- impact: high
+- status: open
+- created_at: 2026-04-20
