@@ -6,8 +6,10 @@
 
 - `issue routing の完成条件を plan / operations に反映する`
 - `issue routing の最小運用実験で使う issue 候補と観測項目を決める`
-- `issue routing の第一バッチ運用実験を実施する`
 - `routing と document writing の責務分離方針を整理する`
+- `issue routing と writer 間の action plan 受け渡し項目を定義する`
+- `issue routing の第一バッチ運用実験を実施する`
+- `issue routing 第一バッチの観測結果を記録する`
 
 ### 補助 task
 
@@ -62,25 +64,6 @@
 
 ## Day1（04/21 火）
 
-- task: issue routing の第一バッチ運用実験を実施する
-  source_ref:
-    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
-    - notes/01_issues/idea_log.md
-    - src/services/flow-control/issue-routing.js
-    - src/services/flow-control/issue-routing-actions.js
-    - src/services/flow-control/issue-routing-notes-write.js
-    - src/services/flow-control/orchestrate.js
-  rolling_day: Day1
-  why_now:
-    - issue routing の完成は実際に運用して効果が見えることなので、第一バッチの観測を回す必要がある
-  notes:
-    - `20260418-022` と `20260419-023` を第一バッチ入力として routing する
-    - route 判定、payload、operations candidate の rolling 接続可能性、route 多様性不足を記録する
-  due_date: 2026-04-21
-  due_type: date
-
-## Day2（04/22 水）
-
 - task: routing と document writing の責務分離方針を整理する
   source_ref:
     - notes/01_issues/idea_log.md
@@ -90,14 +73,65 @@
     - src/services/flow-control/issue-routing.js
     - src/services/flow-control/issue-routing-actions.js
     - src/services/flow-control/issue-routing-notes-write.js
-  rolling_day: Day2
+  rolling_day: Day1
   why_now:
     - issue routing を実運用で完成させるには、routing 自体の責務を軽く保ち、document writing を後段へ分離する必要がある
-    - 第一バッチ運用実験の観測前後で、分離方針を先に整理しておくと後続修正がしやすい
+    - 構造変更の前提を先に固定しないまま第一バッチ実験を行うと、観測結果の前提がずれる
   notes:
     - routing は再評価 / 分解統合 / 送付先判定 / action plan 生成までに留める
     - document writing / placement は後段 usecase に分離する
-    - 両者の間は completed document ではなく normalized payload と action plan を受け渡す
+    - completed document ではなく normalized payload と action plan を受け渡す
+  due_date: 2026-04-21
+  due_type: date
+
+- task: issue routing と writer 間の action plan 受け渡し項目を定義する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-16_issue_routing_notes_write_minimum_usecase.md
+    - notes/02_design/2026-04-16_issue_routing_operations_candidate_queue.md
+    - src/services/flow-control/issue-routing-actions.js
+    - src/services/flow-control/issue-routing-notes-write.js
+  rolling_day: Day1
+  why_now:
+    - 責務分離方針だけでは実装や実験に降ろせないため、writer に渡す action plan の最小 schema を固定する必要がある
+  notes:
+    - normalized item / routing decision / action plan の受け渡し単位を明確にする
+    - design / operations / future / archive への payload seed を最小項目で定義する
+  due_date: 2026-04-21
+  due_type: date
+
+## Day2（04/22 水）
+
+- task: issue routing の第一バッチ運用実験を実施する
+  source_ref:
+    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
+    - notes/01_issues/idea_log.md
+    - src/services/flow-control/issue-routing.js
+    - src/services/flow-control/issue-routing-actions.js
+    - src/services/flow-control/issue-routing-notes-write.js
+    - src/services/flow-control/orchestrate.js
+  rolling_day: Day2
+  why_now:
+    - 責務分離と action plan schema を先に整理したうえで、第一バッチの観測を回す必要がある
+  notes:
+    - `20260418-022` と `20260419-023` を第一バッチ入力として routing する
+    - route 判定、payload、operations candidate の rolling 接続可能性、route 多様性不足を記録する
+  due_date: 2026-04-22
+  due_type: date
+
+- task: issue routing 第一バッチの観測結果を記録する
+  source_ref:
+    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
+    - notes/01_issues/idea_log.md
+    - src/services/flow-control/issue-routing.js
+    - src/services/flow-control/issue-routing-actions.js
+    - src/services/flow-control/issue-routing-notes-write.js
+  rolling_day: Day2
+  why_now:
+    - 実験だけ行っても効果確認にならないため、観測結果を次の補正へ返す記録が必要である
+  notes:
+    - route ごとの結果、違和感、route 多様性不足、rolling 接続の妥当性を明示する
+    - 必要なら design / report / issue へ返す
   due_date: 2026-04-22
   due_type: date
 
