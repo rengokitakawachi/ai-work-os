@@ -103,6 +103,25 @@
   due_date: 2026-04-21
   due_type: date
 
+- task: repo の adam_instruction.md 変更を ADAM instruction へ反映する
+  source_ref:
+    - config/ai/adam_instruction.md
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-20_routing_and_document_writing_separation.md
+    - notes/02_design/2026-04-20_issue_routing_action_plan_handoff_schema.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day1
+  why_now:
+    - repo 上の instruction 変更だけでは不十分で、実際の ADAM instruction への反映はまだ未完了である
+    - operations と issue routing の再発防止ルールを、実運用している instruction にも反映する必要がある
+  notes:
+    - Day 容量チェック
+    - 前提変更を実験より先に置く原則
+    - 送付先が自然でなければ issue に残してよい原則
+    - repo 更新済みと実反映済みを混同しない
+  due_date: 2026-04-21
+  due_type: date
+
 ## Day2（04/22 水）
 
 - task: routing と writing を分離する最小実装を入れる
