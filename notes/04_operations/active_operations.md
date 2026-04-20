@@ -8,6 +8,7 @@
 - `issue routing の最小運用実験で使う issue 候補と観測項目を決める`
 - `routing と document writing の責務分離方針を整理する`
 - `issue routing と writer 間の action plan 受け渡し項目を定義する`
+- `routing と writing を分離する最小実装を入れる`
 - `issue routing の第一バッチ運用実験を実施する`
 - `issue routing 第一バッチの観測結果を記録する`
 
@@ -81,6 +82,7 @@
     - routing は再評価 / 分解統合 / 送付先判定 / action plan 生成までに留める
     - document writing / placement は後段 usecase に分離する
     - completed document ではなく normalized payload と action plan を受け渡す
+    - `route_to: issue` と keep は正規結果として扱う
   due_date: 2026-04-21
   due_type: date
 
@@ -97,10 +99,31 @@
   notes:
     - normalized item / routing decision / action plan の受け渡し単位を明確にする
     - design / operations / future / archive への payload seed を最小項目で定義する
+    - `keep_items` を no-op として扱う前提を固定する
   due_date: 2026-04-21
   due_type: date
 
 ## Day2（04/22 水）
+
+- task: routing と writing を分離する最小実装を入れる
+  source_ref:
+    - notes/02_design/2026-04-20_routing_and_document_writing_separation.md
+    - notes/02_design/2026-04-20_issue_routing_action_plan_handoff_schema.md
+    - notes/02_design/2026-04-16_issue_routing_notes_write_minimum_usecase.md
+    - src/services/flow-control/issue-routing.js
+    - src/services/flow-control/issue-routing-actions.js
+    - src/services/flow-control/issue-routing-notes-write.js
+  rolling_day: Day2
+  why_now:
+    - 第一バッチ運用実験の前に、少なくとも routing と writer の分離骨格を code 側に反映しないと、観測対象が旧構造のままになる
+  notes:
+    - routed_candidates への過積載を減らし、normalized / decision / action plan の境界を code 上で明示する
+    - writer usecase は keep_items を no-op として扱う
+    - operations candidate は queue payload までに留める
+  due_date: 2026-04-22
+  due_type: date
+
+## Day3（04/23 木）
 
 - task: issue routing の第一バッチ運用実験を実施する
   source_ref:
@@ -110,13 +133,14 @@
     - src/services/flow-control/issue-routing-actions.js
     - src/services/flow-control/issue-routing-notes-write.js
     - src/services/flow-control/orchestrate.js
-  rolling_day: Day2
+  rolling_day: Day3
   why_now:
-    - 責務分離と action plan schema を先に整理したうえで、第一バッチの観測を回す必要がある
+    - 責務分離と action plan schema と最小実装を先に整理したうえで、第一バッチの観測を回す必要がある
   notes:
     - `20260418-022` と `20260419-023` を第一バッチ入力として routing する
     - route 判定、payload、operations candidate の rolling 接続可能性、route 多様性不足を記録する
-  due_date: 2026-04-22
+    - `route_to: issue` / keep の結果も正規結果として観測する
+  due_date: 2026-04-23
   due_type: date
 
 - task: issue routing 第一バッチの観測結果を記録する
@@ -126,33 +150,33 @@
     - src/services/flow-control/issue-routing.js
     - src/services/flow-control/issue-routing-actions.js
     - src/services/flow-control/issue-routing-notes-write.js
-  rolling_day: Day2
+  rolling_day: Day3
   why_now:
     - 実験だけ行っても効果確認にならないため、観測結果を次の補正へ返す記録が必要である
   notes:
     - route ごとの結果、違和感、route 多様性不足、rolling 接続の妥当性を明示する
     - 必要なら design / report / issue へ返す
-  due_date: 2026-04-22
+  due_date: 2026-04-23
   due_type: date
 
-## Day3（04/23 木）
+## Day4（04/24 金）
 
 - task: docs 番号衝突と旧 docs 群の整理方針をメモ化する
   source_ref:
     - notes/08_analysis/2026-04-04_repo_readthrough_findings.md
     - notes/00_inbox/dev_memo/2026-04-04_repo_consistency_check_followup.md
     - notes/04_operations/next_operations.md
-  rolling_day: Day3
+  rolling_day: Day4
   why_now:
     - repo 全体整合には必要だが、直近は issue routing 完成を優先する
   notes:
     - docs 15 / 16 系の衝突整理を含む
-  due_date: 2026-04-23
+  due_date: 2026-04-24
   due_type: date
   external:
     todoist_task_id: 6gQFMv28VrRWm55H
 
-## Day4（04/24 金）
+## Day5（04/25 土）
 
 - task: Phase 1 各 plan と operations 接続案を並べる
   source_ref:
@@ -160,19 +184,15 @@
     - notes/03_plan/2026-04_phase1_schedule_proposal_and_outlook_write.md
     - notes/03_plan/2026-04_phase1_teams_and_obsidian_light_use.md
     - notes/04_operations/next_operations.md
-  rolling_day: Day4
+  rolling_day: Day5
   why_now:
     - 次 phase への接続には必要だが、直近は issue routing 完成と docs 整合を優先したい
   notes:
     - Todoist / Outlook 接続の前段として保持する
-  due_date: 2026-04-24
+  due_date: 2026-04-25
   due_type: date
   external:
     todoist_task_id: 6gQFMvgvW5j8QJ5H
-
-## Day5（04/25 土）
-
-- なし
 
 ## Day6（04/26 日）
 
