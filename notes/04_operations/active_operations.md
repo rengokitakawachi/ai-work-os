@@ -27,6 +27,8 @@
   notes:
     - `node --test` の実行可否と失敗箇所を記録する
     - flow-control 周辺の新 shape 主経路が通るかを確認する
+  external:
+    todoist_task_id: 6gQwqHgFfQPgPQXH
 
 ## Day1（04/23 木）
 
@@ -43,6 +45,8 @@
   notes:
     - 実 inbox 入力または inbox 相当の入力束から選ぶ
     - source_ref と inbox 後処理も見られる候補を優先する
+  external:
+    todoist_task_id: 6gQwqHvVc2cj87vq
 
 - task: intake routing の観測項目を analysis に落とす
   source_ref:
@@ -57,6 +61,8 @@
     - issue / design / future の出方
     - source_ref の自然さ
     - inbox 後処理として archive / pending をどう扱うか
+  external:
+    todoist_task_id: 6gQwqJ2HGv8fwVvq
 
 ## Day2（04/24 金）
 
@@ -69,6 +75,8 @@
     - report / handover の返し先整理は終わったため、必要なら週次 report に返す最小要点だけを残しておく価値がある
   notes:
     - handover ではなく weekly report 向けの要点だけを整理する
+  external:
+    todoist_task_id: 6gQwqHx9RcJQJrRH
 
 ## Day3（04/25 土）
 
