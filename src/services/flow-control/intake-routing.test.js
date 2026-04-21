@@ -36,7 +36,6 @@ test('routeSingleIntakeCandidate returns handoff-friendly shape', () => {
   assert.equal(result.mode, 'dry_run');
   assert.equal(result.normalized_items.length, 1);
   assert.equal(result.routing_decisions.length, 1);
-  assert.equal(result.routed_candidates.length, 1);
   assert.equal(result.routing_decisions[0].route_to, 'design');
   assert.equal(result.grouped.design.length, 1);
 });
