@@ -33,7 +33,6 @@ function uniqueStrings(values = []) {
 function createItemLookupMaps({
   normalizedItems = [],
   routingDecisions = [],
-  routedCandidates = [],
 } = {}) {
   const normalizedByCandidateId = new Map(
     (Array.isArray(normalizedItems) ? normalizedItems : [])
@@ -47,16 +46,9 @@ function createItemLookupMaps({
       .filter(([key]) => key)
   );
 
-  const routedByCandidateId = new Map(
-    (Array.isArray(routedCandidates) ? routedCandidates : [])
-      .map((candidate) => [ensureString(candidate?.candidate_id), candidate])
-      .filter(([key]) => key)
-  );
-
   return {
     normalizedByCandidateId,
     routingByCandidateId,
-    routedByCandidateId,
   };
 }
 
@@ -64,12 +56,10 @@ function resolveContextForActionItem(actionItem = {}, lookupMaps = {}) {
   const candidateId = ensureString(actionItem?.candidate_id);
   const normalizedItem = lookupMaps?.normalizedByCandidateId?.get(candidateId) || {};
   const routingDecision = lookupMaps?.routingByCandidateId?.get(candidateId) || {};
-  const routedCandidate = lookupMaps?.routedByCandidateId?.get(candidateId) || {};
 
   return {
     normalizedItem,
     routingDecision,
-    routedCandidate,
   };
 }
 
@@ -77,7 +67,6 @@ function mergeSourceRef(actionItem = {}, resolvedContext = {}, context = {}) {
   return uniqueStrings([
     ...ensureStringArray(actionItem?.source_ref),
     ...ensureStringArray(resolvedContext?.normalizedItem?.source_ref),
-    ...ensureStringArray(resolvedContext?.routedCandidate?.source_ref),
     ...ensureStringArray(context?.sourceRef),
   ]);
 }
@@ -91,15 +80,12 @@ function mergeRelatedRefs(actionItem = {}, resolvedContext = {}, context = {}) {
   ]);
 }
 
-function resolveQuickWin(actionItem = {}, resolvedContext = {}) {
-  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
+function resolveQuickWin(actionItem = {}) {
   const metadata = ensureObject(actionItem?.metadata);
 
   const value = (
     ensureString(actionItem?.quick_win) ||
-    ensureString(metadata?.quick_win) ||
-    ensureString(routedCandidate?.quick_win) ||
-    ensureString(routedCandidate?.metadata?.quick_win)
+    ensureString(metadata?.quick_win)
   ).toLowerCase();
 
   return ['high', 'medium', 'low'].includes(value) ? value : '';
@@ -108,14 +94,11 @@ function resolveQuickWin(actionItem = {}, resolvedContext = {}) {
 function resolveSummary(actionItem = {}, resolvedContext = {}, fallback = '') {
   const metadata = ensureObject(actionItem?.metadata);
   const normalizedItem = ensureObject(resolvedContext?.normalizedItem);
-  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
 
   return (
     ensureString(actionItem?.description) ||
     ensureString(normalizedItem?.description) ||
     ensureString(normalizedItem?.summary) ||
-    ensureString(routedCandidate?.description) ||
-    ensureString(routedCandidate?.summary) ||
     ensureString(metadata?.description) ||
     fallback
   );
@@ -334,8 +317,7 @@ function buildPlanWrite(actionItem = {}, resolvedContext = {}, context = {}) {
 }
 
 function buildOperationsCandidateWrite(actionItem = {}, resolvedContext = {}, context = {}) {
-  const quickWin = resolveQuickWin(actionItem, resolvedContext);
-  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
+  const quickWin = resolveQuickWin(actionItem);
 
   return compactObject({
     target_layer: '04_operations',
@@ -352,12 +334,11 @@ function buildOperationsCandidateWrite(actionItem = {}, resolvedContext = {}, co
     quick_win: quickWin,
     candidate_draft:
       compactObject({
-        ...(ensureObject(actionItem?.task_draft) ||
-          ensureObject(routedCandidate?.task_draft) || {
-            task: ensureString(actionItem?.title),
-            source_ref: mergeSourceRef(actionItem, resolvedContext, context),
-            notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
-          }),
+        ...(ensureObject(actionItem?.task_draft) || {
+          task: ensureString(actionItem?.title),
+          source_ref: mergeSourceRef(actionItem, resolvedContext, context),
+          notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
+        }),
         ...(quickWin ? { quick_win: quickWin } : {}),
       }) || {
         task: ensureString(actionItem?.title),
@@ -570,7 +551,6 @@ async function applyDocumentWrite(documentWrite = {}) {
 export async function applyIssueRoutingActionPlan({
   normalizedItems = [],
   routingDecisions = [],
-  routedCandidates = [],
   actionPlan = {},
   sourceRef = [],
   mode = 'dry_run',
@@ -586,7 +566,6 @@ export async function applyIssueRoutingActionPlan({
   const lookupMaps = createItemLookupMaps({
     normalizedItems,
     routingDecisions,
-    routedCandidates,
   });
   const safeActionPlan = ensureObject(actionPlan);
 
