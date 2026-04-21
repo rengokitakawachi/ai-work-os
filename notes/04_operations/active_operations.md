@@ -114,31 +114,40 @@
     - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
     - src/services/flow-control/issue-routing.js
     - src/services/flow-control/issue-routing-actions.js
+    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
   rolling_day: Day4
   why_now:
     - 第二バッチ候補を集めるだけでは完成条件に届かず、実際の route 結果と action_plan を観測する必要がある
   notes:
-    - design / operations / future / archive / issue の出方を記録する
-    - action_plan の route 多様性を確認する
+    - design / operations / future / archive / issue の出方を記録した
+    - action_plan の route 多様性を確認した
+    - `notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md` を作成した
+  status: completed
+  completed: true
 
 - task: 第二バッチ観測結果を analysis に返す
   source_ref:
     - notes/01_issues/idea_log.md
     - src/services/flow-control/issue-routing.js
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
+    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
   rolling_day: Day4
   why_now:
     - 実行だけでは不十分であり、第二バッチの観測結果を次の補正判断へ返す記録が必要である
   notes:
-    - 未出 route が残るか
-    - 理由文と next_action が自然か
-    - keep と送付先のバランスが改善したか
+    - 未出 route は第二バッチ構成上ほぼ解消した
+    - 理由文と next_action の自然さを確認した
+    - keep と送付先のバランスを比較した
+  status: completed
+  completed: true
 
 ## Day5（04/26 日）
 
 - task: operations candidate を rolling に接続して反映確認する
   source_ref:
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
+    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
+    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
     - notes/04_operations/active_operations.md
     - notes/04_operations/next_operations.md
     - src/services/flow-control/issue-routing-actions.js
@@ -146,13 +155,15 @@
   why_now:
     - issue routing の完成条件には operations へ送った候補が rolling に接続されることが含まれているため、operations candidate の反映先まで観測する必要がある
   notes:
-    - operations candidate が active / next / future のどこへ入るかを確認する
-    - queue payload だけで終わらず placement まで見る
+    - `20260419-023` 由来 candidate は queue payload としては自然
+    - ただし current active へ直行ではなく、現時点 placement は future 寄りと観測した
+    - `notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md` を作成した
 
 - task: keep / future / archive の運用妥当性を整理する
   source_ref:
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
+    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
   rolling_day: Day5
   why_now:
