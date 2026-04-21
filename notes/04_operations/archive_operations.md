@@ -158,7 +158,9 @@ weekly review までの短期履歴置き場であり、
   - `keep / future / archive` の役割差と再評価地点を整理した
   - `route_to: operations` は即 active 化ではなく rolling 比較対象化であることを確認した
   - `repo反映 / 正本反映 / 実運用反映` を分離する再発防止ルールを instruction に追加した
-  - 新スレッド冒頭の `ADAM_MMDD` を再開識別子として扱うルールを instruction に追加した
+- 補正:
+  - `ADAM_MMDD` 再開識別子ルールの runtime 反映確認は未完了と判断を修正した
+  - repo instruction 更新は完了済みだが、ADAM 実運用への反映確認は 2026-04-22 active へ戻した
 
 ---
 
