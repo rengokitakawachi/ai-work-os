@@ -76,24 +76,35 @@
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
     - notes/01_issues/idea_log.md
     - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
+    - notes/08_analysis/2026-04-21_issue_routing_second_batch_candidate_set.md
+    - notes/02_design/2026-04-21_issue_routing_second_batch_additional_issue_conditions.md
   rolling_day: Day3
   why_now:
     - issue routing の完成条件は複数件の実例で route 多様性を観測することなので、第一バッチだけで止めずに次の入力候補を準備する必要がある
   notes:
     - design / operations / future / archive の未出 route を補える issue を優先する
     - 第二バッチは観測不足の送付先を埋める観点で選ぶ
+    - `notes/08_analysis/2026-04-21_issue_routing_second_batch_candidate_set.md` を作成した
+    - keep / future / archive 用の追加条件を `notes/02_design/2026-04-21_issue_routing_second_batch_additional_issue_conditions.md` に固定した
+    - `20260421-025` `20260421-026` `20260421-027` を第二バッチ候補として issue log に追加した
+  status: completed
+  completed: true
 
 - task: future / archive を観測できる issue 候補を追加する
   source_ref:
     - notes/01_issues/idea_log.md
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/02_design/2026-04-21_issue_routing_second_batch_additional_issue_conditions.md
   rolling_day: Day3
   why_now:
     - issue routing の完成条件には future / archive 送付の実運用確認が含まれているため、第二バッチ入力の時点で未出 route を補う必要がある
   notes:
     - closed issue または open 以外 status の issue 候補を用意する
     - keep に偏らない route 観測を優先する
+    - `20260421-026` を future 観測用、`20260421-027` を archive 観測用、`20260421-025` を keep 観測用として追加した
+  status: completed
+  completed: true
 
 ## Day4（04/25 土）
 
