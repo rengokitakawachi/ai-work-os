@@ -44,7 +44,6 @@ test('routeSingleDesignCandidate returns handoff-friendly shape for docs candida
   assert.equal(result.mode, 'dry_run');
   assert.equal(result.normalized_items.length, 1);
   assert.equal(result.routing_decisions.length, 1);
-  assert.equal(result.routed_design_candidates.length, 1);
   assert.equal(result.routing_decisions[0].route_to, 'docs');
   assert.equal(result.action_plan.docs_candidates.length, 1);
   assert.equal(result.action_plan.operations_candidates.length, 0);
@@ -189,7 +188,6 @@ test('routeDesignNotes returns dry run output shape', () => {
   assert.equal(result.mode, 'dry_run');
   assert.ok(Array.isArray(result.normalized_items));
   assert.ok(Array.isArray(result.routing_decisions));
-  assert.ok(Array.isArray(result.routed_design_candidates));
   assert.ok(result.action_plan);
   assert.ok(Array.isArray(result.action_plan.docs_candidates));
   assert.ok(Array.isArray(result.action_plan.design_retained));
@@ -215,7 +213,6 @@ test('applyDesignRoutingActionPlan builds docs candidate payload in dry run from
   const result = await applyDesignRoutingActionPlan({
     normalizedItems: routed.normalized_items,
     routingDecisions: routed.routing_decisions,
-    routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
     mode: 'dry_run',
@@ -248,7 +245,6 @@ test('applyDesignRoutingActionPlan builds future payload in dry run', async () =
   const result = await applyDesignRoutingActionPlan({
     normalizedItems: routed.normalized_items,
     routingDecisions: routed.routing_decisions,
-    routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
     mode: 'dry_run',
@@ -278,7 +274,6 @@ test('applyDesignRoutingActionPlan builds archive payload in dry run', async () 
   const result = await applyDesignRoutingActionPlan({
     normalizedItems: routed.normalized_items,
     routingDecisions: routed.routing_decisions,
-    routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
     mode: 'dry_run',
@@ -307,7 +302,6 @@ test('applyDesignRoutingActionPlan builds operations candidate payload in dry ru
   const result = await applyDesignRoutingActionPlan({
     normalizedItems: routed.normalized_items,
     routingDecisions: routed.routing_decisions,
-    routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
     mode: 'dry_run',
@@ -321,6 +315,50 @@ test('applyDesignRoutingActionPlan builds operations candidate payload in dry ru
     'design-routing-adapter-connection'
   );
   assert.equal(result.operations_candidate_writes[0].write_status, 'draft_only');
+});
+
+test('applyDesignRoutingActionPlan can use routedDesignCandidates only as compatibility fallback', async () => {
+  const routedDesignCandidates = [
+    {
+      candidate_id: 'design:test',
+      design_id: 'design-routing-adapter-connection',
+      item_id: 'design-routing-adapter-connection',
+      source_type: 'design',
+      source_ref: ['notes/02_design/example.md'],
+      title: 'design-routing-adapter-connection',
+      summary: 'implementation value is high',
+      metadata: {},
+      route_to: 'operations',
+      reason: 'execution 価値が高く docs 準備前のため operations 候補にする',
+      evaluated_at: '2026-04-18T00:00:00.000Z',
+      maturity_now: 'maturing',
+      execution_value_now: 'high',
+      docs_ready_now: false,
+      review_at: 'monthly_review',
+      next_action: 'generate_operations_candidate',
+      task_draft: {
+        task: 'design-routing-adapter-connection',
+        source_ref: ['notes/02_design/example.md'],
+        notes: ['generated_from_design:design:test'],
+      },
+    },
+  ];
+
+  const actionPlan = buildDesignRoutingActionPlan({ routedDesignCandidates });
+
+  const result = await applyDesignRoutingActionPlan({
+    routedDesignCandidates,
+    actionPlan,
+    sourceRef: ['notes/02_design/example.md'],
+    mode: 'dry_run',
+    now: '2026-04-18T00:00:00.000Z',
+  });
+
+  assert.equal(result.operations_candidate_writes.length, 1);
+  assert.equal(
+    result.operations_candidate_writes[0].candidate_draft.task,
+    'design-routing-adapter-connection'
+  );
 });
 
 test('applyDesignRoutingActionPlan builds retained no-op payload in dry run', async () => {
@@ -339,7 +377,6 @@ test('applyDesignRoutingActionPlan builds retained no-op payload in dry run', as
   const result = await applyDesignRoutingActionPlan({
     normalizedItems: routed.normalized_items,
     routingDecisions: routed.routing_decisions,
-    routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
     mode: 'dry_run',
