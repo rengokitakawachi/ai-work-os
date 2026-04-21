@@ -55,6 +55,11 @@
     - routed_candidates への過積載を減らし、normalized / decision / action plan の境界を code 上で明示する
     - writer usecase は keep_items を no-op として扱う
     - operations candidate は queue payload までに留める
+    - issue / design / intake の routing return を新 handoff shape に統一した
+    - issue / design writer の旧 shape fallback を撤去した
+    - 通常系 test も新 shape 前提へ整理した
+  status: completed
+  completed: true
   due_date: 2026-04-21
   due_type: date
   external:
@@ -77,6 +82,9 @@
     - `20260418-022` と `20260419-023` を第一バッチ入力として routing する
     - route 判定、payload、operations candidate の rolling 接続可能性、route 多様性不足を記録する
     - `route_to: issue` / keep の結果も正規結果として観測する
+    - `notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md` に第一バッチ観測を記録した
+  status: completed
+  completed: true
   due_date: 2026-04-22
   due_type: date
   external:
@@ -95,6 +103,10 @@
   notes:
     - route ごとの結果、違和感、route 多様性不足、rolling 接続の妥当性を明示する
     - 必要なら design / report / issue へ返す
+    - `notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md` を作成済み
+    - 現行 gate では medium impact issue が keep に寄りすぎると確認した
+  status: completed
+  completed: true
   due_date: 2026-04-22
   due_type: date
   external:
