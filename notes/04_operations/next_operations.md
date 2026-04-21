@@ -18,31 +18,44 @@ active_operations に入らなかった上位候補を保持する。
 
 ### 補助 task
 
-- なし
+- `issue routing の第二バッチ候補を整理する`
+- `flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する`
 
-## 再評価結果（2026-04-20 daily review）
+## 再評価結果（2026-04-21 reroll）
 
-### archive へ移した task
+### active へ繰り上げた task
 
-- `routing と document writing の責務分離方針を整理する`
-- `issue routing と writer 間の action plan 受け渡し項目を定義する`
-
-### active 繰り上げ結果
-
-- `repo の adam_instruction.md 変更を ADAM instruction へ反映する`
-- `routing と writing を分離する最小実装を入れる`
-- `issue routing の第一バッチ運用実験を実施する`
-- `issue routing 第一バッチの観測結果を記録する`
+- `flow-control 周辺の node --test 実行確認を行う`
+- `issue routing の medium impact keep bias 補正案を design に整理する`
+- `issue routing の判定順補正を最小差分で実装する`
+- `issue routing 補正後の第一バッチ再観測を行う`
 
 理由
 
-- 2026-04-20 は issue routing の構造整理が前進し、design 2件は完了扱いにできた
-- 一方で ADAM instruction への実反映と code 側の最小実装は未完了であり、第一バッチ実験前に引き続き優先すべきである
-- docs 整理と Phase 1 接続案は補助 task として 1 日後ろに保持するのが自然だった
+- routing / writing 分離と new handoff shape 統一は code / notes 上で一段落したため、次の主論点は実行確認と issue routing 判定補正である
+- `node --test` の実行確認は、return compatibility 撤去後の回帰確認として最優先である
+- 第一バッチ観測では medium impact issue が keep に寄りすぎることが分かっており、次は gate 補正論点を design → code → 再観測の順で進めるのが自然である
 
 ## タスク
 
-- なし
+- task: issue routing の第二バッチ候補を整理する
+  source_ref:
+    - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
+  why_now:
+    - 第一バッチ再観測後も route 多様性が不足する場合に備え、次の観測入力候補を用意しておく価値がある
+  notes:
+    - design / operations / future / archive の未出 route を補える候補を優先する
+
+- task: flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する
+  source_ref:
+    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
+    - notes/08_analysis/2026-04-21_routing_return_compatibility_inventory.md
+  why_now:
+    - 今は handover 自体は不要だが、到達点をどの review 出力で回収するかの整理は後で必要になる
+  notes:
+    - 同一スレッド運用中は handover を作らない前提を維持する
 
 ---
 
