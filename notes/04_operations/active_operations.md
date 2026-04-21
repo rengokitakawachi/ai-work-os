@@ -197,12 +197,17 @@
   source_ref:
     - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
     - notes/08_analysis/2026-04-21_routing_return_compatibility_inventory.md
+    - notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md
   rolling_day: Day6
   why_now:
     - flow-control 側の到達点を review 出力でどう回収するか整理しておくと、Phase 0 完了判定を安定させやすい
   notes:
     - 同一スレッド運用中は handover を作らない前提を維持する
-    - report / daily review / weekly review のどこで回収するかを整理する
+    - analysis + active_operations で保持し、必要なら weekly report に要約を返す
+    - handover は次スレッド再開時にのみ使う
+    - `notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md` を作成した
+  status: completed
+  completed: true
 
 - task: ADAM instruction へ完成条件ベース判断手順を反映する
   source_ref:
