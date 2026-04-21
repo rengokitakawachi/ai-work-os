@@ -32,6 +32,9 @@
     - 前提変更を実験より先に置く原則
     - 送付先が自然でなければ issue に残してよい原則
     - repo 更新済みと実反映済みを混同しない
+    - 実際の ADAM instruction へ反映した
+  status: completed
+  completed: true
   due_date: 2026-04-21
   due_type: date
   external:
