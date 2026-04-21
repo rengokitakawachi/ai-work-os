@@ -4,181 +4,15 @@
 
 ### Phase 0 直結 task
 
-- `issue routing の第二バッチ候補を整理する`
-- `future / archive を観測できる issue 候補を追加する`
-- `第二バッチ issue を routing して route 結果を記録する`
-- `operations candidate を rolling に接続して反映確認する`
-- `keep / future / archive の運用妥当性を整理する`
+- `flow-control 周辺の node --test 実行確認を行う`
+- `intake routing の第一バッチ候補を整理する`
+- `intake routing の観測項目を analysis に落とす`
 
 ### 補助 task
 
-- `flow-control 周辺の node --test 実行確認を行う`
-- `flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する`
-- `ADAM 実運用 instruction へ完成条件ベース判断手順を反映確認する`
+- `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する`
 
-## Day0（04/21 火）
-
-- task: issue routing の medium impact keep bias 補正案を design に整理する
-  source_ref:
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
-    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
-    - src/services/flow-control/issue-routing.js
-  rolling_day: Day0
-  why_now:
-    - 第一バッチ観測で medium impact issue が keep に寄りすぎることが確認できたため、次は補正方針を先に固定する必要がある
-  notes:
-    - impact gate と category 判定の順序を論点化する
-    - architecture / operations issue が keep に吸われすぎない最小条件を整理した
-    - `notes/02_design/2026-04-21_issue_routing_medium_impact_keep_bias_adjustment.md` を作成した
-  status: completed
-  completed: true
-
-## Day1（04/22 水）
-
-- task: issue routing の判定順補正を最小差分で実装する
-  source_ref:
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
-    - src/services/flow-control/issue-routing.js
-    - src/services/flow-control/issue-routing-actions.js
-    - src/services/flow-control/issue-routing.test.js
-  rolling_day: Day1
-  why_now:
-    - 補正方針を design に固定した後で、最小差分の code 補正へ進むのが安全である
-  notes:
-    - medium impact keep gate の強さを弱めるか、category 判定を先に見るかを反映した
-    - `rules.js` で architecture / operations 判定を keep gate より前に出した
-    - `issue-routing.test.js` に medium impact route test を追加した
-  status: completed
-  completed: true
-
-## Day2（04/23 木）
-
-- task: issue routing 補正後の第一バッチ再観測を行う
-  source_ref:
-    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
-    - notes/01_issues/idea_log.md
-    - src/services/flow-control/issue-routing.js
-  rolling_day: Day2
-  why_now:
-    - 実装だけでは不十分であり、補正後に route 多様性と送付先遷移が改善したかを再観測する必要がある
-  notes:
-    - `20260418-022` と `20260419-023` の route 変化を比較した
-    - `notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md` を作成した
-    - design / operations route の回復見込みを確認した
-  status: completed
-  completed: true
-
-## Day3（04/24 金）
-
-- task: issue routing の第二バッチ候補を整理する
-  source_ref:
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
-    - notes/01_issues/idea_log.md
-    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
-    - notes/08_analysis/2026-04-21_issue_routing_second_batch_candidate_set.md
-    - notes/02_design/2026-04-21_issue_routing_second_batch_additional_issue_conditions.md
-  rolling_day: Day3
-  why_now:
-    - issue routing の完成条件は複数件の実例で route 多様性を観測することなので、第一バッチだけで止めずに次の入力候補を準備する必要がある
-  notes:
-    - design / operations / future / archive の未出 route を補える issue を優先する
-    - 第二バッチは観測不足の送付先を埋める観点で選ぶ
-    - `notes/08_analysis/2026-04-21_issue_routing_second_batch_candidate_set.md` を作成した
-    - keep / future / archive 用の追加条件を `notes/02_design/2026-04-21_issue_routing_second_batch_additional_issue_conditions.md` に固定した
-    - `20260421-025` `20260421-026` `20260421-027` を第二バッチ候補として issue log に追加した
-  status: completed
-  completed: true
-
-- task: future / archive を観測できる issue 候補を追加する
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/02_design/2026-04-21_issue_routing_second_batch_additional_issue_conditions.md
-  rolling_day: Day3
-  why_now:
-    - issue routing の完成条件には future / archive 送付の実運用確認が含まれているため、第二バッチ入力の時点で未出 route を補う必要がある
-  notes:
-    - closed issue または open 以外 status の issue 候補を用意する
-    - keep に偏らない route 観測を優先する
-    - `20260421-026` を future 観測用、`20260421-027` を archive 観測用、`20260421-025` を keep 観測用として追加した
-  status: completed
-  completed: true
-
-## Day4（04/25 土）
-
-- task: 第二バッチ issue を routing して route 結果を記録する
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
-    - src/services/flow-control/issue-routing.js
-    - src/services/flow-control/issue-routing-actions.js
-    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
-  rolling_day: Day4
-  why_now:
-    - 第二バッチ候補を集めるだけでは完成条件に届かず、実際の route 結果と action_plan を観測する必要がある
-  notes:
-    - design / operations / future / archive / issue の出方を記録した
-    - action_plan の route 多様性を確認した
-    - `notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md` を作成した
-  status: completed
-  completed: true
-
-- task: 第二バッチ観測結果を analysis に返す
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - src/services/flow-control/issue-routing.js
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
-    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
-  rolling_day: Day4
-  why_now:
-    - 実行だけでは不十分であり、第二バッチの観測結果を次の補正判断へ返す記録が必要である
-  notes:
-    - 未出 route は第二バッチ構成上ほぼ解消した
-    - 理由文と next_action の自然さを確認した
-    - keep と送付先のバランスを比較した
-  status: completed
-  completed: true
-
-## Day5（04/26 日）
-
-- task: operations candidate を rolling に接続して反映確認する
-  source_ref:
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
-    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
-    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
-    - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-    - src/services/flow-control/issue-routing-actions.js
-  rolling_day: Day5
-  why_now:
-    - issue routing の完成条件には operations へ送った候補が rolling に接続されることが含まれているため、operations candidate の反映先まで観測する必要がある
-  notes:
-    - `20260419-023` 由来 candidate は queue payload としては自然
-    - ただし current active へ直行ではなく、現時点 placement は future 寄りと観測した
-    - `notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md` を作成した
-  status: completed
-  completed: true
-
-- task: keep / future / archive の運用妥当性を整理する
-  source_ref:
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
-    - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
-    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day5
-  why_now:
-    - issue routing の完成条件には keep / archive / defer の判断が運用上破綻しないことが含まれるため、送付先ごとの妥当性をまとめて確認する必要がある
-  notes:
-    - keep / future / archive の再評価地点は、それぞれ daily / weekly / archive-confirm と整理した
-    - `keep` は現 phase 内の軽い保留、`future` は今は対象外、`archive` は役目終了として区別できると確認した
-    - `notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md` を作成した
-  status: completed
-  completed: true
-
-## Day6（04/27 月）
+## Day0（04/22 水）
 
 - task: flow-control 周辺の node --test 実行確認を行う
   source_ref:
@@ -186,44 +20,71 @@
     - src/services/flow-control/issue-routing.test.js
     - src/services/flow-control/design-routing.test.js
     - src/services/flow-control/intake-routing.test.js
-  rolling_day: Day6
+  rolling_day: Day0
   why_now:
     - issue routing と flow-control の運用観測を一巡した後で、構造変更由来の回帰有無を補助確認する価値がある
+    - 前日から明日へ繰り越した唯一の未完了 task であり、intake routing 本筋へ進む前に先に閉じるのが自然である
   notes:
     - `node --test` の実行可否と失敗箇所を記録する
     - flow-control 周辺の新 shape 主経路が通るかを確認する
 
-- task: flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する
-  source_ref:
-    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
-    - notes/08_analysis/2026-04-21_routing_return_compatibility_inventory.md
-    - notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md
-  rolling_day: Day6
-  why_now:
-    - flow-control 側の到達点を review 出力でどう回収するか整理しておくと、Phase 0 完了判定を安定させやすい
-  notes:
-    - 同一スレッド運用中は handover を作らない前提を維持する
-    - analysis + active_operations で保持し、必要なら weekly report に要約を返す
-    - handover は次スレッド再開時にのみ使う
-    - `notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md` を作成した
-  status: completed
-  completed: true
+## Day1（04/23 木）
 
-- task: ADAM 実運用 instruction へ完成条件ベース判断手順を反映確認する
+- task: intake routing の第一バッチ候補を整理する
   source_ref:
-    - config/ai/adam_instruction.md
+    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/04_operations/active_operations.md
-    - notes/08_analysis/2026-04-21_adam_runtime_instruction_reflection_confirmation.md
-  rolling_day: Day6
+  rolling_day: Day1
   why_now:
-    - repo 上の instruction 更新と、ADAM の実運用 instruction 反映は別であり、後者を未完了のまま completed 扱いにしないため
+    - issue routing の運用観測ラインは一巡したため、次の Phase 0 本筋は intake routing へ移るのが自然である
+    - intake routing の完成条件を観測するには、issue / design / future の 3 分岐を見られる第一バッチ入力を先に決める必要がある
   notes:
-    - config/ai/adam_instruction.md への repo 反映は実施済み
-    - issue routing 完了判定と反映 task 再オープン判断で runtime 反映を確認した
-    - `notes/08_analysis/2026-04-21_adam_runtime_instruction_reflection_confirmation.md` を作成した
-  status: completed
-  completed: true
+    - 実 inbox 入力または inbox 相当の入力束から選ぶ
+    - source_ref と inbox 後処理も見られる候補を優先する
+
+- task: intake routing の観測項目を analysis に落とす
+  source_ref:
+    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - src/services/flow-control/intake-routing.js
+    - src/services/flow-control/intake-routing.test.js
+  rolling_day: Day1
+  why_now:
+    - 実験入力だけでなく、route / source_ref / inbox 後処理 / role boundary のどこを確認するかを先に固定しておくと、issue routing と同じ粒度で完成判定しやすい
+  notes:
+    - issue / design / future の出方
+    - source_ref の自然さ
+    - inbox 後処理として archive / pending をどう扱うか
+
+## Day2（04/24 金）
+
+- task: flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する
+  source_ref:
+    - notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md
+    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
+  rolling_day: Day2
+  why_now:
+    - report / handover の返し先整理は終わったため、必要なら週次 report に返す最小要点だけを残しておく価値がある
+  notes:
+    - handover ではなく weekly report 向けの要点だけを整理する
+
+## Day3（04/25 土）
+
+- なし
+
+## Day4（04/26 日）
+
+- なし
+
+## Day5（04/27 月）
+
+- なし
+
+## Day6（04/28 火）
+
+- なし
 
 ---
 
@@ -245,4 +106,4 @@
 - 未完了タスクは翌日以降へ移動する
 - 完了タスクは必要に応じて archive_operations に移す
 - Phase 0 中は Flow Control / routing / operations の実運用整合を優先する
-- 直近の daily review rolling では、issue routing の継続実装と後処理統合を優先候補として扱う
+- 直近の daily review rolling では、intake routing の最小運用実験と flow-control 回帰確認を優先候補として扱う
