@@ -107,7 +107,7 @@ weekly review までの短期履歴置き場であり、
   - task は 0.5〜1.5時間程度を目安にする
   - Day は 1 task 固定ではなく複数 task を置いてよいことを固定した
 - `code resource の repo root allowlist 変更要求を整理する` を完了した
-  - allowlist 方式で repo root config file の read/create/update を許可した
+  - allowlist 方式で repo root config file の read と create/update を許可した
   - `package.json` の read と code tree 反映を確認した
 - `daily review の出力から content 抽出と operations rolling の接続ルールを design 観点で整理する` を完了した
   - `operations → Todoist projection → report → content` の順を固定した
@@ -137,11 +137,28 @@ weekly review までの短期履歴置き場であり、
 - `routing と document writing の責務分離方針を整理する` を完了した
   - `notes/02_design/2026-04-20_routing_and_document_writing_separation.md` を作成した
   - routing は再評価 / 分解統合 / 送付先判定 / action plan 生成までに留める方針を固定した
-  - issue routing では送付先が自然でなければ issue に残してよいことを明記した
 - `issue routing と writer 間の action plan 受け渡し項目を定義する` を完了した
   - `notes/02_design/2026-04-20_issue_routing_action_plan_handoff_schema.md` を作成した
   - `normalized_items / routing_decisions / action_plan` の3層受け渡しを固定した
   - `keep_items` を no-op とし、`route_to: issue` を正規結果として扱う前提を固定した
+
+--- 2026-04-21 daily review ---
+
+- `issue routing の medium impact keep bias 補正案を design に整理する` を完了した
+- `issue routing の判定順補正を最小差分で実装する` を完了した
+- `issue routing 補正後の第一バッチ再観測を行う` を完了した
+- `issue routing の第二バッチ候補を整理する` を完了した
+- `future / archive を観測できる issue 候補を追加する` を完了した
+- `第二バッチ issue を routing して route 結果を記録する` を完了した
+- `operations candidate を rolling に接続して反映確認する` を完了した
+- `keep / future / archive の運用妥当性を整理する` を完了した
+- `flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する` を完了した
+- `ADAM 実運用 instruction へ完成条件ベース判断手順を反映確認する` を完了した
+  - issue routing の運用観測ラインを一巡した
+  - `keep / future / archive` の役割差と再評価地点を整理した
+  - `route_to: operations` は即 active 化ではなく rolling 比較対象化であることを確認した
+  - `repo反映 / 正本反映 / 実運用反映` を分離する再発防止ルールを instruction に追加した
+  - 新スレッド冒頭の `ADAM_MMDD` を再開識別子として扱うルールを instruction に追加した
 
 ---
 
