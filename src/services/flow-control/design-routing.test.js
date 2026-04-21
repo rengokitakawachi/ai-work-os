@@ -5,6 +5,7 @@ import {
   routeSingleDesignCandidate,
   routeDesignNotes,
 } from './design-routing.js';
+import { buildDesignRoutingActionPlan } from './design-routing-actions.js';
 import { applyDesignRoutingActionPlan } from './design-routing-notes-write.js';
 import { buildDesignRoutingSourceBundle } from './adapters.js';
 
@@ -27,7 +28,7 @@ function buildDesignCandidate({
   };
 }
 
-test('routeSingleDesignCandidate returns docs when docs_ready and ready', () => {
+test('routeSingleDesignCandidate returns handoff-friendly shape for docs candidate', () => {
   const result = routeSingleDesignCandidate({
     item: buildDesignCandidate({
       title: 'design-routing-output-schema',
@@ -41,7 +42,10 @@ test('routeSingleDesignCandidate returns docs when docs_ready and ready', () => 
   });
 
   assert.equal(result.mode, 'dry_run');
-  assert.equal(result.routed_design_candidates[0].route_to, 'docs');
+  assert.equal(result.normalized_items.length, 1);
+  assert.equal(result.routing_decisions.length, 1);
+  assert.equal(result.routed_design_candidates.length, 1);
+  assert.equal(result.routing_decisions[0].route_to, 'docs');
   assert.equal(result.action_plan.docs_candidates.length, 1);
   assert.equal(result.action_plan.operations_candidates.length, 0);
 });
@@ -60,7 +64,7 @@ test('routeSingleDesignCandidate returns archive when superseded', () => {
     }),
   });
 
-  assert.equal(result.routed_design_candidates[0].route_to, 'archive');
+  assert.equal(result.routing_decisions[0].route_to, 'archive');
   assert.equal(result.action_plan.archive_design.length, 1);
 });
 
@@ -78,7 +82,7 @@ test('routeSingleDesignCandidate returns future when deferred', () => {
     phase: 'phase0',
   });
 
-  assert.equal(result.routed_design_candidates[0].route_to, 'future');
+  assert.equal(result.routing_decisions[0].route_to, 'future');
   assert.equal(result.action_plan.future_candidates.length, 1);
 });
 
@@ -95,7 +99,7 @@ test('routeSingleDesignCandidate returns operations when execution value exists 
     }),
   });
 
-  assert.equal(result.routed_design_candidates[0].route_to, 'operations');
+  assert.equal(result.routing_decisions[0].route_to, 'operations');
   assert.equal(result.action_plan.operations_candidates.length, 1);
   assert.equal(
     result.action_plan.operations_candidates[0].candidate_draft.task,
@@ -116,9 +120,49 @@ test('routeSingleDesignCandidate falls back to design retain', () => {
     }),
   });
 
-  assert.equal(result.routed_design_candidates[0].route_to, 'design');
+  assert.equal(result.routing_decisions[0].route_to, 'design');
   assert.equal(result.action_plan.design_retained.length, 1);
   assert.equal(result.action_plan.design_retained[0].write_status, 'no_op');
+});
+
+test('buildDesignRoutingActionPlan accepts normalized_items and routing_decisions directly', () => {
+  const normalizedItems = [
+    {
+      item_id: 'design-routing-output-schema',
+      candidate_id: 'design:test',
+      design_id: 'design-routing-output-schema',
+      source_type: 'design',
+      source_ref: ['notes/02_design/example.md'],
+      title: 'design-routing-output-schema',
+      summary: 'docs candidate',
+      metadata: {},
+    },
+  ];
+
+  const routingDecisions = [
+    {
+      item_id: 'design-routing-output-schema',
+      candidate_id: 'design:test',
+      design_id: 'design-routing-output-schema',
+      route_to: 'docs',
+      reason: 'docs 昇格条件を満たすため docs 候補にする',
+      evaluated_at: '2026-04-21T00:00:00.000Z',
+      maturity_now: 'ready',
+      execution_value_now: 'high',
+      docs_ready_now: true,
+      review_at: 'monthly_review',
+      next_action: 'prepare_docs_candidate',
+    },
+  ];
+
+  const actionPlan = buildDesignRoutingActionPlan({
+    normalizedItems,
+    routingDecisions,
+  });
+
+  assert.equal(actionPlan.docs_candidates.length, 1);
+  assert.equal(actionPlan.design_retained.length, 0);
+  assert.equal(actionPlan.operations_candidates.length, 0);
 });
 
 test('buildDesignRoutingSourceBundle creates one design item from markdown note', () => {
@@ -143,6 +187,8 @@ test('routeDesignNotes returns dry run output shape', () => {
   });
 
   assert.equal(result.mode, 'dry_run');
+  assert.ok(Array.isArray(result.normalized_items));
+  assert.ok(Array.isArray(result.routing_decisions));
   assert.ok(Array.isArray(result.routed_design_candidates));
   assert.ok(result.action_plan);
   assert.ok(Array.isArray(result.action_plan.docs_candidates));
@@ -153,7 +199,7 @@ test('routeDesignNotes returns dry run output shape', () => {
   assert.ok(Array.isArray(result.action_plan.skipped));
 });
 
-test('applyDesignRoutingActionPlan builds docs candidate payload in dry run', async () => {
+test('applyDesignRoutingActionPlan builds docs candidate payload in dry run from new schema', async () => {
   const routed = routeSingleDesignCandidate({
     item: buildDesignCandidate({
       title: 'design-routing-output-schema',
@@ -167,6 +213,8 @@ test('applyDesignRoutingActionPlan builds docs candidate payload in dry run', as
   });
 
   const result = await applyDesignRoutingActionPlan({
+    normalizedItems: routed.normalized_items,
+    routingDecisions: routed.routing_decisions,
     routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
@@ -198,6 +246,8 @@ test('applyDesignRoutingActionPlan builds future payload in dry run', async () =
   });
 
   const result = await applyDesignRoutingActionPlan({
+    normalizedItems: routed.normalized_items,
+    routingDecisions: routed.routing_decisions,
     routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
@@ -226,6 +276,8 @@ test('applyDesignRoutingActionPlan builds archive payload in dry run', async () 
   });
 
   const result = await applyDesignRoutingActionPlan({
+    normalizedItems: routed.normalized_items,
+    routingDecisions: routed.routing_decisions,
     routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
@@ -253,6 +305,8 @@ test('applyDesignRoutingActionPlan builds operations candidate payload in dry ru
   });
 
   const result = await applyDesignRoutingActionPlan({
+    normalizedItems: routed.normalized_items,
+    routingDecisions: routed.routing_decisions,
     routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
@@ -283,6 +337,8 @@ test('applyDesignRoutingActionPlan builds retained no-op payload in dry run', as
   });
 
   const result = await applyDesignRoutingActionPlan({
+    normalizedItems: routed.normalized_items,
+    routingDecisions: routed.routing_decisions,
     routedDesignCandidates: routed.routed_design_candidates,
     actionPlan: routed.action_plan,
     sourceRef: ['notes/02_design/example.md'],
