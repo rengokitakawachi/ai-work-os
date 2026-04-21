@@ -13,6 +13,7 @@
 
 - `issue routing の第二バッチ候補を整理する`
 - `flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する`
+- `ADAM instruction へ完成条件ベース判断手順を反映する`
 
 ## Day0（04/21 火）
 
@@ -74,7 +75,18 @@
 
 ## Day3（04/24 金）
 
-- なし
+- task: ADAM instruction へ完成条件ベース判断手順を反映する
+  source_ref:
+    - config/ai/adam_instruction.md
+    - notes/02_design/2026-04-21_issue_routing_medium_impact_keep_bias_adjustment.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+  rolling_day: Day3
+  why_now:
+    - 完成条件を主語に task を組む判断を再現可能にするには、instruction へ明示的に反映して運用ルール化する必要がある
+  notes:
+    - completed condition 未達チェック
+    - 運用完成型 usecase では未達観測から次 task を選ぶ原則
+    - コード差分や test の有無だけで completed と判定しない原則
 
 ## Day4（04/25 土）
 
