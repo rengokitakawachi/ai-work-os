@@ -158,19 +158,25 @@
     - `20260419-023` 由来 candidate は queue payload としては自然
     - ただし current active へ直行ではなく、現時点 placement は future 寄りと観測した
     - `notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md` を作成した
+  status: completed
+  completed: true
 
 - task: keep / future / archive の運用妥当性を整理する
   source_ref:
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
     - notes/08_analysis/2026-04-21_issue_routing_second_batch_dry_run_observation.md
+    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
   rolling_day: Day5
   why_now:
     - issue routing の完成条件には keep / archive / defer の判断が運用上破綻しないことが含まれるため、送付先ごとの妥当性をまとめて確認する必要がある
   notes:
-    - keep / future / archive の再評価地点が自然か確認する
-    - 観測結果を次の routing 補正要否へ返す
+    - keep / future / archive の再評価地点は、それぞれ daily / weekly / archive-confirm と整理した
+    - `keep` は現 phase 内の軽い保留、`future` は今は対象外、`archive` は役目終了として区別できると確認した
+    - `notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md` を作成した
+  status: completed
+  completed: true
 
 ## Day6（04/27 月）
 
