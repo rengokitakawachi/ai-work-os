@@ -14,7 +14,7 @@
 
 - `flow-control 周辺の node --test 実行確認を行う`
 - `flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する`
-- `ADAM instruction へ完成条件ベース判断手順を反映する`
+- `ADAM 実運用 instruction へ完成条件ベース判断手順を反映確認する`
 
 ## Day0（04/21 火）
 
@@ -209,18 +209,18 @@
   status: completed
   completed: true
 
-- task: ADAM instruction へ完成条件ベース判断手順を反映する
+- task: ADAM 実運用 instruction へ完成条件ベース判断手順を反映確認する
   source_ref:
     - config/ai/adam_instruction.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/04_operations/active_operations.md
   rolling_day: Day6
   why_now:
-    - 完成条件を主語に task を組む判断を再現可能にするには、instruction へ明示的に反映して運用ルール化する必要がある
+    - repo 上の instruction 更新と、ADAM の実運用 instruction 反映は別であり、後者を未完了のまま completed 扱いにしないため
   notes:
     - config/ai/adam_instruction.md への repo 反映は実施済み
-    - 実運用で継続して使える判断手順として保持する
-  status: completed
-  completed: true
+    - 実運用で completed condition ベース判断が継続して効くかは別途確認する
+    - repo 更新済みを理由に task を閉じない
 
 ---
 
