@@ -9,7 +9,8 @@
 `routeDesignCandidates`
 が返した
 
-- `routed_design_candidates`
+- `normalized_items`
+- `routing_decisions`
 - `action_plan`
 
 を受けて、
@@ -23,6 +24,9 @@
 をどのように生成し、
 何を返すかを最小構成で定義するための design である。
 
+`routed_design_candidates`
+は互換用の補助入力として扱う。
+
 ---
 
 ## 結論
@@ -33,7 +37,8 @@
 
 この usecase は、
 
-- `routed_design_candidates`
+- `normalized_items`
+- `routing_decisions`
 - `action_plan`
 - `source_ref`
 - `mode`
@@ -41,6 +46,10 @@
 
 を受け取り、
 後段で扱う payload 群を返す。
+
+必要に応じて、
+`routed_design_candidates`
+を fallback 参照してよい。
 
 ただし最小段階では、
 **docs へ直接 apply しない。**
@@ -89,19 +98,32 @@ no-op の retained result を返すだけでよい。
 
 ## 最小入力
 
-- `routed_design_candidates`
+- `normalized_items`
+- `routing_decisions`
 - `action_plan`
 - `source_ref`
 - `mode`
 - `now`
 
-### routed_design_candidates
+### normalized_items
 
 少なくとも次を参照できる前提とする。
 
+- `item_id`
 - `candidate_id`
-- `design_id` or `path`
+- `design_id`
+- `source_ref`
 - `title`
+- `summary`
+- `metadata`
+
+### routing_decisions
+
+少なくとも次を参照できる前提とする。
+
+- `item_id`
+- `candidate_id`
+- `design_id`
 - `route_to`
 - `reason`
 - `evaluated_at`
@@ -110,8 +132,6 @@ no-op の retained result を返すだけでよい。
 - `docs_ready_now`
 - `review_at`
 - `next_action`
-- `source_ref`
-- `metadata`
 
 ### action_plan
 
@@ -147,6 +167,13 @@ no-op の retained result を返すだけでよい。
 時刻依存を固定するための入力。
 
 未指定時は `new Date().toISOString()` でよい。
+
+### routed_design_candidates
+
+互換用の補助入力。
+
+`normalized_items / routing_decisions`
+から参照できない情報がある場合の fallback として使ってよい。
 
 ---
 
@@ -206,7 +233,7 @@ no-op の retained result を返すだけでよい。
 
 最小項目
 
-- `design_id` or `path`
+- `design_id`
 - `title`
 - `route_to: design`
 - `reason`
@@ -351,9 +378,11 @@ future / archive の body は最小で次を含む。
 ### apply
 
 最小段階では、
+
 `future_writes`
 と
 `archive_writes`
+
 だけ先に apply してよい。
 
 ただし、
@@ -366,63 +395,35 @@ future / archive の body は最小で次を含む。
 
 ---
 
-## 最小 I/O 例
-
-### 入力
-
-- design A
-  - route_to: docs
-
-- design B
-  - route_to: design
-
-- design C
-  - route_to: future
-
-- design D
-  - route_to: archive
-
-- design E
-  - route_to: operations
-
-### 出力
-
-- `docs_candidate_writes`
-  - design A の docs patch proposal
-
-- `design_retained_results`
-  - design B の retained no-op
-
-- `future_writes`
-  - design C の future/design draft
-
-- `archive_writes`
-  - design D の archive/design draft
-
-- `operations_candidate_writes`
-  - design E の operations queue payload
-
----
-
 ## issue routing notes write との対称性
 
 ### issue routing
 
 - `applyIssueRoutingActionPlan`
-- `design_writes`
-- `operations_candidate_writes`
-- `future_writes`
-- `archive_writes`
-- `kept_issues`
+- 入力:
+  - `normalized_items`
+  - `routing_decisions`
+  - `action_plan`
+- 出力:
+  - `design_writes`
+  - `operations_candidate_writes`
+  - `future_writes`
+  - `archive_writes`
+  - `kept_items`
 
 ### design routing
 
 - `applyDesignRoutingActionPlan`
-- `docs_candidate_writes`
-- `design_retained_results`
-- `future_writes`
-- `archive_writes`
-- `operations_candidate_writes`
+- 入力:
+  - `normalized_items`
+  - `routing_decisions`
+  - `action_plan`
+- 出力:
+  - `docs_candidate_writes`
+  - `design_retained_results`
+  - `future_writes`
+  - `archive_writes`
+  - `operations_candidate_writes`
 
 この対称性により、
 flow-control の post-routing usecase 群を揃えやすくなる。
@@ -441,6 +442,16 @@ flow-control の post-routing usecase 群を揃えやすくなる。
 - retained no-op
 
 を生成して返すことに置くのが自然である。
+
+その主入力は
+
+- `normalized_items`
+- `routing_decisions`
+- `action_plan`
+
+であり、
+`routed_design_candidates`
+は互換用の補助入力として扱えばよい。
 
 この形なら、
 docs 直接反映や active 直接更新を避けつつ、
