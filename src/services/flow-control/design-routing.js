@@ -1,4 +1,4 @@
-import { ensureString } from './common.js';
+import { ensureObject, ensureString } from './common.js';
 import { collectCandidates } from './candidate.js';
 import { normalizeCandidates } from './normalize.js';
 import { buildDesignRoutingEvaluations } from './design-routing-rules.js';
@@ -64,13 +64,75 @@ function buildDesignTaskDraft(candidate = {}, evaluation = {}) {
   };
 }
 
-function buildDesignRoutingDecision(candidate = {}, evaluation = {}) {
-  const taskDraft = buildDesignTaskDraft(candidate, evaluation);
+function buildNormalizedDesignItem(candidate = {}) {
+  const metadata = ensureObject(candidate?.metadata);
 
   return {
-    ...candidate,
-    ...evaluation,
+    item_id:
+      ensureString(candidate?.design_id) ||
+      ensureString(candidate?.path) ||
+      ensureString(candidate?.candidate_id),
+    candidate_id: ensureString(candidate?.candidate_id),
+    design_id:
+      ensureString(candidate?.design_id) ||
+      ensureString(candidate?.path) ||
+      ensureString(candidate?.candidate_id),
+    source_type: ensureString(candidate?.source_type) || 'design',
+    source_ref: Array.isArray(candidate?.source_ref) ? candidate.source_ref : [],
+    title: ensureString(candidate?.title),
+    summary: ensureString(candidate?.summary),
+    metadata,
+  };
+}
+
+function buildDesignRoutingDecision(normalizedItem = {}, evaluation = {}) {
+  const taskDraft = buildDesignTaskDraft(normalizedItem, evaluation);
+
+  return {
+    item_id:
+      ensureString(normalizedItem?.item_id) ||
+      ensureString(normalizedItem?.candidate_id),
+    candidate_id:
+      ensureString(normalizedItem?.candidate_id) ||
+      ensureString(evaluation?.candidate_id),
+    design_id: ensureString(normalizedItem?.design_id),
+    route_to: ensureString(evaluation?.route_to),
+    reason: ensureString(evaluation?.reason),
+    evaluated_at: ensureString(evaluation?.evaluated_at),
+    maturity_now: ensureString(evaluation?.maturity_now),
+    execution_value_now: ensureString(evaluation?.execution_value_now),
+    docs_ready_now: Boolean(evaluation?.docs_ready_now),
+    review_at: ensureString(evaluation?.review_at),
+    next_action: ensureString(evaluation?.next_action),
+    needs_task_generation: Boolean(evaluation?.needs_task_generation),
     ...(taskDraft ? { task_draft: taskDraft } : {}),
+  };
+}
+
+function buildRoutedDesignCandidate(normalizedItem = {}, routingDecision = {}) {
+  return {
+    candidate_id:
+      ensureString(normalizedItem?.candidate_id) ||
+      ensureString(routingDecision?.candidate_id),
+    design_id: ensureString(normalizedItem?.design_id),
+    item_id: ensureString(normalizedItem?.item_id),
+    source_type: ensureString(normalizedItem?.source_type),
+    source_ref: Array.isArray(normalizedItem?.source_ref)
+      ? normalizedItem.source_ref
+      : [],
+    title: ensureString(normalizedItem?.title),
+    summary: ensureString(normalizedItem?.summary),
+    metadata: ensureObject(normalizedItem?.metadata),
+    route_to: ensureString(routingDecision?.route_to),
+    reason: ensureString(routingDecision?.reason),
+    evaluated_at: ensureString(routingDecision?.evaluated_at),
+    maturity_now: ensureString(routingDecision?.maturity_now),
+    execution_value_now: ensureString(routingDecision?.execution_value_now),
+    docs_ready_now: Boolean(routingDecision?.docs_ready_now),
+    review_at: ensureString(routingDecision?.review_at),
+    next_action: ensureString(routingDecision?.next_action),
+    needs_task_generation: Boolean(routingDecision?.needs_task_generation),
+    ...(routingDecision?.task_draft ? { task_draft: routingDecision.task_draft } : {}),
   };
 }
 
@@ -90,20 +152,35 @@ export function routeDesignCandidates({
     evaluations.map((evaluation) => [evaluation.candidate_id, evaluation])
   );
 
-  const routedDesignCandidates = normalizedCandidates.map((candidate) =>
+  const normalizedItems = normalizedCandidates.map((candidate) =>
+    buildNormalizedDesignItem(candidate)
+  );
+
+  const routingDecisions = normalizedItems.map((item) =>
     buildDesignRoutingDecision(
-      candidate,
-      evaluationMap.get(candidate.candidate_id) || {}
+      item,
+      evaluationMap.get(ensureString(item?.candidate_id)) || {}
     )
   );
 
-  const grouped = groupDesignRoutingDecisions(routedDesignCandidates);
-  const actionPlan = buildDesignRoutingActionPlan(grouped);
+  const routedDesignCandidates = normalizedItems.map((item, index) =>
+    buildRoutedDesignCandidate(item, routingDecisions[index] || {})
+  );
+
+  const grouped = groupDesignRoutingDecisions(routingDecisions);
+  const actionPlan = buildDesignRoutingActionPlan({
+    normalizedItems,
+    routingDecisions,
+    routedDesignCandidates,
+  });
 
   return {
     mode: ensureString(mode) || 'dry_run',
-    routed_design_candidates: routedDesignCandidates,
+    normalized_items: normalizedItems,
+    routing_decisions: routingDecisions,
     action_plan: actionPlan,
+    routed_design_candidates: routedDesignCandidates,
+    grouped,
   };
 }
 
