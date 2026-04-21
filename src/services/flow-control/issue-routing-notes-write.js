@@ -26,38 +26,99 @@ function buildSuggestedFile({ layer = '', issueId = '', title = '', now = '' } =
   return `${layer}/${datePrefix}_${safeIssueId}_${safeSlug}.md`;
 }
 
-function resolveCandidateForActionItem(actionItem = {}, routedCandidateMap = new Map()) {
-  const candidateId = ensureString(actionItem?.candidate_id);
-  return routedCandidateMap.get(candidateId) || {};
-}
-
 function uniqueStrings(values = []) {
   return Array.from(new Set(ensureStringArray(values))).filter(Boolean);
 }
 
-function mergeSourceRef(actionItem = {}, context = {}) {
+function createItemLookupMaps({
+  normalizedItems = [],
+  routingDecisions = [],
+  routedCandidates = [],
+} = {}) {
+  const normalizedByCandidateId = new Map(
+    (Array.isArray(normalizedItems) ? normalizedItems : [])
+      .map((item) => [ensureString(item?.candidate_id), item])
+      .filter(([key]) => key)
+  );
+
+  const routingByCandidateId = new Map(
+    (Array.isArray(routingDecisions) ? routingDecisions : [])
+      .map((decision) => [ensureString(decision?.candidate_id), decision])
+      .filter(([key]) => key)
+  );
+
+  const routedByCandidateId = new Map(
+    (Array.isArray(routedCandidates) ? routedCandidates : [])
+      .map((candidate) => [ensureString(candidate?.candidate_id), candidate])
+      .filter(([key]) => key)
+  );
+
+  return {
+    normalizedByCandidateId,
+    routingByCandidateId,
+    routedByCandidateId,
+  };
+}
+
+function resolveContextForActionItem(actionItem = {}, lookupMaps = {}) {
+  const candidateId = ensureString(actionItem?.candidate_id);
+  const normalizedItem = lookupMaps?.normalizedByCandidateId?.get(candidateId) || {};
+  const routingDecision = lookupMaps?.routingByCandidateId?.get(candidateId) || {};
+  const routedCandidate = lookupMaps?.routedByCandidateId?.get(candidateId) || {};
+
+  return {
+    normalizedItem,
+    routingDecision,
+    routedCandidate,
+  };
+}
+
+function mergeSourceRef(actionItem = {}, resolvedContext = {}, context = {}) {
   return uniqueStrings([
     ...ensureStringArray(actionItem?.source_ref),
+    ...ensureStringArray(resolvedContext?.normalizedItem?.source_ref),
+    ...ensureStringArray(resolvedContext?.routedCandidate?.source_ref),
     ...ensureStringArray(context?.sourceRef),
   ]);
 }
 
-function mergeRelatedRefs(actionItem = {}, context = {}) {
+function mergeRelatedRefs(actionItem = {}, resolvedContext = {}, context = {}) {
+  const metadata = ensureObject(actionItem?.metadata);
+
   return uniqueStrings([
-    ...mergeSourceRef(actionItem, context),
-    ...ensureStringArray(actionItem?.metadata?.context_refs),
+    ...mergeSourceRef(actionItem, resolvedContext, context),
+    ...ensureStringArray(metadata?.context_refs),
   ]);
 }
 
-function resolveQuickWin(actionItem = {}, routedCandidate = {}) {
+function resolveQuickWin(actionItem = {}, resolvedContext = {}) {
+  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
+  const metadata = ensureObject(actionItem?.metadata);
+
   const value = (
     ensureString(actionItem?.quick_win) ||
-    ensureString(actionItem?.metadata?.quick_win) ||
+    ensureString(metadata?.quick_win) ||
     ensureString(routedCandidate?.quick_win) ||
     ensureString(routedCandidate?.metadata?.quick_win)
   ).toLowerCase();
 
   return ['high', 'medium', 'low'].includes(value) ? value : '';
+}
+
+function resolveSummary(actionItem = {}, resolvedContext = {}, fallback = '') {
+  const metadata = ensureObject(actionItem?.metadata);
+  const normalizedItem = ensureObject(resolvedContext?.normalizedItem);
+  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
+
+  return (
+    ensureString(actionItem?.description) ||
+    ensureString(normalizedItem?.description) ||
+    ensureString(normalizedItem?.summary) ||
+    ensureString(routedCandidate?.description) ||
+    ensureString(routedCandidate?.summary) ||
+    ensureString(metadata?.description) ||
+    fallback
+  );
 }
 
 function buildSourceIssueSection({ sourceIssueId = '' } = {}) {
@@ -180,11 +241,11 @@ function buildBody({
   ].join('\n');
 }
 
-function buildDesignWrite(actionItem = {}, routedCandidate = {}, context = {}) {
+function buildDesignWrite(actionItem = {}, resolvedContext = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
-  const sourceRef = mergeSourceRef(actionItem, context);
-  const relatedContextRefs = mergeRelatedRefs(actionItem, context);
+  const sourceRef = mergeSourceRef(actionItem, resolvedContext, context);
+  const relatedContextRefs = mergeRelatedRefs(actionItem, resolvedContext, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -198,6 +259,7 @@ function buildDesignWrite(actionItem = {}, routedCandidate = {}, context = {}) {
     title,
     source_ref: sourceRef,
     derived_from_issue_id: issueId,
+    derived_from_item_id: ensureString(actionItem?.item_id),
     evaluated_at: ensureString(actionItem?.evaluated_at),
     impact_now: ensureString(actionItem?.impact_now),
     urgency_now: ensureString(actionItem?.urgency_now),
@@ -214,22 +276,72 @@ function buildDesignWrite(actionItem = {}, routedCandidate = {}, context = {}) {
       impactNow: ensureString(actionItem?.impact_now),
       urgencyNow: ensureString(actionItem?.urgency_now),
       nextAction: ensureString(actionItem?.next_action),
-      summary:
-        ensureString(routedCandidate?.summary) ||
-        ensureString(metadata?.description) ||
-        'design draft generated from issue routing action plan',
+      summary: resolveSummary(
+        actionItem,
+        resolvedContext,
+        'design draft generated from issue routing action plan'
+      ),
       relatedContext: ensureString(metadata?.context),
       relatedContextRefs,
     }),
   });
 }
 
-function buildOperationsCandidateWrite(actionItem = {}, routedCandidate = {}, context = {}) {
-  const quickWin = resolveQuickWin(actionItem, routedCandidate);
+function buildPlanWrite(actionItem = {}, resolvedContext = {}, context = {}) {
+  const issueId = ensureString(actionItem?.issue_id);
+  const title = ensureString(actionItem?.title);
+  const sourceRef = mergeSourceRef(actionItem, resolvedContext, context);
+  const relatedContextRefs = mergeRelatedRefs(actionItem, resolvedContext, context);
+  const metadata = ensureObject(actionItem?.metadata);
+
+  return compactObject({
+    target_layer: '03_plan',
+    suggested_file: buildSuggestedFile({
+      layer: '03_plan',
+      issueId,
+      title,
+      now: context.now,
+    }),
+    title,
+    source_ref: sourceRef,
+    derived_from_issue_id: issueId,
+    derived_from_item_id: ensureString(actionItem?.item_id),
+    evaluated_at: ensureString(actionItem?.evaluated_at),
+    impact_now: ensureString(actionItem?.impact_now),
+    urgency_now: ensureString(actionItem?.urgency_now),
+    reason: ensureString(actionItem?.reason),
+    action_type: ensureString(actionItem?.action_type),
+    write_status: context.mode,
+    body: buildBody({
+      title,
+      sourceIssueId: issueId,
+      sourceRef,
+      routeTo: ensureString(actionItem?.route_to),
+      reason: ensureString(actionItem?.reason),
+      evaluatedAt: ensureString(actionItem?.evaluated_at),
+      impactNow: ensureString(actionItem?.impact_now),
+      urgencyNow: ensureString(actionItem?.urgency_now),
+      nextAction: ensureString(actionItem?.next_action),
+      summary: resolveSummary(
+        actionItem,
+        resolvedContext,
+        'plan draft generated from issue routing action plan'
+      ),
+      relatedContext: ensureString(metadata?.context),
+      relatedContextRefs,
+    }),
+  });
+}
+
+function buildOperationsCandidateWrite(actionItem = {}, resolvedContext = {}, context = {}) {
+  const quickWin = resolveQuickWin(actionItem, resolvedContext);
+  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
+
   return compactObject({
     target_layer: '04_operations',
     title: ensureString(actionItem?.title),
     derived_from_issue_id: ensureString(actionItem?.issue_id),
+    derived_from_item_id: ensureString(actionItem?.item_id),
     route_to: ensureString(actionItem?.route_to),
     reason: ensureString(actionItem?.reason),
     evaluated_at: ensureString(actionItem?.evaluated_at),
@@ -240,26 +352,27 @@ function buildOperationsCandidateWrite(actionItem = {}, routedCandidate = {}, co
     quick_win: quickWin,
     candidate_draft:
       compactObject({
-        ...(ensureObject(routedCandidate?.task_draft) || {
-          task: ensureString(actionItem?.title),
-          source_ref: mergeSourceRef(actionItem, context),
-          notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
-        }),
+        ...(ensureObject(actionItem?.task_draft) ||
+          ensureObject(routedCandidate?.task_draft) || {
+            task: ensureString(actionItem?.title),
+            source_ref: mergeSourceRef(actionItem, resolvedContext, context),
+            notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
+          }),
         ...(quickWin ? { quick_win: quickWin } : {}),
       }) || {
         task: ensureString(actionItem?.title),
-        source_ref: mergeSourceRef(actionItem, context),
+        source_ref: mergeSourceRef(actionItem, resolvedContext, context),
         notes: [`generated_from_issue:${ensureString(actionItem?.issue_id)}`],
       },
     mode: context.mode,
   });
 }
 
-function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
+function buildFutureWrite(actionItem = {}, resolvedContext = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
-  const sourceRef = mergeSourceRef(actionItem, context);
-  const relatedContextRefs = mergeRelatedRefs(actionItem, context);
+  const sourceRef = mergeSourceRef(actionItem, resolvedContext, context);
+  const relatedContextRefs = mergeRelatedRefs(actionItem, resolvedContext, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -273,6 +386,7 @@ function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
     title,
     source_ref: sourceRef,
     derived_from_issue_id: issueId,
+    derived_from_item_id: ensureString(actionItem?.item_id),
     evaluated_at: ensureString(actionItem?.evaluated_at),
     impact_now: ensureString(actionItem?.impact_now),
     urgency_now: ensureString(actionItem?.urgency_now),
@@ -289,10 +403,11 @@ function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
       impactNow: ensureString(actionItem?.impact_now),
       urgencyNow: ensureString(actionItem?.urgency_now),
       nextAction: ensureString(actionItem?.next_action),
-      summary:
-        ensureString(routedCandidate?.summary) ||
-        ensureString(metadata?.description) ||
-        'future draft generated from issue routing action plan',
+      summary: resolveSummary(
+        actionItem,
+        resolvedContext,
+        'future draft generated from issue routing action plan'
+      ),
       relatedContext: ensureString(metadata?.context),
       relatedContextRefs,
       extraSections: [
@@ -309,11 +424,11 @@ function buildFutureWrite(actionItem = {}, routedCandidate = {}, context = {}) {
   });
 }
 
-function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) {
+function buildArchiveWrite(actionItem = {}, resolvedContext = {}, context = {}) {
   const issueId = ensureString(actionItem?.issue_id);
   const title = ensureString(actionItem?.title);
-  const sourceRef = mergeSourceRef(actionItem, context);
-  const relatedContextRefs = mergeRelatedRefs(actionItem, context);
+  const sourceRef = mergeSourceRef(actionItem, resolvedContext, context);
+  const relatedContextRefs = mergeRelatedRefs(actionItem, resolvedContext, context);
   const metadata = ensureObject(actionItem?.metadata);
 
   return compactObject({
@@ -327,6 +442,7 @@ function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) 
     title,
     source_ref: sourceRef,
     derived_from_issue_id: issueId,
+    derived_from_item_id: ensureString(actionItem?.item_id),
     evaluated_at: ensureString(actionItem?.evaluated_at),
     impact_now: ensureString(actionItem?.impact_now),
     urgency_now: ensureString(actionItem?.urgency_now),
@@ -343,10 +459,11 @@ function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) 
       impactNow: ensureString(actionItem?.impact_now),
       urgencyNow: ensureString(actionItem?.urgency_now),
       nextAction: ensureString(actionItem?.next_action),
-      summary:
-        ensureString(routedCandidate?.summary) ||
-        ensureString(metadata?.description) ||
-        'archive draft generated from issue routing action plan',
+      summary: resolveSummary(
+        actionItem,
+        resolvedContext,
+        'archive draft generated from issue routing action plan'
+      ),
       relatedContext: ensureString(metadata?.context),
       relatedContextRefs,
       extraSections: [
@@ -359,8 +476,9 @@ function buildArchiveWrite(actionItem = {}, routedCandidate = {}, context = {}) 
   });
 }
 
-function buildKeptIssue(actionItem = {}) {
+function buildKeptItem(actionItem = {}) {
   return compactObject({
+    item_id: ensureString(actionItem?.item_id),
     issue_id: ensureString(actionItem?.issue_id),
     title: ensureString(actionItem?.title),
     route_to: ensureString(actionItem?.route_to),
@@ -373,22 +491,25 @@ function buildKeptIssue(actionItem = {}) {
   });
 }
 
-function createRoutedCandidateMap(routedCandidates = []) {
-  return new Map(
-    (Array.isArray(routedCandidates) ? routedCandidates : []).map((candidate) => [
-      ensureString(candidate?.candidate_id),
-      candidate,
-    ])
-  );
+function selectBucket(actionPlan = {}, primaryKey = '', legacyKey = '') {
+  if (Array.isArray(actionPlan?.[primaryKey])) {
+    return actionPlan[primaryKey];
+  }
+
+  if (legacyKey && Array.isArray(actionPlan?.[legacyKey])) {
+    return actionPlan[legacyKey];
+  }
+
+  return [];
 }
 
-async function applyDesignWrite(designWrite = {}, context = {}) {
-  const suggestedFile = ensureString(designWrite?.suggested_file);
-  const body = ensureString(designWrite?.body);
+async function applyDocumentWrite(documentWrite = {}) {
+  const suggestedFile = ensureString(documentWrite?.suggested_file);
+  const body = ensureString(documentWrite?.body);
 
   if (!suggestedFile || !body) {
     return {
-      ...designWrite,
+      ...documentWrite,
       write_status: 'invalid_payload',
     };
   }
@@ -403,7 +524,7 @@ async function applyDesignWrite(designWrite = {}, context = {}) {
     );
 
     return {
-      ...designWrite,
+      ...documentWrite,
       write_status: 'updated',
       path: result?.path || '',
       sha: result?.sha || '',
@@ -411,7 +532,7 @@ async function applyDesignWrite(designWrite = {}, context = {}) {
   } catch (error) {
     if (error?.code !== 'NOT_FOUND') {
       return {
-        ...designWrite,
+        ...documentWrite,
         write_status: 'error',
         error: {
           code: ensureString(error?.code) || 'UNKNOWN_ERROR',
@@ -429,14 +550,14 @@ async function applyDesignWrite(designWrite = {}, context = {}) {
     );
 
     return {
-      ...designWrite,
+      ...documentWrite,
       write_status: 'created',
       path: result?.path || '',
       sha: result?.sha || '',
     };
   } catch (error) {
     return {
-      ...designWrite,
+      ...documentWrite,
       write_status: 'error',
       error: {
         code: ensureString(error?.code) || 'UNKNOWN_ERROR',
@@ -447,6 +568,8 @@ async function applyDesignWrite(designWrite = {}, context = {}) {
 }
 
 export async function applyIssueRoutingActionPlan({
+  normalizedItems = [],
+  routingDecisions = [],
   routedCandidates = [],
   actionPlan = {},
   sourceRef = [],
@@ -460,64 +583,72 @@ export async function applyIssueRoutingActionPlan({
     sourceRef: ensureStringArray(sourceRef),
   };
 
-  const routedCandidateMap = createRoutedCandidateMap(routedCandidates);
+  const lookupMaps = createItemLookupMaps({
+    normalizedItems,
+    routingDecisions,
+    routedCandidates,
+  });
   const safeActionPlan = ensureObject(actionPlan);
 
   const result = {
     mode: safeMode,
-    design_writes: (Array.isArray(safeActionPlan.design_updates)
-      ? safeActionPlan.design_updates
-      : []
-    ).map((actionItem) =>
+    design_writes: selectBucket(safeActionPlan, 'design_updates').map((actionItem) =>
       buildDesignWrite(
         actionItem,
-        resolveCandidateForActionItem(actionItem, routedCandidateMap),
+        resolveContextForActionItem(actionItem, lookupMaps),
         context
       )
     ),
-    operations_candidate_writes: (Array.isArray(safeActionPlan.operations_candidates)
-      ? safeActionPlan.operations_candidates
-      : []
+    plan_writes: selectBucket(safeActionPlan, 'plan_updates').map((actionItem) =>
+      buildPlanWrite(
+        actionItem,
+        resolveContextForActionItem(actionItem, lookupMaps),
+        context
+      )
+    ),
+    operations_candidate_writes: selectBucket(
+      safeActionPlan,
+      'operations_candidates'
     ).map((actionItem) =>
       buildOperationsCandidateWrite(
         actionItem,
-        resolveCandidateForActionItem(actionItem, routedCandidateMap),
+        resolveContextForActionItem(actionItem, lookupMaps),
         context
       )
     ),
-    future_writes: (Array.isArray(safeActionPlan.future_candidates)
-      ? safeActionPlan.future_candidates
-      : []
-    ).map((actionItem) =>
+    future_writes: selectBucket(safeActionPlan, 'future_candidates').map((actionItem) =>
       buildFutureWrite(
         actionItem,
-        resolveCandidateForActionItem(actionItem, routedCandidateMap),
+        resolveContextForActionItem(actionItem, lookupMaps),
         context
       )
     ),
-    archive_writes: (Array.isArray(safeActionPlan.archive_issue)
-      ? safeActionPlan.archive_issue
-      : []
-    ).map((actionItem) =>
-      buildArchiveWrite(
-        actionItem,
-        resolveCandidateForActionItem(actionItem, routedCandidateMap),
-        context
-      )
+    archive_writes: selectBucket(safeActionPlan, 'archive_items', 'archive_issue').map(
+      (actionItem) =>
+        buildArchiveWrite(
+          actionItem,
+          resolveContextForActionItem(actionItem, lookupMaps),
+          context
+        )
     ),
-    kept_issues: (Array.isArray(safeActionPlan.keep_issue)
-      ? safeActionPlan.keep_issue
-      : []
-    ).map((actionItem) => buildKeptIssue(actionItem)),
+    kept_items: selectBucket(safeActionPlan, 'keep_items', 'keep_issue').map((actionItem) =>
+      buildKeptItem(actionItem)
+    ),
     skipped: Array.isArray(safeActionPlan.skipped) ? safeActionPlan.skipped : [],
   };
+
+  result.kept_issues = result.kept_items;
 
   if (safeMode !== 'apply') {
     return result;
   }
 
   result.design_writes = await Promise.all(
-    result.design_writes.map((designWrite) => applyDesignWrite(designWrite, context))
+    result.design_writes.map((documentWrite) => applyDocumentWrite(documentWrite))
+  );
+
+  result.plan_writes = await Promise.all(
+    result.plan_writes.map((documentWrite) => applyDocumentWrite(documentWrite))
   );
 
   return result;
