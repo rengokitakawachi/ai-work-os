@@ -32,7 +32,6 @@ function uniqueStrings(values = []) {
 function createLookupMaps({
   normalizedItems = [],
   routingDecisions = [],
-  routedDesignCandidates = [],
 } = {}) {
   const normalizedByCandidateId = new Map(
     (Array.isArray(normalizedItems) ? normalizedItems : [])
@@ -46,16 +45,9 @@ function createLookupMaps({
       .filter(([key]) => key)
   );
 
-  const routedByCandidateId = new Map(
-    (Array.isArray(routedDesignCandidates) ? routedDesignCandidates : [])
-      .map((candidate) => [ensureString(candidate?.candidate_id), candidate])
-      .filter(([key]) => key)
-  );
-
   return {
     normalizedByCandidateId,
     routingByCandidateId,
-    routedByCandidateId,
   };
 }
 
@@ -65,7 +57,6 @@ function resolveContextForActionItem(actionItem = {}, lookupMaps = {}) {
   return {
     normalizedItem: lookupMaps?.normalizedByCandidateId?.get(candidateId) || {},
     routingDecision: lookupMaps?.routingByCandidateId?.get(candidateId) || {},
-    routedCandidate: lookupMaps?.routedByCandidateId?.get(candidateId) || {},
   };
 }
 
@@ -73,7 +64,6 @@ function mergeSourceRef(actionItem = {}, resolvedContext = {}, context = {}) {
   return uniqueStrings([
     ...ensureStringArray(actionItem?.source_ref),
     ...ensureStringArray(resolvedContext?.normalizedItem?.source_ref),
-    ...ensureStringArray(resolvedContext?.routedCandidate?.source_ref),
     ...ensureStringArray(context?.sourceRef),
   ]);
 }
@@ -146,14 +136,13 @@ function buildBody({
 }
 
 function buildDocsCandidateWrite(actionItem = {}, resolvedContext = {}, context = {}) {
-  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
   const normalizedItem = ensureObject(resolvedContext?.normalizedItem);
 
   return compactObject({
     target_layer: 'docs_candidate',
     target_doc: ensureString(actionItem?.target_doc),
     title: ensureString(actionItem?.title),
-    source_design: ensureString(actionItem?.design_id || normalizedItem?.design_id || routedCandidate?.design_id),
+    source_design: ensureString(actionItem?.design_id || normalizedItem?.design_id),
     source_ref: mergeSourceRef(actionItem, resolvedContext, context),
     reason: ensureString(actionItem?.reason),
     evaluated_at: ensureString(actionItem?.evaluated_at),
@@ -181,9 +170,8 @@ function buildDesignRetainedResult(actionItem = {}) {
 }
 
 function buildFutureWrite(actionItem = {}, resolvedContext = {}, context = {}) {
-  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
   const normalizedItem = ensureObject(resolvedContext?.normalizedItem);
-  const designId = ensureString(actionItem?.design_id || normalizedItem?.design_id || routedCandidate?.design_id);
+  const designId = ensureString(actionItem?.design_id || normalizedItem?.design_id);
   const title = ensureString(actionItem?.title);
   const sourceRef = mergeSourceRef(actionItem, resolvedContext, context);
 
@@ -220,16 +208,14 @@ function buildFutureWrite(actionItem = {}, resolvedContext = {}, context = {}) {
       summary:
         ensureString(actionItem?.summary) ||
         ensureString(normalizedItem?.summary) ||
-        ensureString(routedCandidate?.summary) ||
         'future design draft generated from design routing action plan',
     }),
   });
 }
 
 function buildArchiveWrite(actionItem = {}, resolvedContext = {}, context = {}) {
-  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
   const normalizedItem = ensureObject(resolvedContext?.normalizedItem);
-  const designId = ensureString(actionItem?.design_id || normalizedItem?.design_id || routedCandidate?.design_id);
+  const designId = ensureString(actionItem?.design_id || normalizedItem?.design_id);
   const title = ensureString(actionItem?.title);
   const sourceRef = mergeSourceRef(actionItem, resolvedContext, context);
 
@@ -265,7 +251,6 @@ function buildArchiveWrite(actionItem = {}, resolvedContext = {}, context = {}) 
       summary:
         ensureString(actionItem?.summary) ||
         ensureString(normalizedItem?.summary) ||
-        ensureString(routedCandidate?.summary) ||
         'archive design draft generated from design routing action plan',
     }),
   });
@@ -273,13 +258,12 @@ function buildArchiveWrite(actionItem = {}, resolvedContext = {}, context = {}) 
 
 function buildOperationsCandidateWrite(actionItem = {}, resolvedContext = {}, context = {}) {
   const candidateDraft = ensureObject(actionItem?.candidate_draft);
-  const routedCandidate = ensureObject(resolvedContext?.routedCandidate);
   const normalizedItem = ensureObject(resolvedContext?.normalizedItem);
 
   return compactObject({
     target_layer: '04_operations',
     title: ensureString(actionItem?.title),
-    design_id: ensureString(actionItem?.design_id || normalizedItem?.design_id || routedCandidate?.design_id),
+    design_id: ensureString(actionItem?.design_id || normalizedItem?.design_id),
     route_to: ensureString(actionItem?.route_to),
     reason: ensureString(actionItem?.reason),
     evaluated_at: ensureString(actionItem?.evaluated_at),
@@ -305,7 +289,6 @@ function buildOperationsCandidateWrite(actionItem = {}, resolvedContext = {}, co
 export async function applyDesignRoutingActionPlan({
   normalizedItems = [],
   routingDecisions = [],
-  routedDesignCandidates = [],
   actionPlan = {},
   sourceRef = [],
   mode = 'dry_run',
@@ -321,7 +304,6 @@ export async function applyDesignRoutingActionPlan({
   const lookupMaps = createLookupMaps({
     normalizedItems,
     routingDecisions,
-    routedDesignCandidates,
   });
   const safeActionPlan = ensureObject(actionPlan);
 
