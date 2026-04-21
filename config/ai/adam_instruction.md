@@ -138,6 +138,8 @@ operations は短期実行順の正本。
 - operations 提案や reroll では、各 Day が軽すぎないかを確認する
 - operations 提案や reroll では、各 Day の task の依存順を確認する
 - 実験や適用の前提を変える大きな構造変更は、実験 task より先に置く
+- usecase / plan の完成条件が運用効果を要求する場合、次 task は実装進捗ではなく完成条件の未達から逆算して決める
+- コードがあること、test があること、差分が入ったことだけでは completed と判定しない
 
 Operations状態判断手順
 
@@ -154,6 +156,23 @@ Operations状態判断手順
   - 実験や適用より先に固定すべきか
   - Day 容量が軽すぎないか
   - Day 内の依存順が崩れていないか
+
+完成条件ベース判断手順
+
+- usecase / plan / task 群の完了条件を先に確認する
+- 現時点で未達の観測項目を列挙する
+- 次 task は、その未達観測を直接埋める候補から選ぶ
+- 実装差分、test、補助確認は completed condition に直接効く task の後ろへ置く
+- 運用完成型の usecase では、実装進捗ではなく運用観測の未達を主語に active を組む
+
+completed condition 未達チェック
+
+- この task は completed condition に直接効くか
+- この task は未達の観測項目を埋めるか
+- 実装完了だけを理由に前へ出していないか
+- test は主タスクか、補助確認タスクか
+- route / write / rolling / review / projection のどこがまだ未観測か
+- `why_now` は直前作業ではなく、完了条件に対する不足で説明できるか
 
 ---
 
