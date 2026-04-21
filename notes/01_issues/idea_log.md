@@ -26,3 +26,33 @@
 - impact: high
 - status: open
 - created_at: 2026-04-20
+
+### 20260421-025
+- title: category が弱い medium impact issue を keep レイヤーに残せるかを観測する必要がある
+- category: general
+- description: issue routing の第二バッチで、category が architecture / operations ではない medium impact issue が `route_to: issue` に残るかを確認したい。keep は廃止対象ではなく、弱い issue の保留レイヤーとして機能している必要がある。そのため、route 多様性を増やすだけでなく、keep がなお自然に残るケースを比較対象として用意する必要がある。
+- context: 第一バッチ補正後、architecture / operations は keep gate より先に判定する形へ変更した。これにより design / operations route は回復したが、keep が完全に消えると保留レイヤーとしての役割が失われる。第二バッチでは keep が残るべきケースも観測対象に含める必要がある。
+- impact: medium
+- urgency: medium
+- status: open
+- created_at: 2026-04-21
+
+### 20260421-026
+- title: open 以外の issue を future へ送る判定が運用上も自然か確認する必要がある
+- category: operations
+- description: issue routing の第二バッチで、status が open ではない issue が `route_to: future` へ送られるかを確認したい。future は「今やる対象ではないが保持すべき論点」の受け皿として自然に機能する必要があるため、keep との違いが実運用でも説明できる必要がある。
+- context: 現行 rules では `status !== open` の issue は future に送られる。第一バッチでは open issue しか扱っておらず、future route は未観測である。第二バッチでは blocked / pending / deferred のような非 open status を持つ issue を入れて、future 送付が自然に機能するか確認したい。
+- impact: medium
+- urgency: low
+- status: deferred
+- created_at: 2026-04-21
+
+### 20260421-027
+- title: 役目終了した issue を archive へ送る判定が keep / future と混線しないか確認する必要がある
+- category: operations
+- description: issue routing の第二バッチで、役目終了が明確な closed issue が `route_to: archive` へ送られるかを確認したい。archive は終了済み論点の明確な受け皿である必要があり、keep や future と混線しないことを観測したい。
+- context: 現行 rules では `status === closed` の issue は archive に送られるが、第一バッチでは closed issue を扱っていないため archive route は未観測である。第二バッチでは終了済みの比較用 issue を1件入れて、archive 判定が自然に機能するかを確認する必要がある。
+- impact: low
+- urgency: low
+- status: closed
+- created_at: 2026-04-21
