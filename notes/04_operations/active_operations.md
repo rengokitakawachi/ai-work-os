@@ -112,6 +112,10 @@
     - repo 全体整合には必要だが、直近は issue routing 完成を優先する
   notes:
     - docs 15 / 16 系の衝突整理を含む
+    - `notes/08_analysis/2026-04-21_docs_number_collision_and_legacy_docs_cleanup_direction.md` を作成した
+    - 現在の repo 実体では 15 / 16 / 17 の番号衝突は解消済みで、主問題は旧 docs 群の位置づけ整理であると確認した
+  status: completed
+  completed: true
   due_date: 2026-04-23
   due_type: date
   external:
@@ -128,6 +132,10 @@
     - 次 phase への接続には必要だが、直近は issue routing 完成と docs 整合を優先したい
   notes:
     - Todoist / Outlook 接続の前段として保持する
+    - `notes/08_analysis/2026-04-21_phase1_plan_to_operations_connection_candidates.md` を作成した
+    - foundation → proposal/write → support の依存順で operations に落とす方針を固定した
+  status: completed
+  completed: true
   due_date: 2026-04-23
   due_type: date
   external:
