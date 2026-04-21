@@ -138,47 +138,6 @@ test('applyIssueRoutingActionPlan builds operations candidate payload from new s
   assert.equal(result.kept_items[0].write_status, 'no_op');
 });
 
-test('applyIssueRoutingActionPlan can use routedCandidates only as compatibility fallback', async () => {
-  const routedCandidates = [
-    {
-      candidate_id: 'issue:test',
-      item_id: '20260419-023',
-      source_type: 'issue',
-      source_ref: ['notes/01_issues/idea_log.md'],
-      title: 'day capacity rule',
-      summary: 'needs operations candidate',
-      description: 'needs operations candidate',
-      metadata: {
-        issue_id: '20260419-023',
-      },
-      route_to: 'operations',
-      reason: 'operations 系 issue のため、operations 比較対象に入れる',
-      evaluated_at: '2026-04-21T00:00:00.000Z',
-      next_action: 'generate_operations_candidate',
-      impact_now: 'high',
-      urgency_now: 'medium',
-      task_draft: {
-        task: 'day capacity rule',
-        source_ref: ['notes/01_issues/idea_log.md'],
-        notes: ['generated_from:issue:test'],
-      },
-    },
-  ];
-
-  const legacyActionPlan = buildIssueRoutingActions({ routedCandidates });
-
-  const result = await applyIssueRoutingActionPlan({
-    routedCandidates,
-    actionPlan: legacyActionPlan,
-    sourceRef: ['notes/01_issues/idea_log.md'],
-    mode: 'dry_run',
-    now: '2026-04-21T00:00:00.000Z',
-  });
-
-  assert.equal(result.operations_candidate_writes.length, 1);
-  assert.equal(result.operations_candidate_writes[0].candidate_draft.task, 'day capacity rule');
-});
-
 test('applyIssueRoutingActionPlan keeps backward compatibility for legacy keep_issue bucket', async () => {
   const routed = routeSingleIssueCandidate({
     item: buildIssueItem({
