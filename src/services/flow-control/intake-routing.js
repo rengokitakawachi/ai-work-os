@@ -87,31 +87,6 @@ function buildIntakeRoutingDecision(normalizedItem = {}, decision = {}) {
   };
 }
 
-function buildRoutedCandidate(normalizedItem = {}, routingDecision = {}) {
-  return {
-    candidate_id:
-      ensureString(normalizedItem?.candidate_id) ||
-      ensureString(routingDecision?.candidate_id),
-    item_id: ensureString(normalizedItem?.item_id),
-    source_type: ensureString(normalizedItem?.source_type),
-    source_ref: Array.isArray(normalizedItem?.source_ref)
-      ? normalizedItem.source_ref
-      : [],
-    title: ensureString(normalizedItem?.title),
-    summary: ensureString(normalizedItem?.summary),
-    description: ensureString(normalizedItem?.description),
-    metadata: ensureObject(normalizedItem?.metadata),
-    route_to: ensureString(routingDecision?.route_to),
-    reason: ensureString(routingDecision?.reason),
-    evaluated_at: ensureString(routingDecision?.evaluated_at),
-    review_at: ensureString(routingDecision?.review_at),
-    impact_now: ensureString(routingDecision?.impact_now),
-    urgency_now: ensureString(routingDecision?.urgency_now),
-    needs_task_generation: Boolean(routingDecision?.needs_task_generation),
-    ...(routingDecision?.task_draft ? { task_draft: routingDecision.task_draft } : {}),
-  };
-}
-
 export function routeIntakeCandidates({ sourceBundles = [], phase = '' } = {}) {
   const rawCandidates = collectCandidates(sourceBundles);
   const normalizedCandidates = normalizeCandidates(rawCandidates);
@@ -139,15 +114,10 @@ export function routeIntakeCandidates({ sourceBundles = [], phase = '' } = {}) {
     )
   );
 
-  const routedCandidates = normalizedItems.map((item, index) =>
-    buildRoutedCandidate(item, routingDecisions[index] || {})
-  );
-
   return {
     mode: 'dry_run',
     normalized_items: normalizedItems,
     routing_decisions: routingDecisions,
-    routed_candidates: routedCandidates,
     grouped: groupRoutingDecisions(routingDecisions),
   };
 }
