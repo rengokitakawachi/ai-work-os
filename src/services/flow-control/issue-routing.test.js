@@ -70,6 +70,48 @@ test('routeSingleIssueCandidate routes architecture issue to design and keeps it
   assert.equal(result.action_plan.keep_items.length, 1);
 });
 
+test('routeSingleIssueCandidate routes medium-impact architecture issue to design', () => {
+  const result = routeSingleIssueCandidate({
+    item: buildIssueItem({
+      issueId: '20260418-022',
+      category: 'architecture',
+      impact: 'medium',
+      title: 'legacy wrapper cleanup medium impact',
+    }),
+  });
+
+  assert.equal(result.routing_decisions[0].route_to, 'design');
+  assert.equal(result.action_plan.design_updates.length, 1);
+});
+
+test('routeSingleIssueCandidate routes medium-impact operations issue to operations', () => {
+  const result = routeSingleIssueCandidate({
+    item: buildIssueItem({
+      issueId: '20260419-023',
+      category: 'operations',
+      impact: 'medium',
+      title: 'day capacity rule medium impact',
+    }),
+  });
+
+  assert.equal(result.routing_decisions[0].route_to, 'operations');
+  assert.equal(result.action_plan.operations_candidates.length, 1);
+});
+
+test('routeSingleIssueCandidate keeps medium-impact uncategorized issue in issue', () => {
+  const result = routeSingleIssueCandidate({
+    item: buildIssueItem({
+      issueId: '20260421-031',
+      category: 'general',
+      impact: 'medium',
+      title: 'general issue medium impact',
+    }),
+  });
+
+  assert.equal(result.routing_decisions[0].route_to, 'issue');
+  assert.equal(result.action_plan.keep_items.length, 1);
+});
+
 test('buildIssueRoutingActions accepts normalized_items and routing_decisions directly', () => {
   const normalizedItems = [
     {
