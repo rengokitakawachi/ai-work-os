@@ -317,50 +317,6 @@ test('applyDesignRoutingActionPlan builds operations candidate payload in dry ru
   assert.equal(result.operations_candidate_writes[0].write_status, 'draft_only');
 });
 
-test('applyDesignRoutingActionPlan can use routedDesignCandidates only as compatibility fallback', async () => {
-  const routedDesignCandidates = [
-    {
-      candidate_id: 'design:test',
-      design_id: 'design-routing-adapter-connection',
-      item_id: 'design-routing-adapter-connection',
-      source_type: 'design',
-      source_ref: ['notes/02_design/example.md'],
-      title: 'design-routing-adapter-connection',
-      summary: 'implementation value is high',
-      metadata: {},
-      route_to: 'operations',
-      reason: 'execution 価値が高く docs 準備前のため operations 候補にする',
-      evaluated_at: '2026-04-18T00:00:00.000Z',
-      maturity_now: 'maturing',
-      execution_value_now: 'high',
-      docs_ready_now: false,
-      review_at: 'monthly_review',
-      next_action: 'generate_operations_candidate',
-      task_draft: {
-        task: 'design-routing-adapter-connection',
-        source_ref: ['notes/02_design/example.md'],
-        notes: ['generated_from_design:design:test'],
-      },
-    },
-  ];
-
-  const actionPlan = buildDesignRoutingActionPlan({ routedDesignCandidates });
-
-  const result = await applyDesignRoutingActionPlan({
-    routedDesignCandidates,
-    actionPlan,
-    sourceRef: ['notes/02_design/example.md'],
-    mode: 'dry_run',
-    now: '2026-04-18T00:00:00.000Z',
-  });
-
-  assert.equal(result.operations_candidate_writes.length, 1);
-  assert.equal(
-    result.operations_candidate_writes[0].candidate_draft.task,
-    'design-routing-adapter-connection'
-  );
-});
-
 test('applyDesignRoutingActionPlan builds retained no-op payload in dry run', async () => {
   const routed = routeSingleDesignCandidate({
     item: buildDesignCandidate({
