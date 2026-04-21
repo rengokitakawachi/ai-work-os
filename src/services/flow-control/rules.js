@@ -66,18 +66,6 @@ function evaluateIssueCandidate(candidate = {}) {
     };
   }
 
-  if (impactNow && impactNow !== 'high') {
-    return {
-      candidate_id: ensureString(candidate?.candidate_id),
-      route_to: 'issue',
-      in_scope: true,
-      needs_task_generation: false,
-      reason: 'high impact ではないため、issue に残して再評価する',
-      review_at: 'daily_review',
-      ...decisionMeta,
-    };
-  }
-
   if (category === 'architecture') {
     return {
       candidate_id: ensureString(candidate?.candidate_id),
@@ -97,6 +85,18 @@ function evaluateIssueCandidate(candidate = {}) {
       in_scope: true,
       needs_task_generation: true,
       reason: 'operations 系 issue のため、operations 比較対象に入れる',
+      review_at: 'daily_review',
+      ...decisionMeta,
+    };
+  }
+
+  if (impactNow && impactNow !== 'high') {
+    return {
+      candidate_id: ensureString(candidate?.candidate_id),
+      route_to: 'issue',
+      in_scope: true,
+      needs_task_generation: false,
+      reason: 'high impact ではないため、issue に残して再評価する',
       review_at: 'daily_review',
       ...decisionMeta,
     };
