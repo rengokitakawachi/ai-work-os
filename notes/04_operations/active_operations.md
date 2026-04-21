@@ -5,6 +5,7 @@
 ### Phase 0 直結 task
 
 - `flow-control 周辺の node --test 実行確認を行う`
+- `ADAM 実運用 instruction へ新スレッド再開識別子ルールを反映確認する`
 - `intake routing の第一バッチ候補を整理する`
 - `intake routing の観測項目を analysis に落とす`
 
@@ -31,6 +32,19 @@
     todoist_task_id: 6gQwqHgFfQPgPQXH
 
 ## Day1（04/23 木）
+
+- task: ADAM 実運用 instruction へ新スレッド再開識別子ルールを反映確認する
+  source_ref:
+    - config/ai/adam_instruction.md
+    - notes/07_reports/daily/2026-04-21.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day1
+  why_now:
+    - `ADAM_MMDD` 再開識別子ルールは repo の instruction に追加済みだが、ADAM の実運用判断への反映はまだ未確認である
+    - 新スレッド再開運用に直結するため、intake routing 本筋へ入る前に runtime 反映確認を閉じるのが安全である
+  notes:
+    - repo 反映済みを理由に completed 扱いしない
+    - 次の新スレッド再開時に `ADAM_MMDD` を再開識別子として読めることを確認対象にする
 
 - task: intake routing の第一バッチ候補を整理する
   source_ref:
