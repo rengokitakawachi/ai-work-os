@@ -51,7 +51,7 @@ issue routing と同様に
 ### 1. 判定と反映を分けるため
 
 design routing の責務は、
-行き先判定と action plan 生成までである。
+入力正規化、行き先判定、action plan 生成までである。
 
 その後に、
 
@@ -92,15 +92,17 @@ routing のたびに毎回 rewrite する必要はない。
 責務
 
 - design を評価する
-- `route_to` を決める
-- `routed_design_candidates` を返す
+- `normalized_items` を返す
+- `routing_decisions` を返す
 - `action_plan` を返す
+- 必要に応じて `routed_design_candidates` を返す
 
 ### 2. design routing notes/docs write usecase
 
 責務
 
 - `action_plan` を解釈する
+- `normalized_items` / `routing_decisions` を参照する
 - docs 候補 / future draft / archive draft / operations queue payload を作る
 - 必要な write を呼ぶ
 - 実行結果を返す
@@ -242,6 +244,20 @@ queue payload として返す。
 
 ---
 
+## handoff の最小形
+
+design routing と writer の間の正規 handoff は次である。
+
+- `normalized_items`
+- `routing_decisions`
+- `action_plan`
+
+`routed_design_candidates` は
+合成済みの互換表現として残してよいが、
+正規の説明軸にはしない。
+
+---
+
 ## action_plan の最小形
 
 最小 action plan は次でよい。
@@ -300,7 +316,7 @@ rolling 前の queue payload に留める。
 
 返り値には次だけ残せばよい。
 
-- design_id or path
+- design_id
 - title
 - route_to: design
 - reason
@@ -372,9 +388,10 @@ issue routing の operations candidate queue と対称に扱う。
 
 ### dry_run
 
-- route_to を決める
-- action_plan を作る
-- docs candidate / future / archive / operations payload を作る
+- `normalized_items` を作る
+- `routing_decisions` を作る
+- `action_plan` を作る
+- 必要なら `routed_design_candidates` を作る
 - 実 write はしない
 
 ### apply
@@ -408,6 +425,13 @@ issue routing の operations candidate queue と対称に扱う。
 
 ### 出力
 
+- `normalized_items`
+- `routing_decisions`
+- `action_plan`
+- `routed_design_candidates`（必要なら）
+
+そのうえで action_plan には
+
 - `docs_candidates`
   - design A の docs patch proposal
 
@@ -422,6 +446,8 @@ issue routing の operations candidate queue と対称に扱う。
 
 - `operations_candidates`
   - design E の operations queue payload
+
+が入る。
 
 ---
 
@@ -478,6 +504,10 @@ design routing は、
 - route 先は
   `docs / design / future / archive / operations`
 
+- 正規 handoff は
+  `normalized_items / routing_decisions / action_plan`
+
+- `routed_design_candidates` は互換用の合成表現
 - `design` retained は no-op
 - `docs` は候補化まで
 - `operations` は queue payload まで
