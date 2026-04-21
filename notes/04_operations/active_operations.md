@@ -6,6 +6,7 @@
 
 - `issue routing の第二バッチ候補を整理する`
 - `future / archive を観測できる issue 候補を追加する`
+- `第二バッチ issue を routing して route 結果を記録する`
 - `operations candidate を rolling に接続して反映確認する`
 - `keep / future / archive の運用妥当性を整理する`
 
@@ -82,32 +83,45 @@
     - design / operations / future / archive の未出 route を補える issue を優先する
     - 第二バッチは観測不足の送付先を埋める観点で選ぶ
 
-- task: ADAM instruction へ完成条件ベース判断手順を反映する
-  source_ref:
-    - config/ai/adam_instruction.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day3
-  why_now:
-    - 完成条件を主語に task を組む判断を再現可能にするには、instruction へ明示的に反映して運用ルール化する必要がある
-  notes:
-    - config/ai/adam_instruction.md への repo 反映は実施済み
-    - 実運用で継続して使える判断手順として保持する
-  status: completed
-  completed: true
-
-## Day4（04/25 土）
-
 - task: future / archive を観測できる issue 候補を追加する
   source_ref:
     - notes/01_issues/idea_log.md
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day4
+  rolling_day: Day3
   why_now:
-    - issue routing の完成条件には future / archive 送付の実運用確認が含まれているため、未出 route を観測できる入力を増やす必要がある
+    - issue routing の完成条件には future / archive 送付の実運用確認が含まれているため、第二バッチ入力の時点で未出 route を補う必要がある
   notes:
     - closed issue または open 以外 status の issue 候補を用意する
     - keep に偏らない route 観測を優先する
+
+## Day4（04/25 土）
+
+- task: 第二バッチ issue を routing して route 結果を記録する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
+    - src/services/flow-control/issue-routing.js
+    - src/services/flow-control/issue-routing-actions.js
+  rolling_day: Day4
+  why_now:
+    - 第二バッチ候補を集めるだけでは完成条件に届かず、実際の route 結果と action_plan を観測する必要がある
+  notes:
+    - design / operations / future / archive / issue の出方を記録する
+    - action_plan の route 多様性を確認する
+
+- task: 第二バッチ観測結果を analysis に返す
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - src/services/flow-control/issue-routing.js
+    - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
+  rolling_day: Day4
+  why_now:
+    - 実行だけでは不十分であり、第二バッチの観測結果を次の補正判断へ返す記録が必要である
+  notes:
+    - 未出 route が残るか
+    - 理由文と next_action が自然か
+    - keep と送付先のバランスが改善したか
 
 ## Day5（04/26 日）
 
@@ -124,19 +138,56 @@
     - operations candidate が active / next / future のどこへ入るかを確認する
     - queue payload だけで終わらず placement まで見る
 
-## Day6（04/27 月）
-
 - task: keep / future / archive の運用妥当性を整理する
   source_ref:
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
     - notes/08_analysis/2026-04-21_issue_routing_first_batch_reobservation_after_gate_adjustment.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day6
+  rolling_day: Day5
   why_now:
     - issue routing の完成条件には keep / archive / defer の判断が運用上破綻しないことが含まれるため、送付先ごとの妥当性をまとめて確認する必要がある
   notes:
     - keep / future / archive の再評価地点が自然か確認する
     - 観測結果を次の routing 補正要否へ返す
+
+## Day6（04/27 月）
+
+- task: flow-control 周辺の node --test 実行確認を行う
+  source_ref:
+    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
+    - src/services/flow-control/issue-routing.test.js
+    - src/services/flow-control/design-routing.test.js
+    - src/services/flow-control/intake-routing.test.js
+  rolling_day: Day6
+  why_now:
+    - issue routing と flow-control の運用観測を一巡した後で、構造変更由来の回帰有無を補助確認する価値がある
+  notes:
+    - `node --test` の実行可否と失敗箇所を記録する
+    - flow-control 周辺の新 shape 主経路が通るかを確認する
+
+- task: flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する
+  source_ref:
+    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
+    - notes/08_analysis/2026-04-21_routing_return_compatibility_inventory.md
+  rolling_day: Day6
+  why_now:
+    - flow-control 側の到達点を review 出力でどう回収するか整理しておくと、Phase 0 完了判定を安定させやすい
+  notes:
+    - 同一スレッド運用中は handover を作らない前提を維持する
+    - report / daily review / weekly review のどこで回収するかを整理する
+
+- task: ADAM instruction へ完成条件ベース判断手順を反映する
+  source_ref:
+    - config/ai/adam_instruction.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+  rolling_day: Day6
+  why_now:
+    - 完成条件を主語に task を組む判断を再現可能にするには、instruction へ明示的に反映して運用ルール化する必要がある
+  notes:
+    - config/ai/adam_instruction.md への repo 反映は実施済み
+    - 実運用で継続して使える判断手順として保持する
+  status: completed
+  completed: true
 
 ---
 
