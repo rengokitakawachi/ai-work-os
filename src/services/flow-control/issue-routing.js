@@ -1,14 +1,16 @@
-import { ensureString } from './common.js';
+import { ensureObject, ensureString } from './common.js';
 import { collectCandidates } from './candidate.js';
 import { normalizeCandidates } from './normalize.js';
 import { evaluateCandidates } from './rules.js';
 import { buildPlacementDecisions } from './placement.js';
 import { buildIssueRoutingSourceBundle } from './adapters.js';
+import { buildIssueRoutingActions } from './issue-routing-actions.js';
 
 function groupRoutingDecisions(decisions = []) {
   const grouped = {
     operations: [],
     design: [],
+    plan: [],
     future: [],
     archive: [],
     issue: [],
@@ -16,7 +18,7 @@ function groupRoutingDecisions(decisions = []) {
   };
 
   for (const decision of decisions) {
-    const routeTo = decision?.route_to || '';
+    const routeTo = ensureString(decision?.route_to);
 
     if (routeTo === 'operations') {
       grouped.operations.push(decision);
@@ -25,6 +27,11 @@ function groupRoutingDecisions(decisions = []) {
 
     if (routeTo === 'design') {
       grouped.design.push(decision);
+      continue;
+    }
+
+    if (routeTo === 'plan') {
+      grouped.plan.push(decision);
       continue;
     }
 
@@ -49,8 +56,8 @@ function groupRoutingDecisions(decisions = []) {
   return grouped;
 }
 
-function deriveKeepIssueOpen(routeTo = '') {
-  return ['issue', 'design', 'operations', 'future'].includes(routeTo);
+function deriveKeepOpen(routeTo = '') {
+  return ['issue', 'design', 'plan', 'operations', 'future'].includes(routeTo);
 }
 
 function deriveNextAction(routeTo = '') {
@@ -62,25 +69,84 @@ function deriveNextAction(routeTo = '') {
     return 'create_or_update_design';
   }
 
+  if (routeTo === 'plan') {
+    return 'create_or_update_plan';
+  }
+
   if (routeTo === 'future') {
     return 'defer_and_recheck_later';
   }
 
   if (routeTo === 'archive') {
-    return 'archive_issue';
+    return 'archive_item';
   }
 
-  return 'keep_issue_open';
+  return 'keep_item_open';
 }
 
-function buildRoutingDecision(candidate = {}, decision = {}) {
+function buildNormalizedItem(candidate = {}) {
+  const metadata = ensureObject(candidate?.metadata);
+
+  return {
+    item_id: ensureString(metadata?.issue_id) || ensureString(candidate?.candidate_id),
+    candidate_id: ensureString(candidate?.candidate_id),
+    source_type: ensureString(candidate?.source_type) || 'issue',
+    source_ref: Array.isArray(candidate?.source_ref) ? candidate.source_ref : [],
+    title: ensureString(candidate?.title),
+    summary: ensureString(candidate?.summary),
+    description:
+      ensureString(metadata?.description) || ensureString(candidate?.summary),
+    metadata,
+  };
+}
+
+function buildRoutingDecision(normalizedItem = {}, decision = {}) {
   const routeTo = ensureString(decision?.route_to);
 
   return {
-    ...candidate,
-    ...decision,
-    keep_issue_open: deriveKeepIssueOpen(routeTo),
+    item_id:
+      ensureString(normalizedItem?.item_id) || ensureString(decision?.candidate_id),
+    candidate_id:
+      ensureString(normalizedItem?.candidate_id) || ensureString(decision?.candidate_id),
+    route_to: routeTo,
+    reason: ensureString(decision?.reason),
+    evaluated_at: ensureString(decision?.evaluated_at),
     next_action: deriveNextAction(routeTo),
+    keep_open: deriveKeepOpen(routeTo),
+    keep_issue_open: deriveKeepOpen(routeTo),
+    review_at: ensureString(decision?.review_at),
+    impact_now: ensureString(decision?.impact_now),
+    urgency_now: ensureString(decision?.urgency_now),
+    needs_task_generation: Boolean(decision?.needs_task_generation),
+    ...(decision?.task_draft ? { task_draft: decision.task_draft } : {}),
+  };
+}
+
+function buildRoutedCandidate(normalizedItem = {}, routingDecision = {}) {
+  return {
+    candidate_id:
+      ensureString(normalizedItem?.candidate_id) ||
+      ensureString(routingDecision?.candidate_id),
+    item_id: ensureString(normalizedItem?.item_id),
+    source_type: ensureString(normalizedItem?.source_type),
+    source_ref: Array.isArray(normalizedItem?.source_ref)
+      ? normalizedItem.source_ref
+      : [],
+    title: ensureString(normalizedItem?.title),
+    summary: ensureString(normalizedItem?.summary),
+    description: ensureString(normalizedItem?.description),
+    metadata: ensureObject(normalizedItem?.metadata),
+    route_to: ensureString(routingDecision?.route_to),
+    reason: ensureString(routingDecision?.reason),
+    evaluated_at: ensureString(routingDecision?.evaluated_at),
+    next_action: ensureString(routingDecision?.next_action),
+    keep_open: Boolean(routingDecision?.keep_open),
+    keep_issue_open: Boolean(routingDecision?.keep_issue_open),
+    review_at: ensureString(routingDecision?.review_at),
+    impact_now: ensureString(routingDecision?.impact_now),
+    urgency_now: ensureString(routingDecision?.urgency_now),
+    needs_task_generation: Boolean(routingDecision?.needs_task_generation),
+    ...(routingDecision?.task_draft ? { task_draft: routingDecision.task_draft } : {}),
   };
 }
 
@@ -100,16 +166,33 @@ export function routeIssueCandidates({ sourceBundles = [], phase = '' } = {}) {
     placementDecisions.map((decision) => [decision.candidate_id, decision])
   );
 
-  const routedCandidates = normalizedCandidates.map((candidate) =>
+  const normalizedItems = normalizedCandidates.map((candidate) =>
+    buildNormalizedItem(candidate)
+  );
+
+  const routingDecisions = normalizedItems.map((item) =>
     buildRoutingDecision(
-      candidate,
-      decisionMap.get(candidate.candidate_id) || {}
+      item,
+      decisionMap.get(ensureString(item?.candidate_id)) || {}
     )
   );
 
+  const routedCandidates = normalizedItems.map((item, index) =>
+    buildRoutedCandidate(item, routingDecisions[index] || {})
+  );
+
+  const actionPlan = buildIssueRoutingActions({
+    normalizedItems,
+    routingDecisions,
+  });
+
   return {
+    mode: 'dry_run',
+    normalized_items: normalizedItems,
+    routing_decisions: routingDecisions,
+    action_plan: actionPlan,
     routed_candidates: routedCandidates,
-    grouped: groupRoutingDecisions(routedCandidates),
+    grouped: groupRoutingDecisions(routingDecisions),
   };
 }
 
