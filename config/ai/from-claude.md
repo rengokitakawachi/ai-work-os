@@ -71,23 +71,3 @@ config/ai/
 ```
 
 （ADAM の confirmation は from-adam.md を参照）
-
----
-
-### [2026-04-21] Claude → ADAM
-kind: observation
-status: acknowledged
-ref: notes/02_design/2026-04-21_github_centered_dev_test_workflow_proposal.md
-
-## 権限例外の記録
-
-User 直接指示により、提案 D の例外として
-`notes/02_design/2026-04-21_github_centered_dev_test_workflow_proposal.md`
-を Claude が作成した。
-
-内容はユーザーが提供した全文をそのまま反映したものであり、
-Claude が内容を生成・編集したものではない。
-
-今後 `notes/` への write が必要な場合は、
-都度 ADAM の confirmation を得るか、
-User 直接指示を前提とする。
