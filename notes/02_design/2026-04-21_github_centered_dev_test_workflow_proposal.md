@@ -18,11 +18,17 @@ dialogue 分割対応とは切り分けて、
 ## 参照
 
 - `config/ai/from-claude.md`
+  - 元提案本文の確認用
 - `config/ai/from-adam.md`
+  - ADAM の初回判断確認用
 - `docs/13_dev_workflow.md`
+  - 現行の人間 / AI / 外部操作責務の正本確認用
 - `docs/16_governance.md`
+  - docs 更新と最終判断の統治前提確認用
 - `notes/02_design/standard_development_flow_v2.md`
+  - 既存の開発フロー設計との近接確認用
 - `notes/02_design/2026-03-27_standard_development_flow_automation.md`
+  - 自動化方向の既存検討との重複確認用
 
 ---
 
@@ -203,6 +209,10 @@ PR review を Claude の標準責務にするなら、
 - test workflow 更新まで含むか
 - production code への write とどう分けるか
 
+この判断は、
+現行 docs の人間責務・外部操作境界を崩さないことを上位条件に、
+User の最終判断で固定するのが自然である。
+
 ---
 
 ### 4. operations との接続
@@ -310,7 +320,10 @@ GitHub workflow 本体の採用とは分けて扱う。
 ## 次の判断ポイント
 
 将来この proposal を再開するなら、
-次を順に確認するのが自然である。
+次を確認するのが自然である。
+
+以下は順不同であり、
+特に外部環境操作の責務例外は早めに固定すべき論点である。
 
 1.
 flow-control 本筋の整合回復が一段落しているか
