@@ -109,33 +109,6 @@ function buildDesignRoutingDecision(normalizedItem = {}, evaluation = {}) {
   };
 }
 
-function buildRoutedDesignCandidate(normalizedItem = {}, routingDecision = {}) {
-  return {
-    candidate_id:
-      ensureString(normalizedItem?.candidate_id) ||
-      ensureString(routingDecision?.candidate_id),
-    design_id: ensureString(normalizedItem?.design_id),
-    item_id: ensureString(normalizedItem?.item_id),
-    source_type: ensureString(normalizedItem?.source_type),
-    source_ref: Array.isArray(normalizedItem?.source_ref)
-      ? normalizedItem.source_ref
-      : [],
-    title: ensureString(normalizedItem?.title),
-    summary: ensureString(normalizedItem?.summary),
-    metadata: ensureObject(normalizedItem?.metadata),
-    route_to: ensureString(routingDecision?.route_to),
-    reason: ensureString(routingDecision?.reason),
-    evaluated_at: ensureString(routingDecision?.evaluated_at),
-    maturity_now: ensureString(routingDecision?.maturity_now),
-    execution_value_now: ensureString(routingDecision?.execution_value_now),
-    docs_ready_now: Boolean(routingDecision?.docs_ready_now),
-    review_at: ensureString(routingDecision?.review_at),
-    next_action: ensureString(routingDecision?.next_action),
-    needs_task_generation: Boolean(routingDecision?.needs_task_generation),
-    ...(routingDecision?.task_draft ? { task_draft: routingDecision.task_draft } : {}),
-  };
-}
-
 export function routeDesignCandidates({
   sourceBundles = [],
   mode = 'dry_run',
@@ -163,15 +136,10 @@ export function routeDesignCandidates({
     )
   );
 
-  const routedDesignCandidates = normalizedItems.map((item, index) =>
-    buildRoutedDesignCandidate(item, routingDecisions[index] || {})
-  );
-
   const grouped = groupDesignRoutingDecisions(routingDecisions);
   const actionPlan = buildDesignRoutingActionPlan({
     normalizedItems,
     routingDecisions,
-    routedDesignCandidates,
   });
 
   return {
@@ -179,7 +147,6 @@ export function routeDesignCandidates({
     normalized_items: normalizedItems,
     routing_decisions: routingDecisions,
     action_plan: actionPlan,
-    routed_design_candidates: routedDesignCandidates,
     grouped,
   };
 }
