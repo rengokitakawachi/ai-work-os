@@ -214,13 +214,16 @@
     - config/ai/adam_instruction.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/04_operations/active_operations.md
+    - notes/08_analysis/2026-04-21_adam_runtime_instruction_reflection_confirmation.md
   rolling_day: Day6
   why_now:
     - repo 上の instruction 更新と、ADAM の実運用 instruction 反映は別であり、後者を未完了のまま completed 扱いにしないため
   notes:
     - config/ai/adam_instruction.md への repo 反映は実施済み
-    - 実運用で completed condition ベース判断が継続して効くかは別途確認する
-    - repo 更新済みを理由に task を閉じない
+    - issue routing 完了判定と反映 task 再オープン判断で runtime 反映を確認した
+    - `notes/08_analysis/2026-04-21_adam_runtime_instruction_reflection_confirmation.md` を作成した
+  status: completed
+  completed: true
 
 ---
 
