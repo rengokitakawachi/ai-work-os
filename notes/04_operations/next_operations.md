@@ -19,6 +19,7 @@ active_operations に入らなかった上位候補を保持する。
 
 ### 補助 task
 
+- `ADAM 実運用 instruction へ完成条件ベース判断手順を反映確認する`
 - `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する`
 
 ## 再評価結果（2026-04-21 reroll）
@@ -41,8 +42,20 @@ active_operations に入らなかった上位候補を保持する。
 - issue routing は運用観測ラインを一巡できたため、次の Phase 0 本筋は intake routing に移るのが自然である
 - ただし `node --test` は明日に回したため、intake routing 実行はその後段に置く
 - intake routing は既存設計と code/test はあるが、完成条件と最小運用実験がまだ弱いため、まず入力候補と観測項目を固定する必要がある
+- repo の instruction 更新は済んでいるが、ADAM 実運用 instruction 反映は別 task として扱う必要がある
 
 ## タスク
+
+- task: ADAM 実運用 instruction へ完成条件ベース判断手順を反映確認する
+  source_ref:
+    - config/ai/adam_instruction.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/04_operations/active_operations.md
+  why_now:
+    - repo 上の instruction 更新だけでは不十分であり、ADAM の実運用判断に completed condition ベース判断が継続して効くかを別 task として確認する必要がある
+  notes:
+    - repo 更新済みを理由に completed 扱いしない
+    - 次タスク提案と reroll 判断で実際に使えているかを見る
 
 - task: intake routing の第一バッチ候補を整理する
   source_ref:
