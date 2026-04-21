@@ -14,48 +14,69 @@ active_operations に入らなかった上位候補を保持する。
 
 ### Phase 0 直結 task
 
-- なし
+- `intake routing の第一バッチ候補を整理する`
+- `intake routing の観測項目を analysis に落とす`
 
 ### 補助 task
 
-- `issue routing の第二バッチ候補を整理する`
-- `flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する`
+- `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する`
 
 ## 再評価結果（2026-04-21 reroll）
 
-### active へ繰り上げた task
+### active へ繰り上げ済み / 実施済み task
 
 - `flow-control 周辺の node --test 実行確認を行う`
 - `issue routing の medium impact keep bias 補正案を design に整理する`
 - `issue routing の判定順補正を最小差分で実装する`
 - `issue routing 補正後の第一バッチ再観測を行う`
+- `issue routing の第二バッチ候補を整理する`
+- `future / archive を観測できる issue 候補を追加する`
+- `第二バッチ issue を routing して route 結果を記録する`
+- `operations candidate を rolling に接続して反映確認する`
+- `keep / future / archive の運用妥当性を整理する`
+- `flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する`
 
 理由
 
-- routing / writing 分離と new handoff shape 統一は code / notes 上で一段落したため、次の主論点は実行確認と issue routing 判定補正である
-- `node --test` の実行確認は、return compatibility 撤去後の回帰確認として最優先である
-- 第一バッチ観測では medium impact issue が keep に寄りすぎることが分かっており、次は gate 補正論点を design → code → 再観測の順で進めるのが自然である
+- issue routing は運用観測ラインを一巡できたため、次の Phase 0 本筋は intake routing に移るのが自然である
+- ただし `node --test` は明日に回したため、intake routing 実行はその後段に置く
+- intake routing は既存設計と code/test はあるが、完成条件と最小運用実験がまだ弱いため、まず入力候補と観測項目を固定する必要がある
 
 ## タスク
 
-- task: issue routing の第二バッチ候補を整理する
+- task: intake routing の第一バッチ候補を整理する
   source_ref:
-    - notes/08_analysis/2026-04-21_issue_routing_first_batch_observation.md
-    - notes/01_issues/idea_log.md
-    - notes/02_design/2026-04-20_issue_routing_minimum_operation_experiment.md
+    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
   why_now:
-    - 第一バッチ再観測後も route 多様性が不足する場合に備え、次の観測入力候補を用意しておく価値がある
+    - intake routing の完成条件を観測するには、issue / design / future の 3 分岐を見られる第一バッチ入力を先に決める必要がある
   notes:
-    - design / operations / future / archive の未出 route を補える候補を優先する
+    - 実 inbox 入力または inbox 相当の入力束から選ぶ
+    - source_ref と inbox 後処理も見られる候補を優先する
 
-- task: flow-control 新 handoff shape 統一の到達点を report / handover へ返す条件を整理する
+- task: intake routing の観測項目を analysis に落とす
   source_ref:
-    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
-    - notes/08_analysis/2026-04-21_routing_return_compatibility_inventory.md
+    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - src/services/flow-control/intake-routing.js
+    - src/services/flow-control/intake-routing.test.js
   why_now:
-    - 今は handover 自体は不要だが、到達点をどの review 出力で回収するかの整理は後で必要になる
+    - 実験入力だけでなく、route / source_ref / inbox 後処理 / role boundary のどこを確認するかを先に固定しておくと、issue routing と同じ粒度で完成判定しやすい
   notes:
-    - 同一スレッド運用中は handover を作らない前提を維持する
+    - issue / design / future の出方
+    - source_ref の自然さ
+    - inbox 後処理として archive / pending をどう扱うか
+
+- task: flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する
+  source_ref:
+    - notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md
+    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
+  why_now:
+    - report / handover の返し先整理は終わったため、必要なら週次 report に返す最小要点だけを残しておく価値がある
+  notes:
+    - handover ではなく weekly report 向けの要点だけを整理する
 
 ---
 
