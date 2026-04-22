@@ -93,6 +93,8 @@
     - candidate source を明示確認する
     - active / next の両方を reroll 結果として更新する
     - Day 容量と依存順も同時に確認する
+  external:
+    todoist_task_id: 6gR8gmRr5v9m8GmH
 
 ## Day2（04/25 土）
 
@@ -109,6 +111,8 @@
     - route correctness は確認済みなので、次は粒度改善の実装差分を小さく切る段階である
   notes:
     - まずは `1見出し = 1item` の成立性から確認する
+  external:
+    todoist_task_id: 6gR8gpWffJQfM6vq
 
 - task: pending_tasks 分解後の第一バッチ再観測を行う
   source_ref:
@@ -124,6 +128,8 @@
   notes:
     - `pending_tasks` だけを再観測対象にしてよい
     - 1テーマ1メモ性がどこまで改善したかを重点確認する
+  external:
+    todoist_task_id: 6gR8gqXhC5FRM4cq
 
 ## Day3（04/26 日）
 
@@ -155,6 +161,8 @@
   notes:
     - まずは docs 反映前の整理に留める
     - roadmap 直更新ではなく位置づけ整理を先に行う
+  external:
+    todoist_task_id: 6gR8grMFPw7p9cWH
 
 ## Day5（04/28 火）
 
@@ -172,6 +180,8 @@
   notes:
     - plan 側の完成条件と operations 側の実行単位をつなぐ
     - docs 反映前の notes / operations 反映として扱う
+  external:
+    todoist_task_id: 6gR8gv5W9gwwf7wH
 
 ## Day6（04/29 水）
 
@@ -190,6 +200,8 @@
   notes:
     - `client.js` を正本とする前提で段取りを切る
     - 参照箇所確認 → deprecated 化 → 参照移行 → test 確認 → 削除 の順で整理する
+  external:
+    todoist_task_id: 6gR8gw9JGwGhm4cH
 
 ---
 
