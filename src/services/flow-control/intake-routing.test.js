@@ -9,11 +9,13 @@ function buildIntakeItem({
   category = 'architecture',
   impact = 'high',
   urgency = 'medium',
+  reviewAt = '',
   sourceRef = ['notes/00_inbox/example.md'],
 } = {}) {
   return {
     title,
     summary,
+    review_at: reviewAt,
     source_ref: sourceRef,
     metadata: {
       category,
@@ -55,4 +57,22 @@ test('routeSingleIntakeCandidate can keep low-impact item in issue', () => {
 
   assert.equal(result.routing_decisions[0].route_to, 'issue');
   assert.equal(result.grouped.issue.length, 1);
+});
+
+test('routeSingleIntakeCandidate can route deferred item to future', () => {
+  const result = routeSingleIntakeCandidate({
+    item: buildIntakeItem({
+      title: 'phase later memo',
+      summary: 'phase later deferred topic',
+      category: 'operations',
+      impact: 'medium',
+      urgency: 'low',
+      reviewAt: 'monthly_review',
+    }),
+    sourceType: 'conversation',
+    sourceRef: ['notes/00_inbox/example.md'],
+  });
+
+  assert.equal(result.routing_decisions[0].route_to, 'future');
+  assert.equal(result.grouped.future.length, 1);
 });
