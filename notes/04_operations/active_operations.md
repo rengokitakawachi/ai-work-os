@@ -4,9 +4,6 @@
 
 ### Phase 0 直結 task
 
-- `design retain fallback の no_op 期待を test 層に合わせて補正する`
-- `non-high-impact open issue が design に吸われる判定順を修正する`
-- `intake routing の issue / design / future 最小分岐を spec に沿って実装する`
 - `intake routing の第一バッチ候補を整理する`
 - `intake routing の観測項目を analysis に落とす`
 
@@ -30,9 +27,8 @@
     - issue routing と flow-control の運用観測を一巡した後で、構造変更由来の回帰有無を補助確認する価値がある
     - ただし実行担当は Claude とし、ADAM は結果受領後の記録と整合確認を行う
   notes:
-    - 正式結果は HEAD 一致後の再実行を採用する
-    - GitHub main `2c04437` に対して 36件中 34 pass / 2 fail を確認した
-    - 正式 fail は `design-routing.test.js` と `rules.test.js`
+    - 最終正式結果は HEAD 一致後の再実行を採用する
+    - 最新 HEAD `438658e` に対して 36件中 36 pass / 0 fail を確認した
     - `notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md` に正式結果を保存した
   status: completed
   completed: true
@@ -109,22 +105,29 @@
     - GitHub main の正式 test でも design retain fail は継続しており、routing 層と apply 層の参照ずれを test で補正するのが第一候補である
     - code 修正ではなく test 期待の位置補正で閉じられる可能性が高い
   notes:
-    - `write_status: no_op` は apply result 層で確認する
-    - routing action plan 層に `no_op` を期待しない
+    - `write_status: no_op` は apply result 層で確認するよう test を補正した
+    - 最新 HEAD `438658e` の正式再実行で flow-control 周辺 test green を確認した
+  status: completed
+  completed: true
 
 - task: non-high-impact open issue が design に吸われる判定順を修正する
   source_ref:
     - notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md
     - src/services/flow-control/rules.js
     - src/services/flow-control/rules.test.js
+    - src/services/flow-control/issue-routing.test.js
+    - notes/08_analysis/2026-04-22_issue_routing_medium_impact_expectation_conflict.md
   rolling_day: Day0
   due_date: 2026-04-22
   why_now:
     - GitHub main の正式 test で `evaluateCandidate keeps non-high-impact open issue in issue` が fail しており、architecture 判定が impact keep より先に効いている副作用を直す必要がある
     - intake 側の最小分岐追加で issue routing 側を壊していないかを先に閉じるのが安全である
   notes:
-    - `source_type === issue` の既存 keep bias を維持する
-    - architecture 判定より前に non-high-impact keep を確認するか、issue routing と intake routing の分岐境界を見直す
+    - `source_type === issue` の keep bias を回復する判定順補正を入れた
+    - medium-impact issue の期待不一致は issue-routing.test 側を keep bias 方針へ揃えて解消した
+    - 最新 HEAD `438658e` の正式再実行で flow-control 周辺 test green を確認した
+  status: completed
+  completed: true
 
 - task: intake routing の issue / design / future 最小分岐を spec に沿って実装する
   source_ref:
@@ -142,8 +145,10 @@
     - intake routing の最小完成条件は `issue / design / future` の 3 分岐観測であり、intake-routing 側の正式 fail 自体は解消した
     - ただし正式結果では `rules.test.js` に副作用が出ており、issue routing 側を壊さずに最小分岐を成立させる補正がまだ必要である
   notes:
-    - intake-routing 単体ではなく `rules.test.js` を通すところまでを完了条件に含める
-    - conversation 起点 issue routing との役割差を壊さない
+    - intake routing の最小3分岐を実装し、周辺 test と整合する形まで補正した
+    - 最新 HEAD `438658e` の正式再実行で flow-control 周辺 test green を確認した
+  status: completed
+  completed: true
 
 ## Day1（04/23 木）
 
@@ -156,7 +161,7 @@
   rolling_day: Day1
   due_date: 2026-04-23
   why_now:
-    - issue routing の運用観測ラインは一巡したため、次の Phase 0 本筋は intake routing へ移るのが自然である
+    - issue routing の運用観測ラインは一巡し、flow-control 周辺 test も green になったため、次の Phase 0 本筋は intake routing の第一バッチ観測へ移るのが自然である
     - intake routing の完成条件を観測するには、issue / design / future の 3 分岐を見られる第一バッチ入力を先に決める必要がある
   notes:
     - 実 inbox 入力または inbox 相当の入力束から選ぶ
