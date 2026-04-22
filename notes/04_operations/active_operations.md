@@ -6,6 +6,8 @@
 
 - `intake routing の第一バッチ候補を整理する`
 - `intake routing の観測項目を analysis に落とす`
+- `intake routing の第一バッチ期待値ベース observation を記録する`
+- `intake routing 用 inbox markdown adapter の最小要件を整理する`
 
 ### 補助 task
 
@@ -193,6 +195,42 @@
   completed: true
   external:
     todoist_task_id: 6gQwqJ2HGv8fwVvq
+
+- task: intake routing の第一バッチ期待値ベース observation を記録する
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md
+    - notes/08_analysis/2026-04-22_intake_routing_observation_items.md
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_execution_readiness.md
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_expectation_observation.md
+  rolling_day: Day1
+  due_date: 2026-04-23
+  why_now:
+    - inbox markdown adapter 未実装のため、まずは期待値ベース observation で第一バッチの運用妥当性を先に固定する
+    - 後で mechanical dry run を追加したときの比較基準になる
+  notes:
+    - `pending_tasks` → issue
+    - `reflection_design` → design
+    - `branch_strategy_future` → future
+    - 5観点で観測メモを保存した
+  status: completed
+  completed: true
+
+- task: intake routing 用 inbox markdown adapter の最小要件を整理する
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_execution_readiness.md
+    - src/services/flow-control/adapters.js
+    - src/services/flow-control/intake-routing.js
+    - notes/02_design/intake_review_and_source_ref_spec.md
+  rolling_day: Day1
+  due_date: 2026-04-23
+  why_now:
+    - 第一バッチを実ファイルから機械的に routing するには inbox markdown adapter が必要である
+    - expectation observation の次に、最小 adapter 要件を固定するのが自然である
+  notes:
+    - markdown 読取
+    - 最小 item 化
+    - source_bundle 生成
+    - チャンク分解をどこまで前提にするかを整理する
 
 ## Day2（04/24 金）
 
