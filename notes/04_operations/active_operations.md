@@ -43,6 +43,8 @@
   notes:
     - repo 反映済みを理由に completed 扱いしない
     - 次の新スレッド再開時に `ADAM_MMDD` を再開識別子として読めることを確認対象にする
+  external:
+    todoist_task_id: 6gR4rGXfHgh563Rq
 
 ## Day1（04/23 木）
 
