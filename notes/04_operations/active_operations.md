@@ -25,9 +25,10 @@
   due_date: 2026-04-22
   why_now:
     - issue routing と flow-control の運用観測を一巡した後で、構造変更由来の回帰有無を補助確認する価値がある
-    - 前日から明日へ繰り越した唯一の未完了 task であり、intake routing 本筋へ進む前に先に閉じるのが自然である
+    - ただし実行担当は Claude とし、ADAM は結果受領後の記録と整合確認を行う
   notes:
-    - `node --test` の実行可否と失敗箇所を記録する
+    - `node --test` は Claude が実行する
+    - ADAM は実行結果と失敗箇所の受領後に記録する
     - flow-control 周辺の新 shape 主経路が通るかを確認する
   external:
     todoist_task_id: 6gQwqHgFfQPgPQXH
