@@ -162,6 +162,26 @@ weekly review までの短期履歴置き場であり、
   - `ADAM_MMDD` 再開識別子ルールの runtime 反映確認は未完了と判断を修正した
   - repo instruction 更新は完了済みだが、ADAM 実運用への反映確認は 2026-04-22 active へ戻した
 
+--- 2026-04-22 daily review ---
+
+- `flow-control 周辺の node --test 実行確認を行う` を完了した
+  - 最新 HEAD `e4e782e` に対して 39件中 39 pass / 0 fail を確認した
+- `ADAM 実運用 instruction へ新スレッド再開識別子ルールを反映確認する` を完了した
+  - runtime 反映確認済みと扱える状態になった
+- `design retain fallback の no_op 欠落が仕様変更か不整合かを整理する` を完了した
+- `intake routing の design / issue 期待値ズレが test 側か実装側かを切り分ける` を完了した
+- `design retain fallback の no_op 期待を test 層に合わせて補正する` を完了した
+- `non-high-impact open issue が design に吸われる判定順を修正する` を完了した
+- `intake routing の issue / design / future 最小分岐を spec に沿って実装する` を完了した
+- `intake routing の第一バッチ候補を整理する` を完了した
+- `intake routing の観測項目を analysis に落とす` を完了した
+- `intake routing の第一バッチ期待値ベース observation を記録する` を完了した
+- `intake routing 用 inbox markdown adapter の最小要件を整理する` を完了した
+- `intake routing 用 inbox markdown adapter の最小実装差分を作る` を完了した
+- `intake routing 第一バッチ 3 件の mechanical dry run observation を記録する` を完了した
+  - route 多様性は mechanical dry run でも `issue / design / future` の 3 分岐で成立した
+  - 次の主論点は `pending_tasks` の複数論点分解要否に絞られた
+
 ---
 
 ## ルール
