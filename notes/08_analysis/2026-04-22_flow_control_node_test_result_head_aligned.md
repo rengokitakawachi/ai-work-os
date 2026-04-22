@@ -2,15 +2,15 @@
 
 ## 目的
 
-GitHub main `2c04437` に対して、HEAD 一致状態で実行した flow-control 周辺 `node --test` の正式結果を記録する。
+GitHub main の HEAD 一致状態で実行した flow-control 周辺 `node --test` の正式結果を記録する。
 
 ---
 
 ## 前提
 
-前回の test 実行は、local working tree が HEAD と不一致で、しかも test 対象ファイルに差分が混在していたため、正式結果としては採用しない。
+途中で local working tree と HEAD の不一致が見つかったため、混在状態での test 結果は正式結果として採用しない。
 
-今回は、対象ファイルを `git checkout HEAD -- ...` で HEAD に戻し、対象ファイル差分ゼロを確認した後の実行結果である。
+正式結果は、対象ファイルを HEAD に戻し、対象ファイル差分ゼロを確認した後の再実行結果のみを採用する。
 
 ---
 
@@ -32,66 +32,55 @@ node --test src/services/flow-control/issue-routing.test.js \
 
 ---
 
-## 結果サマリー
+## 最終正式結果
 
+- HEAD: `438658e`
 - total: 36
-- pass: 34
-- fail: 2
+- pass: 36
+- fail: 0
 
 補足:
-- `intake-routing.test.js` の前回 fail は解消した
-- 代わりに `rules.test.js` で正式 fail が出た
-- これが GitHub main `2c04437` に対する正式結果である
+- 対象ファイルは HEAD 一致状態で再実行した
+- `git status --short` では対象ファイル差分ゼロを確認した
+- flow-control 周辺 test は全 green になった
 
 ---
 
-## fail 詳細
+## 途中で見えた論点
 
-### 1. `design-routing.test.js:109`
+途中の正式再実行では、次の論点が順に見えた。
 
-テスト名:
-- `routeSingleDesignCandidate falls back to design retain`
+1.
+`design-routing.test.js`
+- design retain の `no_op` を routing 層で期待していた
+- apply result 層で確認するよう test を補正した
 
-観測:
-- actual: `undefined`
-- expected: `no_op`
+2.
+`rules.test.js`
+- non-high-impact open issue が `architecture` 判定に吸われていた
+- keep bias を優先する判定順へ補正した
 
-読み取り:
-- design retain の `write_status: no_op` は routing action plan 層ではなく apply result 層で付く可能性が高い
-- したがって、現時点では実装不整合より test の参照層ずれが第一候補
+3.
+`issue-routing.test.js`
+- medium-impact architecture / operations issue の期待が `rules.test.js` と不一致だった
+- keep bias 優先方針に合わせて test 期待を統一した
 
-### 2. `rules.test.js:107`
-
-テスト名:
-- `evaluateCandidate keeps non-high-impact open issue in issue`
-
-観測:
-- actual: `design`
-- expected: `issue`
-
-読み取り:
-- `source_type === issue` の architecture issue で、category 判定が non-high-impact keep より先に効いている
-- intake 側の最小分岐追加と issue routing 側 keep bias の境界が崩れた可能性がある
+これらの補正後、最新 HEAD `438658e` で全 test green を確認した。
 
 ---
 
 ## 判断
 
-- GitHub main に対する正式 fail は `design-routing.test.js` と `rules.test.js` の 2 件である
-- `intake-routing.test.js` fail は正式結果では消えているため、次の主論点ではない
-- 次に優先すべきは
-  1. design retain の `no_op` 期待を test 層に合わせて補正すること
-  2. non-high-impact open issue が design に吸われる判定順を修正すること
+- flow-control 周辺の回帰確認は green で閉じてよい
+- intake routing の最小分岐実装も、周辺 test と整合するところまで到達した
+- 次は flow-control 回帰論点ではなく、intake routing の第一バッチ運用観測へ進むのが自然である
 
 ---
 
 ## 次の自然なタスク
 
 1.
-`design retain fallback の no_op 期待を test 層に合わせて補正する`
+`intake routing の第一バッチ候補を整理する`
 
 2.
-`non-high-impact open issue が design に吸われる判定順を修正する`
-
-3.
-その後に flow-control 周辺 test を再実行して green を確認する
+`intake routing の観測項目を analysis に落とす`
