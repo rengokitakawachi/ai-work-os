@@ -4,8 +4,8 @@
 
 ### Phase 0 直結 task
 
-- `flow-control 周辺の node --test 実行確認を行う`
-- `ADAM 実運用 instruction へ新スレッド再開識別子ルールを反映確認する`
+- `design retain fallback の no_op 欠落が仕様変更か不整合かを整理する`
+- `intake routing の design / issue 期待値ズレが test 側か実装側かを切り分ける`
 - `intake routing の第一バッチ候補を整理する`
 - `intake routing の観測項目を analysis に落とす`
 
@@ -21,15 +21,19 @@
     - src/services/flow-control/issue-routing.test.js
     - src/services/flow-control/design-routing.test.js
     - src/services/flow-control/intake-routing.test.js
+    - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
   rolling_day: Day0
   due_date: 2026-04-22
   why_now:
     - issue routing と flow-control の運用観測を一巡した後で、構造変更由来の回帰有無を補助確認する価値がある
     - ただし実行担当は Claude とし、ADAM は結果受領後の記録と整合確認を行う
   notes:
-    - `node --test` は Claude が実行する
-    - ADAM は実行結果と失敗箇所の受領後に記録する
-    - flow-control 周辺の新 shape 主経路が通るかを確認する
+    - `node --test` は Claude が実行した
+    - 25件中 23 pass / 2 fail を確認した
+    - `design-routing.test.js` と `intake-routing.test.js` に fail がある
+    - `notes/08_analysis/2026-04-22_flow_control_node_test_result.md` に結果を保存した
+  status: completed
+  completed: true
   external:
     todoist_task_id: 6gQwqHgFfQPgPQXH
 
@@ -46,8 +50,39 @@
   notes:
     - repo 反映済みを理由に completed 扱いしない
     - 次の新スレッド再開時に `ADAM_MMDD` を再開識別子として読めることを確認対象にする
+  status: completed
+  completed: true
   external:
     todoist_task_id: 6gR4rGXfHgh563Rq
+
+- task: design retain fallback の no_op 欠落が仕様変更か不整合かを整理する
+  source_ref:
+    - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
+    - src/services/flow-control/design-routing.test.js
+    - src/services/flow-control/design-routing.js
+  rolling_day: Day0
+  due_date: 2026-04-22
+  why_now:
+    - `design-routing.test.js` で fallback retain path の `no_op` が `undefined` になっており、仕様変更なのか実装不整合なのかを先に切り分ける必要がある
+    - intake 本筋の前に、design routing 側の fallback 意味づけを整理しておくと後段判断が安定する
+  notes:
+    - code を直す前に、期待値と現実装のどちらが正かを見る
+    - fallback removal 系変更との関係も確認する
+
+- task: intake routing の design / issue 期待値ズレが test 側か実装側かを切り分ける
+  source_ref:
+    - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
+    - src/services/flow-control/intake-routing.test.js
+    - src/services/flow-control/intake-routing.js
+    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
+  rolling_day: Day0
+  due_date: 2026-04-22
+  why_now:
+    - `intake-routing.test.js` が `design` 期待に対して実装は `issue` を返しており、次の intake routing 本筋へ入る前にズレの性質を把握する必要がある
+    - intake routing 候補整理を進めるにしても、route 境界の前提がずれていると観測設計に影響する
+  notes:
+    - code を直す前に、test 側期待値と design 文書のどちらに寄せるべきかを見る
+    - blocking か、候補整理は先行可能かも同時に判断する
 
 ## Day1（04/23 木）
 
