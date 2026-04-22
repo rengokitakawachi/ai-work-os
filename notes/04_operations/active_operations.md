@@ -158,6 +158,7 @@
     - notes/02_design/intake_review_and_source_ref_spec.md
     - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md
   rolling_day: Day1
   due_date: 2026-04-23
   why_now:
@@ -166,6 +167,9 @@
   notes:
     - 実 inbox 入力または inbox 相当の入力束から選ぶ
     - source_ref と inbox 後処理も見られる候補を優先する
+    - 第一バッチ候補は `notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md` に整理した
+  status: completed
+  completed: true
   external:
     todoist_task_id: 6gQwqHvVc2cj87vq
 
