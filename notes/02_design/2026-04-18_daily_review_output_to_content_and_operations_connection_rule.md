@@ -29,6 +29,10 @@ daily review の最小接続順は次とする。
 ```text
 当日の実績確認
 ↓
+candidate source 確認
+↓
+operations reroll
+↓
 operations 更新
 ↓
 Todoist projection 更新
@@ -38,15 +42,18 @@ daily report 保存
 content 抽出
 ```
 
-重要なのは次の 3 点である。
+重要なのは次の 4 点である。
 
 1.
-**operations 更新を先に閉じる**
+**candidate source 確認を先に閉じる**
 
 2.
-**report は review の結果物であり、rolling の代替ではない**
+**operations reroll と operations 更新を report より先に閉じる**
 
 3.
+**report は review の結果物であり、rolling の代替ではない**
+
+4.
 **content は report から派生する素材抽出であり、review 本体ではない**
 
 ---
@@ -63,7 +70,24 @@ report を先に保存しても、
 operations が更新されていなければ
 review は閉じていない。
 
-### 2. Todoist は projection だから
+### 2. candidate source 確認が reroll の前提だから
+
+reroll は、
+何を候補源として比較したかが曖昧だと
+局所的な並べ替えに崩れやすい。
+
+そのため、
+daily review では先に
+
+- plan
+- open issue
+- next_operations
+- current active
+
+を candidate source として確認し、
+その後で reroll に入る必要がある。
+
+### 3. Todoist は projection だから
 
 Todoist は `04_operations` の projection であり、
 reports の projection ではない。
@@ -73,7 +97,7 @@ Todoist 同期は
 report 保存後ではなく、
 operations 更新後に行うのが自然である。
 
-### 3. content は価値抽出だから
+### 4. content は価値抽出だから
 
 `09_content/drafts` は
 review の本体レイヤーではなく、
@@ -107,7 +131,7 @@ content や operations を未処理のままにしない。
 
 - 短期実行順の正本
 - 完了 task / 未完了 task / 明日の実行順を反映する
-- rolling の結果を保持する
+- reroll の結果を保持する
 
 ### Todoist
 
@@ -164,9 +188,11 @@ rolling を report から生成しない。
 
 - 当日の実績
 - 現行 operations
-- 必要に応じて plan / issue / design / queue
+- plan
+- open issue
+- next_operations
 
-を見て rolling を行い、
+を見て reroll を行い、
 その結果を `04_operations` に反映する。
 
 その後で、
@@ -182,7 +208,7 @@ report → rolling
 ではなく、
 
 ```text
-rolling → operations 更新 → report
+candidate source 確認 → rolling → operations 更新 → report
 ```
 
 である。
@@ -237,7 +263,9 @@ reports に書いた next action があっても、
 にある通り、
 daily review の最低完了条件には
 
-- operations 更新
+- candidate source 確認
+- reroll
+- active / next 更新
 - Todoist projection 更新
 - daily report 保存
 - content 保存
@@ -249,15 +277,21 @@ daily review の最低完了条件には
 少なくとも次を順に閉じる必要がある。
 
 1.
-operations 更新
+candidate source 確認
 
 2.
-Todoist projection 更新
+operations reroll
 
 3.
-report 保存
+operations 更新
 
 4.
+Todoist projection 更新
+
+5.
+report 保存
+
+6.
 content 保存
 
 ---
@@ -293,11 +327,16 @@ routing が必要な新論点が report から見つかった場合は、
 
 ```text
 1. 当日の完了 / 未完了を確認する
-2. operations rolling を行う
-3. active / next を更新する
-4. Todoist projection を同期する
-5. daily report を保存する
-6. report から価値ある論点だけ content drafts に抽出する
+2. candidate source を確認する
+   - plan
+   - open issue
+   - next_operations
+   - current active
+3. operations reroll を行う
+4. active / next を更新する
+5. Todoist projection を同期する
+6. daily report を保存する
+7. report から価値ある論点だけ content drafts に抽出する
 ```
 
 この順なら、
@@ -322,6 +361,7 @@ review の本体と派生処理が混ざりにくい。
 
 daily review の出力接続は、
 
+- candidate source 確認
 - operations
 - Todoist projection
 - report
