@@ -22,6 +22,7 @@
     - src/services/flow-control/design-routing.test.js
     - src/services/flow-control/intake-routing.test.js
   rolling_day: Day0
+  due_date: 2026-04-22
   why_now:
     - issue routing と flow-control の運用観測を一巡した後で、構造変更由来の回帰有無を補助確認する価値がある
     - 前日から明日へ繰り越した唯一の未完了 task であり、intake routing 本筋へ進む前に先に閉じるのが自然である
@@ -37,6 +38,7 @@
     - notes/07_reports/daily/2026-04-21.md
     - notes/04_operations/active_operations.md
   rolling_day: Day0
+  due_date: 2026-04-22
   why_now:
     - `ADAM_MMDD` 再開識別子ルールは repo の instruction に追加済みだが、ADAM の実運用判断への反映はまだ未確認である
     - 明日やるなら intake routing より前で、node --test と同じ Day0 に置くのが自然である
@@ -55,6 +57,7 @@
     - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
   rolling_day: Day1
+  due_date: 2026-04-23
   why_now:
     - issue routing の運用観測ラインは一巡したため、次の Phase 0 本筋は intake routing へ移るのが自然である
     - intake routing の完成条件を観測するには、issue / design / future の 3 分岐を見られる第一バッチ入力を先に決める必要がある
@@ -71,6 +74,7 @@
     - src/services/flow-control/intake-routing.js
     - src/services/flow-control/intake-routing.test.js
   rolling_day: Day1
+  due_date: 2026-04-23
   why_now:
     - 実験入力だけでなく、route / source_ref / inbox 後処理 / role boundary のどこを確認するかを先に固定しておくと、issue routing と同じ粒度で完成判定しやすい
   notes:
@@ -87,6 +91,7 @@
     - notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md
     - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
   rolling_day: Day2
+  due_date: 2026-04-24
   why_now:
     - report / handover の返し先整理は終わったため、必要なら週次 report に返す最小要点だけを残しておく価値がある
   notes:
