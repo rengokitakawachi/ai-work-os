@@ -179,6 +179,7 @@
     - notes/02_design/intake_review_and_source_ref_spec.md
     - src/services/flow-control/intake-routing.js
     - src/services/flow-control/intake-routing.test.js
+    - notes/08_analysis/2026-04-22_intake_routing_observation_items.md
   rolling_day: Day1
   due_date: 2026-04-23
   why_now:
@@ -187,6 +188,9 @@
     - issue / design / future の出方
     - source_ref の自然さ
     - inbox 後処理として archive / pending をどう扱うか
+    - 観測項目は `notes/08_analysis/2026-04-22_intake_routing_observation_items.md` に整理した
+  status: completed
+  completed: true
   external:
     todoist_task_id: 6gQwqJ2HGv8fwVvq
 
