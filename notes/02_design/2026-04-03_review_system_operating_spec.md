@@ -114,19 +114,27 @@ issue / design / future へ振り分ける。
 
 - 当日の実施内容
 - 現行 operations
-- 必要に応じて関連 plan
+- 関連 plan
+- open issue
+- next_operations
 
 手順
 
 1. 当日の実績を確認する
-2. 完了 task を archive へ移す
-3. 未完了 task の繰越を判断する
-4. 明日の実行順を調整する
-5. operations rolling を実行する
-6. operations を更新する
-7. Todoist projection を更新する
-8. 日報を書く
-9. content を作成する
+2. review モードであることを明示する
+3. candidate source を確認する
+   - plan
+   - open issue
+   - next_operations
+   - current active
+4. 完了 task を archive へ移す
+5. 未完了 task の繰越を判断する
+6. 明日の実行順を調整する
+7. operations reroll を実行する
+8. active_operations と next_operations を更新する
+9. Todoist projection を更新する
+10. 日報を書く
+11. content を作成する
 
 出力
 
@@ -145,10 +153,12 @@ issue / design / future へ振り分ける。
 完了条件
 
 - 当日の実績確認が終わっている
+- candidate source 確認が終わっている
 - 完了 task の archive 移動が終わっている
 - 未完了 task の繰越判断が終わっている
-- 明日の実行順調整が終わっている
-- operations 更新が終わっている
+- reroll が終わっている
+- active_operations 更新が終わっている
+- next_operations 更新が終わっている
 - Todoist projection 更新が終わっている
 - daily report が保存されている
 - content が保存されている
@@ -160,6 +170,9 @@ daily review 開始時は、先に以下を固定する。
 - 今回の手順
 - 更新対象
 - 完了条件
+- review モードであること
+- candidate source
+- reroll 実施有無
 
 daily report は review の結果物であり、
 report を保存しただけでは daily review 完了とみなさない。
@@ -173,6 +186,7 @@ report を保存しただけでは daily review 完了とみなさない。
 - 日中は active の完了認識や優先順位変更を行ってよい
 - ただし archive 移動と rolling 確定は daily review で行う
 - daily review 前に Day 再編成や archive 退避を確定させない
+- candidate source 未確認や reroll 未実施なら fail-closed で停止する
 
 ---
 
