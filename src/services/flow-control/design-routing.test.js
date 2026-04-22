@@ -121,7 +121,8 @@ test('routeSingleDesignCandidate falls back to design retain', () => {
 
   assert.equal(result.routing_decisions[0].route_to, 'design');
   assert.equal(result.action_plan.design_retained.length, 1);
-  assert.equal(result.action_plan.design_retained[0].write_status, 'no_op');
+  assert.equal(result.action_plan.design_retained[0].route_to, 'design');
+  assert.equal(result.action_plan.design_retained[0].action_type, 'keep_design');
 });
 
 test('buildDesignRoutingActionPlan accepts normalized_items and routing_decisions directly', () => {
