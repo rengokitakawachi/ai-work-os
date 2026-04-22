@@ -8,6 +8,7 @@
 - `intake routing の観測項目を analysis に落とす`
 - `intake routing の第一バッチ期待値ベース observation を記録する`
 - `intake routing 用 inbox markdown adapter の最小要件を整理する`
+- `intake routing 用 inbox markdown adapter の最小実装差分を作る`
 
 ### 補助 task
 
@@ -218,6 +219,7 @@
 - task: intake routing 用 inbox markdown adapter の最小要件を整理する
   source_ref:
     - notes/08_analysis/2026-04-22_intake_routing_first_batch_execution_readiness.md
+    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
     - src/services/flow-control/adapters.js
     - src/services/flow-control/intake-routing.js
     - notes/02_design/intake_review_and_source_ref_spec.md
@@ -230,7 +232,27 @@
     - markdown 読取
     - 最小 item 化
     - source_bundle 生成
-    - チャンク分解をどこまで前提にするかを整理する
+    - チャンク分解をどこまで前提にするかを整理した
+    - `notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md` に保存した
+  status: completed
+  completed: true
+
+- task: intake routing 用 inbox markdown adapter の最小実装差分を作る
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
+    - src/services/flow-control/adapters.js
+    - src/services/flow-control/intake-routing.js
+    - src/services/flow-control/normalize.js
+    - notes/02_design/intake_review_and_source_ref_spec.md
+  rolling_day: Day1
+  due_date: 2026-04-23
+  why_now:
+    - 第一バッチ 3 件を mechanical dry run で観測するには inbox markdown adapter が必要である
+    - 最小要件は整理済みなので、次は最小実装差分へ落とすのが自然である
+  notes:
+    - まずは 1ファイル = 1item の最小版でよい
+    - `pending_tasks` の複数論点分解は後続拡張に回す
+    - source_type は `inbox` を使う
 
 ## Day2（04/24 金）
 
