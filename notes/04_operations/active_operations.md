@@ -9,6 +9,7 @@
 - `intake routing の第一バッチ期待値ベース observation を記録する`
 - `intake routing 用 inbox markdown adapter の最小要件を整理する`
 - `intake routing 用 inbox markdown adapter の最小実装差分を作る`
+- `intake routing 第一バッチ 3 件の mechanical dry run observation を記録する`
 
 ### 補助 task
 
@@ -31,7 +32,7 @@
     - ただし実行担当は Claude とし、ADAM は結果受領後の記録と整合確認を行う
   notes:
     - 最終正式結果は HEAD 一致後の再実行を採用する
-    - 最新 HEAD `438658e` に対して 36件中 36 pass / 0 fail を確認した
+    - 最新 HEAD `e4e782e` に対して 39件中 39 pass / 0 fail を確認した
     - `notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md` に正式結果を保存した
   status: completed
   completed: true
@@ -109,7 +110,7 @@
     - code 修正ではなく test 期待の位置補正で閉じられる可能性が高い
   notes:
     - `write_status: no_op` は apply result 層で確認するよう test を補正した
-    - 最新 HEAD `438658e` の正式再実行で flow-control 周辺 test green を確認した
+    - 最新 HEAD `e4e782e` の正式再実行で flow-control 周辺 test green を確認した
   status: completed
   completed: true
 
@@ -128,7 +129,7 @@
   notes:
     - `source_type === issue` の keep bias を回復する判定順補正を入れた
     - medium-impact issue の期待不一致は issue-routing.test 側を keep bias 方針へ揃えて解消した
-    - 最新 HEAD `438658e` の正式再実行で flow-control 周辺 test green を確認した
+    - 最新 HEAD `e4e782e` の正式再実行で flow-control 周辺 test green を確認した
   status: completed
   completed: true
 
@@ -149,7 +150,7 @@
     - ただし正式結果では `rules.test.js` に副作用が出ており、issue routing 側を壊さずに最小分岐を成立させる補正がまだ必要である
   notes:
     - intake routing の最小3分岐を実装し、周辺 test と整合する形まで補正した
-    - 最新 HEAD `438658e` の正式再実行で flow-control 周辺 test green を確認した
+    - 最新 HEAD `e4e782e` の正式再実行で flow-control 周辺 test green を確認した
   status: completed
   completed: true
 
@@ -241,9 +242,11 @@
   source_ref:
     - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
     - src/services/flow-control/adapters.js
+    - src/services/flow-control/index.js
     - src/services/flow-control/intake-routing.js
+    - src/services/flow-control/intake-routing.test.js
     - src/services/flow-control/normalize.js
-    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md
   rolling_day: Day1
   due_date: 2026-04-23
   why_now:
@@ -252,7 +255,29 @@
   notes:
     - まずは 1ファイル = 1item の最小版でよい
     - `pending_tasks` の複数論点分解は後続拡張に回す
-    - source_type は `inbox` を使う
+    - source_type は `inbox` を使った
+    - 最新 HEAD `e4e782e` の正式再実行で 39件中 39 pass / 0 fail を確認した
+  status: completed
+  completed: true
+
+- task: intake routing 第一バッチ 3 件の mechanical dry run observation を記録する
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md
+    - notes/08_analysis/2026-04-22_intake_routing_observation_items.md
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_expectation_observation.md
+    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
+    - src/services/flow-control/adapters.js
+    - src/services/flow-control/intake-routing.js
+  rolling_day: Day1
+  due_date: 2026-04-23
+  why_now:
+    - inbox markdown adapter の最小実装が入り、第一バッチ 3 件を実ファイル由来で mechanical dry run できる状態になった
+    - 期待値ベース observation と実観測を比較して、入口処理として成立しているかを確認する次段である
+  notes:
+    - `pending_tasks`
+    - `reflection_design`
+    - `branch_strategy_future`
+    - の 3 件を同一観測シートで記録する
 
 ## Day2（04/24 金）
 
