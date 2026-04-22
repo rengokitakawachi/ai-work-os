@@ -99,6 +99,30 @@ function buildDesignIdFromSourceRef(sourceRef = '') {
   return ensureString(fileName.replace(/\.md$/u, ''));
 }
 
+function looksLikeDesignInboxMemo({ title = '', content = '' } = {}) {
+  const comparable = `${ensureString(title)} ${ensureString(content)}`.toLowerCase();
+  return (
+    comparable.includes('設計メモ') ||
+    comparable.includes('api設計') ||
+    comparable.includes('データ構造') ||
+    comparable.includes('system') ||
+    comparable.includes('architecture') ||
+    comparable.includes('reflection')
+  );
+}
+
+function looksLikeFutureInboxMemo({ title = '', content = '' } = {}) {
+  const comparable = `${ensureString(title)} ${ensureString(content)}`.toLowerCase();
+  return (
+    comparable.includes('future plan') ||
+    comparable.includes('将来') ||
+    comparable.includes('将来的') ||
+    comparable.includes('later') ||
+    comparable.includes('deferred') ||
+    comparable.includes('branch strategy')
+  );
+}
+
 function normalizeComparableText(value = '') {
   return ensureString(value)
     .toLowerCase()
@@ -350,6 +374,45 @@ export function buildDesignRoutingSourceBundle({ content = '', sourceRef = '' } 
     source_type: 'design',
     source_ref: safeSourceRef ? [safeSourceRef] : [],
     items,
+  };
+}
+
+export function buildIntakeInboxSourceBundle({ content = '', sourceRef = '' } = {}) {
+  const safeSourceRef = ensureString(sourceRef);
+  const title = extractMarkdownTitle(content) || buildDesignIdFromSourceRef(safeSourceRef);
+  const summary = extractFirstParagraph(content) || 'inbox markdown から抽出した candidate';
+
+  if (!title) {
+    return {
+      source_type: 'inbox',
+      source_ref: safeSourceRef ? [safeSourceRef] : [],
+      items: [],
+    };
+  }
+
+  const metadata = {
+    extracted_from: 'inbox_markdown',
+    source_kind: 'inbox',
+    original_path: safeSourceRef,
+    description: summary,
+    ...(looksLikeDesignInboxMemo({ title, content }) ? { category: 'architecture' } : {}),
+  };
+
+  const item = {
+    title,
+    summary,
+    candidate_type: 'issue',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    ...(looksLikeFutureInboxMemo({ title, content })
+      ? { review_at: 'monthly_review' }
+      : {}),
+    metadata,
+  };
+
+  return {
+    source_type: 'inbox',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    items: [item],
   };
 }
 
