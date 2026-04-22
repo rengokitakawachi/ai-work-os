@@ -4,286 +4,16 @@
 
 ### Phase 0 直結 task
 
-- `intake routing の第一バッチ候補を整理する`
-- `intake routing の観測項目を analysis に落とす`
-- `intake routing の第一バッチ期待値ベース observation を記録する`
-- `intake routing 用 inbox markdown adapter の最小要件を整理する`
-- `intake routing 用 inbox markdown adapter の最小実装差分を作る`
-- `intake routing 第一バッチ 3 件の mechanical dry run observation を記録する`
 - `pending_tasks 向けの inbox チャンク分解拡張要否を整理する`
+- `pending_tasks 型複数論点入力の最小 split ルールを design に落とす`
+- `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する`
+- `intake inbox adapter の複数 item 抽出最小拡張を設計する`
 
 ### 補助 task
 
-- `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する`
+- なし
 
-## Day0（04/22 水）
-
-- task: flow-control 周辺の node --test 実行確認を行う
-  source_ref:
-    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
-    - src/services/flow-control/issue-routing.test.js
-    - src/services/flow-control/design-routing.test.js
-    - src/services/flow-control/intake-routing.test.js
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md
-  rolling_day: Day0
-  due_date: 2026-04-22
-  why_now:
-    - issue routing と flow-control の運用観測を一巡した後で、構造変更由来の回帰有無を補助確認する価値がある
-    - ただし実行担当は Claude とし、ADAM は結果受領後の記録と整合確認を行う
-  notes:
-    - 最終正式結果は HEAD 一致後の再実行を採用する
-    - 最新 HEAD `e4e782e` に対して 39件中 39 pass / 0 fail を確認した
-    - `notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md` に正式結果を保存した
-  status: completed
-  completed: true
-  external:
-    todoist_task_id: 6gQwqHgFfQPgPQXH
-
-- task: ADAM 実運用 instruction へ新スレッド再開識別子ルールを反映確認する
-  source_ref:
-    - config/ai/adam_instruction.md
-    - notes/07_reports/daily/2026-04-21.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day0
-  due_date: 2026-04-22
-  why_now:
-    - `ADAM_MMDD` 再開識別子ルールは repo の instruction に追加済みだが、ADAM の実運用判断への反映はまだ未確認である
-    - 明日やるなら intake routing より前で、node --test と同じ Day0 に置くのが自然である
-  notes:
-    - repo 反映済みを理由に completed 扱いしない
-    - 次の新スレッド再開時に `ADAM_MMDD` を再開識別子として読めることを確認対象にする
-  status: completed
-  completed: true
-  external:
-    todoist_task_id: 6gR4rGXfHgh563Rq
-
-- task: design retain fallback の no_op 欠落が仕様変更か不整合かを整理する
-  source_ref:
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
-    - src/services/flow-control/design-routing.test.js
-    - src/services/flow-control/design-routing.js
-    - src/services/flow-control/design-routing-notes-write.js
-    - notes/08_analysis/2026-04-22_design_retain_no_op_layer_mismatch.md
-  rolling_day: Day0
-  due_date: 2026-04-22
-  why_now:
-    - `design-routing.test.js` で fallback retain path の `no_op` が `undefined` になっており、仕様変更なのか実装不整合なのかを先に切り分ける必要がある
-    - intake 本筋の前に、design routing 側の fallback 意味づけを整理しておくと後段判断が安定する
-  notes:
-    - routing 層では `write_status` を持たず、apply 結果層で `no_op` が付くと整理した
-    - `notes/08_analysis/2026-04-22_design_retain_no_op_layer_mismatch.md` に記録した
-  status: completed
-  completed: true
-
-- task: intake routing の design / issue 期待値ズレが test 側か実装側かを切り分ける
-  source_ref:
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
-    - src/services/flow-control/intake-routing.test.js
-    - src/services/flow-control/intake-routing.js
-    - src/services/flow-control/rules.js
-    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
-    - notes/02_design/intake_review_and_source_ref_spec.md
-    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
-    - notes/08_analysis/2026-04-22_intake_design_issue_route_gap.md
-  rolling_day: Day0
-  due_date: 2026-04-22
-  why_now:
-    - `intake-routing.test.js` が `design` 期待に対して実装は `issue` を返しており、次の intake routing 本筋へ入る前にズレの性質を把握する必要がある
-    - intake routing 候補整理を進めるにしても、route 境界の前提がずれていると観測設計に影響する
-  notes:
-    - spec では intake の最小分岐に `issue / design / future` が含まれる
-    - current implementation は通常 intake をほぼ `issue` に落としており、spec 未達の可能性が高い
-    - `notes/08_analysis/2026-04-22_intake_design_issue_route_gap.md` に記録した
-  status: completed
-  completed: true
-
-- task: design retain fallback の no_op 期待を test 層に合わせて補正する
-  source_ref:
-    - notes/08_analysis/2026-04-22_design_retain_no_op_layer_mismatch.md
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md
-    - src/services/flow-control/design-routing.test.js
-    - src/services/flow-control/design-routing-notes-write.js
-  rolling_day: Day0
-  due_date: 2026-04-22
-  why_now:
-    - GitHub main の正式 test でも design retain fail は継続しており、routing 層と apply 層の参照ずれを test で補正するのが第一候補である
-    - code 修正ではなく test 期待の位置補正で閉じられる可能性が高い
-  notes:
-    - `write_status: no_op` は apply result 層で確認するよう test を補正した
-    - 最新 HEAD `e4e782e` の正式再実行で flow-control 周辺 test green を確認した
-  status: completed
-  completed: true
-
-- task: non-high-impact open issue が design に吸われる判定順を修正する
-  source_ref:
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md
-    - src/services/flow-control/rules.js
-    - src/services/flow-control/rules.test.js
-    - src/services/flow-control/issue-routing.test.js
-    - notes/08_analysis/2026-04-22_issue_routing_medium_impact_expectation_conflict.md
-  rolling_day: Day0
-  due_date: 2026-04-22
-  why_now:
-    - GitHub main の正式 test で `evaluateCandidate keeps non-high-impact open issue in issue` が fail しており、architecture 判定が impact keep より先に効いている副作用を直す必要がある
-    - intake 側の最小分岐追加で issue routing 側を壊していないかを先に閉じるのが安全である
-  notes:
-    - `source_type === issue` の keep bias を回復する判定順補正を入れた
-    - medium-impact issue の期待不一致は issue-routing.test 側を keep bias 方針へ揃えて解消した
-    - 最新 HEAD `e4e782e` の正式再実行で flow-control 周辺 test green を確認した
-  status: completed
-  completed: true
-
-- task: intake routing の issue / design / future 最小分岐を spec に沿って実装する
-  source_ref:
-    - notes/08_analysis/2026-04-22_intake_design_issue_route_gap.md
-    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
-    - notes/02_design/intake_review_and_source_ref_spec.md
-    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
-    - src/services/flow-control/intake-routing.js
-    - src/services/flow-control/rules.js
-    - src/services/flow-control/intake-routing.test.js
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md
-  rolling_day: Day0
-  due_date: 2026-04-22
-  why_now:
-    - intake routing の最小完成条件は `issue / design / future` の 3 分岐観測であり、intake-routing 側の正式 fail 自体は解消した
-    - ただし正式結果では `rules.test.js` に副作用が出ており、issue routing 側を壊さずに最小分岐を成立させる補正がまだ必要である
-  notes:
-    - intake routing の最小3分岐を実装し、周辺 test と整合する形まで補正した
-    - 最新 HEAD `e4e782e` の正式再実行で flow-control 周辺 test green を確認した
-  status: completed
-  completed: true
-
-## Day1（04/23 木）
-
-- task: intake routing の第一バッチ候補を整理する
-  source_ref:
-    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
-    - notes/02_design/intake_review_and_source_ref_spec.md
-    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md
-  rolling_day: Day1
-  due_date: 2026-04-23
-  why_now:
-    - issue routing の運用観測ラインは一巡し、flow-control 周辺 test も green になったため、次の Phase 0 本筋は intake routing の第一バッチ観測へ移るのが自然である
-    - intake routing の完成条件を観測するには、issue / design / future の 3 分岐を見られる第一バッチ入力を先に決める必要がある
-  notes:
-    - 実 inbox 入力または inbox 相当の入力束から選ぶ
-    - source_ref と inbox 後処理も見られる候補を優先する
-    - 第一バッチ候補は `notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md` に整理した
-  status: completed
-  completed: true
-  external:
-    todoist_task_id: 6gQwqHvVc2cj87vq
-
-- task: intake routing の観測項目を analysis に落とす
-  source_ref:
-    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
-    - notes/02_design/intake_review_and_source_ref_spec.md
-    - src/services/flow-control/intake-routing.js
-    - src/services/flow-control/intake-routing.test.js
-    - notes/08_analysis/2026-04-22_intake_routing_observation_items.md
-  rolling_day: Day1
-  due_date: 2026-04-23
-  why_now:
-    - 実験入力だけでなく、route / source_ref / inbox 後処理 / role boundary のどこを確認するかを先に固定しておくと、issue routing と同じ粒度で完成判定しやすい
-  notes:
-    - issue / design / future の出方
-    - source_ref の自然さ
-    - inbox 後処理として archive / pending をどう扱うか
-    - 観測項目は `notes/08_analysis/2026-04-22_intake_routing_observation_items.md` に整理した
-  status: completed
-  completed: true
-  external:
-    todoist_task_id: 6gQwqJ2HGv8fwVvq
-
-- task: intake routing の第一バッチ期待値ベース observation を記録する
-  source_ref:
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md
-    - notes/08_analysis/2026-04-22_intake_routing_observation_items.md
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_execution_readiness.md
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_expectation_observation.md
-  rolling_day: Day1
-  due_date: 2026-04-23
-  why_now:
-    - inbox markdown adapter 未実装のため、まずは期待値ベース observation で第一バッチの運用妥当性を先に固定する
-    - 後で mechanical dry run を追加したときの比較基準になる
-  notes:
-    - `pending_tasks` → issue
-    - `reflection_design` → design
-    - `branch_strategy_future` → future
-    - 5観点で観測メモを保存した
-  status: completed
-  completed: true
-
-- task: intake routing 用 inbox markdown adapter の最小要件を整理する
-  source_ref:
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_execution_readiness.md
-    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
-    - src/services/flow-control/adapters.js
-    - src/services/flow-control/intake-routing.js
-    - notes/02_design/intake_review_and_source_ref_spec.md
-  rolling_day: Day1
-  due_date: 2026-04-23
-  why_now:
-    - 第一バッチを実ファイルから機械的に routing するには inbox markdown adapter が必要である
-    - expectation observation の次に、最小 adapter 要件を固定するのが自然である
-  notes:
-    - markdown 読取
-    - 最小 item 化
-    - source_bundle 生成
-    - チャンク分解をどこまで前提にするかを整理した
-    - `notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md` に保存した
-  status: completed
-  completed: true
-
-- task: intake routing 用 inbox markdown adapter の最小実装差分を作る
-  source_ref:
-    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
-    - src/services/flow-control/adapters.js
-    - src/services/flow-control/index.js
-    - src/services/flow-control/intake-routing.js
-    - src/services/flow-control/intake-routing.test.js
-    - src/services/flow-control/normalize.js
-    - notes/08_analysis/2026-04-22_flow_control_node_test_result_head_aligned.md
-  rolling_day: Day1
-  due_date: 2026-04-23
-  why_now:
-    - 第一バッチ 3 件を mechanical dry run で観測するには inbox markdown adapter が必要である
-    - 最小要件は整理済みなので、次は最小実装差分へ落とすのが自然である
-  notes:
-    - まずは 1ファイル = 1item の最小版でよい
-    - `pending_tasks` の複数論点分解は後続拡張に回す
-    - source_type は `inbox` を使った
-    - 最新 HEAD `e4e782e` の正式再実行で 39件中 39 pass / 0 fail を確認した
-  status: completed
-  completed: true
-
-- task: intake routing 第一バッチ 3 件の mechanical dry run observation を記録する
-  source_ref:
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_candidate_set.md
-    - notes/08_analysis/2026-04-22_intake_routing_observation_items.md
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_expectation_observation.md
-    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
-    - notes/08_analysis/2026-04-22_intake_routing_first_batch_mechanical_dry_run_observation.md
-    - src/services/flow-control/adapters.js
-    - src/services/flow-control/intake-routing.js
-  rolling_day: Day1
-  due_date: 2026-04-23
-  why_now:
-    - inbox markdown adapter の最小実装が入り、第一バッチ 3 件を実ファイル由来で mechanical dry run できる状態になった
-    - 期待値ベース observation と実観測を比較して、入口処理として成立しているかを確認する次段である
-  notes:
-    - `pending_tasks`
-    - `reflection_design`
-    - `branch_strategy_future`
-    - の 3 件を同一観測シートで記録した
-    - route 多様性は 3 分岐とも成立した
-    - 次の主要論点は `pending_tasks` の複数論点分解要否である
-  status: completed
-  completed: true
+## Day0（04/23 木）
 
 - task: pending_tasks 向けの inbox チャンク分解拡張要否を整理する
   source_ref:
@@ -292,7 +22,7 @@
     - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
     - src/services/flow-control/adapters.js
     - notes/02_design/intake_review_and_source_ref_spec.md
-  rolling_day: Day1
+  rolling_day: Day0
   due_date: 2026-04-23
   why_now:
     - 第一バッチの mechanical dry run で `pending_tasks` は route 自体は issue で妥当だったが、1ファイル1item では複数論点混在が残った
@@ -301,13 +31,29 @@
     - `reflection_design` と `branch_strategy_future` は最小 adapter で十分観測できた
     - 拡張対象はまず `pending_tasks` に限定してよい
 
-## Day2（04/24 金）
+- task: pending_tasks 型複数論点入力の最小 split ルールを design に落とす
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_mechanical_dry_run_observation.md
+    - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - src/services/flow-control/adapters.js
+  rolling_day: Day0
+  due_date: 2026-04-23
+  why_now:
+    - `pending_tasks` の複数論点混在を解消するには、実装前に最小 split ルールを固定するのが安全である
+    - intake routing の役割を壊さず、1テーマ1メモへ近づける最小分解基準を先に整理したい
+  notes:
+    - `1見出し = 1item` で十分か
+    - `まとめ` セクションを item 化しないか
+    - source_ref の付け方を崩さない
+
+## Day1（04/24 金）
 
 - task: flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する
   source_ref:
     - notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md
     - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
-  rolling_day: Day2
+  rolling_day: Day1
   due_date: 2026-04-24
   why_now:
     - report / handover の返し先整理は終わったため、必要なら週次 report に返す最小要点だけを残しておく価値がある
@@ -316,19 +62,38 @@
   external:
     todoist_task_id: 6gQwqHx9RcJQJrRH
 
-## Day3（04/25 土）
+- task: intake inbox adapter の複数 item 抽出最小拡張を設計する
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_mechanical_dry_run_observation.md
+    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
+    - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
+    - src/services/flow-control/adapters.js
+  rolling_day: Day1
+  due_date: 2026-04-24
+  why_now:
+    - `pending_tasks` の split 要否が整理できたら、次は adapter 側でどこまで複数 item 抽出するかを設計する段階になる
+    - 最小実装のまま route 多様性は成立したため、次は粒度改善に寄せるのが自然である
+  notes:
+    - まず `pending_tasks` 型だけを対象にしてよい
+    - 全 inbox 一般化は後回しにする
+
+## Day2（04/25 土）
 
 - なし
 
-## Day4（04/26 日）
+## Day3（04/26 日）
 
 - なし
 
-## Day5（04/27 月）
+## Day4（04/27 月）
 
 - なし
 
-## Day6（04/28 火）
+## Day5（04/28 火）
+
+- なし
+
+## Day6（04/29 水）
 
 - なし
 
