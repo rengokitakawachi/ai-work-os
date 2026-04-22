@@ -8,6 +8,7 @@
 - `pending_tasks 型複数論点入力の最小 split ルールを design に落とす`
 - `intake inbox adapter の複数 item 抽出最小拡張を設計する`
 - `daily review reroll で plan / issue / next を必須候補源として確認する最小チェックを design に落とす`
+- `ADAM の instruction へ daily review reroll gate 反映を確認する`
 - `intake inbox adapter の複数 item 抽出最小拡張を実装する`
 - `pending_tasks 分解後の第一バッチ再観測を行う`
 - `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する`
@@ -28,6 +29,7 @@
     - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
     - src/services/flow-control/adapters.js
     - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/08_analysis/2026-04-22_pending_tasks_chunking_extension_necessity.md
   rolling_day: Day0
   due_date: 2026-04-23
   why_now:
@@ -36,6 +38,10 @@
   notes:
     - `reflection_design` と `branch_strategy_future` は最小 adapter で十分観測できた
     - 拡張対象はまず `pending_tasks` に限定してよい
+    - 要否整理は `notes/08_analysis/2026-04-22_pending_tasks_chunking_extension_necessity.md` に保存した
+    - 結論: route 妥当性は成立済みだが、spec 上のチャンク単位処理と 1テーマ1メモのために split 拡張は必要
+  status: completed
+  completed: true
   external:
     todoist_task_id: 6gR8XV6Rp87J9G4H
 
@@ -95,6 +101,21 @@
     - Day 容量と依存順も同時に確認する
   external:
     todoist_task_id: 6gR8gmRr5v9m8GmH
+
+- task: ADAM の instruction へ daily review reroll gate 反映を確認する
+  source_ref:
+    - config/ai/adam_instruction.md
+    - notes/02_design/2026-04-03_review_system_operating_spec.md
+    - notes/02_design/2026-04-18_daily_review_output_to_content_and_operations_connection_rule.md
+    - notes/07_reports/daily/2026-04-22.md
+  rolling_day: Day1
+  due_date: 2026-04-24
+  why_now:
+    - repo 上の instruction と review spec には reroll gate を反映済みだが、ADAM runtime の instruction 反映確認は別 task として残す必要がある
+    - `repo 更新 = 実運用反映` とみなさない再発防止の一部として、早めに確認する価値がある
+  notes:
+    - daily review 開始時に review モード / candidate source / reroll 実施有無を先に明示できるかを確認対象にする
+    - candidate source 未確認なら fail-closed で停止する運用が ADAM 側でも効いているかを見る
 
 ## Day2（04/25 土）
 
