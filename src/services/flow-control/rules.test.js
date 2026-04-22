@@ -10,6 +10,8 @@ function buildCandidate({
   phase = 'phase0',
   assessment = {},
   metadata = {},
+  reviewAt = '',
+  summary = '',
 } = {}) {
   return {
     candidate_id: candidateId,
@@ -18,6 +20,8 @@ function buildCandidate({
     phase,
     assessment,
     metadata,
+    review_at: reviewAt,
+    summary,
   };
 }
 
@@ -150,6 +154,46 @@ test('evaluateCandidate routes operations candidates to operations', () => {
   assert.equal(result.in_scope, true);
   assert.equal(result.needs_task_generation, true);
   assert.equal(result.review_at, 'daily_review');
+});
+
+test('evaluateCandidate routes architecture intake candidate to design', () => {
+  const result = evaluateCandidate(
+    buildCandidate({
+      candidateId: 'architecture-intake',
+      sourceType: 'conversation',
+      metadata: {
+        category: 'architecture',
+      },
+      assessment: {
+        impact_now: 'high',
+      },
+      summary: 'needs design handling',
+    }),
+    { phase: 'phase0' }
+  );
+
+  assert.equal(result.route_to, 'design');
+  assert.equal(result.in_scope, true);
+  assert.equal(result.review_at, 'weekly_review');
+});
+
+test('evaluateCandidate routes deferred intake candidate to future', () => {
+  const result = evaluateCandidate(
+    buildCandidate({
+      candidateId: 'deferred-intake',
+      sourceType: 'conversation',
+      reviewAt: 'monthly_review',
+      metadata: {
+        category: 'operations',
+      },
+      summary: 'phase later deferred idea',
+    }),
+    { phase: 'phase0' }
+  );
+
+  assert.equal(result.route_to, 'future');
+  assert.equal(result.in_scope, false);
+  assert.equal(result.review_at, 'weekly_review');
 });
 
 test('evaluateCandidates returns empty array for empty input', () => {
