@@ -12,6 +12,7 @@ export {
   buildIssueSourceBundle,
   buildIssueRoutingSourceBundle,
   buildDesignRoutingSourceBundle,
+  buildIntakeInboxSourceBundle,
   buildActiveOperationsSourceBundle,
   buildNextOperationsSourceBundle,
   buildOperationsQueueSourceBundle,
