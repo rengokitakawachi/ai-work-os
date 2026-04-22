@@ -34,15 +34,15 @@ node --test src/services/flow-control/issue-routing.test.js \
 
 ## 最終正式結果
 
-- HEAD: `438658e`
-- total: 36
-- pass: 36
+- HEAD: `e4e782e`
+- total: 39
+- pass: 39
 - fail: 0
 
 補足:
 - 対象ファイルは HEAD 一致状態で再実行した
 - `git status --short` では対象ファイル差分ゼロを確認した
-- flow-control 周辺 test は全 green になった
+- inbox markdown adapter 追加後も flow-control 周辺 test は全 green になった
 
 ---
 
@@ -65,22 +65,27 @@ node --test src/services/flow-control/issue-routing.test.js \
 - medium-impact architecture / operations issue の期待が `rules.test.js` と不一致だった
 - keep bias 優先方針に合わせて test 期待を統一した
 
-これらの補正後、最新 HEAD `438658e` で全 test green を確認した。
+4.
+`intake-routing.test.js`
+- inbox markdown adapter 追加後、`adapters.js` / `index.js` の HEAD 揃え漏れによる import 不整合が一度発生した
+- 対象ファイルを HEAD に揃え直した後、adapter 追加分も含めて全 test green を確認した
+
+これらの補正後、最新 HEAD `e4e782e` で全 test green を確認した。
 
 ---
 
 ## 判断
 
 - flow-control 周辺の回帰確認は green で閉じてよい
-- intake routing の最小分岐実装も、周辺 test と整合するところまで到達した
-- 次は flow-control 回帰論点ではなく、intake routing の第一バッチ運用観測へ進むのが自然である
+- intake routing の最小分岐実装と inbox markdown adapter の最小実装は、周辺 test と整合するところまで到達した
+- 次は flow-control 回帰論点ではなく、intake routing 第一バッチ 3 件の mechanical dry run observation へ進むのが自然である
 
 ---
 
 ## 次の自然なタスク
 
 1.
-`intake routing の第一バッチ候補を整理する`
+`intake routing 第一バッチ 3 件の mechanical dry run observation を記録する`
 
 2.
-`intake routing の観測項目を analysis に落とす`
+必要なら `pending_tasks` 向けのチャンク分解拡張を別 task 化する
