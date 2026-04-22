@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { routeSingleIntakeCandidate } from './intake-routing.js';
+import { routeIntakeCandidates, routeSingleIntakeCandidate } from './intake-routing.js';
+import { buildIntakeInboxSourceBundle } from './adapters.js';
 
 function buildIntakeItem({
   title = 'legacy wrapper cleanup',
@@ -75,4 +76,61 @@ test('routeSingleIntakeCandidate can route deferred item to future', () => {
 
   assert.equal(result.routing_decisions[0].route_to, 'future');
   assert.equal(result.grouped.future.length, 1);
+});
+
+test('buildIntakeInboxSourceBundle can route design-like inbox markdown to design', () => {
+  const bundle = buildIntakeInboxSourceBundle({
+    content: `# Reflection機能設計メモ
+
+## 概要
+AI Work OS における reflection 機能の API 設計とデータ構造を整理する。`,
+    sourceRef: 'notes/00_inbox/dev_memo/2026-03-22_15-30-00_reflection_design.md',
+  });
+
+  const result = routeIntakeCandidates({
+    sourceBundles: [bundle],
+    phase: 'phase0',
+  });
+
+  assert.equal(result.normalized_items.length, 1);
+  assert.equal(result.routing_decisions[0].route_to, 'design');
+  assert.equal(result.grouped.design.length, 1);
+});
+
+test('buildIntakeInboxSourceBundle can route future-like inbox markdown to future', () => {
+  const bundle = buildIntakeInboxSourceBundle({
+    content: `# Branch Strategy (Future Plan)
+
+## 概要
+将来的に branch ベース開発へ移行する方針を決定。`,
+    sourceRef: 'notes/00_inbox/dev_memo/2026-03-22_18-00-00_branch_strategy_future.md',
+  });
+
+  const result = routeIntakeCandidates({
+    sourceBundles: [bundle],
+    phase: 'phase0',
+  });
+
+  assert.equal(result.normalized_items.length, 1);
+  assert.equal(result.routing_decisions[0].route_to, 'future');
+  assert.equal(result.grouped.future.length, 1);
+});
+
+test('buildIntakeInboxSourceBundle can keep pending-task markdown in issue', () => {
+  const bundle = buildIntakeInboxSourceBundle({
+    content: `# 開発メモ（積み残しタスク）
+
+## 概要
+現時点で後回しにしたが、今後対応が必要なタスクを整理する。`,
+    sourceRef: 'notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md',
+  });
+
+  const result = routeIntakeCandidates({
+    sourceBundles: [bundle],
+    phase: 'phase0',
+  });
+
+  assert.equal(result.normalized_items.length, 1);
+  assert.equal(result.routing_decisions[0].route_to, 'issue');
+  assert.equal(result.grouped.issue.length, 1);
 });
