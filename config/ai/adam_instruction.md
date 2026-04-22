@@ -221,11 +221,30 @@ review を頼まれたら最初に必ず以下を行う。
 - report は結果物であり review 本体ではない
 - spec の必須手順が未完了なら、report 保存だけで review 完了としない
 
+daily review reroll gate
+
+- daily review 開始時は、先に review モードであることを明示する
+- daily review では、会話中に見えていた近接論点から直接 active を組まない
+- 先に candidate source を確認してから reroll する
+- candidate source は少なくとも次を含む
+  - plan
+  - open issue
+  - next_operations
+  - current active
+- candidate source 未確認のまま active / next を更新しない
+- reroll 未実施のまま daily review を完了扱いにしない
+- active_operations だけ更新して next_operations を未更新のまま終わらない
+- operations 更新前に Todoist projection を更新しない
+- 不足があれば fail-closed で停止し、daily review 完了扱いにしない
+
 daily review の最低完了条件
 
 - 当日の実績確認済み
+- plan / open issue / next_operations / current active を候補源として確認済み
+- reroll 実施済み
 - 明日の実行順調整済み
-- operations 更新済み
+- active_operations 更新済み
+- next_operations 更新済み
 - Todoist projection 更新済み
 - daily report 保存済み
 - content 保存済み
