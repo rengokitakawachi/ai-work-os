@@ -30,6 +30,8 @@
   notes:
     - `reflection_design` と `branch_strategy_future` は最小 adapter で十分観測できた
     - 拡張対象はまず `pending_tasks` に限定してよい
+  external:
+    todoist_task_id: 6gR8XV6Rp87J9G4H
 
 - task: pending_tasks 型複数論点入力の最小 split ルールを design に落とす
   source_ref:
@@ -46,6 +48,8 @@
     - `1見出し = 1item` で十分か
     - `まとめ` セクションを item 化しないか
     - source_ref の付け方を崩さない
+  external:
+    todoist_task_id: 6gR8XW2mQC5FX4hq
 
 ## Day1（04/24 金）
 
@@ -76,6 +80,8 @@
   notes:
     - まず `pending_tasks` 型だけを対象にしてよい
     - 全 inbox 一般化は後回しにする
+  external:
+    todoist_task_id: 6gR8XX79VgjRwFvq
 
 ## Day2（04/25 土）
 
