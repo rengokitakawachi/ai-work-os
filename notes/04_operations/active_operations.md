@@ -4,8 +4,7 @@
 
 ### Phase 0 直結 task
 
-- `design retain fallback の no_op 欠落が仕様変更か不整合かを整理する`
-- `intake routing の design / issue 期待値ズレが test 側か実装側かを切り分ける`
+- `intake routing の issue / design / future 最小分岐を spec に沿って実装する`
 - `intake routing の第一バッチ候補を整理する`
 - `intake routing の観測項目を analysis に落とす`
 
@@ -60,29 +59,58 @@
     - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
     - src/services/flow-control/design-routing.test.js
     - src/services/flow-control/design-routing.js
+    - src/services/flow-control/design-routing-notes-write.js
+    - notes/08_analysis/2026-04-22_design_retain_no_op_layer_mismatch.md
   rolling_day: Day0
   due_date: 2026-04-22
   why_now:
     - `design-routing.test.js` で fallback retain path の `no_op` が `undefined` になっており、仕様変更なのか実装不整合なのかを先に切り分ける必要がある
     - intake 本筋の前に、design routing 側の fallback 意味づけを整理しておくと後段判断が安定する
   notes:
-    - code を直す前に、期待値と現実装のどちらが正かを見る
-    - fallback removal 系変更との関係も確認する
+    - routing 層では `write_status` を持たず、apply 結果層で `no_op` が付くと整理した
+    - `notes/08_analysis/2026-04-22_design_retain_no_op_layer_mismatch.md` に記録した
+  status: completed
+  completed: true
 
 - task: intake routing の design / issue 期待値ズレが test 側か実装側かを切り分ける
   source_ref:
     - notes/08_analysis/2026-04-22_flow_control_node_test_result.md
     - src/services/flow-control/intake-routing.test.js
     - src/services/flow-control/intake-routing.js
+    - src/services/flow-control/rules.js
     - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
+    - notes/08_analysis/2026-04-22_intake_design_issue_route_gap.md
   rolling_day: Day0
   due_date: 2026-04-22
   why_now:
     - `intake-routing.test.js` が `design` 期待に対して実装は `issue` を返しており、次の intake routing 本筋へ入る前にズレの性質を把握する必要がある
     - intake routing 候補整理を進めるにしても、route 境界の前提がずれていると観測設計に影響する
   notes:
-    - code を直す前に、test 側期待値と design 文書のどちらに寄せるべきかを見る
-    - blocking か、候補整理は先行可能かも同時に判断する
+    - spec では intake の最小分岐に `issue / design / future` が含まれる
+    - current implementation は通常 intake をほぼ `issue` に落としており、spec 未達の可能性が高い
+    - `notes/08_analysis/2026-04-22_intake_design_issue_route_gap.md` に記録した
+  status: completed
+  completed: true
+
+- task: intake routing の issue / design / future 最小分岐を spec に沿って実装する
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_design_issue_route_gap.md
+    - notes/02_design/2026-04-21_intake_routing_minimum_operation_experiment.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md
+    - src/services/flow-control/intake-routing.js
+    - src/services/flow-control/rules.js
+    - src/services/flow-control/intake-routing.test.js
+  rolling_day: Day0
+  due_date: 2026-04-22
+  why_now:
+    - intake routing の最小完成条件は `issue / design / future` の 3 分岐観測であり、current implementation は design 分岐が不足している可能性が高い
+    - 第一バッチ候補整理より前に、spec に沿う最小 route 境界を先に整える方が安全である
+  notes:
+    - code を大きく広げず、最小条件で design / future へ送れるようにする
+    - conversation 起点 issue routing との役割差を壊さない
 
 ## Day1（04/23 木）
 
