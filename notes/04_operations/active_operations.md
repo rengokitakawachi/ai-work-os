@@ -10,6 +10,7 @@
 - `intake routing 用 inbox markdown adapter の最小要件を整理する`
 - `intake routing 用 inbox markdown adapter の最小実装差分を作る`
 - `intake routing 第一バッチ 3 件の mechanical dry run observation を記録する`
+- `pending_tasks 向けの inbox チャンク分解拡張要否を整理する`
 
 ### 補助 task
 
@@ -266,6 +267,7 @@
     - notes/08_analysis/2026-04-22_intake_routing_observation_items.md
     - notes/08_analysis/2026-04-22_intake_routing_first_batch_expectation_observation.md
     - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_mechanical_dry_run_observation.md
     - src/services/flow-control/adapters.js
     - src/services/flow-control/intake-routing.js
   rolling_day: Day1
@@ -277,7 +279,27 @@
     - `pending_tasks`
     - `reflection_design`
     - `branch_strategy_future`
-    - の 3 件を同一観測シートで記録する
+    - の 3 件を同一観測シートで記録した
+    - route 多様性は 3 分岐とも成立した
+    - 次の主要論点は `pending_tasks` の複数論点分解要否である
+  status: completed
+  completed: true
+
+- task: pending_tasks 向けの inbox チャンク分解拡張要否を整理する
+  source_ref:
+    - notes/08_analysis/2026-04-22_intake_routing_first_batch_mechanical_dry_run_observation.md
+    - notes/08_analysis/2026-04-22_intake_inbox_markdown_adapter_minimum_requirements.md
+    - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
+    - src/services/flow-control/adapters.js
+    - notes/02_design/intake_review_and_source_ref_spec.md
+  rolling_day: Day1
+  due_date: 2026-04-23
+  why_now:
+    - 第一バッチの mechanical dry run で `pending_tasks` は route 自体は issue で妥当だったが、1ファイル1item では複数論点混在が残った
+    - intake routing を入口処理として実運用に寄せるには、チャンク分解を入れるべきかを次に整理する必要がある
+  notes:
+    - `reflection_design` と `branch_strategy_future` は最小 adapter で十分観測できた
+    - 拡張対象はまず `pending_tasks` に限定してよい
 
 ## Day2（04/24 金）
 
