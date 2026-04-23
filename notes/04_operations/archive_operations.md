@@ -182,6 +182,18 @@ weekly review までの短期履歴置き場であり、
   - route 多様性は mechanical dry run でも `issue / design / future` の 3 分岐で成立した
   - 次の主論点は `pending_tasks` の複数論点分解要否に絞られた
 
+--- 2026-04-23 daily review ---
+
+- `pending_tasks 向けの inbox チャンク分解拡張要否を整理する` を完了した
+  - route 妥当性は成立済みだが、1テーマ1メモと spec 上のチャンク単位処理のために split 拡張が必要と整理した
+- `pending_tasks 型複数論点入力の最小 split ルールを design に落とす` を完了した
+  - `1見出し = 1item` を最小 split ルールとし、`まとめ` / `summary` は item 化しない方針を固定した
+- `intake inbox adapter の複数 item 抽出最小拡張を設計する` を完了した
+  - `pending_tasks` 限定 split、split 不成立時の single item fallback、source_ref 維持を設計として固定した
+- `intake inbox adapter の複数 item 抽出最小拡張を実装する` を完了した
+  - `src/services/flow-control/adapters.js` に `pending_tasks` 専用 split 分岐を追加した
+  - split 成功時は見出し単位の複数 item、失敗時は既存 `1ファイル = 1item` にフォールバックする状態になった
+
 ---
 
 ## ルール
