@@ -123,6 +123,85 @@ function looksLikeFutureInboxMemo({ title = '', content = '' } = {}) {
   );
 }
 
+function isPendingTasksInboxSource({ sourceRef = '', title = '' } = {}) {
+  const comparable = `${ensureString(sourceRef)} ${ensureString(title)}`.toLowerCase();
+  return comparable.includes('pending_tasks');
+}
+
+function splitMarkdownSectionsByHeading(content = '') {
+  const safeContent = ensureString(content);
+  const matches = Array.from(safeContent.matchAll(/^##\s+(.+)$/gmu));
+
+  if (!matches.length) {
+    return [];
+  }
+
+  return matches.map((match, index) => {
+    const title = ensureString(match?.[1]).trim();
+    const start = match.index ?? 0;
+    const end =
+      index + 1 < matches.length
+        ? matches[index + 1].index ?? safeContent.length
+        : safeContent.length;
+    const rawSection = safeContent.slice(start, end).trim();
+    const body = rawSection.replace(/^##\s+.+$/mu, '').trim();
+
+    return {
+      title,
+      body,
+      index,
+    };
+  });
+}
+
+function isExcludedPendingTasksSection(title = '') {
+  const normalized = ensureString(title).trim().toLowerCase();
+  return normalized === 'まとめ' || normalized === 'summary';
+}
+
+function buildSingleInboxItem({ title = '', summary = '', sourceRef = '', content = '' } = {}) {
+  const safeSourceRef = ensureString(sourceRef);
+  const metadata = {
+    extracted_from: 'inbox_markdown',
+    source_kind: 'inbox',
+    original_path: safeSourceRef,
+    description: summary,
+    ...(looksLikeDesignInboxMemo({ title, content }) ? { category: 'architecture' } : {}),
+  };
+
+  return {
+    title,
+    summary,
+    candidate_type: 'issue',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    ...(looksLikeFutureInboxMemo({ title, content })
+      ? { review_at: 'monthly_review' }
+      : {}),
+    metadata,
+  };
+}
+
+function buildPendingTasksSplitItems({ sourceRef = '', sections = [] } = {}) {
+  const safeSourceRef = ensureString(sourceRef);
+
+  return (Array.isArray(sections) ? sections : []).map((section) => ({
+    title: ensureString(section?.title),
+    summary: ensureString(section?.title),
+    description: ensureString(section?.body),
+    candidate_type: 'issue',
+    source_ref: safeSourceRef ? [safeSourceRef] : [],
+    metadata: {
+      extracted_from: 'inbox_markdown',
+      source_kind: 'inbox',
+      original_path: safeSourceRef,
+      section_title: ensureString(section?.title),
+      section_index: section?.index,
+      split_source: 'pending_tasks_heading_split',
+      description: ensureString(section?.body) || ensureString(section?.title),
+    },
+  }));
+}
+
 function normalizeComparableText(value = '') {
   return ensureString(value)
     .toLowerCase()
@@ -390,29 +469,42 @@ export function buildIntakeInboxSourceBundle({ content = '', sourceRef = '' } = 
     };
   }
 
-  const metadata = {
-    extracted_from: 'inbox_markdown',
-    source_kind: 'inbox',
-    original_path: safeSourceRef,
-    description: summary,
-    ...(looksLikeDesignInboxMemo({ title, content }) ? { category: 'architecture' } : {}),
-  };
-
-  const item = {
+  const shouldTrySplit = isPendingTasksInboxSource({
+    sourceRef: safeSourceRef,
     title,
-    summary,
-    candidate_type: 'issue',
-    source_ref: safeSourceRef ? [safeSourceRef] : [],
-    ...(looksLikeFutureInboxMemo({ title, content })
-      ? { review_at: 'monthly_review' }
-      : {}),
-    metadata,
-  };
+  });
+
+  if (shouldTrySplit) {
+    const sections = splitMarkdownSectionsByHeading(content).filter(
+      (section) =>
+        ensureString(section?.title) &&
+        !isExcludedPendingTasksSection(section?.title) &&
+        ensureString(section?.body)
+    );
+
+    if (sections.length > 0) {
+      return {
+        source_type: 'inbox',
+        source_ref: safeSourceRef ? [safeSourceRef] : [],
+        items: buildPendingTasksSplitItems({
+          sourceRef: safeSourceRef,
+          sections,
+        }),
+      };
+    }
+  }
 
   return {
     source_type: 'inbox',
     source_ref: safeSourceRef ? [safeSourceRef] : [],
-    items: [item],
+    items: [
+      buildSingleInboxItem({
+        title,
+        summary,
+        sourceRef: safeSourceRef,
+        content,
+      }),
+    ],
   };
 }
 
