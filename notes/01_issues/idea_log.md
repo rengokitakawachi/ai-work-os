@@ -56,3 +56,13 @@
 - urgency: low
 - status: closed
 - created_at: 2026-04-21
+
+### 20260423-028
+- title: Todoist projection で due_date が create payload へ伝播せず新規 task が日付なしで作られる
+- category: execution
+- description: daily review 後の Todoist projection で、新規に create された active task に due が入らない事象が起きた。`notes/04_operations/active_operations.md` には `due_date` が存在し、repo 側の `src/services/tasks/projection.js` も `due_date` / `rollingDayDate` から Todoist `due_string` / `deadline_date` を組み立てる実装を持っている。しかし、実運用で使っている `projectTasks` の projection 入出力スキーマには `due_date` / `due_type` が存在せず、daily review で Action に渡した current_active_tasks へ due 情報が載らなかった。その結果、新規 create task だけが日付なしで作られる。
+- context: 2026-04-23 の会話で、daily review 後に ADAM 系の新規 Todoist task 3件へ due が入っていないことを確認した。既存継続 task には due が残っていたため、Todoist 側の一般不具合ではなく、新規 create 経路の伝播欠落と判断した。その後、3件には手動で due_date を補正した。根本的には `projectTasks` の task schema に `due_date` / `due_type` を追加し、projection create/update の payload へ伝播させる必要がある。
+- impact: medium
+- urgency: medium
+- status: open
+- created_at: 2026-04-23
