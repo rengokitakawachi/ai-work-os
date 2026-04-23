@@ -71,6 +71,8 @@
   notes:
     - daily review 開始時に review モード / candidate source / reroll 実施有無を先に明示できるかを確認対象にする
     - candidate source 未確認なら fail-closed で停止する運用が ADAM 側でも効いているかを見る
+  external:
+    todoist_task_id: 6gRMpV4r6XqHxJjq
 
 ## Day1（04/25 土）
 
@@ -161,6 +163,8 @@
     - candidate source の網羅
     - 依存順確認
     を同時に見るチェックへ落とす
+  external:
+    todoist_task_id: 6gRMpV799XvGw94q
 
 ## Day6（04/30 木）
 
@@ -176,6 +180,8 @@
     - 再観測後に後処理ルールを整理する順が依存上自然である
   notes:
     - split 後の役目終了条件を明示する
+  external:
+    todoist_task_id: 6gRMpV9V8x32VMpH
 
 ---
 
