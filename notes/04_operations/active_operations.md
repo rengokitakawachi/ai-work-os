@@ -163,6 +163,8 @@
   notes:
     - `projectTasks` schema に due_date / due_type を通す方針を最小で整理する
     - review 後チェックも含める
+  external:
+    todoist_task_id: 6gRfFPv84296Pfmq
 
 ## Day6（05/01 金）
 
@@ -178,6 +180,8 @@
     - due_date 伝播欠落 issue のような新しい運用論点も、今後どこに落とすかの判断線を整理しておく必要がある
   notes:
     - issue routing 後の placement だけでなく、plan 接続の運用線も整理対象にする
+  external:
+    todoist_task_id: 6gRfFPxvWQ72HmMq
 
 ---
 
