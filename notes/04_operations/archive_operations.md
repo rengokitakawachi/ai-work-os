@@ -194,6 +194,13 @@ weekly review までの短期履歴置き場であり、
   - `src/services/flow-control/adapters.js` に `pending_tasks` 専用 split 分岐を追加した
   - split 成功時は見出し単位の複数 item、失敗時は既存 `1ファイル = 1item` にフォールバックする状態になった
 
+--- 2026-04-24 daily review ---
+
+- `pending_tasks 分解後の第一バッチ再観測を行う` を完了した
+  - split 実装後の再観測で、route / source_ref / role boundary は維持され、1テーマ1メモ性は改善したと整理した
+- `pending_tasks 型 split 後の inbox archive / pending rule を整理する` を完了した
+  - 原則 archive、未判断が残るときだけ pending という最小後処理 rule を固定した
+
 ---
 
 ## ルール
