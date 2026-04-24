@@ -156,7 +156,11 @@ function splitMarkdownSectionsByHeading(content = '') {
 
 function isExcludedPendingTasksSection(title = '') {
   const normalized = ensureString(title).trim().toLowerCase();
-  return normalized === 'まとめ' || normalized === 'summary';
+  return (
+    normalized === '概要' ||
+    normalized === 'まとめ' ||
+    normalized === 'summary'
+  );
 }
 
 function buildSingleInboxItem({ title = '', summary = '', sourceRef = '', content = '' } = {}) {
