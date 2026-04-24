@@ -10,31 +10,40 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-23 daily review）
+## 再評価結果（2026-04-24 daily review）
 
 ### active へ繰り上げた task
 
-- `operations 提案時の Day 容量と reroll completeness を同時に確認するチェック項目を整理する`
-- `pending_tasks 型 split 後の inbox archive / pending rule を整理する`
+- `直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える`
 
 理由
 
-- 2026-04-23 時点で `pending_tasks` 向け split 実装まで前進したため、再観測後に続く後処理 rule と運用チェックを 7日枠へ入れる価値が上がった
+- `pending_tasks` 系の最小粒度改善と inbox 後処理 rule 整理まで前進したため、次は新しく見つかった due_date 伝播欠落 issue を含む直近 issue の placement 運用線を補強する価値が上がった
 - daily review では plan / open issue / next_operations / current active を candidate source として確認し、依存順に沿って active を再配置した
 
 ---
 
 ## タスク
 
-- task: 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
+- task: pending_tasks 元 inbox を archive 扱いへ寄せてよいかを実運用上確認する
   source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/01_issues/idea_log.md
+    - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
+    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
+    - notes/08_analysis/2026-04-24_pending_tasks_split_reconfirmation_after_intro_exclusion.md
+  why_now:
+    - design 上は archive 寄りと整理できたため、次は実運用上もその扱いでよいかを確認する価値がある
+  notes:
+    - これは rule 固定後の runtime 側確認として扱う
+
+- task: intake routing の inbox 後処理 rule を一般化する
+  source_ref:
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
     - notes/04_operations/active_operations.md
   why_now:
-    - plan の `次に落とす作業` に含まれる継続論点であり、issue→operations 接続の運用線を補強する価値が残っている
+    - `pending_tasks` で固めた archive / pending 判定を、intake 全体の後処理 rule に返す候補として育てる価値がある
   notes:
-    - issue routing 後の placement だけでなく、plan 接続の運用線も整理対象にする
+    - まずは `pending_tasks` の経験則を一般 rule へ持ち上げる前提整理に留める
 
 ---
 
