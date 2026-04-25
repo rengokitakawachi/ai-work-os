@@ -66,3 +66,13 @@
 - urgency: medium
 - status: open
 - created_at: 2026-04-23
+
+### 20260425-029
+- title: ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する必要がある
+- category: architecture
+- description: GPT-5.5 向けには、古い prompt stack をそのまま持ち越すのではなく、期待成果、成功条件、制約、利用可能な証拠、最終出力を中心に整理し、細かな手順や形式制約は procedure spec や Structured Outputs / API schema 側へ逃がす方がよい。現在の ADAM instruction は、SSOT、operations、review、write gate、routing、handover、再発防止などの重要ルールを保持している一方で、常時読む必要のある拘束ルール、状況依存の手順、背景知識、出力形式、API schema に任せるべき制約が同じ層に積まれている。これにより GPT-5.5 ではノイズ化、探索範囲の過度な制限、機械的な出力につながる可能性がある。
+- context: 2026-04-25 の会話で、ユーザーから「5.5向けに再調整した方がいい？」という確認があり、OpenAI の GPT-5.5 向け案内では古い prompt stack の全持ち越しではなく、期待成果・成功条件を明示し、細かな手順指示を減らし、必要なら Structured Outputs や API 側設定に逃がす方針が示されている、という前提が共有された。ADAM ではルール削除ではなく、`Core Instruction`、`Procedure Specs`、`Structured Outputs / API Schema` の3層へ再分解するのが安全という整理になった。
+- impact: high
+- urgency: medium
+- status: open
+- created_at: 2026-04-25
