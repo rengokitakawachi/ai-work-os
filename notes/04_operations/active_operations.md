@@ -95,14 +95,17 @@
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/04_operations/active_operations.md
     - notes/04_operations/next_operations.md
-    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
+    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
+    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
   rolling_day: Day2
   due_date: 2026-04-27
   why_now:
     - plan の `次に落とす作業` に明示されている継続論点であり、issue routing の完成条件を plan と operations に接続する必要が残っている
     - flow-control 周辺の green と intake 側の粒度改善後に、構造的完了条件を正本側へ返す段として自然である
   notes:
-    - plan 側の完成条件と operations 側の実行単位をつなぐ
+    - plan 側に issue routing completed condition の観測反映を明示する
+    - `route_to: operations` は即 active 化ではなく rolling 比較対象化であることを反映対象に含める
+    - keep / future / archive の役割差と再評価地点を completed condition 側へ接続する
     - docs 反映前の notes / operations 反映として扱う
   external:
     todoist_task_id: 6gR8gv5W9gwwf7wH
