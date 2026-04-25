@@ -52,6 +52,13 @@ write の前に必ずコードブロックで以下を事前表示する。
 
 手順は `read → 整理 → 事前表示 → write → 保存確認` とする。
 
+Action / API schema 更新ルール
+
+- `config/ai/*_schema.*` を更新しても runtime tool schema へ反映済みとはみなさない
+- schema 更新 task の completed condition には、runtime tool schema 上で新規 field / enum / required が見えることの確認を含める
+- repo schema 更新、Action 再反映、runtime 確認を別状態として扱う
+- runtime 確認が未完了なら、repo 更新済みでも completed としない
+
 ---
 
 # Docs / Notes / Todoist
