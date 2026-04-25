@@ -119,6 +119,26 @@ issue routing は、次を満たしたときに完成とみなす。
 「実運用に入れて、送付先判定と後処理が実際に効いていることが観測できること」
 として扱う。
 
+### issue routing 完成条件の現時点反映
+
+現時点の観測では、次はすでに成立またはかなり強く成立している。
+
+- design / operations / future / archive への送付結果は batch 観測で確認済み
+- `route_to: operations` は即 active 化ではなく、rolling の比較対象に入ることを意味すると整理できた
+- keep / future / archive は、役割差と再評価地点を明示すれば運用上破綻しないと整理できた
+- issue routing は「issue を溜めるだけ」ではなく、複数送付先へ流れる効果を観測できた
+
+したがって、issue routing の主論点は
+実装有無そのものではなく、
+これらの completed condition を plan / operations に正本反映しつつ、
+今後も runtime で継続観測する段へ移っているとみなす。
+
+残る主確認は次である。
+
+- completed condition を plan / operations で正本として読める形にすること
+- daily review / reroll をまたいでも同じ completed condition ベース判断が維持されること
+- 必要に応じて docs 反映候補へ返せること
+
 ---
 
 ## 主要論点
