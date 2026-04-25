@@ -4,208 +4,169 @@
 
 ### Phase 0 直結 task
 
-- `daily review reroll で plan / issue / next を必須候補源として確認する最小チェックを design に落とす`
-- `ADAM の instruction へ daily review reroll gate 反映を確認する`
-- `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する`
-- `docs/05_roadmap.md に Phase 0 をどう位置づけるか整理する`
-- `issue routing の完成条件を plan / operations に反映する`
-- `legacy な Todoist service wrapper を deprecated 化する段取りを design / operations に落とす`
+- `直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える`
+- `intake routing の inbox 後処理 rule を一般化する`
+- `ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する方針を design に落とす`
 
 ### 補助 task
 
-- `operations 提案時の Day 容量と reroll completeness を同時に確認するチェック項目を整理する`
-- `Todoist projection の due_date / due_type 伝播欠落を埋める最小対策を design に落とす`
-- `ADAM runtime の projectTasks schema に due_date / due_type が反映されたか確認する`
-- `直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える`
+- `pending_tasks 元 inbox を archive 扱いへ寄せてよいかを実運用上確認する`
+- `repoResourceGet bulk の files 区切り仕様を整理する`
+- `docs/05_roadmap.md への Phase 0 位置づけ反映案を作る`
+- `legacy Todoist wrapper の削除前 gate を repo 全体で再確認する`
 
-## Day0（04/25 土）
-
-- task: daily review reroll で plan / issue / next を必須候補源として確認する最小チェックを design に落とす
-  source_ref:
-    - docs/17_operations_system.md
-    - docs/13_dev_workflow.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/01_issues/idea_log.md
-    - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-  rolling_day: Day0
-  due_date: 2026-04-25
-  why_now:
-    - 2026-04-24 の daily review でも candidate source を明示し、reroll を実施した運用を design に返して再発防止へつなぐ必要がある
-    - review 手順を fail-closed で守る最小チェックを先に固定すると、その後の運用が安定しやすい
-  notes:
-    - candidate source を明示確認する
-    - active / next の両方を reroll 結果として更新する
-    - Day 容量と依存順も同時に確認する
-  external:
-    todoist_task_id: 6gR8gmRr5v9m8GmH
-
-- task: ADAM の instruction へ daily review reroll gate 反映を確認する
-  source_ref:
-    - config/ai/adam_instruction.md
-    - notes/02_design/2026-04-03_review_system_operating_spec.md
-    - notes/02_design/2026-04-18_daily_review_output_to_content_and_operations_connection_rule.md
-    - notes/07_reports/daily/2026-04-24.md
-  rolling_day: Day0
-  due_date: 2026-04-25
-  why_now:
-    - repo 上の instruction と review spec には reroll gate を反映済みだが、ADAM runtime の instruction 反映確認は別 task として残す必要がある
-    - `repo 更新 = 実運用反映` とみなさない再発防止の一部として、早めに確認する価値がある
-  notes:
-    - daily review 開始時に review モード / candidate source / reroll 実施有無を先に明示できるかを確認対象にする
-    - candidate source 未確認なら fail-closed で停止する運用が ADAM 側でも効いているかを見る
-  external:
-    todoist_task_id: 6gRMpV4r6XqHxJjq
-
-- task: flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する
-  source_ref:
-    - notes/08_analysis/2026-04-21_flow_control_handoff_shape_return_to_review_outputs.md
-    - notes/08_analysis/2026-04-21_flow_control_new_handoff_shape_unification.md
-  rolling_day: Day0
-  due_date: 2026-04-25
-  why_now:
-    - pending_tasks 系の最小粒度改善と後処理ルール整理まで前進したため、週次 report に返す到達点を整理するタイミングとして自然である
-    - Day0 の容量を 2時間前後に保つ補完 task としても自然である
-  notes:
-    - handover ではなく weekly report 向けの要点だけを整理する
-  external:
-    todoist_task_id: 6gQwqHx9RcJQJrRH
-
-## Day1（04/26 日）
-
-- task: docs/05_roadmap.md に Phase 0 をどう位置づけるか整理する
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - docs/05_roadmap.md
-    - notes/02_design/2026-04-03_plan_layer_operating_spec.md
-  rolling_day: Day1
-  due_date: 2026-04-26
-  why_now:
-    - plan では Phase 0 の foundation 位置づけが整理されているため、次は roadmap との接続を明文化する候補として評価するのが自然である
-    - intake routing 周辺の最小運用が前進したので、上位計画との接続論点を少し先に置ける
-  notes:
-    - まずは docs 反映前の整理に留める
-    - roadmap 直更新ではなく位置づけ整理を先に行う
-  external:
-    todoist_task_id: 6gR8grMFPw7p9cWH
-
-## Day2（04/27 月）
-
-- task: issue routing の完成条件を plan / operations に反映する
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
-    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
-  rolling_day: Day2
-  due_date: 2026-04-27
-  why_now:
-    - plan の `次に落とす作業` に明示されている継続論点であり、issue routing の完成条件を plan と operations に接続する必要が残っている
-    - flow-control 周辺の green と intake 側の粒度改善後に、構造的完了条件を正本側へ返す段として自然である
-  notes:
-    - plan 側に issue routing completed condition の観測反映を明示する
-    - `route_to: operations` は即 active 化ではなく rolling 比較対象化であることを反映対象に含める
-    - keep / future / archive の役割差と再評価地点を completed condition 側へ接続する
-    - docs 反映前の notes / operations 反映として扱う
-  external:
-    todoist_task_id: 6gR8gv5W9gwwf7wH
-
-## Day3（04/28 火）
-
-- task: legacy な Todoist service wrapper を deprecated 化する段取りを design / operations に落とす
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
-    - src/services/todoist.js
-    - src/services/todoist/client.js
-    - src/services/tasks/service.js
-    - src/services/tasks/projection.js
-  rolling_day: Day3
-  due_date: 2026-04-28
-  why_now:
-    - open issue `20260418-022` は medium impact の architecture 論点として残っており、直近の routing / intake 論点が一段落した後の次候補として自然である
-    - tasks 本線が `client.js` に収束しているため、次は削除前の安全な段取りを completed condition ベースで固定する価値がある
-  notes:
-    - `todoist.js` を legacy 対象、`client.js` を正本として固定する
-    - deprecated 化は成立済みとし、残タスクを `repo 全体 usage 最終確認 → 参照移行 → test → 削除判断` の順で読む
-    - 今回は削除しない
-  external:
-    todoist_task_id: 6gR8gw9JGwGhm4cH
-
-## Day4（04/29 水）
-
-- task: operations 提案時の Day 容量と reroll completeness を同時に確認するチェック項目を整理する
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - docs/17_operations_system.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day4
-  due_date: 2026-04-29
-  why_now:
-    - issue `20260419-023` は、Day 容量不足提案の再発防止と reroll completeness 確認の両方に関わる
-    - 今回の reroll 補正運用を固定化する補助 task として自然である
-  notes:
-    - Day 容量
-    - candidate source の網羅
-    - 依存順確認
-    を同時に見るチェックへ落とす
-  external:
-    todoist_task_id: 6gRMpV799XvGw94q
-
-## Day5（04/30 木）
-
-- task: Todoist projection の due_date / due_type 伝播欠落を埋める最小対策を design に落とす
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - notes/02_design/2026-04-23_todoist_projection_due_date_propagation_gap.md
-    - src/services/tasks/projection.js
-    - notes/04_operations/active_operations.md
-  rolling_day: Day5
-  due_date: 2026-04-30
-  why_now:
-    - 2026-04-24 に新規 Todoist task の due 欠落原因が `projectTasks` schema と runtime projection の不一致だと整理できた
-    - 同じ欠落を再発させないため、最小対策を design に落として次の implementation 前提を固める必要がある
-  notes:
-    - `projectTasks` schema に due_date / due_type を通す方針を最小で整理する
-    - review 後チェックも含める
-  external:
-    todoist_task_id: 6gRfFPv84296Pfmq
-
-- task: ADAM runtime の projectTasks schema に due_date / due_type が反映されたか確認する
-  source_ref:
-    - config/ai/adam_schema.yaml
-    - config/ai/adam_instruction.md
-    - notes/02_design/2026-04-23_todoist_projection_due_date_propagation_gap.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day5
-  due_date: 2026-04-30
-  why_now:
-    - repo schema と instruction は更新済みだが、runtime tool schema に反映されたとはまだみなせない
-    - due_date / due_type 伝播欠落の完了条件には、ADAM runtime の projectTasks 入力 schema で当該 field が見えることの確認が必要である
-  notes:
-    - GPT Action / runtime schema 再反映後に確認する
-    - `current_active_tasks[].due_date` / `current_active_tasks[].due_type` が tool schema 上で見えるか確認する
-    - `previous_active_tasks[].due_date` / `previous_active_tasks[].due_type` が tool schema 上で見えるか確認する
-    - dry_run で create / update payload に `due_string` または `deadline_date` が入るか確認する
-    - repo 更新済みだけでは completed としない
-
-## Day6（05/01 金）
+## Day0（04/26 日）
 
 - task: 直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/01_issues/idea_log.md
     - notes/04_operations/active_operations.md
-  rolling_day: Day6
-  due_date: 2026-05-01
+  rolling_day: Day0
+  due_date: 2026-04-26
+  due_type: date
   why_now:
-    - plan の `次に落とす作業` に含まれる継続論点であり、issue→operations 接続の運用線を補強する価値が残っている
-    - due_date 伝播欠落 issue のような新しい運用論点も、今後どこに落とすかの判断線を整理しておく必要がある
+    - 2026-04-25 に issue `20260425-029` と `20260425-030` が追加され、直近 issue をどの層へ送るかの運用確認が必要になった
+    - issue routing の completed condition を plan / operations に返した後、実際の open issue を placement 判断へつなげる段として自然である
   notes:
-    - issue routing 後の placement だけでなく、plan 接続の運用線も整理対象にする
+    - issue を即 active 化せず、plan / operations / dev_memo / future のどこに落とすかを判定する
+    - high impact の instruction 再層化 issue と medium impact の bulk API issue を比較対象に含める
   external:
     todoist_task_id: 6gRfFPxvWQ72HmMq
+
+- task: pending_tasks 元 inbox を archive 扱いへ寄せてよいかを実運用上確認する
+  source_ref:
+    - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
+    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
+    - notes/08_analysis/2026-04-24_pending_tasks_split_reconfirmation_after_intro_exclusion.md
+  rolling_day: Day0
+  due_date: 2026-04-26
+  due_type: date
+  why_now:
+    - design 上は archive 寄りと整理できたため、daily review 後の実運用確認として閉じる価値がある
+    - inbox 後処理 rule の一般化に入る前に、元 inbox の扱いを単発確認しておく必要がある
+  notes:
+    - source_ref が残っていることを前提に、元 inbox を archive 扱いに寄せてよいか確認する
+    - これは rule 固定後の runtime 側確認として扱う
+
+- task: intake routing の inbox 後処理 rule を一般化する
+  source_ref:
+    - notes/02_design/intake_review_and_source_ref_spec.md
+    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day0
+  due_date: 2026-04-26
+  due_type: date
+  why_now:
+    - pending_tasks で固めた archive / pending 判定を、intake 全体の後処理 rule に返す段として自然である
+    - Phase 0 の intake routing 運用可能性を高めるため、個別例から一般 rule へ上げる必要がある
+  notes:
+    - 原則 archive、未判断が残るときだけ pending の線を一般化する
+    - source_ref 維持と元 inbox の扱いを同時に確認する
+
+## Day1（04/27 月）
+
+- task: ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する方針を design に落とす
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - config/ai/adam_instruction.md
+    - config/ai/adam_schema.yaml
+  rolling_day: Day1
+  due_date: 2026-04-27
+  due_type: date
+  why_now:
+    - issue `20260425-029` は high impact で、現行 instruction の肥大化と GPT-5.5 向け最適化に関わる
+    - ただし即 rewrite ではなく、core / procedure / schema の分離方針を design に落としてから進める必要がある
+  notes:
+    - ルール削除ではなく層分離として扱う
+    - runtime instruction 変更前に、保持すべき拘束ルールと外出し可能な手順を分類する
+
+## Day2（04/28 火）
+
+- task: repoResourceGet bulk の files 区切り仕様を整理する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - docs/10_repo_resource_api.md
+    - config/ai/adam_schema.yaml
+    - api/repo-resource.js
+  rolling_day: Day2
+  due_date: 2026-04-28
+  due_type: date
+  why_now:
+    - issue `20260425-030` は daily review 中にも再発し、handover / 関連ファイル確認の効率と信頼性に影響する
+    - 改修前に、カンマ区切り / 改行区切り / schema 記述 / error message のどこを正すか整理する必要がある
+  notes:
+    - まず仕様整理に留める
+    - repo schema 更新と runtime tool schema 反映確認は別状態として扱う
+
+## Day3（04/29 水）
+
+- task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
+  source_ref:
+    - notes/02_design/2026-04-25_phase0_positioning_in_roadmap.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - docs/05_roadmap.md
+  rolling_day: Day3
+  due_date: 2026-04-29
+  due_type: date
+  why_now:
+    - 2026-04-25 に Phase 0 の foundation 位置づけは design に整理済みで、次は docs 反映案へ進める
+    - docs 本体更新は人間判断前提のため、まず反映案を作るのが安全である
+  notes:
+    - docs 直更新ではなく、差分案を先に作る
+    - Phase 1 へ入る前の foundation として位置づける
+
+## Day4（04/30 木）
+
+- task: legacy Todoist wrapper の削除前 gate を repo 全体で再確認する
+  source_ref:
+    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - src/services/todoist.js
+    - src/services/todoist/client.js
+    - src/services/tasks/service.js
+    - src/services/tasks/projection.js
+  rolling_day: Day4
+  due_date: 2026-04-30
+  due_type: date
+  why_now:
+    - deprecated 化の段取りは整理済みだが、削除前には repo 全体 usage と test gate の再確認が必要である
+    - architecture cleanup としては次段に置けるが、Phase 0 の主線より後に置くのが自然である
+  notes:
+    - 今回も即削除しない
+    - usage 確認、参照移行要否、test 結果を削除判断の gate とする
+
+## Day5（05/01 金）
+
+- task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
+  source_ref:
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
+    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
+  rolling_day: Day5
+  due_date: 2026-05-01
+  due_type: date
+  why_now:
+    - issue routing の completed condition は plan / operations に返したが、単発確認と継続確認を分ける必要がある
+    - weekly review で Phase 0 の進捗判断へ返せる形に整理しておく価値がある
+  notes:
+    - 単発確認済みの項目と、継続観測が必要な項目を分ける
+
+## Day6（05/02 土）
+
+- task: Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする
+  source_ref:
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/04_operations/active_operations.md
+    - notes/04_operations/next_operations.md
+  rolling_day: Day6
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - Phase 0 の複数運用改善が進んだため、Phase 1 へ進む前に残件と移行条件を確認する必要がある
+  notes:
+    - intake / issue / design routing、review、Todoist projection の残件を並べる
+    - Phase 1 に入れるものと、Phase 0 に残すものを分ける
 
 ---
 
@@ -227,4 +188,4 @@
 - 未完了タスクは翌日以降へ移動する
 - 完了タスクは必要に応じて archive_operations に移す
 - Phase 0 中は Flow Control / routing / operations の実運用整合を優先する
-- 直近の daily review rolling では、intake routing の最小運用実験と flow-control 回帰確認を優先候補として扱う
+- 直近の daily review rolling では、intake routing の後処理一般化と直近 issue の placement 運用を優先候補として扱う
