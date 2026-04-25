@@ -216,6 +216,41 @@ legacy 候補とみなすのが自然である。
 
 ---
 
+## 現時点の段取り判断
+
+現時点では、次の整理が最も自然である。
+
+- `src/services/todoist.js` は legacy 候補として限定済み
+- `src/services/todoist/client.js` は正本候補ではなく、実質的に現行正本として扱ってよい
+- `src/services/todoist.js` には deprecated header が入り、新規利用禁止も明示済み
+- tasks 本線は `client.js` に収束している
+
+したがって、
+この論点の次段は
+「deprecated 化するか」ではなく
+**削除判断 gate をどう順に満たすか**
+である。
+
+採るべき順は次である。
+
+1.
+repo 全体 usage の最終確認
+
+2.
+参照が残っていれば `client.js` へ移行
+
+3.
+tasks / projection 周辺の test 確認
+
+4.
+削除判断
+
+つまり、
+**deprecated 化は成立済みで、残りは削除前の安全確認段階**
+と整理するのが自然である。
+
+---
+
 ## 追加確認できた現役導線
 
 今回追加で確認した範囲では、
