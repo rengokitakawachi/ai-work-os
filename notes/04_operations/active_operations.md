@@ -15,6 +15,7 @@
 
 - `operations 提案時の Day 容量と reroll completeness を同時に確認するチェック項目を整理する`
 - `Todoist projection の due_date / due_type 伝播欠落を埋める最小対策を design に落とす`
+- `ADAM runtime の projectTasks schema に due_date / due_type が反映されたか確認する`
 - `直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える`
 
 ## Day0（04/25 土）
@@ -170,6 +171,24 @@
     - review 後チェックも含める
   external:
     todoist_task_id: 6gRfFPv84296Pfmq
+
+- task: ADAM runtime の projectTasks schema に due_date / due_type が反映されたか確認する
+  source_ref:
+    - config/ai/adam_schema.yaml
+    - config/ai/adam_instruction.md
+    - notes/02_design/2026-04-23_todoist_projection_due_date_propagation_gap.md
+    - notes/04_operations/active_operations.md
+  rolling_day: Day5
+  due_date: 2026-04-30
+  why_now:
+    - repo schema と instruction は更新済みだが、runtime tool schema に反映されたとはまだみなせない
+    - due_date / due_type 伝播欠落の完了条件には、ADAM runtime の projectTasks 入力 schema で当該 field が見えることの確認が必要である
+  notes:
+    - GPT Action / runtime schema 再反映後に確認する
+    - `current_active_tasks[].due_date` / `current_active_tasks[].due_type` が tool schema 上で見えるか確認する
+    - `previous_active_tasks[].due_date` / `previous_active_tasks[].due_type` が tool schema 上で見えるか確認する
+    - dry_run で create / update payload に `due_string` または `deadline_date` が入るか確認する
+    - repo 更新済みだけでは completed としない
 
 ## Day6（05/01 金）
 
