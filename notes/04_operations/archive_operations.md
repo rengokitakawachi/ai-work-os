@@ -201,6 +201,31 @@ weekly review までの短期履歴置き場であり、
 - `pending_tasks 型 split 後の inbox archive / pending rule を整理する` を完了した
   - 原則 archive、未判断が残るときだけ pending という最小後処理 rule を固定した
 
+--- 2026-04-25 daily review ---
+
+- `daily review reroll で plan / issue / next を必須候補源として確認する最小チェックを design に落とす` を完了した
+  - `notes/02_design/2026-04-25_daily_review_reroll_candidate_source_minimum_check.md` に整理済み
+- `ADAM の instruction へ daily review reroll gate 反映を確認する` を完了した
+  - runtime 上でも daily review 開始時の review mode / candidate source / reroll gate が効いている前提で扱える
+  - `notes/08_analysis/2026-04-25_adam_runtime_daily_review_reroll_gate_confirmation.md` に観測済み
+- `flow-control 新 handoff shape 統一の到達点を weekly report に返す要点を整理する` を完了した
+  - `notes/08_analysis/2026-04-25_flow_control_handoff_shape_weekly_report_points.md` に整理済み
+- `docs/05_roadmap.md に Phase 0 をどう位置づけるか整理する` を完了した
+  - `notes/02_design/2026-04-25_phase0_positioning_in_roadmap.md` に整理済み
+  - docs 本体反映は後段 task として分離する
+- `issue routing の完成条件を plan / operations に反映する` を完了した
+  - `notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md` と operations 上の位置づけへ返した
+- `legacy な Todoist service wrapper を deprecated 化する段取りを design / operations に落とす` を完了した
+  - deprecated 化済み、残りは削除前 gate として再配置した
+- `operations 提案時の Day 容量と reroll completeness を同時に確認するチェック項目を整理する` を完了した
+  - `notes/02_design/2026-04-25_day_capacity_and_reroll_completeness_joint_check.md` に整理済み
+- `Todoist projection の due_date / due_type 伝播欠落を埋める最小対策を design に落とす` を完了した
+  - repo schema / instruction / design 更新まで完了
+  - runtime schema 反映後の dry_run で `due_string` が出ることを確認した
+- `ADAM runtime の projectTasks schema に due_date / due_type が反映されたか確認する` を完了した
+  - `projectTasks(mode="dry_run")` で `payload.due_string = 2026-04-30` を確認した
+  - apply は daily review の Todoist projection 更新で実施する
+
 ---
 
 ## ルール
