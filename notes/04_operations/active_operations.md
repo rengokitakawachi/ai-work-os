@@ -48,6 +48,8 @@
   notes:
     - source_ref が残っていることを前提に、元 inbox を archive 扱いに寄せてよいか確認する
     - これは rule 固定後の runtime 側確認として扱う
+  external:
+    todoist_task_id: 6gRrVhgVrVgXjJhq
 
 - task: intake routing の inbox 後処理 rule を一般化する
   source_ref:
@@ -63,6 +65,8 @@
   notes:
     - 原則 archive、未判断が残るときだけ pending の線を一般化する
     - source_ref 維持と元 inbox の扱いを同時に確認する
+  external:
+    todoist_task_id: 6gRrVhjPQ4MJQrxq
 
 ## Day1（04/27 月）
 
@@ -80,6 +84,8 @@
   notes:
     - ルール削除ではなく層分離として扱う
     - runtime instruction 変更前に、保持すべき拘束ルールと外出し可能な手順を分類する
+  external:
+    todoist_task_id: 6gRrVhhV7876j2gq
 
 ## Day2（04/28 火）
 
@@ -98,6 +104,8 @@
   notes:
     - まず仕様整理に留める
     - repo schema 更新と runtime tool schema 反映確認は別状態として扱う
+  external:
+    todoist_task_id: 6gRrVhjP6j8M66Jq
 
 ## Day3（04/29 水）
 
@@ -115,6 +123,8 @@
   notes:
     - docs 直更新ではなく、差分案を先に作る
     - Phase 1 へ入る前の foundation として位置づける
+  external:
+    todoist_task_id: 6gRrVhmXVh9wcjhH
 
 ## Day4（04/30 木）
 
@@ -134,6 +144,8 @@
   notes:
     - 今回も即削除しない
     - usage 確認、参照移行要否、test 結果を削除判断の gate とする
+  external:
+    todoist_task_id: 6gRrVhq59gpX2JjH
 
 ## Day5（05/01 金）
 
@@ -150,6 +162,8 @@
     - weekly review で Phase 0 の進捗判断へ返せる形に整理しておく価値がある
   notes:
     - 単発確認済みの項目と、継続観測が必要な項目を分ける
+  external:
+    todoist_task_id: 6gRrVhrhjC7FgXPq
 
 ## Day6（05/02 土）
 
@@ -167,6 +181,8 @@
   notes:
     - intake / issue / design routing、review、Todoist projection の残件を並べる
     - Phase 1 に入れるものと、Phase 0 に残すものを分ける
+  external:
+    todoist_task_id: 6gRrVj47fCPCq8gH
 
 ---
 
