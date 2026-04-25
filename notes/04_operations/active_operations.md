@@ -115,6 +115,7 @@
 - task: legacy な Todoist service wrapper を deprecated 化する段取りを design / operations に落とす
   source_ref:
     - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
     - src/services/todoist.js
     - src/services/todoist/client.js
     - src/services/tasks/service.js
@@ -123,10 +124,11 @@
   due_date: 2026-04-28
   why_now:
     - open issue `20260418-022` は medium impact の architecture 論点として残っており、直近の routing / intake 論点が一段落した後の次候補として自然である
-    - 実削除より前に、deprecated 化の段取りを design / operations に落として安全に進める必要がある
+    - tasks 本線が `client.js` に収束しているため、次は削除前の安全な段取りを completed condition ベースで固定する価値がある
   notes:
-    - `client.js` を正本とする前提で段取りを切る
-    - 参照箇所確認 → deprecated 化 → 参照移行 → test 確認 → 削除 の順で整理する
+    - `todoist.js` を legacy 対象、`client.js` を正本として固定する
+    - deprecated 化は成立済みとし、残タスクを `repo 全体 usage 最終確認 → 参照移行 → test → 削除判断` の順で読む
+    - 今回は削除しない
   external:
     todoist_task_id: 6gR8gw9JGwGhm4cH
 
