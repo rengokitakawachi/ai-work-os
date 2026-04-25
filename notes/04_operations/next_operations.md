@@ -10,40 +10,52 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-24 daily review）
+## 再評価結果（2026-04-25 daily review）
 
 ### active へ繰り上げた task
 
-- `直近 issue を plan / operations / dev_memo へどう落とすかの運用を整える`
+- `pending_tasks 元 inbox を archive 扱いへ寄せてよいかを実運用上確認する`
+- `intake routing の inbox 後処理 rule を一般化する`
 
 理由
 
-- `pending_tasks` 系の最小粒度改善と inbox 後処理 rule 整理まで前進したため、次は新しく見つかった due_date 伝播欠落 issue を含む直近 issue の placement 運用線を補強する価値が上がった
-- daily review では plan / open issue / next_operations / current active を candidate source として確認し、依存順に沿って active を再配置した
+- 2026-04-24 までに `pending_tasks` split と後処理 rule の design 固定が完了したため、元 inbox の実運用確認と一般化を次に進めるのが自然である
+- 2026-04-25 には直近 issue が追加され、issue placement 運用と intake 後処理一般化を並行して進める価値が上がった
 
 ---
 
 ## タスク
 
-- task: pending_tasks 元 inbox を archive 扱いへ寄せてよいかを実運用上確認する
+- task: ADAM instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
-    - notes/00_inbox/dev_memo/2026-03-22_09-40-00_pending_tasks.md
-    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
-    - notes/08_analysis/2026-04-24_pending_tasks_split_reconfirmation_after_intro_exclusion.md
+    - notes/01_issues/idea_log.md
+    - config/ai/adam_instruction.md
+    - config/ai/adam_schema.yaml
   why_now:
-    - design 上は archive 寄りと整理できたため、次は実運用上もその扱いでよいかを確認する価値がある
+    - instruction 再層化は repo 更新だけでは完了しないため、runtime 反映確認を後段 task として分ける必要がある
   notes:
-    - これは rule 固定後の runtime 側確認として扱う
+    - design と repo 更新が終わってから active 化する
+    - completed condition は runtime 上で新 instruction の挙動が観測できること
 
-- task: intake routing の inbox 後処理 rule を一般化する
+- task: repoResourceGet bulk 区切り仕様の最小実装差分を作る
   source_ref:
-    - notes/02_design/intake_review_and_source_ref_spec.md
-    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
-    - notes/04_operations/active_operations.md
+    - notes/01_issues/idea_log.md
+    - docs/10_repo_resource_api.md
+    - api/repo-resource.js
+    - config/ai/adam_schema.yaml
   why_now:
-    - `pending_tasks` で固めた archive / pending 判定を、intake 全体の後処理 rule に返す候補として育てる価値がある
+    - 仕様整理後に、改行区切り対応または明示的 error message の最小実装へ進める
   notes:
-    - まずは `pending_tasks` の経験則を一般 rule へ持ち上げる前提整理に留める
+    - schema 更新と runtime tool schema 反映確認を別 task として扱う
+
+- task: intake routing の archive / pending 後処理を実データで再観測する
+  source_ref:
+    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
+    - notes/02_design/intake_review_and_source_ref_spec.md
+  why_now:
+    - 一般化した rule が、pending_tasks 以外でも破綻しないかを確認する必要がある
+  notes:
+    - 単発確認ではなく、継続観測 task として扱う
 
 ---
 
