@@ -76,3 +76,13 @@
 - urgency: medium
 - status: open
 - created_at: 2026-04-25
+
+### 20260425-030
+- title: repoResourceGet bulk の files パラメータが改行区切りを複数ファイルとして扱わず 1 パス扱いになる
+- category: api
+- description: `repoResourceGet` の `bulk` で `files` に改行区切りの複数パスを渡したところ、API がそれを複数ファイルとして分解せず、改行を含む 1 つの長いファイルパスとして扱い `NOT_FOUND` になった。会話中の handover 作成や関連ファイル一括確認で bulk を使う場面があり、区切り仕様が不明確または改行非対応だと、毎回個別 read に fallback する必要が出る。少なくとも docs / notes / code の bulk で、カンマ区切りと改行区切りの扱いを明確化し、可能なら改行区切りも受け付けるようにした方がよい。
+- context: 2026-04-25 の会話で、`files: "04_operations/active_operations.md\n02_design/2026-04-23_todoist_projection_due_date_propagation_gap.md\n08_analysis/2026-04-25_runtime_projecttasks_schema_not_yet_reflected.md"` のように渡したところ、`Note not found` となり、エラー上も複数ファイルではなく 1 つの長い path として扱われていた。以前にも docs bulk で同種の失敗があり、現状はカンマ区切り前提の可能性が高い。API 側で separator handling を整理し、tool schema / instruction / error message のどこかで期待形式を明示する必要がある。
+- impact: medium
+- urgency: medium
+- status: open
+- created_at: 2026-04-25
