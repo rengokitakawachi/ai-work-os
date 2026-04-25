@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.1.5"
+  version: "2.1.6"
   description: AI Work OS repo access API and Todoist Tasks API
 
 servers:
@@ -364,6 +364,15 @@ components:
             type: string
         rolling_day:
           type: string
+        due_date:
+          type: string
+          description: Operations task due date in YYYY-MM-DD format. Used for Todoist projection.
+        due_type:
+          type: string
+          enum:
+            - date
+            - deadline
+          description: Projection date type. Use date for Todoist due_string and deadline for Todoist deadline_date.
         why_now:
           type: array
           items:
