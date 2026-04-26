@@ -32,6 +32,8 @@
   notes:
     - 正本の違いは共通化しない
     - common_core / common_tool_use / common_schema_reflection の draft を作る
+  external:
+    todoist_task_id: 6gV6JmQh2MfCQ49H
 
 - task: ADAM / EVE procedure draft を作る
   source_ref:
@@ -48,6 +50,8 @@
   notes:
     - ADAM: review / routing / operations / write_gate / handover / schema reflection
     - EVE: task clarify / retrieval / create / update
+  external:
+    todoist_task_id: 6gV6Jmc67hxj8CwH
 
 ## Day1（04/28 火）
 
@@ -66,6 +70,8 @@
   notes:
     - この task では repo 本体更新ではなく圧縮案を作る
     - ADAM は docs / operations / code 制御、EVE は Todoist 正本の実行支援として分ける
+  external:
+    todoist_task_id: 6gV6JmX6x49xfgxq
 
 ## Day2（04/29 水）
 
