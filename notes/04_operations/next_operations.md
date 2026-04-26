@@ -10,32 +10,49 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-25 daily review）
+## 再評価結果（2026-04-26 daily review）
 
 ### active へ繰り上げた task
 
-- `pending_tasks 元 inbox を archive 扱いへ寄せてよいかを実運用上確認する`
-- `intake routing の inbox 後処理 rule を一般化する`
+- `共通 core / tool use / schema reflection の draft を作る`
+- `ADAM / EVE procedure draft を作る`
+- `ADAM / EVE instruction 圧縮案を作る`
 
 理由
 
-- 2026-04-24 までに `pending_tasks` split と後処理 rule の design 固定が完了したため、元 inbox の実運用確認と一般化を次に進めるのが自然である
-- 2026-04-25 には直近 issue が追加され、issue placement 運用と intake 後処理一般化を並行して進める価値が上がった
+- 2026-04-26 に ADAM / EVE instruction / schema の共通 layering design と section inventory が完了したため、次は repo 更新前の draft 群を作るのが自然である
+- EVE も同時に扱う方針へ前提が変わったため、ADAM 単体 rewrite より共通 core / procedure / persona-specific instruction の順に進める
 
 ---
 
 ## タスク
 
-- task: ADAM instruction 再層化後の runtime 反映確認 task を作る
+- task: ADAM / EVE instruction / schema repo 更新差分を作る
   source_ref:
-    - notes/01_issues/idea_log.md
+    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
+    - notes/08_analysis/2026-04-26_adam_eve_instruction_schema_inventory.md
     - config/ai/adam_instruction.md
+    - config/ai/eve_instruction.md
     - config/ai/adam_schema.yaml
+    - config/ai/eve_schema.yaml
   why_now:
-    - instruction 再層化は repo 更新だけでは完了しないため、runtime 反映確認を後段 task として分ける必要がある
+    - common core / procedure / instruction 圧縮案が固まった後、repo 実体への反映差分を作る必要がある
   notes:
-    - design と repo 更新が終わってから active 化する
-    - completed condition は runtime 上で新 instruction の挙動が観測できること
+    - repo 更新後も runtime 反映確認は別 task とする
+    - ADAM / EVE の正本差分を混ぜない
+
+- task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
+  source_ref:
+    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
+    - config/ai/adam_instruction.md
+    - config/ai/eve_instruction.md
+    - config/ai/adam_schema.yaml
+    - config/ai/eve_schema.yaml
+  why_now:
+    - instruction / schema 再層化は repo 更新だけでは完了しないため、ADAM / EVE それぞれの runtime 反映確認を後段 task として分ける必要がある
+  notes:
+    - completed condition は runtime 上で新 instruction と schema が観測できること
+    - ADAM と EVE は別 runtime として確認する
 
 - task: repoResourceGet bulk 区切り仕様の最小実装差分を作る
   source_ref:
@@ -50,7 +67,7 @@ active_operations に入らなかった上位候補を保持する。
 
 - task: intake routing の archive / pending 後処理を実データで再観測する
   source_ref:
-    - notes/02_design/2026-04-24_pending_tasks_split_postprocess_archive_pending_rule.md
+    - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
     - notes/02_design/intake_review_and_source_ref_spec.md
   why_now:
     - 一般化した rule が、pending_tasks 以外でも破綻しないかを確認する必要がある
