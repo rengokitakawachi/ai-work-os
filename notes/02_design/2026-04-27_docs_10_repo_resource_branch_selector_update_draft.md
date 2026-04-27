@@ -6,6 +6,8 @@
 
 この note は docs 本体更新前の草案であり、docs 本体はまだ更新しない。
 
+本更新案は、main に例外実装済みの branch selector と docs の current-main mismatch を解消するための human decision package とする。
+
 ---
 
 ## 参照元
@@ -19,6 +21,7 @@
 - `src/services/repo-resource/notes.js`
 - `src/services/repo-resource/code.js`
 - `notes/02_design/2026-04-27_branch_selector_main_docs_schema_reflection_gap.md`
+- `notes/02_design/2026-04-27_main_alignment_repair_proposal.md`
 
 ---
 
@@ -28,9 +31,39 @@
 
 既存の docs read only 方針は変更しない。
 
-未確認の runtime-visible schema / configured Action refresh は docs の確定仕様として扱わない。
+branch selector は write 権限を拡張しない。
 
-ただし、main code behavior と repo schema には branch selector が反映済みであるため、repo-resource API の仕様として branch selector を追記する。
+branch selector は docs / notes / code の read 系 action と notes / code の write 系 action に適用する。
+
+main code behavior、repo schema、runtime-visible schema、explicit branch read behavior、explicit branch write behavior は確認済みとして扱う。
+
+configured Action / tool schema は直接観測できないため、直接確認済みとは書かない。
+
+ただし runtime-visible schema と actual behavior が確認済みのため、実用上の docs 反映対象とする。
+
+---
+
+## 現在の確認状態
+
+```text
+code behavior: complete for main implementation
+repo schema: complete
+runtime-visible schema: complete
+explicit branch read behavior: complete
+explicit branch write behavior: complete
+docs reflection draft: complete
+docs reflection: not complete
+```
+
+確認済み probe:
+
+```text
+file: notes/00_inbox/dev_memo/2026-04-27_branch_selector_write_probe.md
+sha: a5b5ba195aaad5c7b32db009482dd8ef84da6641
+write response branch: main
+read response branch: main
+status: CREATED / OK
+```
 
 ---
 
@@ -97,7 +130,7 @@ repo-resource POST action は request body に optional `branch` を受け取る
 `実装状況` セクションに以下を追加する。
 
 ```markdown
-- repoResource branch selector：main code / repo schema 反映済み
+- repoResource branch selector：main code / repo schema / runtime-visible schema / explicit read-write behavior 確認済み
 ```
 
 ---
@@ -266,9 +299,11 @@ repoResource branch selector は複数層で確認する。
 - actual branch read behavior
 - actual branch write behavior
 
-docs に branch selector が記載されていても、runtime-visible schema に branch field が見えるまでは、ADAM runtime から明示的に branch を指定できるとは限らない。
-
 schema file の更新と runtime tool schema 反映は区別する。
+
+configured Action / tool schema は直接観測できない場合がある。
+
+runtime-visible schema と actual branch read / write behavior が確認できた場合、ADAM runtime からの実用上の branch selector 動作は確認済みとして扱う。
 ```
 
 ---
@@ -297,12 +332,23 @@ schema file の更新と runtime tool schema 反映は区別する。
 
 ---
 
+## 人間判断ポイント
+
+人間は以下を判断する。
+
+- `docs/10_repo_resource_api.md` に branch selector を現行仕様として反映するか
+- 反映する場合、上記追加案を差分最小で適用するか
+- docs 本体更新後に branch selector docs reflection を complete と扱うか
+
+---
+
 ## 完了条件
 
 この draft は、docs 更新前に以下を満たす。
 
 - 確定済み code behavior のみを反映している
 - repo schema の branch field と矛盾しない
+- runtime-visible schema と actual behavior の観測結果を反映している
 - docs read only 方針を変えていない
-- runtime-visible schema 未確認を完了扱いしていない
 - 差分最小の追記案になっている
+- bulk newline separator など未実装機能を混入していない
