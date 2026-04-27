@@ -85,6 +85,8 @@
   notes:
     - branch target が確認できるまで実装しない
     - implementation / schema / runtime reflection / behavior confirmation を分ける
+  external:
+    todoist_task_id: 6gVGM8r237XWCrHq
 
 ## Day4（05/01 金）
 
