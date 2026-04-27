@@ -45,6 +45,18 @@ docs の更新は本 API の責務に含めない。
 
 docs の修正案は notes/02_design を経由して人間が判断する。
 
+branch は GitHub branch selector を示す。
+
+branch が省略された場合は、環境変数 GITHUB_BRANCH を使用する。
+
+GITHUB_BRANCH も未設定の場合は main を使用する。
+
+branch は repo-resource API の request-level option とする。
+
+branch は docs / notes / code の read 系 action と notes / code の write 系 action に適用する。
+
+branch は docs の write を許可するものではない。
+
 request_id は 1 リクエスト単位の識別子とする。
 
 error.category はエラー分類を示す。
@@ -71,6 +83,10 @@ error.details は解析補助情報を示す。
 - resource ごとに権限を分離する
 - エラーは構造化して返す
 - エラーは解析可能な最小限の文脈を保持する
+- branch selector は request-level option とする
+- branch selector は docs / notes / code の参照先 branch を切り替える
+- branch selector は write 権限を拡張しない
+- docs は branch selector 使用時も read only とする
 
 ---
 
@@ -99,6 +115,23 @@ error.details は解析補助情報を示す。
 - POST /api/repo-resource?action=create&resource=code
 - POST /api/repo-resource?action=update&resource=code
 
+すべての repo-resource GET action は optional query parameter branch を受け取る。
+
+例
+
+- GET /api/repo-resource?action=read&resource=code&file=api/repo-resource.js&branch=feature/example
+- GET /api/repo-resource?action=tree&resource=notes&branch=feature/example
+
+repo-resource POST action は request body に optional branch を受け取る。
+
+例
+
+{
+  "file": "02_design/example.md",
+  "content": "# example",
+  "branch": "feature/example"
+}
+
 ### 実装状況
 
 - GET /api/docs：実装済み
@@ -118,6 +151,7 @@ error.details は解析補助情報を示す。
 - GET /api/repo-resource?action=bulk&resource=code：実装済み
 - POST /api/repo-resource?action=create&resource=code：実装済み
 - POST /api/repo-resource?action=update&resource=code：実装済み
+- repoResource branch selector：main code / repo schema / runtime-visible schema / explicit read-write behavior 確認済み
 - docs の update：当面は実装しない
 
 ### resource 定義
@@ -187,6 +221,32 @@ notes / code resource に使用する。
 既存ファイルを削除する。
 
 notes resource に使用する。
+
+### branch
+
+GitHub branch selector を示す optional parameter とする。
+
+GET action では query parameter として受け取る。
+
+POST action では request body field として受け取る。
+
+branch が指定された場合、GitHub read / write / tree operation は指定 branch を対象にする。
+
+branch が省略された場合、環境変数 GITHUB_BRANCH を使用する。
+
+GITHUB_BRANCH も未設定の場合、main を使用する。
+
+branch は以下の場合に invalid とする。
+
+- .. を含む
+- / で始まる
+- / で終わる
+- \ を含む
+- // を含む
+- .lock で終わる
+- 空白または Git ref として危険な記号を含む
+
+invalid branch の場合は INVALID_REQUEST を返す。
 
 ---
 
@@ -364,6 +424,14 @@ notes 配下に新規ファイルを作成する。
   "content": "# title"
 }
 
+branch 指定例
+
+{
+  "file": "02_design/new-spec.md",
+  "content": "# title",
+  "branch": "feature/example"
+}
+
 ### notes 更新
 
 エンドポイント
@@ -381,6 +449,14 @@ notes 配下の既存ファイルを更新する。
   "content": "# updated title"
 }
 
+branch 指定例
+
+{
+  "file": "02_design/new-spec.md",
+  "content": "# updated title",
+  "branch": "feature/example"
+}
+
 ### notes 削除
 
 エンドポイント
@@ -390,6 +466,13 @@ POST /api/repo-resource?action=delete&resource=notes
 概要
 
 notes 配下の既存ファイルを削除する。
+
+branch 指定例
+
+{
+  "file": "02_design/new-spec.md",
+  "branch": "feature/example"
+}
 
 補足
 
@@ -458,6 +541,14 @@ code 配下に新規ファイルを作成する。
   "content": "export function example() {}"
 }
 
+branch 指定例
+
+{
+  "file": "src/services/example.js",
+  "content": "export function example() {}",
+  "branch": "feature/example"
+}
+
 ### code 更新
 
 エンドポイント
@@ -473,6 +564,39 @@ code 配下の既存ファイルを更新する。
 {
   "file": "src/services/example.js",
   "content": "export function example() { return true; }"
+}
+
+branch 指定例
+
+{
+  "file": "src/services/example.js",
+  "content": "export function example() { return true; }",
+  "branch": "feature/example"
+}
+
+### repo-resource レスポンス
+
+repo-resource の read / tree / write response は、resolved branch を data.branch に含める。
+
+bulk response では、各 file item に branch を含める。
+
+branch が省略された場合も、実際に使用された branch を返す。
+
+例
+
+{
+  "ok": true,
+  "data": {
+    "name": "repo-resource.js",
+    "path": "api/repo-resource.js",
+    "sha": "xxx",
+    "branch": "main",
+    "content": "...",
+    "content_length": 1234,
+    "fetched_at": "2026-04-27T00:00:00Z",
+    "status": "OK"
+  },
+  "request_id": "REQ_ID"
 }
 
 ### docs 修正フロー
@@ -603,6 +727,10 @@ INTERNAL_API_KEY が未設定の場合は認証をスキップする。
 - GitHub URL を直接参照しない
 - resource 外のパスを許可しない
 - details には秘密情報を含めない
+- branch は path ではないが、Git ref として検証する
+- branch validation は service 層の GitHub operation 前に実行する
+- branch validation 失敗時は GitHub API を呼ばない
+- branch selector は resource ごとの権限を変更しない
 
 ### CORS
 
@@ -812,6 +940,23 @@ cause が存在する場合は、内部ログにのみ保持する。
 現状は docs 専用 API と repo-resource の主要機能が実装済みである。
 
 到達形は repo-resource を統合 Access Layer とし、docs / notes / code を一貫した方式で扱う構成とする。
+
+### branch selector の反映層
+
+repoResource branch selector は複数層で確認する。
+
+- code behavior
+- repo schema
+- configured Action / tool schema
+- runtime-visible schema
+- actual branch read behavior
+- actual branch write behavior
+
+schema file の更新と runtime tool schema 反映は区別する。
+
+configured Action / tool schema は直接観測できない場合がある。
+
+runtime-visible schema と actual branch read / write behavior が確認できた場合、ADAM runtime からの実用上の branch selector 動作は確認済みとして扱う。
 
 ### notes/02_design 連携
 
