@@ -10,55 +10,28 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-27 two-layer config alignment）
+## 再評価結果（2026-04-27 daytime reroll）
 
 ### active へ移した task
 
-- `ADAM / EVE instruction / knowledge を現行2層構成に合わせて整合する`
-- `delta 学習支援システムの fast-track architecture を開発計画に取り込む`
+- `delta MVP resource layout を作る`
+- `delta 社労士試験向け initial roadmap / plan / operations を作る`
+- `delta learning history daily log template を作る`
+- `repoResourceGet bulk の files 区切り仕様を整理する`
+- `docs/05_roadmap.md への Phase 0 位置づけ反映案を作る`
+- `legacy Todoist wrapper の削除前 gate を repo 全体で再確認する`
+- `issue routing completed condition の継続観測項目を weekly review 向けに整理する`
+- `Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする`
 
 理由
 
-- `config/ai/common_*` と `config/ai/procedures/*` は ADAM と相談して削除済みであり、再作成しない方針に戻した
-- 現行 repo は `instruction + knowledge + schema` 構成であり、common / procedures file 分割案を repo 更新へ進めると構造が再分裂する
-- delta は 2026-08-23 の社会保険労務士試験に向けた期限駆動案件であり、future ではなく active 後半に置いて次回以降の実行対象とする
-
----
-
-## 再評価結果（2026-04-26 daily review）
-
-### active へ繰り上げた task
-
-- `共通 core / tool use / schema reflection の draft を作る`
-- `ADAM / EVE procedure draft を作る`
-- `ADAM / EVE instruction 圧縮案を作る`
-
-補足
-
-- 上記3件は notes/design / analysis として作成済み
-- ただし `config/ai/common_*` / `config/ai/procedures/*` の repo file 作成は行わない
-- 作成済み draft は設計検討履歴として扱い、現行 repo 反映対象は既存 `instruction + knowledge + schema` 構成へ戻す
+- ADAM / EVE instruction / knowledge 整合は repo 実体上すでに完了済みであり、active 先頭 task としては stale だった
+- delta は 2026-08-23 の社会保険労務士試験に向けた期限駆動案件であり、初期運用開始を急ぐ必要がある
+- delta は design 保存だけでは完了ではなく、resource layout / initial roadmap / plan / operations / daily log template まで進める必要がある
 
 ---
 
 ## タスク
-
-- task: ADAM / EVE instruction / knowledge repo 更新差分を作る
-  source_ref:
-    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
-    - notes/08_analysis/2026-04-26_adam_eve_instruction_schema_inventory.md
-    - notes/08_analysis/2026-04-27_adam_eve_instruction_compression_proposal.md
-    - config/ai/adam_instruction.md
-    - config/ai/adam_knowledge.md
-    - config/ai/eve_instruction.md
-    - config/ai/eve_knowledge.md
-  why_now:
-    - common / procedures file は再作成しない方針に戻ったため、既存4ファイル前提で必要な差分を作る必要がある
-    - instruction 圧縮案は既にあるが、参照先が削除済み common / procedures file を前提にしているため、現行2層構成へ合わせ直す必要がある
-  notes:
-    - schema 更新はこの task に含めない
-    - `adam_schema.yaml` / `eve_schema.yaml` の変更は runtime reflection completed condition が異なるため別 task とする
-    - repo 更新後も runtime 反映確認は別 task とする
 
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
