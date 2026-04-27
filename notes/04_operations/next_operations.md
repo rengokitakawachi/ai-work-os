@@ -10,31 +10,63 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-27 ATLAS / pre-delta environment reroll）
+## 再評価結果（2026-04-27 branch/version policy reroll）
 
 ### active へ移した task
 
-- `branch 運用方針を ATLAS / delta 開発前提で固定する`
+- `repoResource branch selector の設計 / 差分案を作る`
 - `ATLAS testing system の最小方針を固定する`
-- `repoResourceGet bulk の files 区切り仕様を実装する`
+- `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 - `GitHub Actions / ATLAS test workflow の最小差分を作る`
 - `docs と code / operations 実態の差分を棚卸しする`
 - `docs 反映案を delta 前環境整備として作る`
 - `delta MVP resource layout を作る`
-- `delta 社労士試験向け initial roadmap / plan / operations を作る`
-- `delta learning history daily log template を作る`
-- `Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする`
 
 理由
 
-- delta 開発では source / docs / operations の変更量が増えるため、先に branch / ATLAS / bulk / docs 整合の環境整備が必要である
-- ATLAS は Claude による test / verification / CI review system として accepted decision になった
-- bulk 改行区切り対応は、delta 開発中の関連ファイル確認の摩擦を下げるため先行実装する
-- docs が実態より遅れているため、delta resource 作成前に差分を棚卸しする
+- `Docs-aligned main / Notes-driven branch / Versioned merge` model を採用した
+- bulk 実装も code change であり、branch selector の設計なしに main 直書きへ戻すべきではない
+- versioning は merge 境界の問題として docs / code / operations 整合と一緒に扱う
 
 ---
 
 ## タスク
+
+- task: delta 社労士試験向け initial roadmap / plan / operations を作る
+  source_ref:
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+  why_now:
+    - delta resource layout の次に、2026-08-23 から逆算した実運用開始可能な roadmap / plan / operations が必要である
+  notes:
+    - 初期 roadmap、2026_sharoushi_exam_plan、delta active_operations の最小草案を作る
+    - 最初は API 完成を待たず GitHub markdown と ChatGPT UI の手動運用を前提にする
+    - delta MVP resource layout 完了後に active へ戻す
+  external:
+    todoist_task_id: 6gVFwG4QgQgQ2HJq
+
+- task: delta learning history daily log template を作る
+  source_ref:
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+  why_now:
+    - delta は学習履歴を GitHub に保存する前提であり、日次ログ template がないと実運用を開始しにくい
+  notes:
+    - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含める
+    - delta resource layout / initial roadmap の後に active へ戻す
+  external:
+    todoist_task_id: 6gVFwG9QGC326H4H
+
+- task: Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする
+  source_ref:
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/04_operations/active_operations.md
+    - notes/04_operations/next_operations.md
+  why_now:
+    - ATLAS / branch selector / versioning / bulk / docs 整合 / delta を含めて Phase 0 / Phase 1 の境界が変わったため、残件と移行条件の棚卸しが必要である
+  notes:
+    - active の delta 前環境整備が一段落した後に実行する
+  external:
+    todoist_task_id: 6gRrVj47fCPCq8gH
 
 - task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
   source_ref:
@@ -46,7 +78,7 @@ active_operations に入らなかった上位候補を保持する。
     - ただし delta 前環境整備の docs 反映案と統合して扱う方が安全である
   notes:
     - docs 直更新ではなく、差分案を先に作る
-    - active Day2 の docs 反映案 task と統合される可能性がある
+    - active Day3 の docs 反映案 task と統合される可能性がある
 
 - task: legacy Todoist wrapper の削除前 gate を repo 全体で再確認する
   source_ref:
@@ -88,18 +120,6 @@ active_operations に入らなかった上位候補を保持する。
     - completed condition は runtime 上で新 instruction / knowledge / schema scope が観測できること
     - ADAM と EVE は別 runtime として確認する
 
-- task: repoResourceGet bulk 区切り仕様の最小実装差分を作る
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - docs/10_repo_resource_api.md
-    - api/repo-resource.js
-    - config/ai/adam_schema.yaml
-  why_now:
-    - active の `repoResourceGet bulk の files 区切り仕様を実装する` 完了後、必要に応じて docs / schema / runtime reflection に分解する
-  notes:
-    - active 側では implementation / test を先に扱う
-    - schema 更新と runtime tool schema 反映確認は別 task として扱う
-
 - task: intake routing の archive / pending 後処理を実データで再観測する
   source_ref:
     - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
@@ -125,5 +145,8 @@ active_operations に入らなかった上位候補を保持する。
 - 80_future の代替として使わない
 - 削除済みの `config/ai/common_*` / `config/ai/procedures/*` 構造は再作成しない
 - ADAM / EVE config は現行 `instruction + knowledge + schema` 構成を前提に整合する
+- main は Docs-aligned stable version として扱う
+- branch は Notes-driven development space として扱う
+- merge 時に docs / code / config / operations / version を一致させる
 - ATLAS は test / verification / CI review system として扱う
-- delta 開発前に branch / ATLAS / bulk / docs 実態差分の環境整備を優先する
+- delta 開発前に branch selector / ATLAS / bulk / docs 実態差分の環境整備を優先する
