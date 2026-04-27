@@ -53,6 +53,15 @@ Mainでbranch selectorを実装する
   - `RepoResourceWriteRequest` に optional `branch` を追加
   - read / tree / bulk / write response schema に `branch` を追加
 
+### runtime-visible schema
+
+新スレッド確認により、runtime-visible tool schema に branch field が見えていることを確認済み。
+
+確認済み項目:
+
+- `repoResourceGet.branch`: visible
+- `repoResourceWrite.branch`: visible
+
 ---
 
 ## 観測済み
@@ -63,27 +72,25 @@ Mainでbranch selectorを実装する
 
 `config/ai/adam_schema.yaml` の保存確認により、repo schema には branch field が反映済みであることを確認した。
 
+`repoResourceGet` に `branch: main` を明示して `api/repo-resource.js` を read し、response に `branch: main` が返ることを確認した。
+
+これにより explicit branch read behavior は確認済みとする。
+
 ---
 
 ## 未完了層
 
 ### configured Action / tool schema
 
-未反映。
+直接観測はできない。
 
-repo schema を更新しても、configured Action が refresh されるまでは runtime tool schema へ反映済みとはみなさない。
+ただし runtime-visible schema に branch field が見えているため、実用上は runtime-visible schema confirmed とする。
 
-### runtime-visible schema
-
-未反映。
-
-現在の ADAM runtime tool schema では `repoResourceGet` / `repoResourceWrite` に branch field はまだ見えていない。
-
-### actual explicit branch behavior
+### actual explicit branch write behavior
 
 未確認。
 
-runtime tool schema に branch field が見えていないため、ADAM から explicit branch read/write をまだ実行できない。
+branch field を指定した write が、指定 branch に対して実行されることはまだ harmless scoped file で観測していない。
 
 ---
 
@@ -95,15 +102,17 @@ main code が branch selector を実装したため、docs 反映案が必要で
 
 ただし docs は API 上 read-only であり、docs 本体更新は人間判断を経由する。
 
+docs 更新案は以下に作成済み。
+
+- `notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md`
+
 ---
 
 ## 次の最小 action
 
-1. `docs/10_repo_resource_api.md` の更新案を notes/02_design に作る
-2. configured Action を refresh する
-3. runtime-visible schema に branch field が見えることを確認する
-4. explicit branch read behavior を確認する
-5. explicit branch write behavior を harmless scoped file で確認する
+1. explicit branch write behavior を harmless scoped file で確認する
+2. docs 更新案を人間判断へ回す
+3. branch selector 完了判定を更新する
 
 ---
 
@@ -114,8 +123,9 @@ branch selector task は、以下を分けて判定する。
 ```text
 code behavior: complete for main implementation
 repo schema: complete
-configured Action schema: not complete
-runtime-visible schema: not complete
-explicit branch behavior: not complete
+runtime-visible schema: complete
+explicit branch read behavior: complete
+explicit branch write behavior: not complete
+docs reflection draft: complete
 docs reflection: not complete
 ```
