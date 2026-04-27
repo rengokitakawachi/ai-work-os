@@ -226,6 +226,27 @@ weekly review までの短期履歴置き場であり、
   - `projectTasks(mode="dry_run")` で `payload.due_string = 2026-04-30` を確認した
   - apply は daily review の Todoist projection 更新で実施する
 
+--- 2026-04-27 daily review ---
+
+- `現 main の docs/code 不一致を分類し、整合修正対象を確定する` を完了した
+  - current-main mismatch は repoResource branch selector docs reflection のみと判定済み
+  - branch / ATLAS / delta の未実装提案は feature branch または merge 準備へ分離した
+- `main 整合修正案を作る` を完了した
+  - docs/10 branch selector reflection draft を完成形として更新済み
+  - 未実装の ATLAS workflow / delta は main 修正に含めない方針を維持した
+- `feature branch target を確定し、branch 開発開始手順を固定する` を完了した
+  - target は `feature/atlas-pre-delta-foundation` に固定済み
+- `docs/10 repoResource branch selector reflection を人間が反映し完了確認する` を完了した
+  - docs/10 read-back confirmed
+  - docs sha: `af34295c92210134f824e024c3bec288032bbd02`
+- `repoResource branch create API の actual behavior を確認する` を完了した
+  - `repoResourceWrite resource=repo action=create_branch branch=feature/atlas-pre-delta-foundation from_branch=main` が成功した
+  - branch create response: `status=CREATED`, `source_sha=33bfb564142efe8ba2feb114980911e874a630d7`
+  - `repoResourceGet resource=code file=package.json branch=feature/atlas-pre-delta-foundation` の read-back が成功した
+- `ATLAS test workflow を feature branch へ実装する` は未完了として carryover した
+  - `.nvmrc` 作成で `INVALID_REQUEST: code path not allowed` により停止
+  - code write allowlist blocker を次 active の Immediate Gate として追加した
+
 ---
 
 ## ルール
