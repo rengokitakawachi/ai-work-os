@@ -31,6 +31,8 @@
     - まず実装前の差分案を作る
     - repo implementation / repo schema / configured Action / runtime-visible schema / actual behavior を分ける
     - VERSION / CHANGELOG も branch-sensitive write として扱う
+  external:
+    todoist_task_id: 6gVGF6hF9VGRF8Hq
 
 - task: ATLAS testing system の最小方針を固定する
   source_ref:
