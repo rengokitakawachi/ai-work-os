@@ -10,18 +10,18 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-27 delta placement）
+## 再評価結果（2026-04-27 two-layer config alignment）
 
-### next に追加した task
+### active へ移した task
 
+- `ADAM / EVE instruction / knowledge を現行2層構成に合わせて整合する`
 - `delta 学習支援システムの fast-track architecture を開発計画に取り込む`
 
 理由
 
-- delta は 2026-08-23 の社会保険労務士試験に向けた期限駆動案件であり、future に寝かせるには重い
-- ただし current active_operations の Day0 は ADAM / EVE instruction / schema 再層化の共通 core / procedure draft が先頭にあり、active が壊れているわけではない
-- docs/17_operations_system.md 上、日中は active の順序を原則維持し、新規候補は rolling / placement を経由する
-- delta は現行 Phase 0 の common/platform 論点と接続できるため、next の上位候補として保持し、次回 rolling で Day1〜Day2 へ入れるのが妥当である
+- `config/ai/common_*` と `config/ai/procedures/*` は ADAM と相談して削除済みであり、再作成しない方針に戻した
+- 現行 repo は `instruction + knowledge + schema` 構成であり、common / procedures file 分割案を repo 更新へ進めると構造が再分裂する
+- delta は 2026-08-23 の社会保険労務士試験に向けた期限駆動案件であり、future ではなく active 後半に置いて次回以降の実行対象とする
 
 ---
 
@@ -33,61 +33,46 @@ active_operations に入らなかった上位候補を保持する。
 - `ADAM / EVE procedure draft を作る`
 - `ADAM / EVE instruction 圧縮案を作る`
 
-理由
+補足
 
-- 2026-04-26 に ADAM / EVE instruction / schema の共通 layering design と section inventory が完了したため、次は repo 更新前の draft 群を作るのが自然である
-- EVE も同時に扱う方針へ前提が変わったため、ADAM 単体 rewrite より共通 core / procedure / persona-specific instruction の順に進める
+- 上記3件は notes/design / analysis として作成済み
+- ただし `config/ai/common_*` / `config/ai/procedures/*` の repo file 作成は行わない
+- 作成済み draft は設計検討履歴として扱い、現行 repo 反映対象は既存 `instruction + knowledge + schema` 構成へ戻す
 
 ---
 
 ## タスク
 
-- task: delta 学習支援システムの fast-track architecture を開発計画に取り込む
-  source_ref:
-    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
-    - docs/13_dev_workflow.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-  due_date: 2026-04-28
-  due_type: date
-  why_now:
-    - 2026-08-23 の社会保険労務士試験に向けた期限駆動案件である
-    - delta は future system ではなく、短期で MVP 設計と手動運用開始が必要である
-    - Adam/EVE instruction/schema 再層化と同じ common/platform 論点に直結するため、現行 Phase 0 と接続できる
-  notes:
-    - active Day0 への即時割り込みではなく、next の上位候補として保持する
-    - 次回 rolling では Day1〜Day2 相当への配置を優先検討する
-    - まず systems/delta resource layout と MVP 手動運用範囲を固定する
-  completed_condition:
-    - delta の配置が active / next / future のいずれかに決まっている
-    - delta MVP の最初の実行 task が operations に入っている
-    - 2026-08-23 試験日から逆算した初期 roadmap / plan / operations 作成 task が切れている
-
-- task: ADAM / EVE instruction / schema repo 更新差分を作る
+- task: ADAM / EVE instruction / knowledge repo 更新差分を作る
   source_ref:
     - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
     - notes/08_analysis/2026-04-26_adam_eve_instruction_schema_inventory.md
+    - notes/08_analysis/2026-04-27_adam_eve_instruction_compression_proposal.md
     - config/ai/adam_instruction.md
+    - config/ai/adam_knowledge.md
     - config/ai/eve_instruction.md
-    - config/ai/adam_schema.yaml
-    - config/ai/eve_schema.yaml
+    - config/ai/eve_knowledge.md
   why_now:
-    - common core / procedure / instruction 圧縮案が固まった後、repo 実体への反映差分を作る必要がある
+    - common / procedures file は再作成しない方針に戻ったため、既存4ファイル前提で必要な差分を作る必要がある
+    - instruction 圧縮案は既にあるが、参照先が削除済み common / procedures file を前提にしているため、現行2層構成へ合わせ直す必要がある
   notes:
+    - schema 更新はこの task に含めない
+    - `adam_schema.yaml` / `eve_schema.yaml` の変更は runtime reflection completed condition が異なるため別 task とする
     - repo 更新後も runtime 反映確認は別 task とする
-    - ADAM / EVE の正本差分を混ぜない
 
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
     - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
     - config/ai/adam_instruction.md
     - config/ai/eve_instruction.md
+    - config/ai/adam_knowledge.md
+    - config/ai/eve_knowledge.md
     - config/ai/adam_schema.yaml
     - config/ai/eve_schema.yaml
   why_now:
-    - instruction / schema 再層化は repo 更新だけでは完了しないため、ADAM / EVE それぞれの runtime 反映確認を後段 task として分ける必要がある
+    - instruction / knowledge 再層化は repo 更新だけでは完了しないため、ADAM / EVE それぞれの runtime 反映確認を後段 task として分ける必要がある
   notes:
-    - completed condition は runtime 上で新 instruction と schema が観測できること
+    - completed condition は runtime 上で新 instruction / knowledge / schema scope が観測できること
     - ADAM と EVE は別 runtime として確認する
 
 - task: repoResourceGet bulk 区切り仕様の最小実装差分を作る
@@ -124,3 +109,5 @@ active_operations に入らなかった上位候補を保持する。
 - 会話中に新規候補が発生した場合も、まずは reroll により active / next / future を決める
 - backlog 化しない
 - 80_future の代替として使わない
+- 削除済みの `config/ai/common_*` / `config/ai/procedures/*` 構造は再作成しない
+- ADAM / EVE config は現行 `instruction + knowledge + schema` 構成を前提に整合する
