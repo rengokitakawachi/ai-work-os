@@ -33,6 +33,8 @@
     - code 本体はまだ書き換えない
     - common.js / api handler / docs.js / notes.js / code.js / tests / schema の差分案を notes にまとめる
     - repo implementation / repo schema / configured Action / runtime-visible schema / actual behavior の完了層を分ける
+  external:
+    todoist_task_id: 6gVGJ8WH4Mfj6MCq
 
 ## Day1（04/28 火）
 
