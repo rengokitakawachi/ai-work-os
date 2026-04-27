@@ -8,29 +8,29 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
-- task: ADAM Action schema 2.2.2 を configured Action schema に反映する
-  type: manual_gate
+- task: code resource write allowlist に ATLAS workflow 用 root / workflow path を追加する
+  type: implementation_gate
   source_ref:
-    - config/ai/adam_schema.yaml
-    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+    - notes/02_design/2026-04-18_code_resource_repo_root_allowlist_access_design.md
+    - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
+    - src/services/repo-resource/code.js
+    - api/repo-resource.test.js
   blocks:
-    - repoResource branch create API の actual behavior を確認する
     - ATLAS test workflow を feature branch へ実装する
     - repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
     - delta MVP resource layout を feature branch で作る
   why_now:
-    - repo schema 2.2.2 は repository に保存済みであり、ユーザーにより ADAM configured Action schema へ反映済みである
-    - runtime-visible schema に `resource=repo` / `action=create_branch` / `from_branch` が見えるまで branch create actual behavior を確認できない
-    - branch create actual behavior が未確認だと feature branch を作成できず、以後の branch 作業が止まる
+    - `feature/atlas-pre-delta-foundation` は作成済みで read-back も確認済みである
+    - ATLAS workflow 実装で `.nvmrc` 作成を試みたが、runtime の code write allowlist が `.nvmrc` と `.github/workflows/` を許可しておらず `INVALID_REQUEST: code path not allowed` で停止した
+    - ATLAS workflow は後続 branch 開発の verification gate であり、allowlist を先に整備しないと Day0 以降が実行不能になる
   completed_condition:
-    - ADAM configured Action schema に `config/ai/adam_schema.yaml` version 2.2.2 が反映されている
-    - runtime-visible `repoResourceWrite.resource` に `repo` が見える
-    - runtime-visible `repoResourceWrite.action` に `create_branch` が見える
-    - runtime-visible `repoResourceWrite` に `from_branch` が見える
+    - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.nvmrc` を create できる
+    - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.github/workflows/test.yml` を create できる
+    - allowlist 拡張は必要最小限で、docs write 権限や任意 root write を拡張しない
   notes:
-    - repo schema file 更新だけでは complete としない
-    - configured Action schema 反映はユーザー報告により完了
-    - runtime-visible schema は新スレッドまたは schema refresh 後に観測する
+    - 対象 branch は `feature/atlas-pre-delta-foundation`
+    - main へ直接 workflow / schema / code を書かない
+    - write 前に `src/services/repo-resource/code.js` と関連 test を読む
 
 ---
 
@@ -38,152 +38,36 @@ Immediate Gate は7日枠に数えない。
 
 ### Phase 0 直結 task
 
-- `現 main の docs/code 不一致を分類し、整合修正対象を確定する`
-- `main 整合修正案を作る`
-- `feature branch target を確定し、branch 開発開始手順を固定する`
-- `repoResource branch create API の actual behavior を確認する`
 - `ATLAS test workflow を feature branch へ実装する`
 - `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 - `docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す`
+- `delta MVP resource layout を feature branch で作る`
 
-## Day0（04/27 月）
-
-- task: 現 main の docs/code 不一致を分類し、整合修正対象を確定する
-  source_ref:
-    - notes/08_analysis/2026-04-27_pre_delta_docs_code_operations_gap_inventory.md
-    - docs/10_repo_resource_api.md
-    - docs/13_dev_workflow.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-    - api/repo-resource.js
-    - api/repo-resource.test.js
-    - package.json
-  rolling_day: Day0
-  due_date: 2026-04-27
-  due_type: date
-  status: complete
-  completed: true
-  why_now:
-    - main は Docs-aligned stable version であるべきなので、既に main 上で docs/code がずれているなら新規 branch 開発より先に整合回復が必要である
-    - current-main mismatch / notes-proposal-only / branch-development-candidate の分類を更新済みである
-  notes:
-    - current-main mismatch は repoResource branch selector docs reflection のみと判定済み
-    - branch / ATLAS / delta の未実装提案は feature branch または merge 準備に残す
-  external:
-    todoist_task_id: 6gVGQcqVHxFCxQwH
-
-## Day1（04/28 火）
-
-- task: main 整合修正案を作る
-  source_ref:
-    - notes/02_design/2026-04-27_main_alignment_repair_proposal.md
-    - notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md
-    - docs/10_repo_resource_api.md
-  rolling_day: Day1
-  due_date: 2026-04-28
-  due_type: date
-  status: complete
-  completed: true
-  why_now:
-    - 分類後、main の docs/code 整合を回復するために必要な最小修正案を作る必要があった
-  notes:
-    - docs/10 branch selector reflection draft を完成形として更新済み
-    - 未実装の ATLAS workflow / delta は main 修正に含めない
-  external:
-    todoist_task_id: 6gVGQcqRfpP78xVq
-
-## Day2（04/29 水）
-
-- task: feature branch target を確定し、branch 開発開始手順を固定する
-  source_ref:
-    - notes/05_decisions/2026-04-27_branch_policy_for_atlas_delta.md
-    - notes/02_design/2026-04-27_feature_branch_start_procedure.md
-    - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
-  rolling_day: Day2
-  due_date: 2026-04-29
-  due_type: date
-  status: complete
-  completed: true
-  why_now:
-    - main 整合回復後、新規開発は branch で進める
-    - repoResource branch selector の read / write behavior が確認済みになったため、以後は branch target を明示して安全に code / workflow / schema 変更へ進める
-  notes:
-    - target は feature/atlas-pre-delta-foundation に固定済み
-    - branch-sensitive write の前に、対象 branch と write scope を必ず Write Gate で確認する
-    - main に直接 code/workflow/schema を書く例外は user が明示した場合に限る
-  external:
-    todoist_task_id: 6gVGPq5QM2MG46VH
-
-## Day3（04/30 木）
-
-- task: docs/10 repoResource branch selector reflection を人間が反映し完了確認する
-  source_ref:
-    - notes/02_design/2026-04-27_branch_selector_main_docs_schema_reflection_gap.md
-    - notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md
-    - notes/02_design/2026-04-27_main_alignment_repair_proposal.md
-    - docs/10_repo_resource_api.md
-  rolling_day: Day3
-  due_date: 2026-04-30
-  due_type: date
-  status: complete
-  completed: true
-  why_now:
-    - branch selector は main に例外実装済みであり、code behavior / repo schema / runtime-visible schema / explicit read / explicit write behavior まで確認済みである
-    - docs/10_repo_resource_api.md は branch selector を仕様として定義済みであることを確認した
-  notes:
-    - docs/10 read-back confirmed
-    - docs sha: af34295c92210134f824e024c3bec288032bbd02
-    - branch selector docs reflection は complete
-  external:
-    todoist_task_id: 6gVGM8r237XWCrHq
-
-## Day4（05/01 金）
-
-- task: repoResource branch create API の actual behavior を確認する
-  source_ref:
-    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
-    - notes/02_design/2026-04-27_feature_branch_start_procedure.md
-    - config/ai/adam_schema.yaml
-    - api/repo-resource.js
-    - src/services/repo-resource/repo.js
-  rolling_day: Day4
-  due_date: 2026-05-01
-  due_type: date
-  blocked_by:
-    - ADAM Action schema 2.2.2 runtime-visible schema confirmation
-  why_now:
-    - branch create code behavior と repo schema は complete だが、actual branch create behavior は未確認である
-    - feature/atlas-pre-delta-foundation が作成されるまで、ATLAS workflow を feature branch に実装できない
-  notes:
-    - Immediate Gate の runtime-visible schema complete 後に実行する
-    - `repoResourceWrite resource=repo action=create_branch branch=feature/atlas-pre-delta-foundation from_branch=main` を実行する
-    - その後 `repoResourceGet resource=code action=read file=package.json branch=feature/atlas-pre-delta-foundation` で read-back する
-    - 完了条件は branch create response と read-back の両方で観測する
-
-## Day5（05/02 土）
+## Day0（04/28 火）
 
 - task: ATLAS test workflow を feature branch へ実装する
   source_ref:
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
     - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
     - package.json
-  rolling_day: Day5
-  due_date: 2026-05-02
+  rolling_day: Day0
+  due_date: 2026-04-28
   due_type: date
   blocked_by:
-    - repoResource branch create API の actual behavior を確認する
+    - code resource write allowlist に ATLAS workflow 用 root / workflow path を追加する
   why_now:
-    - ATLAS workflow patch proposal は作成済みであり、branch 上で .nvmrc / test workflow を実装する必要がある
+    - feature branch `feature/atlas-pre-delta-foundation` は作成済みで read-back も確認済みである
+    - ATLAS workflow patch proposal は作成済みであり、branch 上で `.nvmrc` / `.github/workflows/test.yml` を実装する必要がある
     - CI は以後の branch 開発の verification gate になる
-    - feature branch が存在し、branch-scoped write が可能になった後に実行する必要がある
   notes:
-    - .nvmrc と .github/workflows/test.yml を feature/atlas-pre-delta-foundation に作る
+    - `.nvmrc` と `.github/workflows/test.yml` を feature branch に作る
     - package-lock.json がないため初期 workflow は npm install を使う
     - coverage / lint / PR comments は後段
+    - 2026-04-27 に実行着手したが、code write allowlist により blocked となった
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
-## Day6（05/03 日）
+## Day1（04/29 水）
 
 - task: repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
   source_ref:
@@ -191,22 +75,115 @@ Immediate Gate は7日枠に数えない。
     - docs/10_repo_resource_api.md
     - api/repo-resource.js
     - api/repo-resource.test.js
-  rolling_day: Day6
-  due_date: 2026-05-03
+  rolling_day: Day1
+  due_date: 2026-04-29
   due_type: date
   blocked_by:
-    - repoResource branch create API の actual behavior を確認する
     - ATLAS test workflow を feature branch へ実装する
   why_now:
     - branch selector の read / write behavior が確認済みになったため、bulk 改行区切り対応を branch 上で進められる
     - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
   notes:
-    - branch create actual behavior と ATLAS workflow の後に実行する
     - parseFilesParam を comma / newline 両対応にする
     - node --test の回帰テストを追加する
     - schema / runtime tool schema 反映は別 task とする
   external:
     todoist_task_id: 6gRrVhjP6j8M66Jq
+
+## Day2（04/30 木）
+
+- task: docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す
+  source_ref:
+    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+    - docs/10_repo_resource_api.md
+    - config/ai/adam_schema.yaml
+    - api/repo-resource.js
+    - src/services/repo-resource/repo.js
+  rolling_day: Day2
+  due_date: 2026-04-30
+  due_type: date
+  why_now:
+    - branch create API は runtime-visible schema と actual branch create behavior まで確認済みになった
+    - docs/10 には branch create 仕様がまだ反映されていないため、docs/code/schema 整合のために reflection 案が必要である
+  notes:
+    - docs 直更新ではなく、docs/10 反映案を notes/02_design に完成形で出す
+    - branch selector docs reflection とは別 task として扱う
+
+## Day3（05/01 金）
+
+- task: delta MVP resource layout を feature branch で作る
+  source_ref:
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+    - docs/13_dev_workflow.md
+    - docs/15_notes_system.md
+    - docs/17_operations_system.md
+  rolling_day: Day3
+  due_date: 2026-05-01
+  due_type: date
+  blocked_by:
+    - ATLAS test workflow を feature branch へ実装する
+    - repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
+  why_now:
+    - 環境整備後に delta 初期運用へ戻る
+    - delta resource は新規 system resource 群のため branch 上で作るのが正しい
+  notes:
+    - systems/delta/ docs / roadmap / plan / operations / history / review / resources / config の最小構成を作る
+    - main 統合時に docs と一致させる
+  external:
+    todoist_task_id: 6gVFwG3q3hCHcrcH
+
+## Day4（05/02 土）
+
+- task: delta 社労士試験向け initial roadmap / plan / operations を作る
+  source_ref:
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+  rolling_day: Day4
+  due_date: 2026-05-02
+  due_type: date
+  blocked_by:
+    - delta MVP resource layout を feature branch で作る
+  why_now:
+    - delta resource layout の次に、2026-08-23 から逆算した実運用開始可能な roadmap / plan / operations が必要である
+  notes:
+    - 初期 roadmap、2026_sharoushi_exam_plan、delta active_operations の最小草案を作る
+    - 最初は API 完成を待たず GitHub markdown と ChatGPT UI の手動運用を前提にする
+  external:
+    todoist_task_id: 6gVFwG4QgQgQ2HJq
+
+## Day5（05/03 日）
+
+- task: delta learning history daily log template を作る
+  source_ref:
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+  rolling_day: Day5
+  due_date: 2026-05-03
+  due_type: date
+  blocked_by:
+    - delta MVP resource layout を feature branch で作る
+  why_now:
+    - delta は学習履歴を GitHub に保存する前提であり、日次ログ template がないと実運用を開始しにくい
+  notes:
+    - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含める
+  external:
+    todoist_task_id: 6gVFwG9QGC326H4H
+
+## Day6（05/04 月）
+
+- task: Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする
+  source_ref:
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/04_operations/active_operations.md
+    - notes/04_operations/next_operations.md
+  rolling_day: Day6
+  due_date: 2026-05-04
+  due_type: date
+  why_now:
+    - ATLAS / branch selector / versioning / bulk / docs 整合 / delta を含めて Phase 0 / Phase 1 の境界が変わったため、残件と移行条件の棚卸しが必要である
+  notes:
+    - active の delta 前環境整備が一段落した後に実行する
+  external:
+    todoist_task_id: 6gRrVj47fCPCq8gH
 
 ---
 
