@@ -76,6 +76,22 @@ Mainでbranch selectorを実装する
 
 これにより explicit branch read behavior は確認済みとする。
 
+`repoResourceWrite` に `branch: main` を明示して harmless scoped file を create し、response に `branch: main` が返ることを確認した。
+
+作成後、同 file を `repoResourceGet` で `branch: main` 指定 read し、content と `branch: main` metadata が一致することを確認した。
+
+確認 probe:
+
+```text
+file: notes/00_inbox/dev_memo/2026-04-27_branch_selector_write_probe.md
+sha: a5b5ba195aaad5c7b32db009482dd8ef84da6641
+write response branch: main
+read response branch: main
+status: CREATED / OK
+```
+
+これにより explicit branch write behavior は確認済みとする。
+
 ---
 
 ## 未完了層
@@ -85,12 +101,6 @@ Mainでbranch selectorを実装する
 直接観測はできない。
 
 ただし runtime-visible schema に branch field が見えているため、実用上は runtime-visible schema confirmed とする。
-
-### actual explicit branch write behavior
-
-未確認。
-
-branch field を指定した write が、指定 branch に対して実行されることはまだ harmless scoped file で観測していない。
 
 ---
 
@@ -110,9 +120,8 @@ docs 更新案は以下に作成済み。
 
 ## 次の最小 action
 
-1. explicit branch write behavior を harmless scoped file で確認する
-2. docs 更新案を人間判断へ回す
-3. branch selector 完了判定を更新する
+1. docs 更新案を人間判断へ回す
+2. branch selector 完了判定を operations / handover 文脈へ反映する
 
 ---
 
@@ -125,7 +134,7 @@ code behavior: complete for main implementation
 repo schema: complete
 runtime-visible schema: complete
 explicit branch read behavior: complete
-explicit branch write behavior: not complete
+explicit branch write behavior: complete
 docs reflection draft: complete
 docs reflection: not complete
 ```
