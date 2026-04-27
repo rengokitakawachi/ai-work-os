@@ -1,5 +1,39 @@
 # active_operations
 
+## Immediate Gates
+
+通常 Day より前に解消すべき manual / external / runtime reflection gate を置く。
+
+Immediate Gate が未完了の場合、その gate に blocked される active task を実行しない。
+
+Immediate Gate は7日枠に数えない。
+
+- task: ADAM Action schema 2.2.1 を configured Action schema に反映する
+  type: manual_gate
+  source_ref:
+    - config/ai/adam_schema.yaml
+    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+  blocks:
+    - repoResource branch create API の actual behavior を確認する
+    - ATLAS test workflow を feature branch へ実装する
+    - repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
+    - delta MVP resource layout を feature branch で作る
+  why_now:
+    - repo schema 2.2.1 は repository に保存済みだが、ADAM configured Action schema への反映は人間作業として残る
+    - runtime-visible schema に `resource=repo` / `action=create_branch` / `from_branch` が見えるまで branch create actual behavior を確認できない
+    - branch create actual behavior が未確認だと feature branch を作成できず、以後の branch 作業が止まる
+  completed_condition:
+    - ADAM configured Action schema に `config/ai/adam_schema.yaml` version 2.2.1 が反映されている
+    - runtime-visible `repoResourceWrite.resource` に `repo` が見える
+    - runtime-visible `repoResourceWrite.action` に `create_branch` が見える
+    - runtime-visible `repoResourceWrite` に `from_branch` が見える
+  notes:
+    - repo schema file 更新だけでは complete としない
+    - configured Action schema 反映はユーザー作業として扱う
+    - runtime-visible schema は新スレッドまたは schema refresh 後に観測する
+
+---
+
 ## Phase 0 位置づけ
 
 ### Phase 0 直結 task
@@ -8,9 +42,9 @@
 - `main 整合修正案を作る`
 - `feature branch target を確定し、branch 開発開始手順を固定する`
 - `docs/10 repoResource branch selector reflection を人間が反映し完了確認する`
-- `ADAM Action schema 2.2.1 を反映し branch create runtime-visible schema を確認する`
 - `repoResource branch create API の actual behavior を確認する`
 - `ATLAS test workflow を feature branch へ実装する`
+- `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 
 ## Day0（04/27 月）
 
@@ -101,26 +135,6 @@
 
 ## Day4（05/01 金）
 
-- task: ADAM Action schema 2.2.1 を反映し branch create runtime-visible schema を確認する
-  source_ref:
-    - config/ai/adam_schema.yaml
-    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
-    - api/repo-resource.js
-    - src/services/repo-resource/repo.js
-  rolling_day: Day4
-  due_date: 2026-05-01
-  due_type: date
-  why_now:
-    - repo schema は 2.2.1 に更新済みだが、configured Action schema / runtime-visible schema への反映は人間作業と新 runtime 観測が必要である
-    - runtime-visible schema に `resource=repo` / `action=create_branch` / `from_branch` が見えるまで actual branch create behavior は確認できない
-  notes:
-    - ユーザーが ADAM の Action schema に `config/ai/adam_schema.yaml` version 2.2.1 を反映する
-    - 新スレッドまたは schema refresh 後に runtime-visible tool schema を確認する
-    - 完了条件は repoResourceWrite で `resource=repo`, `action=create_branch`, `from_branch` が見えること
-    - repo schema file 更新だけでは completed としない
-
-## Day5（05/02 土）
-
 - task: repoResource branch create API の actual behavior を確認する
   source_ref:
     - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
@@ -128,28 +142,33 @@
     - config/ai/adam_schema.yaml
     - api/repo-resource.js
     - src/services/repo-resource/repo.js
-  rolling_day: Day5
-  due_date: 2026-05-02
+  rolling_day: Day4
+  due_date: 2026-05-01
   due_type: date
+  blocked_by:
+    - ADAM Action schema 2.2.1 を configured Action schema に反映する
   why_now:
     - branch create code behavior と repo schema は complete だが、actual branch create behavior は未確認である
     - feature/atlas-pre-delta-foundation が作成されるまで、ATLAS workflow を feature branch に実装できない
   notes:
-    - runtime-visible schema complete 後に実行する
+    - Immediate Gate の runtime-visible schema complete 後に実行する
     - `repoResourceWrite resource=repo action=create_branch branch=feature/atlas-pre-delta-foundation from_branch=main` を実行する
     - その後 `repoResourceGet resource=code action=read file=package.json branch=feature/atlas-pre-delta-foundation` で read-back する
     - 完了条件は branch create response と read-back の両方で観測する
 
-## Day6（05/03 日）
+## Day5（05/02 土）
 
 - task: ATLAS test workflow を feature branch へ実装する
   source_ref:
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
     - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
     - package.json
-  rolling_day: Day6
-  due_date: 2026-05-03
+  rolling_day: Day5
+  due_date: 2026-05-02
   due_type: date
+  blocked_by:
+    - ADAM Action schema 2.2.1 を configured Action schema に反映する
+    - repoResource branch create API の actual behavior を確認する
   why_now:
     - ATLAS workflow patch proposal は作成済みであり、branch 上で .nvmrc / test workflow を実装する必要がある
     - CI は以後の branch 開発の verification gate になる
@@ -161,17 +180,48 @@
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
+## Day6（05/03 日）
+
+- task: repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - docs/10_repo_resource_api.md
+    - api/repo-resource.js
+    - api/repo-resource.test.js
+  rolling_day: Day6
+  due_date: 2026-05-03
+  due_type: date
+  blocked_by:
+    - ADAM Action schema 2.2.1 を configured Action schema に反映する
+    - repoResource branch create API の actual behavior を確認する
+    - ATLAS test workflow を feature branch へ実装する
+  why_now:
+    - branch selector の read / write behavior が確認済みになったため、bulk 改行区切り対応を branch 上で進められる
+    - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
+  notes:
+    - branch create actual behavior と ATLAS workflow の後に実行する
+    - parseFilesParam を comma / newline 両対応にする
+    - node --test の回帰テストを追加する
+    - schema / runtime tool schema 反映は別 task とする
+  external:
+    todoist_task_id: 6gRrVhjP6j8M66Jq
+
 ---
 
 ## ルール
 
 - 実行対象は active_operations に入っている task のみとする
 - 実行は上から順に行う
+- Immediate Gate が未完了の場合、その gate に blocked される active task を実行しない
+- Immediate Gate は通常 Day 枠に数えない
+- active の7日構造より、実行可能性と blocker 解消を優先する
+- 後続 task を実行不能にする前提作業は、通常 Day 枠ではなく Immediate Gate として先頭に置く
 - Day は仮配置であり固定日付ではない
 - 日付と曜日は人間可読性のために付与する
 - 日付表示は daily review 時に更新する
 - active_operations の各 task は task / source_ref / rolling_day を必須で持つ
 - why_now / notes / due_date / due_type は必要に応じて持つ
+- blocked_by / blocks は依存関係を構造化するために必要に応じて持つ
 - operations は候補を優先順位で並べ、7日枠に入るものを active_operations とする
 - active に入らなかった上位候補を next_operations に置く
 - スコアは補助であり、決定ではない
