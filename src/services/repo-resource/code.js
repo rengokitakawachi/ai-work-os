@@ -13,23 +13,25 @@ function filterCodeTreeItems(tree) {
   return tree.filter((item) => isAllowedCodePath(item.path));
 }
 
-export async function treeCode() {
+export async function treeCode(options = {}) {
   const tree = await getRepoTree('', {
     step: 'treeCode',
     resource: 'code',
     action: 'tree',
+    branch: options.branch,
   });
 
-  const items = mapTreeItems(filterCodeTreeItems(tree));
+  const items = mapTreeItems(filterCodeTreeItems(tree.items));
 
   return {
     resource: 'code',
+    branch: tree.branch,
     items,
     count: items.length,
   };
 }
 
-export async function readCode(file) {
+export async function readCode(file, options = {}) {
   const path = buildCodePath(file, {
     step: 'readCode',
     resource: 'code',
@@ -41,6 +43,7 @@ export async function readCode(file) {
       step: 'readCode',
       resource: 'code',
       action: 'read',
+      branch: options.branch,
     });
 
     return formatReadResponse(data);
@@ -66,7 +69,7 @@ export async function readCode(file) {
   }
 }
 
-export async function bulkReadCode(files) {
+export async function bulkReadCode(files, options = {}) {
   if (!Array.isArray(files) || files.length === 0) {
     throw createError({
       status: 400,
@@ -86,7 +89,7 @@ export async function bulkReadCode(files) {
   const results = await Promise.all(
     files.map(async (file) => {
       try {
-        const data = await readCode(file);
+        const data = await readCode(file, options);
         return {
           ok: true,
           file,
@@ -108,7 +111,7 @@ export async function bulkReadCode(files) {
   return results;
 }
 
-export async function createCode(file, content, message = '') {
+export async function createCode(file, content, message = '', options = {}) {
   const path = buildCodePath(file, {
     step: 'createCode',
     resource: 'code',
@@ -120,6 +123,7 @@ export async function createCode(file, content, message = '') {
       step: 'createCode',
       resource: 'code',
       action: 'create',
+      branch: options.branch,
     });
 
     throw createError({
@@ -147,16 +151,18 @@ export async function createCode(file, content, message = '') {
     step: 'createCode',
     resource: 'code',
     action: 'create',
+    branch: options.branch,
   });
 
   return {
     path: result.content.path,
     sha: result.content.sha,
+    branch: result.branch,
     status: 'CREATED',
   };
 }
 
-export async function updateCode(file, content, message = '', sha = '') {
+export async function updateCode(file, content, message = '', sha = '', options = {}) {
   const path = buildCodePath(file, {
     step: 'updateCode',
     resource: 'code',
@@ -171,6 +177,7 @@ export async function updateCode(file, content, message = '', sha = '') {
         step: 'updateCode',
         resource: 'code',
         action: 'update',
+        branch: options.branch,
       });
       currentSha = existing.sha;
     } catch (error) {
@@ -200,11 +207,13 @@ export async function updateCode(file, content, message = '', sha = '') {
     step: 'updateCode',
     resource: 'code',
     action: 'update',
+    branch: options.branch,
   });
 
   return {
     path: result.content.path,
     sha: result.content.sha,
+    branch: result.branch,
     status: 'UPDATED',
   };
 }
