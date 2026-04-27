@@ -43,6 +43,16 @@ Mainでbranch selectorを実装する
   - `normalizeBranch()` tests を追加
   - invalid GET / POST branch tests を追加
 
+### repo schema
+
+以下は main に更新済み。
+
+- `config/ai/adam_schema.yaml`
+  - schema version を `2.1.6` から `2.2.0` に更新
+  - `/api/repo-resource` GET parameter に optional `branch` を追加
+  - `RepoResourceWriteRequest` に optional `branch` を追加
+  - read / tree / bulk / write response schema に `branch` を追加
+
 ---
 
 ## 観測済み
@@ -51,19 +61,11 @@ Mainでbranch selectorを実装する
 
 これは、少なくとも omitted branch が resolved branch として response に出る behavior が動いていることを示す。
 
+`config/ai/adam_schema.yaml` の保存確認により、repo schema には branch field が反映済みであることを確認した。
+
 ---
 
 ## 未完了層
-
-### repo schema
-
-`config/ai/adam_schema.yaml` にはまだ branch field が反映されていない。
-
-必要な反映:
-
-- `/api/repo-resource` GET parameter に optional `branch` を追加
-- `RepoResourceWriteRequest` に optional `branch` を追加
-- schema version を上げる
 
 ### configured Action / tool schema
 
@@ -97,12 +99,11 @@ main code が branch selector を実装したため、docs 反映案が必要で
 
 ## 次の最小 action
 
-1. `config/ai/adam_schema.yaml` に branch field を反映する
-2. `docs/10_repo_resource_api.md` の更新案を notes/02_design に作る
-3. configured Action を refresh する
-4. runtime-visible schema に branch field が見えることを確認する
-5. explicit branch read behavior を確認する
-6. explicit branch write behavior を harmless scoped file で確認する
+1. `docs/10_repo_resource_api.md` の更新案を notes/02_design に作る
+2. configured Action を refresh する
+3. runtime-visible schema に branch field が見えることを確認する
+4. explicit branch read behavior を確認する
+5. explicit branch write behavior を harmless scoped file で確認する
 
 ---
 
@@ -111,8 +112,8 @@ main code が branch selector を実装したため、docs 反映案が必要で
 branch selector task は、以下を分けて判定する。
 
 ```text
-code behavior: partially complete
-repo schema: not complete
+code behavior: complete for main implementation
+repo schema: complete
 configured Action schema: not complete
 runtime-visible schema: not complete
 explicit branch behavior: not complete
