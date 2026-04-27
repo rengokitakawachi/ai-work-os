@@ -32,6 +32,8 @@
   notes:
     - systems/delta/ docs / roadmap / plan / operations / history / review / resources / config の最小構成を作る
     - この task は repo 本体作成前の差分案または notes/design で完了してよい
+  external:
+    todoist_task_id: 6gVFwG3q3hCHcrcH
 
 - task: delta 社労士試験向け initial roadmap / plan / operations を作る
   source_ref:
@@ -45,6 +47,8 @@
   notes:
     - 初期 roadmap、2026_sharoushi_exam_plan、delta active_operations の最小草案を作る
     - 最初は API 完成を待たず GitHub markdown と ChatGPT UI の手動運用を前提にする
+  external:
+    todoist_task_id: 6gVFwG4QgQgQ2HJq
 
 ## Day1（04/28 火）
 
@@ -58,6 +62,8 @@
     - delta は学習履歴を GitHub に保存する前提であり、日次ログ template がないと実運用を開始しにくい
   notes:
     - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含める
+  external:
+    todoist_task_id: 6gVFwG9QGC326H4H
 
 ## Day2（04/29 水）
 
