@@ -10,28 +10,68 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-27 daytime reroll）
+## 再評価結果（2026-04-27 ATLAS / pre-delta environment reroll）
 
 ### active へ移した task
 
+- `branch 運用方針を ATLAS / delta 開発前提で固定する`
+- `ATLAS testing system の最小方針を固定する`
+- `repoResourceGet bulk の files 区切り仕様を実装する`
+- `GitHub Actions / ATLAS test workflow の最小差分を作る`
+- `docs と code / operations 実態の差分を棚卸しする`
+- `docs 反映案を delta 前環境整備として作る`
 - `delta MVP resource layout を作る`
 - `delta 社労士試験向け initial roadmap / plan / operations を作る`
 - `delta learning history daily log template を作る`
-- `repoResourceGet bulk の files 区切り仕様を整理する`
-- `docs/05_roadmap.md への Phase 0 位置づけ反映案を作る`
-- `legacy Todoist wrapper の削除前 gate を repo 全体で再確認する`
-- `issue routing completed condition の継続観測項目を weekly review 向けに整理する`
 - `Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする`
 
 理由
 
-- ADAM / EVE instruction / knowledge 整合は repo 実体上すでに完了済みであり、active 先頭 task としては stale だった
-- delta は 2026-08-23 の社会保険労務士試験に向けた期限駆動案件であり、初期運用開始を急ぐ必要がある
-- delta は design 保存だけでは完了ではなく、resource layout / initial roadmap / plan / operations / daily log template まで進める必要がある
+- delta 開発では source / docs / operations の変更量が増えるため、先に branch / ATLAS / bulk / docs 整合の環境整備が必要である
+- ATLAS は Claude による test / verification / CI review system として accepted decision になった
+- bulk 改行区切り対応は、delta 開発中の関連ファイル確認の摩擦を下げるため先行実装する
+- docs が実態より遅れているため、delta resource 作成前に差分を棚卸しする
 
 ---
 
 ## タスク
+
+- task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
+  source_ref:
+    - notes/02_design/2026-04-25_phase0_positioning_in_roadmap.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - docs/05_roadmap.md
+  why_now:
+    - Phase 0 の foundation 位置づけは design に整理済みで、docs 反映案へ進める価値がある
+    - ただし delta 前環境整備の docs 反映案と統合して扱う方が安全である
+  notes:
+    - docs 直更新ではなく、差分案を先に作る
+    - active Day2 の docs 反映案 task と統合される可能性がある
+
+- task: legacy Todoist wrapper の削除前 gate を repo 全体で再確認する
+  source_ref:
+    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - src/services/todoist.js
+    - src/services/todoist/client.js
+    - src/services/tasks/service.js
+    - src/services/tasks/projection.js
+  why_now:
+    - deprecated 化の段取りは整理済みだが、削除前には repo 全体 usage と test gate の再確認が必要である
+  notes:
+    - 今回も即削除しない
+    - usage 確認、参照移行要否、test 結果を削除判断の gate とする
+    - ATLAS test workflow 整備後に実行する方が安全である
+
+- task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
+  source_ref:
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
+    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
+  why_now:
+    - issue routing の completed condition は plan / operations に返したが、単発確認と継続確認を分ける必要がある
+    - weekly review で Phase 0 の進捗判断へ返せる形に整理しておく価値がある
+  notes:
+    - 単発確認済みの項目と、継続観測が必要な項目を分ける
 
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
@@ -55,9 +95,10 @@ active_operations に入らなかった上位候補を保持する。
     - api/repo-resource.js
     - config/ai/adam_schema.yaml
   why_now:
-    - 仕様整理後に、改行区切り対応または明示的 error message の最小実装へ進める
+    - active の `repoResourceGet bulk の files 区切り仕様を実装する` 完了後、必要に応じて docs / schema / runtime reflection に分解する
   notes:
-    - schema 更新と runtime tool schema 反映確認を別 task として扱う
+    - active 側では implementation / test を先に扱う
+    - schema 更新と runtime tool schema 反映確認は別 task として扱う
 
 - task: intake routing の archive / pending 後処理を実データで再観測する
   source_ref:
@@ -84,3 +125,5 @@ active_operations に入らなかった上位候補を保持する。
 - 80_future の代替として使わない
 - 削除済みの `config/ai/common_*` / `config/ai/procedures/*` 構造は再作成しない
 - ADAM / EVE config は現行 `instruction + knowledge + schema` 構成を前提に整合する
+- ATLAS は test / verification / CI review system として扱う
+- delta 開発前に branch / ATLAS / bulk / docs 実態差分の環境整備を優先する
