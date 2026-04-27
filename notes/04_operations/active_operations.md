@@ -7,10 +7,10 @@
 - `現 main の docs/code 不一致を分類し、整合修正対象を確定する`
 - `main 整合修正案を作る`
 - `feature branch target を確定し、branch 開発開始手順を固定する`
-- `repoResource branch selector の docs reflection を人間判断へ回す`
-- `repoResource branch create API を設計・実装・runtime確認する`
+- `docs/10 repoResource branch selector reflection を人間が反映し完了確認する`
+- `ADAM Action schema 2.2.1 を反映し branch create runtime-visible schema を確認する`
+- `repoResource branch create API の actual behavior を確認する`
 - `ATLAS test workflow を feature branch へ実装する`
-- `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 
 ## Day0（04/27 月）
 
@@ -53,7 +53,7 @@
   notes:
     - docs 本体更新か code 修正かを gap ごとに判断する
     - main に実装済みの branch selector は current-main mismatch として docs reflection 対象に含める
-    - 未実装の ATLAS workflow / delta は main 修正に含めない
+    - 未実装の ATLAS workflow / delta は main修正に含めない
   external:
     todoist_task_id: 6gVGQcqRfpP78xVq
 
@@ -79,56 +79,76 @@
 
 ## Day3（04/30 木）
 
-- task: repoResource branch selector の docs reflection を人間判断へ回す
+- task: docs/10 repoResource branch selector reflection を人間が反映し完了確認する
   source_ref:
     - notes/02_design/2026-04-27_branch_selector_main_docs_schema_reflection_gap.md
     - notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md
+    - notes/02_design/2026-04-27_main_alignment_repair_proposal.md
     - docs/10_repo_resource_api.md
   rolling_day: Day3
   due_date: 2026-04-30
   due_type: date
   why_now:
     - branch selector は main に例外実装済みであり、code behavior / repo schema / runtime-visible schema / explicit read / explicit write behavior まで確認済みである
-    - docs/10_repo_resource_api.md はまだ branch selector を仕様として定義していないため、docs reflection の人間判断へ回す必要がある
+    - docs/10_repo_resource_api.md はまだ branch selector を仕様として定義していないため、docs 本体への人間反映と完了確認が必要である
   notes:
-    - docs 本体は API 上 read-only として扱い、ADAM は docs 更新案を提示する
-    - docs reflection draft は作成済みである
-    - docs reflection が完了するまでは branch selector の docs 層は未完了として扱う
+    - ADAM は docs 本体を API から直接更新しない
+    - 人間が docs/10 に branch selector reflection を反映する
+    - ADAM は反映後に docs/10 を read して、branch selector の docs reflection complete を確認する
+    - update proposal は現行 docs とマージした complete proposed content を code block で出す
   external:
     todoist_task_id: 6gVGM8r237XWCrHq
 
 ## Day4（05/01 金）
 
-- task: repoResource branch create API を設計・実装・runtime確認する
+- task: ADAM Action schema 2.2.1 を反映し branch create runtime-visible schema を確認する
   source_ref:
-    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
-    - notes/02_design/2026-04-27_feature_branch_start_procedure.md
-    - docs/10_repo_resource_api.md
-    - api/repo-resource.js
-    - src/services/repo-resource/common.js
     - config/ai/adam_schema.yaml
+    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+    - api/repo-resource.js
+    - src/services/repo-resource/repo.js
   rolling_day: Day4
   due_date: 2026-05-01
   due_type: date
   why_now:
-    - feature/atlas-pre-delta-foundation が runtime から read できず、ATLAS workflow を feature branch へ実装できない
-    - repoResource は既存 branch の read / write はできるが、新規 branch 作成 capability を持たない
-    - branch based development model を ADAM runtime から運用するには、branch create API が ATLAS workflow 実装より前に必要である
+    - repo schema は 2.2.1 に更新済みだが、configured Action schema / runtime-visible schema への反映は人間作業と新 runtime 観測が必要である
+    - runtime-visible schema に `resource=repo` / `action=create_branch` / `from_branch` が見えるまで actual branch create behavior は確認できない
   notes:
-    - 最小 action は POST /api/repo-resource?action=create_branch&resource=repo
-    - target branch は feature/ で始まるものに限定する
-    - code behavior / repo schema / runtime-visible schema / actual branch create behavior を分けて完了判定する
-    - docs reflection は実装後に別途扱う
+    - ユーザーが ADAM の Action schema に `config/ai/adam_schema.yaml` version 2.2.1 を反映する
+    - 新スレッドまたは schema refresh 後に runtime-visible tool schema を確認する
+    - 完了条件は repoResourceWrite で `resource=repo`, `action=create_branch`, `from_branch` が見えること
+    - repo schema file 更新だけでは completed としない
 
 ## Day5（05/02 土）
+
+- task: repoResource branch create API の actual behavior を確認する
+  source_ref:
+    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+    - notes/02_design/2026-04-27_feature_branch_start_procedure.md
+    - config/ai/adam_schema.yaml
+    - api/repo-resource.js
+    - src/services/repo-resource/repo.js
+  rolling_day: Day5
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - branch create code behavior と repo schema は complete だが、actual branch create behavior は未確認である
+    - feature/atlas-pre-delta-foundation が作成されるまで、ATLAS workflow を feature branch に実装できない
+  notes:
+    - runtime-visible schema complete 後に実行する
+    - `repoResourceWrite resource=repo action=create_branch branch=feature/atlas-pre-delta-foundation from_branch=main` を実行する
+    - その後 `repoResourceGet resource=code action=read file=package.json branch=feature/atlas-pre-delta-foundation` で read-back する
+    - 完了条件は branch create response と read-back の両方で観測する
+
+## Day6（05/03 日）
 
 - task: ATLAS test workflow を feature branch へ実装する
   source_ref:
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
     - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
     - package.json
-  rolling_day: Day5
-  due_date: 2026-05-02
+  rolling_day: Day6
+  due_date: 2026-05-03
   due_type: date
   why_now:
     - ATLAS workflow patch proposal は作成済みであり、branch 上で .nvmrc / test workflow を実装する必要がある
@@ -140,27 +160,6 @@
     - coverage / lint / PR comments は後段
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
-
-## Day6（05/03 日）
-
-- task: repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - docs/10_repo_resource_api.md
-    - api/repo-resource.js
-    - api/repo-resource.test.js
-  rolling_day: Day6
-  due_date: 2026-05-03
-  due_type: date
-  why_now:
-    - branch selector の read / write behavior が確認済みになったため、bulk 改行区切り対応を branch 上で進められる
-    - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
-  notes:
-    - parseFilesParam を comma / newline 両対応にする
-    - node --test の回帰テストを追加する
-    - schema / runtime tool schema 反映は別 task とする
-  external:
-    todoist_task_id: 6gRrVhjP6j8M66Jq
 
 ---
 
