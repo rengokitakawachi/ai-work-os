@@ -2,9 +2,46 @@
 
 ## Purpose
 
-`feature/atlas-pre-delta-foundation` を ADAM runtime から作成できない問題を解消するため、repoResource に branch create capability を追加する最小設計を定義する。
+`feature/atlas-pre-delta-foundation` を ADAM runtime から作成できない問題を解消するため、repoResource に branch create capability を追加する最小設計と実装状態を定義する。
 
-この note は design であり、code / schema / docs 本体はまだ更新しない。
+この note は design / implementation status note であり、docs 本体はまだ更新しない。
+
+---
+
+## Current Status
+
+```text
+code behavior: implemented in main
+repo schema: updated in main
+validation tests: added in main
+runtime-visible schema: not confirmed
+actual branch create behavior: not confirmed
+docs reflection: not complete
+```
+
+実装済み file:
+
+```text
+src/services/repo-resource/repo.js
+api/repo-resource.js
+api/repo-resource.test.js
+config/ai/adam_schema.yaml
+```
+
+保存確認済み sha:
+
+```text
+src/services/repo-resource/repo.js: d120d7806a49318b2ae16f9df56b8598a310b88e
+api/repo-resource.js: de2765f615994edf6f9b0f5618e35d5c8430bda5
+api/repo-resource.test.js: 154c54ba4f7758c99347837ed02505d2a4f659de
+config/ai/adam_schema.yaml: a49f10a8973737ec52baf4f6f5fee878c2d36ae9
+```
+
+`config/ai/adam_schema.yaml` version:
+
+```text
+2.2.1
+```
 
 ---
 
@@ -22,11 +59,15 @@ explicit branch read behavior: complete
 explicit branch write behavior: complete
 ```
 
-一方で、feature branch 自体を作成する API は存在しない。
+一方で、feature branch 自体を作成する API は存在しなかった。
 
 `repoResourceGet` に `branch: feature/atlas-pre-delta-foundation` を指定して `package.json` を read したところ、runtime では `NOT_FOUND` が返った。
 
-これにより、現状では ADAM runtime だけで branch を作成して feature branch 作業へ進めない。
+これにより、ADAM runtime だけで branch を作成して feature branch 作業へ進めない状態だった。
+
+この gap を解消するため、branch create capability を main に bootstrap 実装した。
+
+ただし、この runtime tool schema にはまだ `repoResourceWrite.resource=repo` / `action=create_branch` / `from_branch` が見えていないため、runtime-visible schema と actual branch create behavior は未確認である。
 
 ---
 
@@ -36,17 +77,18 @@ explicit branch write behavior: complete
 
 ```text
 既存 branch を指定して read / write する
+repo schema 上は create_branch を定義済み
+main code 上は create_branch を実装済み
 ```
 
-現在できないこと:
+現在このスレッドでまだできないこと:
 
 ```text
-main など既存 ref から新しい feature branch を作成する
+runtime-visible tool schema 経由で resource=repo / action=create_branch を呼ぶ
+actual branch create behavior を観測する
 ```
 
-そのため、branch based development model のうち、branch 作成だけが人間作業に残る。
-
-これは `Docs-aligned main / Notes-driven branch / Versioned merge` model の自走性を下げる。
+そのため、branch create task はまだ完了扱いできない。
 
 ---
 
@@ -181,12 +223,7 @@ Additional validation:
 - `branch` must not equal `from_branch`
 - `from_branch` defaults to `main`
 - invalid branch returns `INVALID_REQUEST`
-
-Recommended guard:
-
-```text
-branch must start with feature/
-```
+- target branch must start with `feature/`
 
 Reason:
 
@@ -198,9 +235,9 @@ If broader branch classes are needed later, expand explicitly.
 
 ---
 
-## Service Design
+## Service Implementation
 
-Create a new service module:
+Created service module:
 
 ```text
 src/services/repo-resource/repo.js
@@ -214,10 +251,11 @@ Responsibilities:
 - create target ref
 - normalize GitHub errors into existing error shape
 
-Proposed function:
+Implemented exports:
 
 ```js
-export async function createBranch(branch, fromBranch = 'main', message = '')
+export function validateBranchCreateInput(branchValue, fromBranchValue = 'main')
+export async function createBranch(branchValue, fromBranchValue = 'main', message = '')
 ```
 
 Implementation outline:
@@ -242,27 +280,24 @@ GitHub ref API requires source commit SHA and target ref name.
 
 ---
 
-## API Handler Design
+## API Handler Implementation
 
-Update `api/repo-resource.js` minimally.
-
-Import:
-
-```js
-import { createBranch } from '../src/services/repo-resource/repo.js';
-```
-
-`validatePost()` change:
+Updated:
 
 ```text
-resource repo + action create_branch is allowed
+api/repo-resource.js
 ```
 
-`dispatchPost()` change:
+Changes:
 
 ```text
-if resource === repo and action === create_branch:
-  return createBranch(body.branch, body.from_branch, body.message)
+- import createBranch from src/services/repo-resource/repo.js
+- validatePost() allows resource=repo + action=create_branch
+- validatePost() requires body.branch for create_branch
+- validatePost() validates from_branch when present
+- dispatchPost() handles repo/create_branch before file/content validation
+- repo/create_branch does not require file/content/sha
+- repo GET remains unsupported
 ```
 
 Do not mix branch create into docs / notes / code resources.
@@ -271,16 +306,28 @@ Do not add branch create to GET.
 
 ---
 
-## Schema Design
+## Schema Implementation
 
-Update `config/ai/adam_schema.yaml` only after code design is accepted.
+Updated:
 
-Required schema additions:
+```text
+config/ai/adam_schema.yaml
+```
 
-- `resource` enum for repoResourceWrite includes `repo`
-- POST action enum includes `create_branch`
-- request schema supports `branch` and `from_branch`
-- response schema supports `branch`, `from_branch`, `source_sha`, `ref`, `status: CREATED`
+Changes:
+
+```text
+version: 2.2.1
+RepoResourceWriteRequest.file is no longer globally required
+RepoResourceWriteRequest.from_branch added
+RepoResourceWriteRequest.branch describes create_branch target branch
+RepoResourceWriteResultData.from_branch added
+RepoResourceWriteResultData.source_sha added
+RepoResourceWriteResultData.ref added
+POST /api/repo-resource action enum includes create_branch
+POST /api/repo-resource resource enum includes repo
+POST description includes create_branch rules
+```
 
 Because runtime tool schema reflection is separate, completion cannot be based on repo schema file update alone.
 
@@ -295,13 +342,39 @@ actual branch create behavior
 
 ---
 
+## Tests Added
+
+Updated:
+
+```text
+api/repo-resource.test.js
+```
+
+Added validation coverage:
+
+```text
+validateBranchCreateInput accepts feature branch from main
+validateBranchCreateInput defaults from_branch to main
+validateBranchCreateInput rejects missing target branch
+validateBranchCreateInput rejects main target branch
+validateBranchCreateInput rejects non-feature target branch
+validateBranchCreateInput rejects target equal to source
+repo-resource returns 400 for repo GET
+repo-resource returns 400 for unsupported repo post action
+repo-resource returns 400 for repo create_branch without branch
+```
+
+Networked GitHub behavior is not confirmed by these tests.
+
+---
+
 ## Docs Reflection
 
-`docs/10_repo_resource_api.md` must eventually define branch create if implemented.
+`docs/10_repo_resource_api.md` must eventually define branch create after runtime behavior is confirmed.
 
 Docs reflection should be separate from this design note.
 
-Minimum docs additions after implementation:
+Minimum docs additions after implementation confirmation:
 
 ```text
 repo resource
@@ -312,7 +385,7 @@ response shape
 errors: ALREADY_EXISTS, NOT_FOUND, INVALID_REQUEST
 ```
 
-Do not include branch create in current branch selector docs reflection until implementation exists.
+Do not include branch create in current branch selector docs reflection until runtime-visible schema and actual branch create behavior are confirmed.
 
 ---
 
@@ -340,26 +413,49 @@ Branch create enables later branch-scoped file writes, which still require Write
 
 ---
 
-## Testing Plan
+## Runtime Confirmation Plan
 
-Add tests in `api/repo-resource.test.js` or a dedicated service test.
+This task is not complete until runtime confirms the new schema and behavior.
 
-Minimum tests:
-
-1. invalid target branch is rejected
-2. missing target branch is rejected
-3. target branch `main` is rejected
-4. target branch not starting with `feature/` is rejected
-5. target branch equal to source branch is rejected
-6. unsupported repo action is rejected
-7. unsupported repo GET is rejected
-
-Networked GitHub behavior should be tested by a harmless runtime observation after deployment:
+Required confirmations:
 
 ```text
-create feature/atlas-pre-delta-foundation from main
-read package.json with branch: feature/atlas-pre-delta-foundation
-confirm data.branch is feature/atlas-pre-delta-foundation
+1. runtime-visible repoResourceWrite schema exposes resource=repo
+2. runtime-visible repoResourceWrite schema exposes action=create_branch
+3. runtime-visible repoResourceWrite schema exposes from_branch
+4. actual call can create feature/atlas-pre-delta-foundation from main
+5. repoResourceGet can read package.json with branch=feature/atlas-pre-delta-foundation
+```
+
+Expected actual create call after schema refresh:
+
+```json
+{
+  "resource": "repo",
+  "action": "create_branch",
+  "branch": "feature/atlas-pre-delta-foundation",
+  "from_branch": "main",
+  "message": "create feature branch for ATLAS pre-delta foundation"
+}
+```
+
+Expected read-back call after create:
+
+```json
+{
+  "resource": "code",
+  "action": "read",
+  "file": "package.json",
+  "branch": "feature/atlas-pre-delta-foundation"
+}
+```
+
+Expected read-back success:
+
+```text
+ok: true
+data.branch: feature/atlas-pre-delta-foundation
+data.path: package.json
 ```
 
 ---
@@ -376,7 +472,7 @@ This design does not include:
 - branch protection
 - GitHub Actions workflow creation
 - docs/10 direct update
-- runtime schema reflection completion
+- runtime schema reflection completion by repo file update alone
 
 ---
 
@@ -384,18 +480,18 @@ This design does not include:
 
 This capability is a prerequisite for ATLAS workflow implementation when target feature branch does not exist.
 
-Current active Day4 cannot safely proceed until one of the following is true:
+Current active Day4 cannot be completed until one of the following is true:
 
 ```text
 A. feature/atlas-pre-delta-foundation exists
-B. branch create API exists and is runtime-confirmed
+B. branch create API is runtime-confirmed
 C. user creates the branch outside ADAM
 ```
 
-Recommended next operations candidate:
+Recommended next action:
 
 ```text
-repoResource branch create API を設計・実装・runtime確認する
+Confirm runtime-visible schema for repoResourceWrite create_branch, then perform actual branch create behavior observation.
 ```
 
 Placement:
@@ -408,7 +504,7 @@ Before ATLAS test workflow implementation
 
 ## Completed Condition
 
-This design task is complete when:
+Design layer is complete because:
 
 - branch create API shape is defined
 - target resource/action boundary is defined
@@ -418,11 +514,20 @@ This design task is complete when:
 - docs reflection timing is defined
 - operations impact is stated
 
-Implementation is not complete until:
+Implementation task is not complete until:
 
 ```text
 code behavior: complete
 repo schema: complete
 runtime-visible schema: complete
 actual branch create behavior: confirmed
+```
+
+Current implementation task status:
+
+```text
+code behavior: complete
+repo schema: complete
+runtime-visible schema: not complete
+actual branch create behavior: not complete
 ```
