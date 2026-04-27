@@ -25,7 +25,10 @@ import {
   updateCode,
 } from '../src/services/repo-resource/code.js';
 
-import { createError } from '../src/services/repo-resource/common.js';
+import {
+  createError,
+  normalizeBranch,
+} from '../src/services/repo-resource/common.js';
 
 function ensureString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -123,6 +126,12 @@ function requireContent(value, context) {
 }
 
 function validateGet(resource, action, query) {
+  normalizeBranch(query.branch, {
+    step: 'validateGet',
+    resource,
+    action,
+  });
+
   if (resource === 'docs') {
     if (!['list', 'read', 'bulk'].includes(action)) {
       throw createError({
@@ -205,6 +214,12 @@ function validateGet(resource, action, query) {
 }
 
 function validatePost(resource, action, body) {
+  normalizeBranch(body?.branch, {
+    step: 'validatePost',
+    resource,
+    action,
+  });
+
   if (resource === 'notes') {
     if (!['create', 'update', 'delete'].includes(action)) {
       throw createError({
@@ -278,9 +293,13 @@ function validatePost(resource, action, body) {
 }
 
 async function dispatchGet(resource, action, query) {
+  const options = {
+    branch: ensureString(query.branch),
+  };
+
   if (resource === 'docs') {
     if (action === 'list') {
-      return listDocs();
+      return listDocs(options);
     }
 
     if (action === 'read') {
@@ -289,7 +308,8 @@ async function dispatchGet(resource, action, query) {
           step: 'dispatchGet',
           resource,
           action,
-        })
+        }),
+        options
       );
     }
 
@@ -299,14 +319,15 @@ async function dispatchGet(resource, action, query) {
           step: 'dispatchGet',
           resource,
           action,
-        })
+        }),
+        options
       );
     }
   }
 
   if (resource === 'notes') {
     if (action === 'tree') {
-      return treeNotes();
+      return treeNotes(options);
     }
 
     if (action === 'read') {
@@ -315,7 +336,8 @@ async function dispatchGet(resource, action, query) {
           step: 'dispatchGet',
           resource,
           action,
-        })
+        }),
+        options
       );
     }
 
@@ -325,14 +347,15 @@ async function dispatchGet(resource, action, query) {
           step: 'dispatchGet',
           resource,
           action,
-        })
+        }),
+        options
       );
     }
   }
 
   if (resource === 'code') {
     if (action === 'tree') {
-      return treeCode();
+      return treeCode(options);
     }
 
     if (action === 'read') {
@@ -341,7 +364,8 @@ async function dispatchGet(resource, action, query) {
           step: 'dispatchGet',
           resource,
           action,
-        })
+        }),
+        options
       );
     }
 
@@ -351,7 +375,8 @@ async function dispatchGet(resource, action, query) {
           step: 'dispatchGet',
           resource,
           action,
-        })
+        }),
+        options
       );
     }
   }
@@ -377,6 +402,9 @@ async function dispatchPost(resource, action, body) {
 
   const message = ensureString(body?.message);
   const sha = ensureString(body?.sha);
+  const options = {
+    branch: ensureString(body?.branch),
+  };
 
   if (resource === 'notes') {
     if (action === 'create') {
@@ -386,7 +414,7 @@ async function dispatchPost(resource, action, body) {
         action,
       });
 
-      return createNote(file, content, message);
+      return createNote(file, content, message, options);
     }
 
     if (action === 'update') {
@@ -396,11 +424,11 @@ async function dispatchPost(resource, action, body) {
         action,
       });
 
-      return updateNote(file, content, message, sha);
+      return updateNote(file, content, message, sha, options);
     }
 
     if (action === 'delete') {
-      return deleteNote(file, message, sha);
+      return deleteNote(file, message, sha, options);
     }
   }
 
@@ -412,11 +440,11 @@ async function dispatchPost(resource, action, body) {
     });
 
     if (action === 'create') {
-      return createCode(file, content, message);
+      return createCode(file, content, message, options);
     }
 
     if (action === 'update') {
-      return updateCode(file, content, message, sha);
+      return updateCode(file, content, message, sha, options);
     }
   }
 
