@@ -7,14 +7,15 @@ import {
   formatReadResponse,
 } from './common.js';
 
-export async function listDocs() {
+export async function listDocs(options = {}) {
   const tree = await getRepoTree('docs/', {
     step: 'listDocs',
     resource: 'docs',
     action: 'list',
+    branch: options.branch,
   });
 
-  const items = tree
+  const items = tree.items
     .filter((item) => item.type === 'blob')
     .map((item) => ({
       name: item.path.split('/').pop(),
@@ -25,12 +26,13 @@ export async function listDocs() {
 
   return {
     resource: 'docs',
+    branch: tree.branch,
     items,
     count: items.length,
   };
 }
 
-export async function readDoc(file) {
+export async function readDoc(file, options = {}) {
   const path = buildDocsPath(file, {
     step: 'readDoc',
     resource: 'docs',
@@ -42,6 +44,7 @@ export async function readDoc(file) {
       step: 'readDoc',
       resource: 'docs',
       action: 'read',
+      branch: options.branch,
     });
 
     return formatReadResponse(data);
@@ -67,7 +70,7 @@ export async function readDoc(file) {
   }
 }
 
-export async function bulkReadDocs(files) {
+export async function bulkReadDocs(files, options = {}) {
   if (!Array.isArray(files) || files.length === 0) {
     throw createError({
       status: 400,
@@ -87,7 +90,7 @@ export async function bulkReadDocs(files) {
   const results = await Promise.all(
     files.map(async (file) => {
       try {
-        const data = await readDoc(file);
+        const data = await readDoc(file, options);
         return {
           ok: true,
           file,
@@ -109,17 +112,19 @@ export async function bulkReadDocs(files) {
   return results;
 }
 
-export async function treeDocs() {
+export async function treeDocs(options = {}) {
   const tree = await getRepoTree('docs/', {
     step: 'treeDocs',
     resource: 'docs',
     action: 'tree',
+    branch: options.branch,
   });
 
-  const items = mapTreeItems(tree);
+  const items = mapTreeItems(tree.items);
 
   return {
     resource: 'docs',
+    branch: tree.branch,
     items,
     count: items.length,
   };
