@@ -31,6 +31,8 @@ Immediate Gate は7日枠に数えない。
     - 対象 branch は `feature/atlas-pre-delta-foundation`
     - main へ直接 workflow / schema / code を書かない
     - write 前に `src/services/repo-resource/code.js` と関連 test を読む
+  external:
+    todoist_task_id: 6gVHhg3XfmHG2gwH
 
 ---
 
@@ -108,6 +110,8 @@ Immediate Gate は7日枠に数えない。
   notes:
     - docs 直更新ではなく、docs/10 反映案を notes/02_design に完成形で出す
     - branch selector docs reflection とは別 task として扱う
+  external:
+    todoist_task_id: 6gVHhc493Rj8WhFq
 
 ## Day3（05/01 金）
 
@@ -148,7 +152,7 @@ Immediate Gate は7日枠に数えない。
     - 初期 roadmap、2026_sharoushi_exam_plan、delta active_operations の最小草案を作る
     - 最初は API 完成を待たず GitHub markdown と ChatGPT UI の手動運用を前提にする
   external:
-    todoist_task_id: 6gVFwG4QgQgQ2HJq
+    todoist_task_id: 6gVHhgP4WjXwfJJq
 
 ## Day5（05/03 日）
 
@@ -165,7 +169,7 @@ Immediate Gate は7日枠に数えない。
   notes:
     - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含める
   external:
-    todoist_task_id: 6gVFwG9QGC326H4H
+    todoist_task_id: 6gVHhgq3qgMWh9jq
 
 ## Day6（05/04 月）
 
@@ -183,7 +187,7 @@ Immediate Gate は7日枠に数えない。
   notes:
     - active の delta 前環境整備が一段落した後に実行する
   external:
-    todoist_task_id: 6gRrVj47fCPCq8gH
+    todoist_task_id: 6gVHhhGXGmcpRfRq
 
 ---
 
