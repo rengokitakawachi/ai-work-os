@@ -30,6 +30,12 @@
 
 - 実行対象は `active_operations` に入っている task のみ
 - 会話中の新規候補は即実行せず、routing / rolling で active / next / future を決める
+- routing / rolling 前に dependency / blocker gate を確認する
+- 後続 task を実行不能にする前提作業は通常 Day 枠ではなく Immediate Gate として先頭に置く
+- active の7日構造より、実行可能性と blocker 解消を優先する
+- Immediate Gate が未完了の場合、その gate に blocked される active task を実行しない
+- manual / external / runtime reflection が後続 task の前提なら Immediate Gate として扱う
+- dependency は可能な限り `blocked_by` / `blocks` で構造化する
 - completed condition は観測で閉じる
 - note / report / diff / code / test / schema file が存在するだけでは completed としない
 - API / Action で確認できる情報を人に聞かない
