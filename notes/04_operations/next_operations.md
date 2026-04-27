@@ -10,30 +10,63 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-27 branch create API insertion）
+## 再評価結果（2026-04-27 schema/docs reflection reminders）
 
 ### active へ入った task
 
-- `repoResource branch create API を設計・実装・runtime確認する`
+- `ADAM Action schema 2.2.1 を反映し branch create runtime-visible schema を確認する`
+- `repoResource branch create API の actual behavior を確認する`
 
 理由
 
-- `feature/atlas-pre-delta-foundation` が runtime から read できず、ATLAS workflow を feature branch へ実装できない
-- repoResource は既存 branch の read / write はできるが、新規 branch 作成 capability を持たない
-- ATLAS workflow / bulk / delta resource layout は feature branch の存在確認後に進める必要がある
+- repo schema 2.2.1 は repository に保存済みだが、ADAM configured Action schema への反映は人間作業として残る
+- runtime-visible schema に branch create API が見えるまで actual branch create behavior を確認できない
+- feature branch が作成されるまで ATLAS workflow を feature branch へ実装できない
 
 ### active から next へ送った task
 
-- `delta MVP resource layout を feature branch で作る`
+- `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 
 理由
 
-- branch create API が未実装のままでは feature branch 上に delta resource layout を安全に作れない
-- ATLAS workflow / bulk separator の後に戻す方が安全である
+- branch create / ATLAS workflow が先に必要である
+- bulk separator は ATLAS workflow 後の方が回帰確認しやすい
 
 ---
 
 ## タスク
+
+- task: repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
+  source_ref:
+    - notes/01_issues/idea_log.md
+    - docs/10_repo_resource_api.md
+    - api/repo-resource.js
+    - api/repo-resource.test.js
+  why_now:
+    - branch selector の read / write behavior が確認済みになったため、bulk 改行区切り対応を branch 上で進められる
+    - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
+  notes:
+    - branch create actual behavior と ATLAS workflow の後に active へ戻す
+    - parseFilesParam を comma / newline 両対応にする
+    - node --test の回帰テストを追加する
+    - schema / runtime tool schema 反映は別 task とする
+  external:
+    todoist_task_id: 6gRrVhjP6j8M66Jq
+
+- task: docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す
+  source_ref:
+    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+    - docs/10_repo_resource_api.md
+    - config/ai/adam_schema.yaml
+    - api/repo-resource.js
+    - src/services/repo-resource/repo.js
+  why_now:
+    - branch create API は repo schema / code behavior まで進んでいるが、docs/10 にはまだ仕様として反映されていない
+    - runtime-visible schema と actual branch create behavior を確認した後、docs/code/schema 整合のために docs/10 reflection が必要である
+  notes:
+    - runtime-visible schema と actual branch create behavior が confirmed になるまでは docs/10 へ現行仕様として反映しない
+    - update proposal は現行 docs/10 とマージした complete proposed content を code block で出す
+    - branch selector docs reflection とは別 task として扱う
 
 - task: delta MVP resource layout を feature branch で作る
   source_ref:
@@ -159,7 +192,7 @@ active_operations に入らなかった上位候補を保持する。
 - 必要に応じて target_date や rolling_day を持ってよい
 - daily / weekly review で再評価する
 - active_operations に入る前提のものだけを置く
-- 会話中に新規候補が発生した場合も、まずは reroll により active / next / future を決める
+- 会話中に新規タスク候補が発生した場合も、まずは reroll により active / next / future を決める
 - backlog 化しない
 - 80_future の代替として使わない
 - 削除済みの `config/ai/common_*` / `config/ai/procedures/*` 構造は再作成しない
