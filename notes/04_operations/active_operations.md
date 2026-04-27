@@ -8,9 +8,9 @@
 - `main 整合修正案を作る`
 - `feature branch target を確定し、branch 開発開始手順を固定する`
 - `repoResource branch selector の docs reflection を人間判断へ回す`
+- `repoResource branch create API を設計・実装・runtime確認する`
 - `ATLAS test workflow を feature branch へ実装する`
 - `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
-- `delta MVP resource layout を feature branch で作る`
 
 ## Day0（04/27 月）
 
@@ -99,25 +99,49 @@
 
 ## Day4（05/01 金）
 
+- task: repoResource branch create API を設計・実装・runtime確認する
+  source_ref:
+    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+    - notes/02_design/2026-04-27_feature_branch_start_procedure.md
+    - docs/10_repo_resource_api.md
+    - api/repo-resource.js
+    - src/services/repo-resource/common.js
+    - config/ai/adam_schema.yaml
+  rolling_day: Day4
+  due_date: 2026-05-01
+  due_type: date
+  why_now:
+    - feature/atlas-pre-delta-foundation が runtime から read できず、ATLAS workflow を feature branch へ実装できない
+    - repoResource は既存 branch の read / write はできるが、新規 branch 作成 capability を持たない
+    - branch based development model を ADAM runtime から運用するには、branch create API が ATLAS workflow 実装より前に必要である
+  notes:
+    - 最小 action は POST /api/repo-resource?action=create_branch&resource=repo
+    - target branch は feature/ で始まるものに限定する
+    - code behavior / repo schema / runtime-visible schema / actual branch create behavior を分けて完了判定する
+    - docs reflection は実装後に別途扱う
+
+## Day5（05/02 土）
+
 - task: ATLAS test workflow を feature branch へ実装する
   source_ref:
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
     - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
     - package.json
-  rolling_day: Day4
-  due_date: 2026-05-01
+  rolling_day: Day5
+  due_date: 2026-05-02
   due_type: date
   why_now:
     - ATLAS workflow patch proposal は作成済みであり、branch 上で .nvmrc / test workflow を実装する必要がある
     - CI は以後の branch 開発の verification gate になる
+    - feature branch が存在し、branch-scoped write が可能になった後に実行する必要がある
   notes:
-    - .nvmrc と .github/workflows/test.yml を feature branch に作る
+    - .nvmrc と .github/workflows/test.yml を feature/atlas-pre-delta-foundation に作る
     - package-lock.json がないため初期 workflow は npm install を使う
     - coverage / lint / PR comments は後段
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
-## Day5（05/02 土）
+## Day6（05/03 日）
 
 - task: repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
   source_ref:
@@ -125,37 +149,18 @@
     - docs/10_repo_resource_api.md
     - api/repo-resource.js
     - api/repo-resource.test.js
-  rolling_day: Day5
-  due_date: 2026-05-02
+  rolling_day: Day6
+  due_date: 2026-05-03
   due_type: date
   why_now:
     - branch selector の read / write behavior が確認済みになったため、bulk 改行区切り対応を branch 上で進められる
+    - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
   notes:
     - parseFilesParam を comma / newline 両対応にする
     - node --test の回帰テストを追加する
     - schema / runtime tool schema 反映は別 task とする
   external:
     todoist_task_id: 6gRrVhjP6j8M66Jq
-
-## Day6（05/03 日）
-
-- task: delta MVP resource layout を feature branch で作る
-  source_ref:
-    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
-    - docs/13_dev_workflow.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-  rolling_day: Day6
-  due_date: 2026-05-03
-  due_type: date
-  why_now:
-    - 環境整備後に delta 初期運用へ戻る
-    - delta resource は新規 system resource 群のため branch 上で作るのが正しい
-  notes:
-    - systems/delta/ docs / roadmap / plan / operations / history / review / resources / config の最小構成を作る
-    - main 統合時に docs と一致させる
-  external:
-    todoist_task_id: 6gVFwG3q3hCHcrcH
 
 ---
 
@@ -183,4 +188,4 @@
 - branch は Notes-driven development space として扱う
 - branch で開発し、main 統合時に docs / code / config / operations / version を一致させる
 - 現 main に docs/code 不一致がある場合は、新規 branch 開発前に整合回復を優先する
-- delta 開発前に branch selector / ATLAS / bulk / docs 実態差分の環境整備を優先する
+- delta 開発前に branch selector / branch create / ATLAS / bulk / docs 実態差分の環境整備を優先する
