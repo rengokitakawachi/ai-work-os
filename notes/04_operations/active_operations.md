@@ -8,7 +8,7 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
-- task: ADAM Action schema 2.2.1 を configured Action schema に反映する
+- task: ADAM Action schema 2.2.2 を configured Action schema に反映する
   type: manual_gate
   source_ref:
     - config/ai/adam_schema.yaml
@@ -19,17 +19,17 @@ Immediate Gate は7日枠に数えない。
     - repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
     - delta MVP resource layout を feature branch で作る
   why_now:
-    - repo schema 2.2.1 は repository に保存済みだが、ADAM configured Action schema への反映は人間作業として残る
+    - repo schema 2.2.2 は repository に保存済みであり、ユーザーにより ADAM configured Action schema へ反映済みである
     - runtime-visible schema に `resource=repo` / `action=create_branch` / `from_branch` が見えるまで branch create actual behavior を確認できない
     - branch create actual behavior が未確認だと feature branch を作成できず、以後の branch 作業が止まる
   completed_condition:
-    - ADAM configured Action schema に `config/ai/adam_schema.yaml` version 2.2.1 が反映されている
+    - ADAM configured Action schema に `config/ai/adam_schema.yaml` version 2.2.2 が反映されている
     - runtime-visible `repoResourceWrite.resource` に `repo` が見える
     - runtime-visible `repoResourceWrite.action` に `create_branch` が見える
     - runtime-visible `repoResourceWrite` に `from_branch` が見える
   notes:
     - repo schema file 更新だけでは complete としない
-    - configured Action schema 反映はユーザー作業として扱う
+    - configured Action schema 反映はユーザー報告により完了
     - runtime-visible schema は新スレッドまたは schema refresh 後に観測する
 
 ---
@@ -41,10 +41,10 @@ Immediate Gate は7日枠に数えない。
 - `現 main の docs/code 不一致を分類し、整合修正対象を確定する`
 - `main 整合修正案を作る`
 - `feature branch target を確定し、branch 開発開始手順を固定する`
-- `docs/10 repoResource branch selector reflection を人間が反映し完了確認する`
 - `repoResource branch create API の actual behavior を確認する`
 - `ATLAS test workflow を feature branch へ実装する`
 - `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
+- `docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す`
 
 ## Day0（04/27 月）
 
@@ -61,12 +61,13 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-04-27
   due_type: date
+  status: complete
+  completed: true
   why_now:
     - main は Docs-aligned stable version であるべきなので、既に main 上で docs/code がずれているなら新規 branch 開発より先に整合回復が必要である
-    - ただし notes 上の future/proposal と実装済み code の差分を混同すると、未実装機能を docs に先取り反映してしまう
+    - current-main mismatch / notes-proposal-only / branch-development-candidate の分類を更新済みである
   notes:
-    - gap を current-main mismatch / notes-proposal-only / branch-development-candidate に分類する
-    - current-main mismatch だけを main 整合修正候補にする
+    - current-main mismatch は repoResource branch selector docs reflection のみと判定済み
     - branch / ATLAS / delta の未実装提案は feature branch または merge 準備に残す
   external:
     todoist_task_id: 6gVGQcqVHxFCxQwH
@@ -75,19 +76,19 @@ Immediate Gate は7日枠に数えない。
 
 - task: main 整合修正案を作る
   source_ref:
-    - notes/08_analysis/2026-04-27_pre_delta_docs_code_operations_gap_inventory.md
+    - notes/02_design/2026-04-27_main_alignment_repair_proposal.md
+    - notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md
     - docs/10_repo_resource_api.md
-    - docs/13_dev_workflow.md
-    - docs/17_operations_system.md
   rolling_day: Day1
   due_date: 2026-04-28
   due_type: date
+  status: complete
+  completed: true
   why_now:
-    - 分類後、main の docs/code 整合を回復するために必要な最小修正案を作る必要がある
+    - 分類後、main の docs/code 整合を回復するために必要な最小修正案を作る必要があった
   notes:
-    - docs 本体更新か code 修正かを gap ごとに判断する
-    - main に実装済みの branch selector は current-main mismatch として docs reflection 対象に含める
-    - 未実装の ATLAS workflow / delta は main修正に含めない
+    - docs/10 branch selector reflection draft を完成形として更新済み
+    - 未実装の ATLAS workflow / delta は main 修正に含めない
   external:
     todoist_task_id: 6gVGQcqRfpP78xVq
 
@@ -101,11 +102,13 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day2
   due_date: 2026-04-29
   due_type: date
+  status: complete
+  completed: true
   why_now:
     - main 整合回復後、新規開発は branch で進める
     - repoResource branch selector の read / write behavior が確認済みになったため、以後は branch target を明示して安全に code / workflow / schema 変更へ進める
   notes:
-    - 推奨 target は feature/atlas-pre-delta-foundation
+    - target は feature/atlas-pre-delta-foundation に固定済み
     - branch-sensitive write の前に、対象 branch と write scope を必ず Write Gate で確認する
     - main に直接 code/workflow/schema を書く例外は user が明示した場合に限る
   external:
@@ -122,14 +125,15 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day3
   due_date: 2026-04-30
   due_type: date
+  status: complete
+  completed: true
   why_now:
     - branch selector は main に例外実装済みであり、code behavior / repo schema / runtime-visible schema / explicit read / explicit write behavior まで確認済みである
-    - docs/10_repo_resource_api.md はまだ branch selector を仕様として定義していないため、docs 本体への人間反映と完了確認が必要である
+    - docs/10_repo_resource_api.md は branch selector を仕様として定義済みであることを確認した
   notes:
-    - ADAM は docs 本体を API から直接更新しない
-    - 人間が docs/10 に branch selector reflection を反映する
-    - ADAM は反映後に docs/10 を read して、branch selector の docs reflection complete を確認する
-    - update proposal は現行 docs とマージした complete proposed content を code block で出す
+    - docs/10 read-back confirmed
+    - docs sha: af34295c92210134f824e024c3bec288032bbd02
+    - branch selector docs reflection は complete
   external:
     todoist_task_id: 6gVGM8r237XWCrHq
 
@@ -146,7 +150,7 @@ Immediate Gate は7日枠に数えない。
   due_date: 2026-05-01
   due_type: date
   blocked_by:
-    - ADAM Action schema 2.2.1 を configured Action schema に反映する
+    - ADAM Action schema 2.2.2 runtime-visible schema confirmation
   why_now:
     - branch create code behavior と repo schema は complete だが、actual branch create behavior は未確認である
     - feature/atlas-pre-delta-foundation が作成されるまで、ATLAS workflow を feature branch に実装できない
@@ -167,7 +171,6 @@ Immediate Gate は7日枠に数えない。
   due_date: 2026-05-02
   due_type: date
   blocked_by:
-    - ADAM Action schema 2.2.1 を configured Action schema に反映する
     - repoResource branch create API の actual behavior を確認する
   why_now:
     - ATLAS workflow patch proposal は作成済みであり、branch 上で .nvmrc / test workflow を実装する必要がある
@@ -192,7 +195,6 @@ Immediate Gate は7日枠に数えない。
   due_date: 2026-05-03
   due_type: date
   blocked_by:
-    - ADAM Action schema 2.2.1 を configured Action schema に反映する
     - repoResource branch create API の actual behavior を確認する
     - ATLAS test workflow を feature branch へ実装する
   why_now:
