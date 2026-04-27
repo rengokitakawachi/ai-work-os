@@ -47,23 +47,25 @@ function assertNotesDeleteAllowed(file) {
   return safeFile;
 }
 
-export async function treeNotes() {
+export async function treeNotes(options = {}) {
   const tree = await getRepoTree('notes/', {
     step: 'treeNotes',
     resource: 'notes',
     action: 'tree',
+    branch: options.branch,
   });
 
-  const items = mapTreeItems(tree);
+  const items = mapTreeItems(tree.items);
 
   return {
     resource: 'notes',
+    branch: tree.branch,
     items,
     count: items.length,
   };
 }
 
-export async function readNote(file) {
+export async function readNote(file, options = {}) {
   const path = buildNotesPath(file, {
     step: 'readNote',
     resource: 'notes',
@@ -75,6 +77,7 @@ export async function readNote(file) {
       step: 'readNote',
       resource: 'notes',
       action: 'read',
+      branch: options.branch,
     });
 
     return formatReadResponse(data);
@@ -100,7 +103,7 @@ export async function readNote(file) {
   }
 }
 
-export async function bulkReadNotes(files) {
+export async function bulkReadNotes(files, options = {}) {
   if (!Array.isArray(files) || files.length === 0) {
     throw createError({
       status: 400,
@@ -120,7 +123,7 @@ export async function bulkReadNotes(files) {
   const results = await Promise.all(
     files.map(async (file) => {
       try {
-        const data = await readNote(file);
+        const data = await readNote(file, options);
         return {
           ok: true,
           file,
@@ -142,7 +145,7 @@ export async function bulkReadNotes(files) {
   return results;
 }
 
-export async function createNote(file, content, message = '') {
+export async function createNote(file, content, message = '', options = {}) {
   const path = buildNotesPath(file, {
     step: 'createNote',
     resource: 'notes',
@@ -154,6 +157,7 @@ export async function createNote(file, content, message = '') {
       step: 'createNote',
       resource: 'notes',
       action: 'create',
+      branch: options.branch,
     });
 
     throw createError({
@@ -181,16 +185,18 @@ export async function createNote(file, content, message = '') {
     step: 'createNote',
     resource: 'notes',
     action: 'create',
+    branch: options.branch,
   });
 
   return {
     path: result.content.path,
     sha: result.content.sha,
+    branch: result.branch,
     status: 'CREATED',
   };
 }
 
-export async function updateNote(file, content, message = '', sha = '') {
+export async function updateNote(file, content, message = '', sha = '', options = {}) {
   const path = buildNotesPath(file, {
     step: 'updateNote',
     resource: 'notes',
@@ -205,6 +211,7 @@ export async function updateNote(file, content, message = '', sha = '') {
         step: 'updateNote',
         resource: 'notes',
         action: 'update',
+        branch: options.branch,
       });
       currentSha = existing.sha;
     } catch (error) {
@@ -234,16 +241,18 @@ export async function updateNote(file, content, message = '', sha = '') {
     step: 'updateNote',
     resource: 'notes',
     action: 'update',
+    branch: options.branch,
   });
 
   return {
     path: result.content.path,
     sha: result.content.sha,
+    branch: result.branch,
     status: 'UPDATED',
   };
 }
 
-export async function deleteNote(file, message = '', sha = '') {
+export async function deleteNote(file, message = '', sha = '', options = {}) {
   const allowedFile = assertNotesDeleteAllowed(file);
 
   const path = buildNotesPath(allowedFile, {
@@ -260,6 +269,7 @@ export async function deleteNote(file, message = '', sha = '') {
         step: 'deleteNote',
         resource: 'notes',
         action: 'delete',
+        branch: options.branch,
       });
       currentSha = existing.sha;
     } catch (error) {
@@ -290,12 +300,14 @@ export async function deleteNote(file, message = '', sha = '') {
       step: 'deleteNote',
       resource: 'notes',
       action: 'delete',
+      branch: options.branch,
     });
 
     return {
       path,
       sha: currentSha,
       commit_sha: result.commit.sha,
+      branch: result.branch,
       status: 'DELETED',
     };
   } catch (error) {
