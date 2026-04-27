@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import handler from './repo-resource.js';
 import { normalizeBranch } from '../src/services/repo-resource/common.js';
+import { validateBranchCreateInput } from '../src/services/repo-resource/repo.js';
 
 function createMockRes() {
   return {
@@ -57,6 +58,53 @@ test('normalizeBranch rejects invalid branch names', () => {
       (error) => error.code === 'INVALID_REQUEST'
     );
   }
+});
+
+test('validateBranchCreateInput accepts feature branch from main', () => {
+  assert.deepEqual(
+    validateBranchCreateInput('feature/atlas-pre-delta-foundation', 'main'),
+    {
+      branch: 'feature/atlas-pre-delta-foundation',
+      fromBranch: 'main',
+    }
+  );
+});
+
+test('validateBranchCreateInput defaults from branch to main', () => {
+  assert.deepEqual(validateBranchCreateInput('feature/example'), {
+    branch: 'feature/example',
+    fromBranch: 'main',
+  });
+});
+
+test('validateBranchCreateInput rejects missing target branch', () => {
+  assert.throws(
+    () => validateBranchCreateInput('', 'main'),
+    (error) => error.code === 'INVALID_REQUEST' && error.details.field === 'branch'
+  );
+});
+
+test('validateBranchCreateInput rejects main target branch', () => {
+  assert.throws(
+    () => validateBranchCreateInput('main', 'main'),
+    (error) => error.code === 'INVALID_REQUEST'
+  );
+});
+
+test('validateBranchCreateInput rejects non-feature target branch', () => {
+  assert.throws(
+    () => validateBranchCreateInput('release/example', 'main'),
+    (error) =>
+      error.code === 'INVALID_REQUEST' &&
+      error.details.required_prefix === 'feature/'
+  );
+});
+
+test('validateBranchCreateInput rejects target equal to source', () => {
+  assert.throws(
+    () => validateBranchCreateInput('feature/example', 'feature/example'),
+    (error) => error.code === 'INVALID_REQUEST'
+  );
 });
 
 test('repo-resource returns 400 when action and resource are missing', async () => {
@@ -209,6 +257,86 @@ test('repo-resource returns 400 for invalid POST branch', async () => {
       content: 'export default 1;',
       branch: 'feature/x?y',
     },
+  };
+  const res = createMockRes();
+
+  const previousKey = process.env.INTERNAL_API_KEY;
+  process.env.INTERNAL_API_KEY = '';
+
+  try {
+    await handler(req, res);
+  } finally {
+    process.env.INTERNAL_API_KEY = previousKey;
+  }
+
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.body.ok, false);
+  assert.equal(res.body.error.code, 'INVALID_REQUEST');
+  assert.equal(res.body.error.details.field, 'branch');
+});
+
+test('repo-resource returns 400 for repo GET', async () => {
+  const req = {
+    method: 'GET',
+    query: {
+      resource: 'repo',
+      action: 'create_branch',
+    },
+    headers: {},
+  };
+  const res = createMockRes();
+
+  const previousKey = process.env.INTERNAL_API_KEY;
+  process.env.INTERNAL_API_KEY = '';
+
+  try {
+    await handler(req, res);
+  } finally {
+    process.env.INTERNAL_API_KEY = previousKey;
+  }
+
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.body.ok, false);
+  assert.equal(res.body.error.code, 'RESOURCE_NOT_SUPPORTED');
+});
+
+test('repo-resource returns 400 for unsupported repo post action', async () => {
+  const req = {
+    method: 'POST',
+    query: {
+      resource: 'repo',
+      action: 'delete_branch',
+    },
+    headers: {},
+    body: {
+      branch: 'feature/example',
+    },
+  };
+  const res = createMockRes();
+
+  const previousKey = process.env.INTERNAL_API_KEY;
+  process.env.INTERNAL_API_KEY = '';
+
+  try {
+    await handler(req, res);
+  } finally {
+    process.env.INTERNAL_API_KEY = previousKey;
+  }
+
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.body.ok, false);
+  assert.equal(res.body.error.code, 'ACTION_NOT_SUPPORTED');
+});
+
+test('repo-resource returns 400 for repo create_branch without branch', async () => {
+  const req = {
+    method: 'POST',
+    query: {
+      resource: 'repo',
+      action: 'create_branch',
+    },
+    headers: {},
+    body: {},
   };
   const res = createMockRes();
 
