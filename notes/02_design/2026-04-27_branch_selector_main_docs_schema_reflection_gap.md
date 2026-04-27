@@ -2,7 +2,7 @@
 
 ## 目的
 
-ユーザー判断により、例外的に `main` へ repoResource branch selector の code 実装を入れた後の、未反映層を明示する。
+ユーザー判断により、例外的に `main` へ repoResource branch selector の code 実装を入れた後の、反映層と完了判定を明示する。
 
 ---
 
@@ -48,7 +48,6 @@ Mainでbranch selectorを実装する
 以下は main に更新済み。
 
 - `config/ai/adam_schema.yaml`
-  - schema version を `2.1.6` から `2.2.0` に更新
   - `/api/repo-resource` GET parameter に optional `branch` を追加
   - `RepoResourceWriteRequest` に optional `branch` を追加
   - read / tree / bulk / write response schema に `branch` を追加
@@ -92,42 +91,44 @@ status: CREATED / OK
 
 これにより explicit branch write behavior は確認済みとする。
 
+`docs/10_repo_resource_api.md` を read し、branch selector が現行仕様として反映されていることを確認した。
+
+確認済み docs/10 内容:
+
+```text
+branch は GitHub branch selector を示す
+branch fallback: branch -> GITHUB_BRANCH -> main
+branch は repo-resource API の request-level option
+branch は docs / notes / code の read 系 action と notes / code の write 系 action に適用
+branch は docs の write を許可しない
+repo-resource GET action は optional query parameter branch を受け取る
+repo-resource POST action は request body に optional branch を受け取る
+branch validation rule
+resolved branch を data.branch に含める
+bulk item に branch を含める
+```
+
+確認済み docs sha:
+
+```text
+docs/10_repo_resource_api.md: af34295c92210134f824e024c3bec288032bbd02
+```
+
+これにより docs reflection は確認済みとする。
+
 ---
 
-## 未完了層
-
-### configured Action / tool schema
+## configured Action / tool schema
 
 直接観測はできない。
 
-ただし runtime-visible schema に branch field が見えているため、実用上は runtime-visible schema confirmed とする。
-
----
-
-## docs gap
-
-`docs/10_repo_resource_api.md` はまだ branch selector を仕様として定義していない。
-
-main code が branch selector を実装したため、docs 反映案が必要である。
-
-ただし docs は API 上 read-only であり、docs 本体更新は人間判断を経由する。
-
-docs 更新案は以下に作成済み。
-
-- `notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md`
-
----
-
-## 次の最小 action
-
-1. docs 更新案を人間判断へ回す
-2. branch selector 完了判定を operations / handover 文脈へ反映する
+ただし runtime-visible schema に branch field が見えており、actual read / write behavior も確認済みのため、branch selector に関しては実用上 confirmed とする。
 
 ---
 
 ## 完了判定
 
-branch selector task は、以下を分けて判定する。
+branch selector task は、以下の通り完了とする。
 
 ```text
 code behavior: complete for main implementation
@@ -136,5 +137,19 @@ runtime-visible schema: complete
 explicit branch read behavior: complete
 explicit branch write behavior: complete
 docs reflection draft: complete
+docs reflection: complete
+```
+
+---
+
+## 残件
+
+branch selector 自体の残件はない。
+
+別 capability として、repoResource branch create API は次の層が未完了である。
+
+```text
+runtime-visible schema: not confirmed
+actual branch create behavior: not confirmed
 docs reflection: not complete
 ```
