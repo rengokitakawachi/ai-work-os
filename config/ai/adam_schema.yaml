@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.2.1"
+  version: "2.2.2"
   description: AI Work OS repo access API and Todoist Tasks API
 
 servers:
@@ -680,16 +680,7 @@ paths:
     post:
       operationId: repoResourceWrite
       summary: Write repo resources
-      description: |
-        Supports create, update, delete, and create_branch.
-        Rules:
-        - action=create: file and content are required
-        - action=update: file and content are required
-        - action=delete: file and sha are required; content must be omitted
-        - action=create_branch: branch is required, from_branch is optional, file/content/sha are omitted
-        - create / update are available for notes and code
-        - delete is currently intended for notes resource only
-        - create_branch is available only for repo resource and target branches must start with feature/
+      description: Notes/code create/update/delete. Repo create_branch creates feature/* from from_branch. Use branch as target for create_branch or selector for file writes.
       security:
         - bearerAuth: []
       parameters:
