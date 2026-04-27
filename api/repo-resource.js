@@ -25,6 +25,8 @@ import {
   updateCode,
 } from '../src/services/repo-resource/code.js';
 
+import { createBranch } from '../src/services/repo-resource/repo.js';
+
 import {
   createError,
   normalizeBranch,
@@ -220,6 +222,45 @@ function validatePost(resource, action, body) {
     action,
   });
 
+  if (resource === 'repo') {
+    if (action !== 'create_branch') {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validatePost',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    if (!ensureString(body?.branch)) {
+      throw createError({
+        status: 400,
+        code: 'INVALID_REQUEST',
+        message: 'branch required',
+        category: 'validation',
+        step: 'validatePost',
+        resource,
+        action,
+        retryable: false,
+        details: {
+          field: 'branch',
+        },
+      });
+    }
+
+    normalizeBranch(body?.from_branch, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    return;
+  }
+
   if (resource === 'notes') {
     if (!['create', 'update', 'delete'].includes(action)) {
       throw createError({
@@ -394,13 +435,24 @@ async function dispatchGet(resource, action, query) {
 }
 
 async function dispatchPost(resource, action, body) {
+  const message = ensureString(body?.message);
+
+  if (resource === 'repo') {
+    if (action === 'create_branch') {
+      return createBranch(
+        ensureString(body?.branch),
+        ensureString(body?.from_branch) || 'main',
+        message
+      );
+    }
+  }
+
   const file = requireFile(body?.file, {
     step: 'dispatchPost',
     resource,
     action,
   });
 
-  const message = ensureString(body?.message);
   const sha = ensureString(body?.sha);
   const options = {
     branch: ensureString(body?.branch),
