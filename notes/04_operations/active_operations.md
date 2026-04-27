@@ -4,76 +4,45 @@
 
 ### Phase 0 直結 task
 
-- `共通 core / tool use / schema reflection の draft を作る`
-- `ADAM / EVE procedure draft を作る`
-- `ADAM / EVE instruction 圧縮案を作る`
+- `ADAM / EVE instruction / knowledge を現行2層構成に合わせて整合する`
+- `repoResourceGet bulk の files 区切り仕様を整理する`
+- `docs/05_roadmap.md への Phase 0 位置づけ反映案を作る`
 
 ### 補助 task
 
-- `repoResourceGet bulk の files 区切り仕様を整理する`
-- `docs/05_roadmap.md への Phase 0 位置づけ反映案を作る`
 - `legacy Todoist wrapper の削除前 gate を repo 全体で再確認する`
 - `issue routing completed condition の継続観測項目を weekly review 向けに整理する`
 
 ## Day0（04/27 月）
 
-- task: 共通 core / tool use / schema reflection の draft を作る
+- task: ADAM / EVE instruction / knowledge を現行2層構成に合わせて整合する
   source_ref:
     - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
     - notes/08_analysis/2026-04-26_adam_eve_instruction_schema_inventory.md
+    - notes/08_analysis/2026-04-27_adam_eve_instruction_compression_proposal.md
     - config/ai/adam_instruction.md
+    - config/ai/adam_knowledge.md
     - config/ai/eve_instruction.md
+    - config/ai/eve_knowledge.md
   rolling_day: Day0
   due_date: 2026-04-27
   due_type: date
   why_now:
-    - ADAM / EVE の同時整備方針と section inventory ができたため、次は共通化してよい範囲を draft として固定する必要がある
-    - 共通 core を先に作らないと、ADAM / EVE 個別 instruction の圧縮が二重作業になりやすい
+    - `config/ai/common_*` と `config/ai/procedures/*` は ADAM と相談して削除済みであり、再作成しない方針に戻す必要がある
+    - 現行 repo は `instruction + knowledge` の2層構成であり、共通 layer / procedure file 分割案をそのまま repo 更新へ進めると構造が再分裂する
+    - 既に instruction 圧縮案は作成済みのため、次は現行2層構成に合わせて必要差分だけを整理するのが正しい
   notes:
-    - 正本の違いは共通化しない
-    - common_core / common_tool_use / common_schema_reflection の draft を作る
+    - repo 本体への common / procedures file 作成はしない
+    - `notes/02_design/2026-04-27_common_core_tool_use_schema_reflection_draft.md` と `notes/02_design/2026-04-27_adam_eve_procedure_draft.md` は、現行方針では repo 反映対象ではなく、設計検討履歴として扱う
+    - 次に作る差分案は `adam_instruction.md` / `adam_knowledge.md` / `eve_instruction.md` / `eve_knowledge.md` の既存4ファイル前提に限定する
+  completed_condition:
+    - common / procedures 再作成をしない方針が operations 上で読める
+    - instruction 圧縮案が既存作成済みであることを前提に、次の repo 差分対象が既存4ファイルへ絞られている
+    - next_operations の repo 更新差分 task が、削除済み構造を前提にしない形へ修正されている
   external:
     todoist_task_id: 6gV6JmQh2MfCQ49H
 
-- task: ADAM / EVE procedure draft を作る
-  source_ref:
-    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
-    - notes/08_analysis/2026-04-26_adam_eve_instruction_schema_inventory.md
-    - config/ai/adam_instruction.md
-    - config/ai/eve_instruction.md
-  rolling_day: Day0
-  due_date: 2026-04-27
-  due_type: date
-  why_now:
-    - 共通 core と同時に、状況依存手順を procedure へ逃がす準備が必要である
-    - ADAM と EVE では procedure 範囲が異なるため、先に draft で境界を固定する
-  notes:
-    - ADAM: review / routing / operations / write_gate / handover / schema reflection
-    - EVE: task clarify / retrieval / create / update
-  external:
-    todoist_task_id: 6gV6Jmc67hxj8CwH
-
 ## Day1（04/28 火）
-
-- task: ADAM / EVE instruction 圧縮案を作る
-  source_ref:
-    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
-    - notes/08_analysis/2026-04-26_adam_eve_instruction_schema_inventory.md
-    - config/ai/adam_instruction.md
-    - config/ai/eve_instruction.md
-  rolling_day: Day1
-  due_date: 2026-04-28
-  due_type: date
-  why_now:
-    - 共通 core と procedure draft の後で、ADAM / EVE それぞれの instruction 圧縮案を安全に作れる
-    - repo 直接更新前に、人格別の正本差分を残した圧縮案を確認する必要がある
-  notes:
-    - この task では repo 本体更新ではなく圧縮案を作る
-    - ADAM は docs / operations / code 制御、EVE は Todoist 正本の実行支援として分ける
-  external:
-    todoist_task_id: 6gV6JmX6x49xfgxq
-
-## Day2（04/29 水）
 
 - task: repoResourceGet bulk の files 区切り仕様を整理する
   source_ref:
@@ -81,27 +50,27 @@
     - docs/10_repo_resource_api.md
     - config/ai/adam_schema.yaml
     - api/repo-resource.js
-  rolling_day: Day2
-  due_date: 2026-04-29
+  rolling_day: Day1
+  due_date: 2026-04-28
   due_type: date
   why_now:
     - issue `20260425-030` は daily review 中にも再発し、handover / 関連ファイル確認の効率と信頼性に影響する
-    - ただし ADAM / EVE instruction / schema 再層化の前提整理が始まったため、その後段に置く
+    - ADAM / EVE instruction / knowledge の2層構成方針を戻した後、次に残る schema / API 整合の実害がある論点である
   notes:
     - まず仕様整理に留める
     - repo schema 更新と runtime tool schema 反映確認は別状態として扱う
   external:
     todoist_task_id: 6gRrVhjP6j8M66Jq
 
-## Day3（04/30 木）
+## Day2（04/29 水）
 
 - task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
   source_ref:
     - notes/02_design/2026-04-25_phase0_positioning_in_roadmap.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - docs/05_roadmap.md
-  rolling_day: Day3
-  due_date: 2026-04-30
+  rolling_day: Day2
+  due_date: 2026-04-29
   due_type: date
   why_now:
     - 2026-04-25 に Phase 0 の foundation 位置づけは design に整理済みで、次は docs 反映案へ進める
@@ -112,7 +81,7 @@
   external:
     todoist_task_id: 6gRrVhmXVh9wcjhH
 
-## Day4（05/01 金）
+## Day3（04/30 木）
 
 - task: legacy Todoist wrapper の削除前 gate を repo 全体で再確認する
   source_ref:
@@ -121,8 +90,8 @@
     - src/services/todoist/client.js
     - src/services/tasks/service.js
     - src/services/tasks/projection.js
-  rolling_day: Day4
-  due_date: 2026-05-01
+  rolling_day: Day3
+  due_date: 2026-04-30
   due_type: date
   why_now:
     - deprecated 化の段取りは整理済みだが、削除前には repo 全体 usage と test gate の再確認が必要である
@@ -133,15 +102,15 @@
   external:
     todoist_task_id: 6gRrVhq59gpX2JjH
 
-## Day5（05/02 土）
+## Day4（05/01 金）
 
 - task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
     - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
-  rolling_day: Day5
-  due_date: 2026-05-02
+  rolling_day: Day4
+  due_date: 2026-05-01
   due_type: date
   why_now:
     - issue routing の completed condition は plan / operations に返したが、単発確認と継続確認を分ける必要がある
@@ -150,6 +119,24 @@
     - 単発確認済みの項目と、継続観測が必要な項目を分ける
   external:
     todoist_task_id: 6gRrVhrhjC7FgXPq
+
+## Day5（05/02 土）
+
+- task: delta 学習支援システムの fast-track architecture を開発計画に取り込む
+  source_ref:
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+    - docs/13_dev_workflow.md
+    - docs/15_notes_system.md
+    - docs/17_operations_system.md
+  rolling_day: Day5
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - 2026-08-23 の社会保険労務士試験に向けた期限駆動案件である
+    - future に寝かせるには重いが、active Day0 への割り込みではなく、既存 Phase 0 修正後に配置するのが安全である
+  notes:
+    - まず systems/delta resource layout と MVP 手動運用範囲を固定する
+    - 初期 roadmap / plan / operations 作成 task を切る
 
 ## Day6（05/03 日）
 
@@ -190,4 +177,5 @@
 - 未完了タスクは翌日以降へ移動する
 - 完了タスクは必要に応じて archive_operations に移す
 - Phase 0 中は Flow Control / routing / operations の実運用整合を優先する
-- 直近の daily review rolling では、ADAM / EVE instruction / schema 再層化の共通 core と procedure draft を優先候補として扱う
+- 削除済みの `config/ai/common_*` / `config/ai/procedures/*` 構造は再作成しない
+- ADAM / EVE config は現行 `instruction + knowledge + schema` 構成を前提に整合する
