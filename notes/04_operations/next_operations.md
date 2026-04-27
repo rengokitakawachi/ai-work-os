@@ -10,27 +10,46 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-27 branch/version policy reroll）
+## 再評価結果（2026-04-27 branch create API insertion）
 
-### active へ移した task
+### active へ入った task
 
-- `repoResource branch selector の設計 / 差分案を作る`
-- `ATLAS testing system の最小方針を固定する`
-- `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
-- `GitHub Actions / ATLAS test workflow の最小差分を作る`
-- `docs と code / operations 実態の差分を棚卸しする`
-- `docs 反映案を delta 前環境整備として作る`
-- `delta MVP resource layout を作る`
+- `repoResource branch create API を設計・実装・runtime確認する`
 
 理由
 
-- `Docs-aligned main / Notes-driven branch / Versioned merge` model を採用した
-- bulk 実装も code change であり、branch selector の設計なしに main 直書きへ戻すべきではない
-- versioning は merge 境界の問題として docs / code / operations 整合と一緒に扱う
+- `feature/atlas-pre-delta-foundation` が runtime から read できず、ATLAS workflow を feature branch へ実装できない
+- repoResource は既存 branch の read / write はできるが、新規 branch 作成 capability を持たない
+- ATLAS workflow / bulk / delta resource layout は feature branch の存在確認後に進める必要がある
+
+### active から next へ送った task
+
+- `delta MVP resource layout を feature branch で作る`
+
+理由
+
+- branch create API が未実装のままでは feature branch 上に delta resource layout を安全に作れない
+- ATLAS workflow / bulk separator の後に戻す方が安全である
 
 ---
 
 ## タスク
+
+- task: delta MVP resource layout を feature branch で作る
+  source_ref:
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+    - docs/13_dev_workflow.md
+    - docs/15_notes_system.md
+    - docs/17_operations_system.md
+  why_now:
+    - 環境整備後に delta 初期運用へ戻る
+    - delta resource は新規 system resource 群のため branch 上で作るのが正しい
+  notes:
+    - branch create API / ATLAS workflow / bulk separator の後に active へ戻す
+    - systems/delta/ docs / roadmap / plan / operations / history / review / resources / config の最小構成を作る
+    - main 統合時に docs と一致させる
+  external:
+    todoist_task_id: 6gVFwG3q3hCHcrcH
 
 - task: delta 社労士試験向け initial roadmap / plan / operations を作る
   source_ref:
@@ -149,4 +168,4 @@ active_operations に入らなかった上位候補を保持する。
 - branch は Notes-driven development space として扱う
 - merge 時に docs / code / config / operations / version を一致させる
 - ATLAS は test / verification / CI review system として扱う
-- delta 開発前に branch selector / ATLAS / bulk / docs 実態差分の環境整備を優先する
+- delta 開発前に branch selector / branch create / ATLAS / bulk / docs 実態差分の環境整備を優先する
