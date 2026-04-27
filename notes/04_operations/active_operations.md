@@ -28,6 +28,8 @@
     - 推奨 target は feature/atlas-pre-delta-foundation または feature/repo-resource-branch-selector
     - ADAM runtime が branch 指定できない間は main に code/workflow/schema を書かない
     - 選択肢は GITHUB_BRANCH を feature branch に向ける、人間が patch を適用する、branch selector 実装後に runtime schema refresh する、のいずれか
+  external:
+    todoist_task_id: 6gVGPq5QM2MG46VH
 
 ## Day1（04/28 火）
 
@@ -63,6 +65,8 @@
     - .nvmrc と .github/workflows/test.yml を feature branch に作る
     - package-lock.json がないため初期 workflow は npm install を使う
     - coverage / lint / PR comments は後段
+  external:
+    todoist_task_id: 6gVGPq8f5mWXJxmH
 
 ## Day3（04/30 木）
 
