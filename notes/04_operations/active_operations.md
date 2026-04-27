@@ -7,7 +7,7 @@
 - `現 main の docs/code 不一致を分類し、整合修正対象を確定する`
 - `main 整合修正案を作る`
 - `feature branch target を確定し、branch 開発開始手順を固定する`
-- `repoResource branch selector を feature branch へ実装する`
+- `repoResource branch selector の docs reflection を人間判断へ回す`
 - `ATLAS test workflow を feature branch へ実装する`
 - `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 - `delta MVP resource layout を feature branch で作る`
@@ -52,7 +52,8 @@
     - 分類後、main の docs/code 整合を回復するために必要な最小修正案を作る必要がある
   notes:
     - docs 本体更新か code 修正かを gap ごとに判断する
-    - 未実装の branch selector / ATLAS workflow / delta は main 修正に含めない
+    - main に実装済みの branch selector は current-main mismatch として docs reflection 対象に含める
+    - 未実装の ATLAS workflow / delta は main 修正に含めない
   external:
     todoist_task_id: 6gVGQcqRfpP78xVq
 
@@ -61,35 +62,38 @@
 - task: feature branch target を確定し、branch 開発開始手順を固定する
   source_ref:
     - notes/05_decisions/2026-04-27_branch_policy_for_atlas_delta.md
-    - notes/02_design/2026-04-27_repo_resource_branch_selector_patch_proposal.md
+    - notes/02_design/2026-04-27_feature_branch_start_procedure.md
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
   rolling_day: Day2
   due_date: 2026-04-29
   due_type: date
   why_now:
     - main 整合回復後、新規開発は branch で進める
-    - 現 runtime は branch 指定 write を持たないため、実装前に feature branch target と適用方法を確定する必要がある
+    - repoResource branch selector の read / write behavior が確認済みになったため、以後は branch target を明示して安全に code / workflow / schema 変更へ進める
   notes:
-    - 推奨 target は feature/atlas-pre-delta-foundation または feature/repo-resource-branch-selector
-    - ADAM runtime が branch 指定できない間は main に code/workflow/schema を書かない
-    - 選択肢は GITHUB_BRANCH を feature branch に向ける、人間が patch を適用する、branch selector 実装後に runtime schema refresh する、のいずれか
+    - 推奨 target は feature/atlas-pre-delta-foundation
+    - branch-sensitive write の前に、対象 branch と write scope を必ず Write Gate で確認する
+    - main に直接 code/workflow/schema を書く例外は user が明示した場合に限る
   external:
     todoist_task_id: 6gVGPq5QM2MG46VH
 
 ## Day3（04/30 木）
 
-- task: repoResource branch selector を feature branch へ実装する
+- task: repoResource branch selector の docs reflection を人間判断へ回す
   source_ref:
-    - notes/02_design/2026-04-27_repo_resource_branch_selector_patch_proposal.md
+    - notes/02_design/2026-04-27_branch_selector_main_docs_schema_reflection_gap.md
+    - notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md
+    - docs/10_repo_resource_api.md
   rolling_day: Day3
   due_date: 2026-04-30
   due_type: date
   why_now:
-    - main 整合後、feature branch target が確認できた段階で実装する
-    - 以後の bulk / ATLAS workflow / delta resource 作成を branch 上で安全に進める前提になる
+    - branch selector は main に例外実装済みであり、code behavior / repo schema / runtime-visible schema / explicit read / explicit write behavior まで確認済みである
+    - docs/10_repo_resource_api.md はまだ branch selector を仕様として定義していないため、docs reflection の人間判断へ回す必要がある
   notes:
-    - implementation / schema / runtime reflection / behavior confirmation を分ける
-    - repo schema 更新後も runtime tool schema 反映済みとはみなさない
+    - docs 本体は API 上 read-only として扱い、ADAM は docs 更新案を提示する
+    - docs reflection draft は作成済みである
+    - docs reflection が完了するまでは branch selector の docs 層は未完了として扱う
   external:
     todoist_task_id: 6gVGM8r237XWCrHq
 
@@ -125,7 +129,7 @@
   due_date: 2026-05-02
   due_type: date
   why_now:
-    - branch selector 実装後に、bulk 改行区切り対応を branch 上で進める
+    - branch selector の read / write behavior が確認済みになったため、bulk 改行区切り対応を branch 上で進められる
   notes:
     - parseFilesParam を comma / newline 両対応にする
     - node --test の回帰テストを追加する
