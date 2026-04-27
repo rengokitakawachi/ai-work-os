@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.2.0"
+  version: "2.2.1"
   description: AI Work OS repo access API and Todoist Tasks API
 
 servers:
@@ -265,24 +265,25 @@ components:
     RepoResourceWriteRequest:
       type: object
       additionalProperties: false
-      required:
-        - file
       properties:
         file:
           type: string
-          description: Relative file path inside the selected resource
+          description: Relative file path inside the selected resource. Required for notes/code create/update/delete. Not used for repo create_branch.
         content:
           type: string
-          description: Required for create and update. Do not send for delete.
+          description: Required for notes/code create and update. Do not send for delete or create_branch.
         message:
           type: string
-          description: Optional commit message
+          description: Optional commit message or operation trace message
         sha:
           type: string
           description: Optional file SHA. Can be used for update or delete.
         branch:
           type: string
-          description: Optional Git branch selector. If omitted, uses configured GITHUB_BRANCH or main.
+          description: Optional Git branch selector. For repo create_branch, this is the target branch and must start with feature/.
+        from_branch:
+          type: string
+          description: Optional source branch for repo create_branch. If omitted, uses main.
 
     RepoResourceWriteResultData:
       type: object
@@ -296,7 +297,16 @@ components:
           type: string
         branch:
           type: string
-          description: Resolved Git branch used for this write
+          description: Resolved Git branch used for this write, or target branch for create_branch
+        from_branch:
+          type: string
+          description: Source branch used for create_branch
+        source_sha:
+          type: string
+          description: Source commit SHA used for create_branch
+        ref:
+          type: string
+          description: Git ref created by create_branch
         status:
           type: string
           enum:
@@ -671,13 +681,15 @@ paths:
       operationId: repoResourceWrite
       summary: Write repo resources
       description: |
-        Supports create, update, and delete.
+        Supports create, update, delete, and create_branch.
         Rules:
-        - action=create: content is required
-        - action=update: content is required
-        - action=delete: content must be omitted
+        - action=create: file and content are required
+        - action=update: file and content are required
+        - action=delete: file and sha are required; content must be omitted
+        - action=create_branch: branch is required, from_branch is optional, file/content/sha are omitted
         - create / update are available for notes and code
         - delete is currently intended for notes resource only
+        - create_branch is available only for repo resource and target branches must start with feature/
       security:
         - bearerAuth: []
       parameters:
@@ -690,6 +702,7 @@ paths:
               - create
               - update
               - delete
+              - create_branch
         - name: resource
           in: query
           required: true
@@ -698,6 +711,7 @@ paths:
             enum:
               - notes
               - code
+              - repo
       requestBody:
         required: true
         content:
