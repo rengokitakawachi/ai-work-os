@@ -34,6 +34,8 @@
     - gap を current-main mismatch / notes-proposal-only / branch-development-candidate に分類する
     - current-main mismatch だけを main 整合修正候補にする
     - branch / ATLAS / delta の未実装提案は feature branch または merge 準備に残す
+  external:
+    todoist_task_id: 6gVGQcqVHxFCxQwH
 
 ## Day1（04/28 火）
 
@@ -51,6 +53,8 @@
   notes:
     - docs 本体更新か code 修正かを gap ごとに判断する
     - 未実装の branch selector / ATLAS workflow / delta は main 修正に含めない
+  external:
+    todoist_task_id: 6gVGQcqRfpP78xVq
 
 ## Day2（04/29 水）
 
