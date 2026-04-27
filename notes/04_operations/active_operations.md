@@ -28,6 +28,8 @@
   notes:
     - まず design / decision で main / feature branch / PR / human merge の境界を固定する
     - repoResourceWrite がどの branch に書くかの扱いも別途 schema / runtime reflection 対象として分ける
+  external:
+    todoist_task_id: 6gVG3qCx7hV7Gm3q
 
 - task: ATLAS testing system の最小方針を固定する
   source_ref:
@@ -44,6 +46,8 @@
   notes:
     - 初期 ATLAS は npm test / GitHub Actions / Claude review handoff までに限定する
     - coverage / lint / branch protection / automated comments は後段に分ける
+  external:
+    todoist_task_id: 6gVG3qH94jq5FPGH
 
 - task: repoResourceGet bulk の files 区切り仕様を実装する
   source_ref:
@@ -80,6 +84,8 @@
   notes:
     - まず .github/workflows/test.yml で npm test のみを実行する
     - coverage / lint は後段に分ける
+  external:
+    todoist_task_id: 6gVG3qGGxMrvRcFH
 
 - task: docs と code / operations 実態の差分を棚卸しする
   source_ref:
@@ -97,6 +103,8 @@
   notes:
     - docs 直更新ではなく notes/08_analysis か notes/02_design に差分棚卸しを作る
     - branch / ATLAS / bulk / systems/delta の不足を中心に見る
+  external:
+    todoist_task_id: 6gVG3qQXWf5V3Qfq
 
 ## Day2（04/29 水）
 
@@ -114,6 +122,8 @@
   notes:
     - docs 本体は人間判断前提のため直接更新しない
     - branch / ATLAS / bulk separator / delta precondition を反映候補にする
+  external:
+    todoist_task_id: 6gVG3qMfWpqJ7P6q
 
 ## Day3（04/30 木）
 
