@@ -4,8 +4,7 @@
 
 ### Phase 0 直結 task
 
-- `repoResource branch selector の設計 / 差分案を作る`
-- `ATLAS testing system の最小方針を固定する`
+- `repoResource branch selector 実装パッチ案を作る`
 - `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 - `GitHub Actions / ATLAS test workflow の最小差分を作る`
 - `docs と code / operations 実態の差分を棚卸しする`
@@ -14,43 +13,26 @@
 
 ## Day0（04/27 月）
 
-- task: repoResource branch selector の設計 / 差分案を作る
+- task: repoResource branch selector 実装パッチ案を作る
   source_ref:
-    - notes/05_decisions/2026-04-27_branch_policy_for_atlas_delta.md
-    - docs/10_repo_resource_api.md
+    - notes/02_design/2026-04-27_repo_resource_branch_selector_design.md
     - api/repo-resource.js
     - src/services/repo-resource/common.js
+    - src/services/repo-resource/docs.js
+    - src/services/repo-resource/notes.js
+    - src/services/repo-resource/code.js
+    - api/repo-resource.test.js
     - config/ai/adam_schema.yaml
   rolling_day: Day0
   due_date: 2026-04-27
   due_type: date
   why_now:
-    - Docs-aligned main / Notes-driven branch / Versioned merge model を採用したため、ADAM が feature branch を明示して read/write できる設計が先に必要である
-    - bulk separator 実装も code change であり、branch selector なしに main 直書きへ戻すべきではない
+    - branch selector design は完了したが、現 runtime では branch 指定 write ができないため、main 直書きではなく feature branch 用の実装パッチ案に留める必要がある
+    - bulk 実装や ATLAS workflow 作成の前提として、branch selector の具体差分を固定する必要がある
   notes:
-    - まず実装前の差分案を作る
-    - repo implementation / repo schema / configured Action / runtime-visible schema / actual behavior を分ける
-    - VERSION / CHANGELOG も branch-sensitive write として扱う
-  external:
-    todoist_task_id: 6gVGF6hF9VGRF8Hq
-
-- task: ATLAS testing system の最小方針を固定する
-  source_ref:
-    - notes/05_decisions/2026-04-27_atlas_testing_system_name.md
-    - notes/02_design/2026-04-21_github_centered_dev_test_workflow_proposal.md
-    - config/ai/from-claude.md
-    - package.json
-  rolling_day: Day0
-  due_date: 2026-04-27
-  due_type: date
-  why_now:
-    - Claude による test / verification / CI review system を ATLAS と命名したため、delta 前に最小運用範囲を固定する必要がある
-    - CI / Claude review / from-claude handoff の境界を固定しないまま delta に入ると検証責務が曖昧になる
-  notes:
-    - 初期 ATLAS は npm test / GitHub Actions / Claude review handoff までに限定する
-    - coverage / lint / branch protection / automated comments は後段に分ける
-  external:
-    todoist_task_id: 6gVG3qH94jq5FPGH
+    - code 本体はまだ書き換えない
+    - common.js / api handler / docs.js / notes.js / code.js / tests / schema の差分案を notes にまとめる
+    - repo implementation / repo schema / configured Action / runtime-visible schema / actual behavior の完了層を分ける
 
 ## Day1（04/28 火）
 
@@ -65,7 +47,7 @@
   due_type: date
   why_now:
     - delta 前環境整備として、関連 docs / notes / code の一括読取の摩擦を下げる必要がある
-    - ただし code change のため branch selector の設計後に進める
+    - ただし code change のため branch selector パッチ案の後に進める
   notes:
     - parseFilesParam を comma / newline 両対応にする
     - node --test の回帰テストを追加する
@@ -76,7 +58,7 @@
 - task: GitHub Actions / ATLAS test workflow の最小差分を作る
   source_ref:
     - notes/05_decisions/2026-04-27_atlas_testing_system_name.md
-    - notes/02_design/2026-04-21_github_centered_dev_test_workflow_proposal.md
+    - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
     - package.json
     - api/repo-resource.test.js
   rolling_day: Day1
@@ -84,9 +66,10 @@
   due_type: date
   why_now:
     - ATLAS の最小実体として、PR / branch 単位で npm test を確認できる line が必要である
+    - ATLAS から .nvmrc を先に作る提案があったため、workflow 差分案に .nvmrc を含める必要がある
   notes:
-    - まず .github/workflows/test.yml で npm test のみを実行する
-    - coverage / lint は後段に分ける
+    - まず .nvmrc と .github/workflows/test.yml の差分案を作る
+    - coverage / lint / PR comments は後段に分ける
   external:
     todoist_task_id: 6gVG3qGGxMrvRcFH
 
