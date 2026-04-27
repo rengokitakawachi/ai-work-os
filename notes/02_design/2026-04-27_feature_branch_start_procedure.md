@@ -12,7 +12,8 @@ pre-delta foundation 作業の feature branch target と開始手順を固定す
 
 - `notes/05_decisions/2026-04-27_branch_policy_for_atlas_delta.md`
 - `notes/02_design/2026-04-27_main_alignment_repair_proposal.md`
-- `notes/02_design/2026-04-27_repo_resource_branch_selector_patch_proposal.md`
+- `notes/02_design/2026-04-27_branch_selector_main_docs_schema_reflection_gap.md`
+- `notes/02_design/2026-04-27_docs_10_repo_resource_branch_selector_update_draft.md`
 - `notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md`
 - `notes/04_operations/active_operations.md`
 
@@ -28,26 +29,45 @@ feature/atlas-pre-delta-foundation
 
 手動 patch 適用は使わない。
 
-許可する開始経路は次の2つに限定する。
+以後の code / workflow / schema / delta resource 作成は、原則として explicit branch selector で `feature/atlas-pre-delta-foundation` を指定して実行する。
 
-1. 環境変数 `GITHUB_BRANCH` を feature branch に向ける
-2. 手動以外の安全な repo / runtime 経路で branch selector を先に実装する
+---
+
+## 現在の前提
+
+repoResource branch selector は、ユーザー判断により例外的に `main` に実装済みである。
+
+確認済み層:
+
+```text
+code behavior: complete for main implementation
+repo schema: complete
+runtime-visible schema: complete
+explicit branch read behavior: complete
+explicit branch write behavior: complete
+docs reflection draft: complete
+docs reflection: not complete
+```
+
+したがって、旧手順で想定していた「ADAM runtime から branch を指定できない」制約は解消済みである。
+
+ただし、docs/10 の branch selector reflection は未完了であり、main は完全な docs-aligned stable state ではない。
 
 ---
 
 ## 理由
 
-`feature/atlas-pre-delta-foundation` は `feature/repo-resource-branch-selector` より広いが、現在の active operations の順序に合っている。
+`feature/atlas-pre-delta-foundation` は、delta 前提整備を一貫して扱う foundation branch として適切である。
 
-この branch には、delta 前提整備として次を一貫して含められる。
+この branch には、次を含める。
 
-1. repoResource branch selector
-2. ATLAS 最小 test workflow
-3. repoResource bulk newline separator
-4. delta MVP resource layout 準備
-5. merge 準備時に必要なら VERSION / CHANGELOG 導入
+1. ATLAS 最小 test workflow
+2. repoResource bulk newline separator
+3. delta MVP resource layout 準備
+4. merge 準備時に必要なら VERSION / CHANGELOG 導入
+5. docs reflection / merge reconciliation の差分整理
 
-密接に依存する前提整備を細かく分けすぎないため、この foundation branch を採用する。
+repoResource branch selector 自体は main に例外実装済みであるため、この branch の最初の実装対象からは外す。
 
 ---
 
@@ -64,96 +84,80 @@ feature/atlas-pre-delta-foundation
 - `CHANGELOG.md`
 - `systems/delta/` resource layout
 
-`main` は Docs-aligned stable version として維持する。
+`main` に直接反映してよいものは、原則として次に限る。
 
-小さな notes / design / decision の追加は、計画・判断記録として main に保存してよい。
-
----
-
-## 現在の runtime 制約
-
-現在の ADAM runtime では、`repoResourceGet` / `repoResourceWrite` に branch selector field が見えていない。
-
-そのため、ADAM は現時点では runtime tool call だけで feature branch を安全に指定して code write できない。
-
-手動 patch 適用は使わないため、以下の非手動経路のいずれかが確認されるまで、ADAM は code / workflow / schema write を進めない。
+- conversation-driven operations update
+- notes decision / design / report の小さな追加
+- handover など再開入口の保存
+- user が明示的に main 更新を許可した軽微変更
 
 ---
 
-## 開始経路
+## branch-sensitive write rule
 
-### Path A: 手動 patch 適用
+branch-sensitive write の前には必ず Write Gate を出す。
 
-不採用。
+Write Gate では次を明示する。
 
-ユーザー判断により、手動 patch 適用は使わない。
+- target branch
+- resource
+- file path
+- action
+- write scope
+- expected impact
+- rollback / revert 方針
 
----
-
-### Path B: 環境変数で branch target を切り替える
-
-deployment / runtime 環境で `GITHUB_BRANCH` を次に向ける。
+code / workflow / schema / delta resource write では、原則として次を指定する。
 
 ```text
-feature/atlas-pre-delta-foundation
+branch: feature/atlas-pre-delta-foundation
 ```
 
-この場合、branch field が runtime schema に無くても、repoResource write は環境変数で指定された branch に向く。
+branch 指定なしで code / workflow / schema / delta resource を write しない。
 
-ただし、code / workflow / schema write の前に、ADAM は runtime write 先が `main` ではなく feature branch であることを観測する必要がある。
-
-最小確認:
-
-1. 既知ファイルを read し、response metadata または挙動から想定 branch を確認する
-2. response に branch metadata が出ない場合、外部確認後に harmless な branch-scoped verification write だけを行う
-3. 意図だけを根拠に branch target を推定しない
+main へ直接 write する例外は、user が明示した場合に限る。
 
 ---
 
-### Path C: branch selector を先に実装する
+## 開始前確認
 
-手動ではない安全な repo / runtime 経路で repoResource branch selector を先に実装する。
+feature branch 上で最初の destructive ではない確認を行う。
 
-実装後は次を確認する。
+推奨確認:
 
-1. configured Action / tool schema を refresh する
-2. runtime-visible schema に branch field が見えることを確認する
-3. branch read behavior を確認する
-4. harmless test file または明示 scoped file で branch write behavior を確認する
-5. その後、ATLAS / bulk / delta 作業を ADAM runtime から進める
-
-これは長期的には最もきれいな経路だが、最初の branch selector 実装自体を `main` に書かずに進める安全経路が必要である。
-
----
-
-## 推奨経路
-
-まず Path B を採用する。
-
-条件:
-
-- `GITHUB_BRANCH` を `feature/atlas-pre-delta-foundation` に向けられる
-- ADAM がその事実を観測または検証できる
-
-そのうえで、feature branch 上に repoResource branch selector を実装する。
-
-branch selector が runtime-visible になり、read/write behavior が確認できた後、ATLAS workflow / bulk separator / delta resource layout を explicit branch targeting で進める。
+1. `repoResourceGet` に `branch: feature/atlas-pre-delta-foundation` を指定して既知 file を read する
+2. branch が存在しない場合は、GitHub API から NOT_FOUND / upstream error が返る可能性がある
+3. branch が未作成なら、ADAM runtime だけでは branch create API を持たないため、人間が branch を作るか、別途 branch creation capability を設計する
+4. branch が存在する場合のみ、feature branch への code / workflow write に進む
 
 ---
 
 ## 最初の実装 task
 
-最初の実装 task は次のままとする。
+最初の実装 task は次とする。
 
 ```text
-repoResource branch selector を feature branch へ実装する
+ATLAS test workflow を feature branch へ実装する
+```
+
+対象 branch:
+
+```text
+feature/atlas-pre-delta-foundation
+```
+
+最小変更:
+
+```text
+.nvmrc
+.github/workflows/test.yml
 ```
 
 理由:
 
-- feature branch への安全な repo read/write を解放する
-- bulk separator 実装より前に必要である
-- ATLAS / delta resource 変更前の事故リスクを下げる
+- repoResource branch selector はすでに main 実装・runtime確認済みである
+- ATLAS workflow は以後の branch 開発の verification gate になる
+- bulk separator / delta resource layout の前に CI の最小線を置くのが安全である
 
 ---
 
@@ -164,5 +168,6 @@ repoResource branch selector を feature branch へ実装する
 - branch target が `feature/atlas-pre-delta-foundation` に固定されている
 - 手動 patch 適用を使わないことが明示されている
 - main 直接 write 禁止対象が明示されている
-- 非手動の開始経路が整理されている
-- 次の実装 task が repoResource branch selector と明示されている
+- branch-sensitive write rule が明示されている
+- branch selector が runtime 上で read / write 確認済みであることが反映されている
+- 次の実装 task が ATLAS test workflow と明示されている
