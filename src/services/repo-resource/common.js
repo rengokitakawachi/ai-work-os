@@ -36,11 +36,54 @@ export function createError({
   return error;
 }
 
-export function getConfig() {
+export function normalizeBranch(value, context = {}) {
+  const branch = typeof value === 'string' ? value.trim() : '';
+
+  if (!branch) {
+    return '';
+  }
+
+  const invalid =
+    branch.includes('..') ||
+    branch.startsWith('/') ||
+    branch.endsWith('/') ||
+    branch.includes('\\') ||
+    branch.includes('//') ||
+    branch.endsWith('.lock') ||
+    /[\x00-\x20~^:?*\[\]]/.test(branch);
+
+  if (invalid) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'invalid branch',
+      category: 'validation',
+      step: context.step || 'normalizeBranch',
+      resource: context.resource || '',
+      action: context.action || '',
+      retryable: false,
+      details: {
+        field: 'branch',
+        branch,
+      },
+    });
+  }
+
+  return branch;
+}
+
+export function getConfig(options = {}) {
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
-  const branch = process.env.GITHUB_BRANCH || 'main';
+  const branch =
+    normalizeBranch(options.branch, {
+      step: options.step || 'getConfig',
+      resource: options.resource || '',
+      action: options.action || '',
+    }) ||
+    process.env.GITHUB_BRANCH ||
+    'main';
 
   if (!token || !owner || !repo) {
     throw createError({
@@ -286,7 +329,7 @@ export function buildCodePath(file, context = {}) {
 }
 
 export async function getContentFile(path, context = {}) {
-  const { owner, repo, branch } = getConfig();
+  const { owner, repo, branch } = getConfig(context);
 
   const data = await githubRequest(
     `/repos/${owner}/${repo}/contents/${path}?ref=${encodeURIComponent(branch)}`
@@ -308,11 +351,14 @@ export async function getContentFile(path, context = {}) {
     });
   }
 
-  return data;
+  return {
+    ...data,
+    branch,
+  };
 }
 
 export async function putContentFile(path, content, message, sha, context = {}) {
-  const { owner, repo, branch } = getConfig();
+  const { owner, repo, branch } = getConfig(context);
 
   const body = {
     message,
@@ -342,11 +388,14 @@ export async function putContentFile(path, content, message, sha, context = {}) 
     });
   }
 
-  return data;
+  return {
+    ...data,
+    branch,
+  };
 }
 
 export async function deleteContentFile(path, message, sha, context = {}) {
-  const { owner, repo, branch } = getConfig();
+  const { owner, repo, branch } = getConfig(context);
 
   const safeMessage = typeof message === 'string' ? message.trim() : '';
   const safeSha = typeof sha === 'string' ? sha.trim() : '';
@@ -395,11 +444,14 @@ export async function deleteContentFile(path, message, sha, context = {}) {
     });
   }
 
-  return data;
+  return {
+    ...data,
+    branch,
+  };
 }
 
 export async function getRepoTree(prefix, context = {}) {
-  const { owner, repo, branch } = getConfig();
+  const { owner, repo, branch } = getConfig(context);
 
   const data = await githubRequest(
     `/repos/${owner}/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`
@@ -421,7 +473,10 @@ export async function getRepoTree(prefix, context = {}) {
     });
   }
 
-  return data.tree.filter((item) => item.path.startsWith(prefix));
+  return {
+    branch,
+    items: data.tree.filter((item) => item.path.startsWith(prefix)),
+  };
 }
 
 export function mapTreeItems(items) {
@@ -441,6 +496,7 @@ export function formatReadResponse(data) {
     path: data.path,
     sha: data.sha,
     size: data.size,
+    branch: data.branch || '',
     content,
     content_length: content.length,
     fetched_at: new Date().toISOString(),
