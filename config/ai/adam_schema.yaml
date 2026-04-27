@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.1.6"
+  version: "2.2.0"
   description: AI Work OS repo access API and Todoist Tasks API
 
 servers:
@@ -95,6 +95,9 @@ components:
           type: string
           enum:
             - docs
+        branch:
+          type: string
+          description: Resolved Git branch used for this response
         items:
           type: array
           items:
@@ -129,6 +132,9 @@ components:
           type: string
         size:
           type: integer
+        branch:
+          type: string
+          description: Resolved Git branch used for this response
         content:
           type: string
         content_length:
@@ -169,6 +175,9 @@ components:
           type: string
         size:
           type: integer
+        branch:
+          type: string
+          description: Resolved Git branch used for this response
         content:
           type: string
         content_length:
@@ -223,6 +232,9 @@ components:
           enum:
             - notes
             - code
+        branch:
+          type: string
+          description: Resolved Git branch used for this response
         items:
           type: array
           items:
@@ -268,6 +280,9 @@ components:
         sha:
           type: string
           description: Optional file SHA. Can be used for update or delete.
+        branch:
+          type: string
+          description: Optional Git branch selector. If omitted, uses configured GITHUB_BRANCH or main.
 
     RepoResourceWriteResultData:
       type: object
@@ -279,6 +294,9 @@ components:
           type: string
         commit_sha:
           type: string
+        branch:
+          type: string
+          description: Resolved Git branch used for this write
         status:
           type: string
           enum:
@@ -627,6 +645,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: branch
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional Git branch selector. If omitted, uses configured GITHUB_BRANCH or main.
       responses:
         "200":
           description: Success
