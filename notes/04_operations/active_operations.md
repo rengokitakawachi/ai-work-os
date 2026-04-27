@@ -4,25 +4,66 @@
 
 ### Phase 0 直結 task
 
+- `現 main の docs/code 不一致を分類し、整合修正対象を確定する`
+- `main 整合修正案を作る`
 - `feature branch target を確定し、branch 開発開始手順を固定する`
 - `repoResource branch selector を feature branch へ実装する`
 - `ATLAS test workflow を feature branch へ実装する`
 - `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
-- `docs 反映案を merge 準備として作る`
 - `delta MVP resource layout を feature branch で作る`
 
 ## Day0（04/27 月）
+
+- task: 現 main の docs/code 不一致を分類し、整合修正対象を確定する
+  source_ref:
+    - notes/08_analysis/2026-04-27_pre_delta_docs_code_operations_gap_inventory.md
+    - docs/10_repo_resource_api.md
+    - docs/13_dev_workflow.md
+    - docs/15_notes_system.md
+    - docs/17_operations_system.md
+    - api/repo-resource.js
+    - api/repo-resource.test.js
+    - package.json
+  rolling_day: Day0
+  due_date: 2026-04-27
+  due_type: date
+  why_now:
+    - main は Docs-aligned stable version であるべきなので、既に main 上で docs/code がずれているなら新規 branch 開発より先に整合回復が必要である
+    - ただし notes 上の future/proposal と実装済み code の差分を混同すると、未実装機能を docs に先取り反映してしまう
+  notes:
+    - gap を current-main mismatch / notes-proposal-only / branch-development-candidate に分類する
+    - current-main mismatch だけを main 整合修正候補にする
+    - branch / ATLAS / delta の未実装提案は feature branch または merge 準備に残す
+
+## Day1（04/28 火）
+
+- task: main 整合修正案を作る
+  source_ref:
+    - notes/08_analysis/2026-04-27_pre_delta_docs_code_operations_gap_inventory.md
+    - docs/10_repo_resource_api.md
+    - docs/13_dev_workflow.md
+    - docs/17_operations_system.md
+  rolling_day: Day1
+  due_date: 2026-04-28
+  due_type: date
+  why_now:
+    - 分類後、main の docs/code 整合を回復するために必要な最小修正案を作る必要がある
+  notes:
+    - docs 本体更新か code 修正かを gap ごとに判断する
+    - 未実装の branch selector / ATLAS workflow / delta は main 修正に含めない
+
+## Day2（04/29 水）
 
 - task: feature branch target を確定し、branch 開発開始手順を固定する
   source_ref:
     - notes/05_decisions/2026-04-27_branch_policy_for_atlas_delta.md
     - notes/02_design/2026-04-27_repo_resource_branch_selector_patch_proposal.md
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
-  rolling_day: Day0
-  due_date: 2026-04-27
+  rolling_day: Day2
+  due_date: 2026-04-29
   due_type: date
   why_now:
-    - 運用順は branch で開発し、main 統合時に docs と合わせる形が正しい
+    - main 整合回復後、新規開発は branch で進める
     - 現 runtime は branch 指定 write を持たないため、実装前に feature branch target と適用方法を確定する必要がある
   notes:
     - 推奨 target は feature/atlas-pre-delta-foundation または feature/repo-resource-branch-selector
@@ -31,16 +72,16 @@
   external:
     todoist_task_id: 6gVGPq5QM2MG46VH
 
-## Day1（04/28 火）
+## Day3（04/30 木）
 
 - task: repoResource branch selector を feature branch へ実装する
   source_ref:
     - notes/02_design/2026-04-27_repo_resource_branch_selector_patch_proposal.md
-  rolling_day: Day1
-  due_date: 2026-04-28
+  rolling_day: Day3
+  due_date: 2026-04-30
   due_type: date
   why_now:
-    - patch proposal は作成済みであり、feature branch target が確認できた段階で実装する必要がある
+    - main 整合後、feature branch target が確認できた段階で実装する
     - 以後の bulk / ATLAS workflow / delta resource 作成を branch 上で安全に進める前提になる
   notes:
     - implementation / schema / runtime reflection / behavior confirmation を分ける
@@ -48,15 +89,15 @@
   external:
     todoist_task_id: 6gVGM8r237XWCrHq
 
-## Day2（04/29 水）
+## Day4（05/01 金）
 
 - task: ATLAS test workflow を feature branch へ実装する
   source_ref:
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
     - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
     - package.json
-  rolling_day: Day2
-  due_date: 2026-04-29
+  rolling_day: Day4
+  due_date: 2026-05-01
   due_type: date
   why_now:
     - ATLAS workflow patch proposal は作成済みであり、branch 上で .nvmrc / test workflow を実装する必要がある
@@ -68,7 +109,7 @@
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
-## Day3（04/30 木）
+## Day5（05/02 土）
 
 - task: repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
   source_ref:
@@ -76,8 +117,8 @@
     - docs/10_repo_resource_api.md
     - api/repo-resource.js
     - api/repo-resource.test.js
-  rolling_day: Day3
-  due_date: 2026-04-30
+  rolling_day: Day5
+  due_date: 2026-05-02
   due_type: date
   why_now:
     - branch selector 実装後に、bulk 改行区切り対応を branch 上で進める
@@ -88,27 +129,7 @@
   external:
     todoist_task_id: 6gRrVhjP6j8M66Jq
 
-## Day4（05/01 金）
-
-- task: docs 反映案を merge 準備として作る
-  source_ref:
-    - notes/08_analysis/2026-04-27_pre_delta_docs_code_operations_gap_inventory.md
-    - docs/10_repo_resource_api.md
-    - docs/13_dev_workflow.md
-    - docs/17_operations_system.md
-  rolling_day: Day4
-  due_date: 2026-05-01
-  due_type: date
-  why_now:
-    - docs 反映は branch 開発後、main 統合前に行うべきである
-    - 棚卸し済み gap を merge gate 用の docs reflection proposal に変換する必要がある
-  notes:
-    - docs 本体は直接更新しない
-    - branch / ATLAS / versioning / branch selector / bulk / day reroll / delta precondition を反映候補にする
-  external:
-    todoist_task_id: 6gVG3qMfWpqJ7P6q
-
-## Day5（05/02 土）
+## Day6（05/03 日）
 
 - task: delta MVP resource layout を feature branch で作る
   source_ref:
@@ -116,8 +137,8 @@
     - docs/13_dev_workflow.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
-  rolling_day: Day5
-  due_date: 2026-05-02
+  rolling_day: Day6
+  due_date: 2026-05-03
   due_type: date
   why_now:
     - 環境整備後に delta 初期運用へ戻る
@@ -153,4 +174,5 @@
 - main は Docs-aligned stable version として扱う
 - branch は Notes-driven development space として扱う
 - branch で開発し、main 統合時に docs / code / config / operations / version を一致させる
+- 現 main に docs/code 不一致がある場合は、新規 branch 開発前に整合回復を優先する
 - delta 開発前に branch selector / ATLAS / bulk / docs 実態差分の環境整備を優先する
