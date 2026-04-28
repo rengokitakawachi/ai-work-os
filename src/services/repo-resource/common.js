@@ -7,6 +7,7 @@ export const CODE_ALLOWED_PREFIXES = [
   'scripts/',
   'config/',
   '.github/workflows/',
+  'systems/delta/',
 ];
 
 export const CODE_ALLOWED_ROOT_FILES = [
