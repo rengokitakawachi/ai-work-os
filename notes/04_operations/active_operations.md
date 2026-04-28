@@ -10,6 +10,8 @@ Immediate Gate は7日枠に数えない。
 
 - task: code resource write allowlist に ATLAS workflow 用 root / workflow path を追加する
   type: implementation_gate
+  status: complete
+  completed: true
   source_ref:
     - notes/02_design/2026-04-18_code_resource_repo_root_allowlist_access_design.md
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
@@ -20,26 +22,19 @@ Immediate Gate は7日枠に数えない。
     - ATLAS test workflow を feature branch へ実装する
     - repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
     - delta MVP resource layout を feature branch で作る
-  why_now:
-    - `feature/atlas-pre-delta-foundation` は作成済みで read-back も確認済みである
-    - ATLAS workflow 実装で `.nvmrc` 作成を試みたが、runtime の code write allowlist が `.nvmrc` と `.github/workflows/` を許可しておらず `INVALID_REQUEST: code path not allowed` で停止していた
-    - allowlist patch は main / feature branch の両方に保存済みで、`.nvmrc` create は runtime behavior として成功した
-    - `.github/workflows/test.yml` create は validation 通過後、GitHub upstream 404 で停止しており、workflow write permission / runtime environment 側の blocker が残っている
-    - ATLAS workflow は後続 branch 開発の verification gate であり、workflow file が作成できるまで Day0 以降は実行不能である
   completed_condition:
     - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.nvmrc` を create できる
     - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.github/workflows/test.yml` を create できる
     - allowlist 拡張は必要最小限で、docs write 権限や任意 root write を拡張しない
   notes:
-    - 対象 branch は `feature/atlas-pre-delta-foundation`
-    - main に直接 workflow / schema / code を書かない
+    - allowlist patch は main / feature branch の両方に保存済み
     - `src/services/repo-resource/common.js` に `.nvmrc` と `.github/workflows/` の最小 allowlist patch を保存済み
     - `api/repo-resource.test.js` に ATLAS workflow path allowlist test を保存済み
     - feature branch saved code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
     - main saved code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
     - `.nvmrc` create succeeded on feature branch; sha `209e3ef4b6247ce746048d5711befda46206d235`
-    - `.github/workflows/test.yml` create failed with `GITHUB_NOT_FOUND` from GitHub upstream, request_id `2aa9943d-70d7-40d2-84c2-fee81495c933`
-    - 次に必要なのは GitHub token / runtime environment の workflow write permission を確認すること、または workflow file 作成を別権限経路で実施することである
+    - `.github/workflows/test.yml` create succeeded on feature branch after token workflow scope update; sha `08895ad5e9a4ab7a72f3d3fe3aaa4cf4e2030bd7`
+    - read-back confirmed both files with status OK
   external:
     todoist_task_id: 6gVHhg3XfmHG2gwH
 
@@ -57,6 +52,8 @@ Immediate Gate は7日枠に数えない。
 ## Day0（04/28 火）
 
 - task: ATLAS test workflow を feature branch へ実装する
+  status: complete
+  completed: true
   source_ref:
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
     - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
@@ -64,18 +61,17 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-04-28
   due_type: date
-  blocked_by:
-    - code resource write allowlist に ATLAS workflow 用 root / workflow path を追加する
   why_now:
     - feature branch `feature/atlas-pre-delta-foundation` は作成済みで read-back も確認済みである
-    - ATLAS workflow patch proposal は作成済みであり、branch 上で `.nvmrc` / `.github/workflows/test.yml` を実装する必要がある
+    - ATLAS workflow patch proposal は作成済みであり、branch 上で `.nvmrc` / `.github/workflows/test.yml` を実装する必要があった
     - CI は以後の branch 開発の verification gate になる
   notes:
     - `.nvmrc` は feature branch に作成済み
-    - `.github/workflows/test.yml` は GitHub upstream 404 により未作成
+    - `.github/workflows/test.yml` は feature branch に作成済み
     - package-lock.json がないため初期 workflow は npm install を使う
     - coverage / lint / PR comments は後段
-    - 2026-04-28 に allowlist patch は main / feature branch へ保存済みだが、workflow file write permission blocker が残っている
+    - `.nvmrc` read-back OK; sha `209e3ef4b6247ce746048d5711befda46206d235`
+    - `.github/workflows/test.yml` read-back OK; sha `08895ad5e9a4ab7a72f3d3fe3aaa4cf4e2030bd7`
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
@@ -90,10 +86,8 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day1
   due_date: 2026-04-29
   due_type: date
-  blocked_by:
-    - ATLAS test workflow を feature branch へ実装する
   why_now:
-    - branch selector の read / write behavior が確認済みになったため、bulk 改行区切り対応を branch 上で進められる
+    - branch selector の read / write behavior が確認済みになった
     - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
   notes:
     - parseFilesParam を comma / newline 両対応にする
@@ -135,7 +129,6 @@ Immediate Gate は7日枠に数えない。
   due_date: 2026-05-01
   due_type: date
   blocked_by:
-    - ATLAS test workflow を feature branch へ実装する
     - repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
   why_now:
     - 環境整備後に delta 初期運用へ戻る
