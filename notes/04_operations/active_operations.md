@@ -60,6 +60,8 @@ Immediate Gate は7日枠に数えない。
   notes:
     - 以前作った `api/delta-history.js` route 方式は function 上限のため使用しない
     - `src/services/delta-history.js` は service 層として再利用してよい
+  external:
+    todoist_task_id: 6gVXWvpPp8vjgF5H
 
 ## Day1（04/30 木）
 
@@ -83,6 +85,8 @@ Immediate Gate は7日枠に数えない。
     - `operations` write は実行しない
   notes:
     - runtime reflection は repo schema / configured Action schema / runtime-visible tool schema / actual behavior を分けて観測する
+  external:
+    todoist_task_id: 6gVXWvxP35M4RQcq
 
 ## Day2（05/01 金）
 
@@ -105,6 +109,8 @@ Immediate Gate は7日枠に数えない。
     - v0.4 実装前の invalid path / unsupported action test を定義する
   notes:
     - まだ operations write は実装しない
+  external:
+    todoist_task_id: 6gVXWw4QrfRR8pfH
 
 ## Day3（05/02 土）
 
@@ -128,6 +134,8 @@ Immediate Gate は7日枠に数えない。
     - read-back する
   notes:
     - v0.3 runtime behavior confirmed 前に実行しない
+  external:
+    todoist_task_id: 6gVXWw2WcrQ8pc7H
 
 ## Day4（05/03 日）
 
@@ -150,6 +158,8 @@ Immediate Gate は7日枠に数えない。
     - unexpected write scope がないことを確認する
   notes:
     - 失敗時は v0.4 を disabled に戻す
+  external:
+    todoist_task_id: 6gVXWw74rqV7H8qH
 
 ## Day5（05/04 月）
 
@@ -198,6 +208,8 @@ Immediate Gate は7日枠に数えない。
     - docs 直更新は人間判断に回す
   notes:
     - docs/10 branch create reflection や delta 前環境整備の docs 反映案と混線させない
+  external:
+    todoist_task_id: 6gVXWw9XGv6MJvfH
 
 ---
 
