@@ -1,0 +1,51 @@
+system_id: delta
+code_name: delta
+purpose: learning_support
+exam:
+  name: 社会保険労務士試験
+  date: 2026-08-23
+resources:
+  docs: systems/delta/docs
+  roadmap: systems/delta/roadmap
+  plan: systems/delta/plan
+  operations: systems/delta/operations
+  history: systems/delta/history
+  review: systems/delta/review
+  materials: systems/delta/resources/materials.md
+models:
+  LearningOperationTask:
+    base_fields:
+      - task
+      - source_ref
+      - rolling_day
+      - due_date
+      - due_type
+      - why_now
+      - notes
+      - status
+      - completed
+    delta_fields:
+      - subject
+      - topic
+      - material
+      - study_type
+      - estimated_minutes
+      - target_score
+      - actual_score
+      - comprehension
+      - next_review_date
+      - weak_point_ref
+  LearningHistory:
+    fields:
+      - date
+      - subject
+      - topic
+      - material
+      - minutes
+      - study_type
+      - result
+      - comprehension
+      - quiz_score
+      - weak_points
+      - next_review_date
+      - source_ref
