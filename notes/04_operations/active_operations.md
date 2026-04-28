@@ -171,6 +171,8 @@ Immediate Gate は7日枠に数えない。
 ## Day4（05/02 土）
 
 - task: delta 社労士試験向け initial roadmap / plan / operations を作る
+  status: complete
+  completed: true
   source_ref:
     - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
     - systems/delta/roadmap/delta_roadmap.md
@@ -182,7 +184,11 @@ Immediate Gate は7日枠に数えない。
   why_now:
     - delta resource layout の次に、2026-08-23 から逆算した実運用開始可能な roadmap / plan / operations が必要である
   notes:
-    - 初期 roadmap、2026_sharoushi_exam_plan、delta active_operations の最小草案を作る
+    - ユーザー提供の `DELTA initial roadmap / plan / operations` を入力素材として反映済み
+    - `systems/delta/roadmap/delta_roadmap.md` を 3 phase roadmap / fixed rules / recovery policy 付きに更新済み; sha `e380c644bb9e7e66c7989a9531cc97c60f108abb`
+    - `systems/delta/plan/2026_sharoushi_exam_plan.md` を 2026-04-28 から 2026-06-30 までの初期 plan に更新済み; sha `bebb6263999a3c44e0b171422f25019c67307315`
+    - `systems/delta/operations/active_operations.md` を 2026-04-28〜2026-05-04 の Day0〜Day6 学習 operations に更新済み; sha `bbcab07659cbee696ae8b0c41ea36477d3532e11`
+    - read-back confirmed roadmap / plan / operations with status OK
     - 最初は API 完成を待たず GitHub markdown と ChatGPT UI の手動運用を前提にする
   external:
     todoist_task_id: 6gVHhgP4WjXwfJJq
@@ -194,15 +200,16 @@ Immediate Gate は7日枠に数えない。
     - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
     - systems/delta/history/2026-04.md
     - systems/delta/docs/03_delta_data_model.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
   rolling_day: Day5
   due_date: 2026-05-03
   due_type: date
-  blocked_by:
-    - delta 社労士試験向け initial roadmap / plan / operations を作る
   why_now:
     - delta は学習履歴を GitHub に保存する前提であり、日次ログ template がないと実運用を開始しにくい
+    - 初期 roadmap / plan / operations は作成済みである
   notes:
     - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含める
+    - DELTA initial plan の Markdown Log Structure と接続する
   external:
     todoist_task_id: 6gVHhgq3qgMWh9jq
 
