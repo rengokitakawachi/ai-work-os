@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: DELTA Read-only Resource API
-  version: "0.2.0"
-  description: Read-only GitHub resource access for DELTA learning system under systems/delta/.
+  version: "0.2.1"
+  description: Read-only GitHub resource access for DELTA learning system under systems/delta/ via existing repo-resource endpoint.
 
 servers:
   - url: https://ai-work-os.vercel.app
@@ -36,8 +36,6 @@ components:
               type: string
             resource:
               type: string
-              enum:
-                - delta
             action:
               type: string
             status:
@@ -221,17 +219,25 @@ security:
   - bearerAuth: []
 
 paths:
-  /api/delta-resource:
+  /api/repo-resource:
     get:
       operationId: deltaResourceGet
-      summary: Read DELTA resources only
+      summary: Read DELTA resources only through repo-resource
       description: |
         Read-only access to files under systems/delta/.
+        This action is constrained by schema to resource=delta and action=tree/read/bulk.
         The file and files parameters must be relative to systems/delta/.
         Write actions are intentionally not exposed in v0.2.
       security:
         - bearerAuth: []
       parameters:
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - delta
         - name: action
           in: query
           required: true
