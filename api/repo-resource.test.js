@@ -202,6 +202,68 @@ test('repo-resource returns 400 when code read file is missing', async () => {
   assert.equal(res.body.error.details.field, 'file');
 });
 
+test('repo-resource accepts newline separated files for bulk validation', async () => {
+  const req = {
+    method: 'GET',
+    query: {
+      resource: 'code',
+      action: 'bulk',
+      files: 'api/repo-resource.js\napi/repo-resource.test.js',
+      branch: 'feature/atlas-pre-delta-foundation',
+    },
+    headers: {},
+  };
+  const res = createMockRes();
+
+  const previousKey = process.env.INTERNAL_API_KEY;
+  const previousToken = process.env.GITHUB_TOKEN;
+  process.env.INTERNAL_API_KEY = '';
+  process.env.GITHUB_TOKEN = '';
+
+  try {
+    await handler(req, res);
+  } finally {
+    process.env.INTERNAL_API_KEY = previousKey;
+    process.env.GITHUB_TOKEN = previousToken;
+  }
+
+  assert.equal(res.statusCode, 500);
+  assert.equal(res.body.ok, false);
+  assert.equal(res.body.error.code, 'CONFIG_ERROR');
+  assert.equal(res.body.error.action, 'bulk');
+});
+
+test('repo-resource accepts mixed comma and newline separated files for bulk validation', async () => {
+  const req = {
+    method: 'GET',
+    query: {
+      resource: 'code',
+      action: 'bulk',
+      files: 'api/repo-resource.js,\napi/repo-resource.test.js',
+      branch: 'feature/atlas-pre-delta-foundation',
+    },
+    headers: {},
+  };
+  const res = createMockRes();
+
+  const previousKey = process.env.INTERNAL_API_KEY;
+  const previousToken = process.env.GITHUB_TOKEN;
+  process.env.INTERNAL_API_KEY = '';
+  process.env.GITHUB_TOKEN = '';
+
+  try {
+    await handler(req, res);
+  } finally {
+    process.env.INTERNAL_API_KEY = previousKey;
+    process.env.GITHUB_TOKEN = previousToken;
+  }
+
+  assert.equal(res.statusCode, 500);
+  assert.equal(res.body.ok, false);
+  assert.equal(res.body.error.code, 'CONFIG_ERROR');
+  assert.equal(res.body.error.action, 'bulk');
+});
+
 test('repo-resource returns 400 for unsupported code post action', async () => {
   const req = {
     method: 'POST',
