@@ -247,6 +247,21 @@ weekly review までの短期履歴置き場であり、
   - `.nvmrc` 作成で `INVALID_REQUEST: code path not allowed` により停止
   - code write allowlist blocker を次 active の Immediate Gate として追加した
 
+--- 2026-04-28 daily review ---
+
+- `DELTA v0.2 read-only Action runtime behavior confirmation` を完了した
+  - 旧 `/api/delta-resource` route 方式は Vercel Hobby の Serverless Functions 上限で失敗した
+  - `api/delta-*` と `api/*.test.js` を main から削除し、Production deployment を Ready に復旧した
+  - v0.2 は `/api/repo-resource` + `resource=delta` 統合方式へ変更した
+  - `api/repo-resource.js` に delta read-only を統合済み
+  - `systems/delta/config/delta_action_schema_v0.2.yaml` を v0.2.1 として更新済み
+  - DELTA GPT Actions に Bearer 認証を設定した
+  - runtime test で tree / read / bulk がすべて成功した
+  - `branch=feature/atlas-pre-delta-foundation` と `read_only: true` を確認した
+  - write / create / update / delete は実行していない
+- `Phase 1 Todoist foundation entry` は未着手として carryover した
+  - DELTA 開発優先により Day5 へ繰り下げた
+
 ---
 
 ## ルール
