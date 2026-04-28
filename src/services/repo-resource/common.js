@@ -1,8 +1,16 @@
 const GITHUB_API_BASE = 'https://api.github.com';
 
-export const CODE_ALLOWED_PREFIXES = ['src/', 'api/', 'lib/', 'scripts/', 'config/'];
+export const CODE_ALLOWED_PREFIXES = [
+  'src/',
+  'api/',
+  'lib/',
+  'scripts/',
+  'config/',
+  '.github/workflows/',
+];
 
 export const CODE_ALLOWED_ROOT_FILES = [
+  '.nvmrc',
   'package.json',
   'vitest.config.js',
   'jest.config.js',
