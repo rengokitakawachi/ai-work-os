@@ -31,6 +31,7 @@
 - 実行対象は `active_operations` に入っている task のみ
 - 会話中の新規候補は即実行せず、routing / rolling で active / next / future を決める
 - routing / rolling 前に dependency / blocker gate を確認する
+- operations rolling / daily review では Day capacity を必ず確認し、task はおおむね 0.5〜1.5h、1 day はおおむね 2h として、明示理由なしに軽すぎる Day を作らない
 - 後続 task を実行不能にする前提作業は通常 Day 枠ではなく Immediate Gate として先頭に置く
 - active の7日構造より、実行可能性と blocker 解消を優先する
 - Immediate Gate が未完了の場合、その gate に blocked される active task を実行しない
