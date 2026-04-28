@@ -13,7 +13,7 @@ Immediate Gate は7日枠に数えない。
   source_ref:
     - notes/02_design/2026-04-18_code_resource_repo_root_allowlist_access_design.md
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
-    - src/services/repo-resource/code.js
+    - src/services/repo-resource/common.js
     - api/repo-resource.test.js
   blocks:
     - ATLAS test workflow を feature branch へ実装する
@@ -29,8 +29,12 @@ Immediate Gate は7日枠に数えない。
     - allowlist 拡張は必要最小限で、docs write 権限や任意 root write を拡張しない
   notes:
     - 対象 branch は `feature/atlas-pre-delta-foundation`
-    - main へ直接 workflow / schema / code を書かない
-    - write 前に `src/services/repo-resource/code.js` と関連 test を読む
+    - main に直接 workflow / schema / code を書かない
+    - `src/services/repo-resource/common.js` に `.nvmrc` と `.github/workflows/` の最小 allowlist patch を保存済み
+    - `api/repo-resource.test.js` に ATLAS workflow path allowlist test を保存済み
+    - saved branch code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
+    - runtime behavior は未反映で、`.nvmrc` create は引き続き `INVALID_REQUEST: code path not allowed` を返した
+    - 次に必要なのは、allowlist patch を runtime-visible behavior に反映する手順の確定である
   external:
     todoist_task_id: 6gVHhg3XfmHG2gwH
 
@@ -66,6 +70,7 @@ Immediate Gate は7日枠に数えない。
     - package-lock.json がないため初期 workflow は npm install を使う
     - coverage / lint / PR comments は後段
     - 2026-04-27 に実行着手したが、code write allowlist により blocked となった
+    - 2026-04-28 に allowlist patch は feature branch へ保存済みだが、runtime behavior は未反映
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
