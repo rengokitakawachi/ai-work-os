@@ -93,14 +93,14 @@ Immediate Gate は7日枠に数えない。
     - branch selector の read / write behavior が確認済みになった
     - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
   notes:
-    - この task の完了範囲は feature branch implementation saved とする
-    - runtime reflection は `repoResource bulk newline runtime reflection を main/deployed runtime で確認する` として next_operations へ分離した
-    - parseFilesParam を comma / newline 両対応にする patch は feature branch に保存済み
-    - `api/repo-resource.js` saved sha: `5791dbab8d3734130f31712e20c2b97dcf6beedc`
-    - `api/repo-resource.test.js` saved sha: `14dc5d950270559780d8c9efdf2541a11655fce8`
+    - parseFilesParam を comma / newline 両対応にする patch は feature branch と main の両方に保存済み
+    - main `api/repo-resource.js` saved sha: `5791dbab8d3734130f31712e20c2b97dcf6beedc`
+    - main `api/repo-resource.test.js` saved sha: `14dc5d950270559780d8c9efdf2541a11655fce8`
+    - feature branch `api/repo-resource.js` saved sha: `5791dbab8d3734130f31712e20c2b97dcf6beedc`
+    - feature branch `api/repo-resource.test.js` saved sha: `14dc5d950270559780d8c9efdf2541a11655fce8`
     - test には newline separated files と mixed comma/newline files の validation 確認を追加済み
-    - runtime-visible tool はまだ旧実装で、改行区切りを単一 file として扱い `NOT_FOUND` を返した
-    - schema / runtime tool schema 反映は別 task とする
+    - runtime-visible tool で newline separated files が複数 files として bulk read されることを確認済み
+    - runtime observation request_id: `f04668a3-f53f-4449-8b33-7e870c1ce4a0`
   external:
     todoist_task_id: 6gRrVhjP6j8M66Jq
 
@@ -139,7 +139,7 @@ Immediate Gate は7日枠に数えない。
   why_now:
     - 環境整備後に delta 初期運用へ戻る
     - delta resource は新規 system resource 群のため branch 上で作るのが正しい
-    - bulk newline runtime reflection は別 task に分離済みであり、delta MVP layout の branch 作成自体は block しない
+    - bulk newline runtime reflection は完了済みであり、複数ファイル確認の効率が上がった
   notes:
     - systems/delta/ docs / roadmap / plan / operations / history / review / resources / config の最小構成を作る
     - main 統合時に docs と一致させる
