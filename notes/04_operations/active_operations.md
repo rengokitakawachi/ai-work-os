@@ -13,6 +13,7 @@ Immediate Gate は7日枠に数えない。
   source_ref:
     - notes/02_design/2026-04-18_code_resource_repo_root_allowlist_access_design.md
     - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
+    - notes/08_analysis/2026-04-28_atlas_workflow_write_upstream_not_found.md
     - src/services/repo-resource/common.js
     - api/repo-resource.test.js
   blocks:
@@ -21,8 +22,10 @@ Immediate Gate は7日枠に数えない。
     - delta MVP resource layout を feature branch で作る
   why_now:
     - `feature/atlas-pre-delta-foundation` は作成済みで read-back も確認済みである
-    - ATLAS workflow 実装で `.nvmrc` 作成を試みたが、runtime の code write allowlist が `.nvmrc` と `.github/workflows/` を許可しておらず `INVALID_REQUEST: code path not allowed` で停止した
-    - ATLAS workflow は後続 branch 開発の verification gate であり、allowlist を先に整備しないと Day0 以降が実行不能になる
+    - ATLAS workflow 実装で `.nvmrc` 作成を試みたが、runtime の code write allowlist が `.nvmrc` と `.github/workflows/` を許可しておらず `INVALID_REQUEST: code path not allowed` で停止していた
+    - allowlist patch は main / feature branch の両方に保存済みで、`.nvmrc` create は runtime behavior として成功した
+    - `.github/workflows/test.yml` create は validation 通過後、GitHub upstream 404 で停止しており、workflow write permission / runtime environment 側の blocker が残っている
+    - ATLAS workflow は後続 branch 開発の verification gate であり、workflow file が作成できるまで Day0 以降は実行不能である
   completed_condition:
     - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.nvmrc` を create できる
     - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.github/workflows/test.yml` を create できる
@@ -32,9 +35,11 @@ Immediate Gate は7日枠に数えない。
     - main に直接 workflow / schema / code を書かない
     - `src/services/repo-resource/common.js` に `.nvmrc` と `.github/workflows/` の最小 allowlist patch を保存済み
     - `api/repo-resource.test.js` に ATLAS workflow path allowlist test を保存済み
-    - saved branch code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
-    - runtime behavior は未反映で、`.nvmrc` create は引き続き `INVALID_REQUEST: code path not allowed` を返した
-    - 次に必要なのは、allowlist patch を runtime-visible behavior に反映する手順の確定である
+    - feature branch saved code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
+    - main saved code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
+    - `.nvmrc` create succeeded on feature branch; sha `209e3ef4b6247ce746048d5711befda46206d235`
+    - `.github/workflows/test.yml` create failed with `GITHUB_NOT_FOUND` from GitHub upstream, request_id `2aa9943d-70d7-40d2-84c2-fee81495c933`
+    - 次に必要なのは GitHub token / runtime environment の workflow write permission を確認すること、または workflow file 作成を別権限経路で実施することである
   external:
     todoist_task_id: 6gVHhg3XfmHG2gwH
 
@@ -66,11 +71,11 @@ Immediate Gate は7日枠に数えない。
     - ATLAS workflow patch proposal は作成済みであり、branch 上で `.nvmrc` / `.github/workflows/test.yml` を実装する必要がある
     - CI は以後の branch 開発の verification gate になる
   notes:
-    - `.nvmrc` と `.github/workflows/test.yml` を feature branch に作る
+    - `.nvmrc` は feature branch に作成済み
+    - `.github/workflows/test.yml` は GitHub upstream 404 により未作成
     - package-lock.json がないため初期 workflow は npm install を使う
     - coverage / lint / PR comments は後段
-    - 2026-04-27 に実行着手したが、code write allowlist により blocked となった
-    - 2026-04-28 に allowlist patch は feature branch へ保存済みだが、runtime behavior は未反映
+    - 2026-04-28 に allowlist patch は main / feature branch へ保存済みだが、workflow file write permission blocker が残っている
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
