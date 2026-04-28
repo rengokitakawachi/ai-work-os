@@ -8,202 +8,150 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
-- task: code resource write allowlist に ATLAS workflow 用 root / workflow path を追加する
-  type: implementation_gate
+- task: DELTA v0.2 read-only Action runtime behavior confirmation
+  type: runtime_reflection_gate
   status: complete
   completed: true
   source_ref:
-    - notes/02_design/2026-04-18_code_resource_repo_root_allowlist_access_design.md
-    - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
-    - notes/08_analysis/2026-04-28_atlas_workflow_write_upstream_not_found.md
-    - src/services/repo-resource/common.js
-    - api/repo-resource.test.js
+    - systems/delta/config/delta_action_schema_v0.2.yaml
+    - api/repo-resource.js
+    - src/services/delta-resource.js
+    - DELTA GPT Actions runtime test result 2026-04-28
   blocks:
-    - ATLAS test workflow を feature branch へ実装する
-    - repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
-    - delta MVP resource layout を feature branch で作る
+    - DELTA v0.3 history write を repo-resource 統合方式で実装する
   completed_condition:
-    - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.nvmrc` を create できる
-    - branch `feature/atlas-pre-delta-foundation` 上で code resource が `.github/workflows/test.yml` を create できる
-    - allowlist 拡張は必要最小限で、docs write 権限や任意 root write を拡張しない
+    - DELTA GPT Actions で `deltaResourceGet` が `/api/repo-resource` 経由で実行できる
+    - `resource=delta` / `action=tree` が成功する
+    - `resource=delta` / `action=read` が `operations/active_operations.md` を相対パスで読める
+    - `resource=delta` / `action=bulk` が `config/delta_instruction.md` と `operations/active_operations.md` を読める
+    - `branch=feature/atlas-pre-delta-foundation` が返る
+    - `read_only: true` が確認できる
+    - write / create / update / delete を実行していない
   notes:
-    - allowlist patch は main / feature branch の両方に保存済み
-    - `src/services/repo-resource/common.js` に `.nvmrc` と `.github/workflows/` の最小 allowlist patch を保存済み
-    - `api/repo-resource.test.js` に ATLAS workflow path allowlist test を保存済み
-    - `.nvmrc` create succeeded on feature branch; sha `209e3ef4b6247ce746048d5711befda46206d235`
-    - `.github/workflows/test.yml` create succeeded on feature branch after token workflow scope update; sha `08895ad5e9a4ab7a72f3d3fe3aaa4cf4e2030bd7`
-    - read-back confirmed both files with status OK
-  external:
-    todoist_task_id: 6gVHhg3XfmHG2gwH
+    - 初回 `/api/delta-resource` 方式は Vercel Hobby の Serverless Functions 上限に衝突したため廃止した
+    - `api/delta-*` と `api/*.test.js` は main から削除し、Production deploy は Ready に復旧した
+    - v0.2 schema は `/api/repo-resource` + `resource=delta` へ差し替え済み
+    - 認証 blocker は DELTA GPT Actions に Bearer API Key を設定して解消した
+    - runtime test で tree / read / bulk がすべて成功した
 
 ---
 
-## Phase 0 位置づけ
+## Day0（04/29 水）
 
-### Phase 0 直結 task
-
-- `ATLAS test workflow を feature branch へ実装する`
-- `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
-- `docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す`
-- `delta MVP resource layout を feature branch で作る`
-- `delta 社労士試験向け initial roadmap / plan / operations を作る`
-- `delta learning history daily log template を作る`
-- `Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする`
-
-## Day0（04/28 火）
-
-- task: ATLAS test workflow を feature branch へ実装する
-  status: complete
-  completed: true
+- task: DELTA v0.3 history write を repo-resource 統合方式で実装する
   source_ref:
-    - notes/02_design/2026-04-27_atlas_test_workflow_patch_proposal.md
-    - notes/05_decisions/2026-04-27_atlas_minimum_testing_policy.md
-    - package.json
-  rolling_day: Day0
-  due_date: 2026-04-28
-  due_type: date
-  notes:
-    - `.nvmrc` は feature branch に作成済み
-    - `.github/workflows/test.yml` は feature branch に作成済み
-    - read-back OK
-  external:
-    todoist_task_id: 6gVGPq8f5mWXJxmH
-
-## Day1（04/29 水）
-
-- task: repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する
-  status: complete
-  completed: true
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - docs/10_repo_resource_api.md
-    - notes/08_analysis/2026-04-28_repo_resource_bulk_newline_runtime_reflection_gap.md
+    - systems/delta/config/delta_action_schema_v0.3.yaml
+    - src/services/delta-history.js
     - api/repo-resource.js
-    - api/repo-resource.test.js
-  rolling_day: Day1
+    - systems/delta/history/
+  rolling_day: Day0
   due_date: 2026-04-29
   due_type: date
+  why_now:
+    - v0.2 read-only Action の runtime behavior が confirmed になったため、次の段階である history write に進める
+    - Vercel Hobby の function 上限により新規 API route は増やせないため、既存 `/api/repo-resource` に統合する必要がある
+  completed_condition:
+    - `resource=delta_history` を `/api/repo-resource` POST に追加する
+    - 許可 action は `create` / `update` のみに限定する
+    - write scope は `systems/delta/history/` の `.md` のみに限定する
+    - `operations` write / delete / arbitrary `systems/delta/` write は許可しない
+    - schema v0.3 を `/api/repo-resource` 用に更新する
+    - 保存後 read-back する
   notes:
-    - parseFilesParam を comma / newline 両対応にする patch は feature branch と main の両方に保存済み
-    - runtime-visible tool で newline separated files が複数 files として bulk read されることを確認済み
-    - runtime observation request_id: `f04668a3-f53f-4449-8b33-7e870c1ce4a0`
-  external:
-    todoist_task_id: 6gRrVhjP6j8M66Jq
+    - 以前作った `api/delta-history.js` route 方式は function 上限のため使用しない
+    - `src/services/delta-history.js` は service 層として再利用してよい
 
-## Day2（04/30 木）
+## Day1（04/30 木）
 
-- task: docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す
-  status: complete
-  completed: true
+- task: DELTA v0.3 history write runtime reflection を実行する
   source_ref:
-    - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
-    - notes/02_design/2026-04-28_docs_10_repo_resource_branch_create_update_draft.md
-    - docs/10_repo_resource_api.md
-    - config/ai/adam_schema.yaml
-    - api/repo-resource.js
-    - src/services/repo-resource/repo.js
-  rolling_day: Day2
+    - systems/delta/config/delta_action_schema_v0.3.yaml
+    - DELTA GPT Actions
+    - systems/delta/history/2026-04.md
+  rolling_day: Day1
   due_date: 2026-04-30
   due_type: date
+  blocked_by:
+    - DELTA v0.3 history write を repo-resource 統合方式で実装する
+  why_now:
+    - repo schema / code 保存だけでは runtime-visible schema / actual behavior confirmed にならない
+  completed_condition:
+    - DELTA GPT Actions に v0.3 schema を設定する
+    - invalid path / unsupported action が拒否されることを先に確認する
+    - `systems/delta/history/` 配下の controlled history update を1回だけ実行する
+    - update 後に v0.2 read-only Action で read-back する
+    - `operations` write は実行しない
   notes:
-    - docs/10 反映案を notes/02_design に完成形で作成済み
-    - 人間判断により docs/10 本体へ反映済み
-    - docs/10 read-back OK; sha `b38d43cee3dee5f08ff98e75fe8a63e262a3de2e`
-  external:
-    todoist_task_id: 6gVHhc493Rj8WhFq
+    - runtime reflection は repo schema / configured Action schema / runtime-visible tool schema / actual behavior を分けて観測する
 
-## Day3（05/01 金）
+## Day2（05/01 金）
 
-- task: delta MVP resource layout を feature branch で作る
-  status: complete
-  completed: true
+- task: DELTA v0.4 operations write の safety design gate を作る
   source_ref:
-    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
-    - docs/13_dev_workflow.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-    - systems/delta/docs/00_delta_index.md
+    - systems/delta/operations/active_operations.md
     - systems/delta/config/delta_schema.yaml
-  rolling_day: Day3
+    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+  rolling_day: Day2
   due_date: 2026-05-01
   due_type: date
+  blocked_by:
+    - DELTA v0.3 history write runtime reflection を実行する
+  why_now:
+    - v0.4 は active_operations 更新権限を持つため、history write より強い guard が必要である
+  completed_condition:
+    - v0.4 の write scope を `systems/delta/operations/active_operations.md` のみに限定する方針を固定する
+    - full replace / patch / proposed diff のどれで扱うか判断する
+    - completed_condition / source_ref / read-back / rollback の確認項目を決める
+    - v0.4 実装前の invalid path / unsupported action test を定義する
   notes:
-    - `systems/delta/` の最小 resource layout を `feature/atlas-pre-delta-foundation` 上に作成済み
-    - 作成済み: docs / roadmap / plan / operations / history / review / resources / config
-    - `systems/delta/` tree read-back confirmed
-    - code resource allowlist に `systems/delta/` を最小追加済み。`systems/` 全体は許可していない
-  external:
-    todoist_task_id: 6gVFwG3q3hCHcrcH
+    - まだ operations write は実装しない
 
-## Day4（05/02 土）
+## Day3（05/02 土）
 
-- task: delta 社労士試験向け initial roadmap / plan / operations を作る
-  status: complete
-  completed: true
+- task: DELTA v0.4 operations write を repo-resource 統合方式で実装する
   source_ref:
-    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
-    - systems/delta/roadmap/delta_roadmap.md
-    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - api/repo-resource.js
+    - src/services/delta-history.js
     - systems/delta/operations/active_operations.md
-  rolling_day: Day4
+  rolling_day: Day3
   due_date: 2026-05-02
   due_type: date
+  blocked_by:
+    - DELTA v0.4 operations write の safety design gate を作る
+  why_now:
+    - DELTA が学習 history だけでなく operations も更新できると、学習運用の closed loop に近づく
+  completed_condition:
+    - 新規 API route を増やさず `/api/repo-resource` に統合する
+    - write scope は `systems/delta/operations/active_operations.md` のみに限定する
+    - history write と operations write の resource / action を混同しない
+    - schema v0.4 を作成または更新する
+    - read-back する
   notes:
-    - ユーザー提供の `DELTA initial roadmap / plan / operations` を入力素材として反映済み
-    - `systems/delta/roadmap/delta_roadmap.md` 更新済み; sha `e380c644bb9e7e66c7989a9531cc97c60f108abb`
-    - `systems/delta/plan/2026_sharoushi_exam_plan.md` 更新済み; sha `bebb6263999a3c44e0b171422f25019c67307315`
-    - `systems/delta/operations/active_operations.md` 更新済み; sha `bbcab07659cbee696ae8b0c41ea36477d3532e11`
-    - read-back confirmed roadmap / plan / operations with status OK
-  external:
-    todoist_task_id: 6gVHhgP4WjXwfJJq
+    - v0.3 runtime behavior confirmed 前に実行しない
 
-## Day5（05/03 日）
+## Day4（05/03 日）
 
-- task: delta learning history daily log template を作る
-  status: complete
-  completed: true
+- task: DELTA v0.4 operations write runtime reflection を実行する
   source_ref:
-    - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
-    - systems/delta/history/2026-04.md
-    - systems/delta/history/templates/daily_log_template.md
-    - systems/delta/docs/03_delta_data_model.md
-    - systems/delta/plan/2026_sharoushi_exam_plan.md
-  rolling_day: Day5
+    - DELTA GPT Actions
+    - systems/delta/operations/active_operations.md
+  rolling_day: Day4
   due_date: 2026-05-03
   due_type: date
-  notes:
-    - `systems/delta/history/2026-04.md` を日次学習ログ構造へ更新済み; sha `9edbcb2bda09f3107446eaf3b0a35b128b2d4214`
-    - `systems/delta/history/templates/daily_log_template.md` を再利用 template として作成済み; sha `72ad4e4ed7cba4f6bd6f86fcd67a49c582534384`
-    - 2026-04-27 baseline entry と 2026-04-28 planned entry を月次ログに作成済み
-    - read-back confirmed monthly history and daily template with status OK
-  external:
-    todoist_task_id: 6gVHhgq3qgMWh9jq
-
-## Day6（05/04 月）
-
-- task: Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする
-  status: complete
-  completed: true
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
-    - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-    - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
-  rolling_day: Day6
-  due_date: 2026-05-04
-  due_type: date
+  blocked_by:
+    - DELTA v0.4 operations write を repo-resource 統合方式で実装する
   why_now:
-    - ATLAS / branch selector / versioning / bulk / docs 整合 / delta を含めて Phase 0 / Phase 1 の境界が変わったため、残件と移行条件の棚卸しが必要である
-    - delta MVP resource layout / initial plan / learning history template が完了した
+    - operations write は DELTA の実行正本に触れるため、実装保存では完了扱いにできない
+  completed_condition:
+    - DELTA GPT Actions に v0.4 schema を設定する
+    - invalid path / unsupported action が拒否される
+    - controlled operations update を1回だけ実行する
+    - read-back で expected diff を確認する
+    - unexpected write scope がないことを確認する
   notes:
-    - Phase 1 を止める blocker は現時点ではない
-    - Phase 0 残件は、近く処理すべき docs / operations 整合残件と、Phase 1 と並行する継続観測残件に分離した
-    - 棚卸し note を作成済み; sha `32ac334de76c2c60620fcab439b1be2e0158599f`
-  external:
-    todoist_task_id: 6gVHhhGXGmcpRfRq
+    - 失敗時は v0.4 を disabled に戻す
 
-## Day7（05/05 火）
+## Day5（05/04 月）
 
 - task: Phase 1 Todoist foundation entry: Todoist service 境界と一覧取得 API を確認する
   source_ref:
@@ -214,19 +162,42 @@ Immediate Gate は7日枠に数えない。
     - src/services/todoist/client.js
     - src/services/tasks/service.js
     - src/services/tasks/projection.js
-  rolling_day: Day7
+  rolling_day: Day5
+  due_date: 2026-05-04
+  due_type: date
+  why_now:
+    - DELTA の急ぎ対応後、Phase 1 Todoist / Outlook foundation に戻る
+    - Phase 1 の最初の完了条件は Todoist task list retrieval である
+    - Outlook 読取へ入る前に、既存 Todoist service / task service / projection / legacy wrapper の境界確認を行う方が安全である
+  completed_condition:
+    - current Todoist service / task service / projection responsibilities are mapped
+    - legacy wrapper usage is checked
+    - Phase 1 list retrieval entry point is fixed
+    - next implementation task is proposed or routed
+  notes:
+    - legacy Todoist wrapper 削除前 gate をこの entry task に吸収してよい
+  external:
+    todoist_task_id: 6gVVg84rHJc5CMpq
+
+## Day6（05/05 火）
+
+- task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
+  source_ref:
+    - notes/02_design/2026-04-25_phase0_positioning_in_roadmap.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - docs/05_roadmap.md
+  rolling_day: Day6
   due_date: 2026-05-05
   due_type: date
   why_now:
-    - Phase 0 / delta 前環境整備が完了し、Phase 1 Todoist / Outlook foundation へ進む blocker がない
-    - Phase 1 の最初の完了条件は Todoist task list retrieval である
-    - Outlook 読取へ入る前に、既存 Todoist service / task service / projection / legacy wrapper の境界確認を行う方が安全である
+    - Phase 0 の foundation 位置づけは design / plan / operations に反映済みで、docs/05 reflection draft へ進める価値がある
+    - DELTA / Phase 1 の前提として、roadmap 上の Phase 0 の意味を明確化しておくと後続判断が安定する
+  completed_condition:
+    - docs/05 を再取得する
+    - Phase 0 positioning の反映差分案を notes/design として作る
+    - docs 直更新は人間判断に回す
   notes:
-    - legacy Todoist wrapper 削除前 gate をこの entry task に吸収してよい
-    - docs / plan / code / test を読む
-    - 実装直行ではなく、境界確認と Phase 1 で使う Todoist list API の入口固定を完了条件にする
-  external:
-    todoist_task_id: 6gVVg84rHJc5CMpq
+    - docs/10 branch create reflection や delta 前環境整備の docs 反映案と混線させない
 
 ---
 
