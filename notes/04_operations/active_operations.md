@@ -81,6 +81,7 @@ Immediate Gate は7日枠に数えない。
   source_ref:
     - notes/01_issues/idea_log.md
     - docs/10_repo_resource_api.md
+    - notes/08_analysis/2026-04-28_repo_resource_bulk_newline_runtime_reflection_gap.md
     - api/repo-resource.js
     - api/repo-resource.test.js
   rolling_day: Day1
@@ -90,8 +91,12 @@ Immediate Gate は7日枠に数えない。
     - branch selector の read / write behavior が確認済みになった
     - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
   notes:
-    - parseFilesParam を comma / newline 両対応にする
-    - node --test の回帰テストを追加する
+    - parseFilesParam を comma / newline 両対応にする patch は feature branch に保存済み
+    - `api/repo-resource.js` saved sha: `5791dbab8d3734130f31712e20c2b97dcf6beedc`
+    - `api/repo-resource.test.js` saved sha: `14dc5d950270559780d8c9efdf2541a11655fce8`
+    - test には newline separated files と mixed comma/newline files の validation 確認を追加済み
+    - runtime-visible tool はまだ旧実装で、改行区切りを単一 file として扱い `NOT_FOUND` を返した
+    - この task を完了扱いにするには、runtime reflection を別 task に切るか、main/deployed runtime へ反映して actual bulk behavior を再観測する必要がある
     - schema / runtime tool schema 反映は別 task とする
   external:
     todoist_task_id: 6gRrVhjP6j8M66Jq
