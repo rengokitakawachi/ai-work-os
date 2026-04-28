@@ -22,35 +22,19 @@ active_operations に入らなかった上位候補を保持する。
 - runtime-visible behavior は別責務の reflection task として分離する
 - delta MVP resource layout の branch 作成自体は runtime bulk newline behavior を前提にしない
 
-### next へ分離した task
+### next から完了扱いで外した task
 
 - `repoResource bulk newline runtime reflection を main/deployed runtime で確認する`
 
 理由
 
-- feature branch patch は保存済みだが、runtime-visible tool はまだ旧実装で改行区切りを単一 file として扱った
-- main/deployed runtime 反映後に actual behavior を観測する必要がある
-- schema / runtime / behavior を混同しないため、branch implementation task から分離する
+- main の `api/repo-resource.js` / `api/repo-resource.test.js` に feature branch と同じ最小差分を反映した
+- runtime-visible tool で newline separated files が複数 files として bulk read されることを確認した
+- 観測 request_id: `f04668a3-f53f-4449-8b33-7e870c1ce4a0`
 
 ---
 
 ## タスク
-
-- task: repoResource bulk newline runtime reflection を main/deployed runtime で確認する
-  source_ref:
-    - notes/08_analysis/2026-04-28_repo_resource_bulk_newline_runtime_reflection_gap.md
-    - api/repo-resource.js
-    - api/repo-resource.test.js
-    - docs/10_repo_resource_api.md
-  why_now:
-    - feature branch `feature/atlas-pre-delta-foundation` に parseFilesParam の comma / newline separator patch は保存済みである
-    - runtime-visible tool はまだ旧実装で、改行区切り files を単一 file path として扱い `NOT_FOUND` を返した
-    - main/deployed runtime に反映した後、actual bulk behavior を観測する必要がある
-  notes:
-    - branch implementation saved task から分離した runtime reflection task
-    - completed condition は runtime-visible tool で newline separated files が複数 files として bulk read されること
-    - merge / deploy / runtime refresh のタイミングで再評価する
-    - delta MVP resource layout の branch 作成自体はこの task に blocked しない
 
 - task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
   source_ref:
