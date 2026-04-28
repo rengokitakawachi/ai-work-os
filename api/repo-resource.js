@@ -25,6 +25,12 @@ import {
   updateCode,
 } from '../src/services/repo-resource/code.js';
 
+import {
+  treeDelta,
+  readDelta,
+  bulkReadDelta,
+} from '../src/services/delta-resource.js';
+
 import { createBranch } from '../src/services/repo-resource/repo.js';
 
 import {
@@ -127,6 +133,37 @@ function requireContent(value, context) {
   return value;
 }
 
+function validateReadLikeGet(resource, action, query) {
+  if (!['tree', 'read', 'bulk'].includes(action)) {
+    throw createError({
+      status: 400,
+      code: 'ACTION_NOT_SUPPORTED',
+      message: 'action not supported',
+      category: 'routing',
+      step: 'validateGet',
+      resource,
+      action,
+      retryable: false,
+    });
+  }
+
+  if (action === 'read') {
+    requireFile(query.file, {
+      step: 'validateGet',
+      resource,
+      action,
+    });
+  }
+
+  if (action === 'bulk') {
+    parseFilesParam(query.files, {
+      step: 'validateGet',
+      resource,
+      action,
+    });
+  }
+}
+
 function validateGet(resource, action, query) {
   normalizeBranch(query.branch, {
     step: 'validateGet',
@@ -167,39 +204,8 @@ function validateGet(resource, action, query) {
     return;
   }
 
-  if (resource === 'notes' || resource === 'code') {
-    if (
-      (resource === 'notes' && !['tree', 'read', 'bulk'].includes(action)) ||
-      (resource === 'code' && !['tree', 'read', 'bulk'].includes(action))
-    ) {
-      throw createError({
-        status: 400,
-        code: 'ACTION_NOT_SUPPORTED',
-        message: 'action not supported',
-        category: 'routing',
-        step: 'validateGet',
-        resource,
-        action,
-        retryable: false,
-      });
-    }
-
-    if (action === 'read') {
-      requireFile(query.file, {
-        step: 'validateGet',
-        resource,
-        action,
-      });
-    }
-
-    if (action === 'bulk') {
-      parseFilesParam(query.files, {
-        step: 'validateGet',
-        resource,
-        action,
-      });
-    }
-
+  if (resource === 'notes' || resource === 'code' || resource === 'delta') {
+    validateReadLikeGet(resource, action, query);
     return;
   }
 
@@ -412,6 +418,34 @@ async function dispatchGet(resource, action, query) {
 
     if (action === 'bulk') {
       return bulkReadCode(
+        parseFilesParam(query.files, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+  }
+
+  if (resource === 'delta') {
+    if (action === 'tree') {
+      return treeDelta(options);
+    }
+
+    if (action === 'read') {
+      return readDelta(
+        requireFile(query.file, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+
+    if (action === 'bulk') {
+      return bulkReadDelta(
         parseFilesParam(query.files, {
           step: 'dispatchGet',
           resource,
