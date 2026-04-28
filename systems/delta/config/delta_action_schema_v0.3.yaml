@@ -1,0 +1,180 @@
+openapi: 3.1.0
+info:
+  title: DELTA History Write API
+  version: "0.3.0"
+  description: Create and update DELTA learning history files under systems/delta/history/ only.
+
+servers:
+  - url: https://ai-work-os.vercel.app
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+
+  schemas:
+    ErrorResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: object
+          additionalProperties: true
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            category:
+              type: string
+            step:
+              type: string
+            resource:
+              type: string
+              enum:
+                - delta_history
+            action:
+              type: string
+            status:
+              type: integer
+            retryable:
+              type: boolean
+            details:
+              type: object
+              additionalProperties: true
+            request_id:
+              type: string
+      required:
+        - ok
+        - error
+
+    DeltaHistoryWriteRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - file
+        - content
+      properties:
+        file:
+          type: string
+          description: Markdown file path relative to systems/delta/history/, e.g. 2026-04.md.
+        content:
+          type: string
+          description: Full markdown content to create or replace.
+        message:
+          type: string
+          description: Optional commit message.
+        sha:
+          type: string
+          description: Optional file SHA for update.
+        branch:
+          type: string
+          description: Optional Git branch selector. For testing, use feature/atlas-pre-delta-foundation.
+
+    DeltaHistoryWriteData:
+      type: object
+      additionalProperties: true
+      properties:
+        resource:
+          type: string
+          enum:
+            - delta_history
+        root:
+          type: string
+          enum:
+            - systems/delta/history/
+        path:
+          type: string
+        sha:
+          type: string
+        branch:
+          type: string
+        status:
+          type: string
+          enum:
+            - CREATED
+            - UPDATED
+        write_scope:
+          type: string
+          enum:
+            - history_only
+
+    DeltaHistoryWriteResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/DeltaHistoryWriteData"
+        request_id:
+          type: string
+      required:
+        - ok
+        - data
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/delta-history:
+    post:
+      operationId: deltaHistoryWrite
+      summary: Create or update DELTA history files only
+      description: |
+        Write access limited to systems/delta/history/ markdown files.
+        This v0.3 schema does not expose operations write.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - create
+              - update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeltaHistoryWriteRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeltaHistoryWriteResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "405":
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
