@@ -136,11 +136,15 @@ Immediate Gate は7日枠に数えない。
 ## Day3（05/01 金）
 
 - task: delta MVP resource layout を feature branch で作る
+  status: complete
+  completed: true
   source_ref:
     - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
     - docs/13_dev_workflow.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
+    - systems/delta/docs/00_delta_index.md
+    - systems/delta/config/delta_schema.yaml
   rolling_day: Day3
   due_date: 2026-05-01
   due_type: date
@@ -149,7 +153,17 @@ Immediate Gate は7日枠に数えない。
     - delta resource は新規 system resource 群のため branch 上で作るのが正しい
     - bulk newline runtime reflection は完了済みであり、複数ファイル確認の効率が上がった
   notes:
-    - systems/delta/ docs / roadmap / plan / operations / history / review / resources / config の最小構成を作る
+    - `systems/delta/` の最小 resource layout を `feature/atlas-pre-delta-foundation` 上に作成済み
+    - 作成済み: docs / roadmap / plan / operations / history / review / resources / config
+    - `systems/delta/docs/00_delta_index.md` create succeeded; sha `b436e72553a63a4d09bd45e5f4142667f9bd533b`
+    - `systems/delta/roadmap/delta_roadmap.md` create succeeded; sha `c9a92b70c5bc51585f8e6e8264a292b892a0bdd9`
+    - `systems/delta/plan/2026_sharoushi_exam_plan.md` create succeeded; sha `0e74ee79d6a715e695360f04f2338f0faf1d7222`
+    - `systems/delta/operations/active_operations.md` create succeeded; sha `13ecff52dc26d6c4ede18d3d278da9875e8f21e1`
+    - `systems/delta/history/2026-04.md` create succeeded; sha `c22efe3c306c6eb360100a20c217048464367fb6`
+    - `systems/delta/config/delta_schema.yaml` create succeeded; sha `ebaf5f53a84ddde9b955a1982ed764b855e5a91a`
+    - `systems/delta/` tree read-back confirmed
+    - code resource allowlist に `systems/delta/` を最小追加済み。`systems/` 全体は許可していない
+    - allowlist test guard `api/repo-resource-delta-allowlist.test.js` を main / feature branch に作成済み; sha `e24a3b2ab4562ff85c7c5c3f6b3f2c01abb0b8a2`
     - main 統合時に docs と一致させる
   external:
     todoist_task_id: 6gVFwG3q3hCHcrcH
@@ -159,11 +173,12 @@ Immediate Gate は7日枠に数えない。
 - task: delta 社労士試験向け initial roadmap / plan / operations を作る
   source_ref:
     - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - systems/delta/operations/active_operations.md
   rolling_day: Day4
   due_date: 2026-05-02
   due_type: date
-  blocked_by:
-    - delta MVP resource layout を feature branch で作る
   why_now:
     - delta resource layout の次に、2026-08-23 から逆算した実運用開始可能な roadmap / plan / operations が必要である
   notes:
@@ -177,11 +192,13 @@ Immediate Gate は7日枠に数えない。
 - task: delta learning history daily log template を作る
   source_ref:
     - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+    - systems/delta/history/2026-04.md
+    - systems/delta/docs/03_delta_data_model.md
   rolling_day: Day5
   due_date: 2026-05-03
   due_type: date
   blocked_by:
-    - delta MVP resource layout を feature branch で作る
+    - delta 社労士試験向け initial roadmap / plan / operations を作る
   why_now:
     - delta は学習履歴を GitHub に保存する前提であり、日次ログ template がないと実運用を開始しにくい
   notes:
