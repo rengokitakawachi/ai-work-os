@@ -121,12 +121,14 @@ Immediate Gate は7日枠に数えない。
   due_type: date
   why_now:
     - branch create API は runtime-visible schema と actual branch create behavior まで確認済みになった
-    - docs/10 には branch create 仕様がまだ反映されていないため、docs/code/schema 整合のために reflection 案が必要であった
+    - docs/10 には branch create 仕様がまだ反映されていなかったため、docs/code/schema 整合のために reflection 案が必要であった
   notes:
     - docs 直更新ではなく、docs/10 反映案を notes/02_design に完成形で作成済み
     - draft path: `notes/02_design/2026-04-28_docs_10_repo_resource_branch_create_update_draft.md`
     - draft sha: `81e4399c67609874d217d188236e982d6752092e`
-    - 人間判断ポイントは `docs/10 に repo resource / create_branch action を正式仕様として反映してよいか` の1点
+    - 人間判断により docs/10 本体へ反映済み
+    - docs/10 read-back OK; sha `b38d43cee3dee5f08ff98e75fe8a63e262a3de2e`
+    - docs/10 に `repo` resource / `create_branch` action / branch create response / validation / non-goals / bulk newline separator が反映済み
     - branch selector docs reflection とは別 task として扱った
   external:
     todoist_task_id: 6gVHhc493Rj8WhFq
