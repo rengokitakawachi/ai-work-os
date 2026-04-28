@@ -10,57 +10,37 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-28 during execution）
+## 再評価結果（2026-04-28 daily review）
 
-### active で完了扱いにした task
+### active へ移した task
 
-- `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
+- `DELTA v0.3 history write を repo-resource 統合方式で実装する`
+- `DELTA v0.3 history write runtime reflection を実行する`
+- `DELTA v0.4 operations write の safety design gate を作る`
+- `DELTA v0.4 operations write を repo-resource 統合方式で実装する`
+- `DELTA v0.4 operations write runtime reflection を実行する`
+- `Phase 1 Todoist foundation entry: Todoist service 境界と一覧取得 API を確認する`
+- `docs/05_roadmap.md への Phase 0 位置づけ反映案を作る`
 
-理由
+### 完了扱いで外した task
 
-- task の完了範囲を feature branch implementation saved として固定した
-- runtime-visible behavior は別責務の reflection task として分離する
-- delta MVP resource layout の branch 作成自体は runtime bulk newline behavior を前提にしない
+- `DELTA v0.2 read-only Action runtime behavior confirmation`
 
-### next から完了扱いで外した task
+理由:
 
-- `repoResource bulk newline runtime reflection を main/deployed runtime で確認する`
+- DELTA GPT Actions で tree / read / bulk がすべて成功した
+- `branch=feature/atlas-pre-delta-foundation` と `read_only: true` を確認した
+- write / create / update / delete は未実行
 
-理由
+### 方針変更
 
-- main の `api/repo-resource.js` / `api/repo-resource.test.js` に feature branch と同じ最小差分を反映した
-- runtime-visible tool で newline separated files が複数 files として bulk read されることを確認した
-- 観測 request_id: `f04668a3-f53f-4449-8b33-7e870c1ce4a0`
+- Vercel Hobby の Serverless Functions 上限により、新規 `api/delta-*` route 追加方式は採用しない
+- v0.3 以降も既存 `/api/repo-resource` へ resource を統合する方式で進める
+- schema 更新だけでは runtime confirmed としない
 
 ---
 
 ## タスク
-
-- task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
-  source_ref:
-    - notes/02_design/2026-04-25_phase0_positioning_in_roadmap.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - docs/05_roadmap.md
-  why_now:
-    - Phase 0 の foundation 位置づけは design に整理済みで、docs 反映案へ進める価値がある
-    - ただし delta 前環境整備の docs 反映案と統合して扱う方が安全である
-  notes:
-    - docs 直更新ではなく、差分案を先に作る
-    - docs/10 branch create reflection や delta 前環境整備の docs 反映案と統合される可能性がある
-
-- task: legacy Todoist wrapper の削除前 gate を repo 全体で再確認する
-  source_ref:
-    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
-    - src/services/todoist.js
-    - src/services/todoist/client.js
-    - src/services/tasks/service.js
-    - src/services/tasks/projection.js
-  why_now:
-    - deprecated 化の段取りは整理済みだが、削除前には repo 全体 usage と test gate の再確認が必要である
-  notes:
-    - 今回も即削除しない
-    - usage 確認、参照移行要否、test 結果を削除判断の gate とする
-    - ATLAS test workflow 整備後に実行する方が安全である
 
 - task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
   source_ref:
@@ -97,6 +77,26 @@ active_operations に入らなかった上位候補を保持する。
   notes:
     - 単発確認ではなく、継続観測 task として扱う
 
+- task: Phase 1 Outlook Calendar API の読取設計を整理する
+  source_ref:
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - docs/05_roadmap.md
+  why_now:
+    - Todoist foundation entry の後続として、Outlook を schedule 正本として読む設計が必要になる
+  notes:
+    - Outlook 書き込みではなく read-only foundation に限定する
+    - 認証 / calendar scope / free-busy 判定を分けて扱う
+
+- task: legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
+  source_ref:
+    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - src/services/todoist.js
+    - src/services/todoist/client.js
+  why_now:
+    - wrapper usage 確認は Phase 1 Todoist foundation entry に吸収するが、実削除判断は別 gate として残す方が安全である
+  notes:
+    - repo usage / tests / replacement path が揃うまで削除しない
+
 ---
 
 ## ルール
@@ -117,4 +117,4 @@ active_operations に入らなかった上位候補を保持する。
 - branch は Notes-driven development space として扱う
 - merge 時に docs / code / config / operations / version を一致させる
 - ATLAS は test / verification / CI review system として扱う
-- delta 開発前に branch selector / branch create / ATLAS / bulk / docs 実態差分の環境整備を優先する
+- DELTA v0.3 以降は新規 API route を増やさず、既存 `/api/repo-resource` 統合方式で進める
