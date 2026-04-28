@@ -62,7 +62,7 @@ function parseFilesParam(value, context) {
   }
 
   const files = raw
-    .split(',')
+    .split(/[\n,]+/)
     .map((item) => item.trim())
     .filter(Boolean);
 
