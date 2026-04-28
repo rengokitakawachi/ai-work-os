@@ -30,8 +30,6 @@ Immediate Gate は7日枠に数えない。
     - allowlist patch は main / feature branch の両方に保存済み
     - `src/services/repo-resource/common.js` に `.nvmrc` と `.github/workflows/` の最小 allowlist patch を保存済み
     - `api/repo-resource.test.js` に ATLAS workflow path allowlist test を保存済み
-    - feature branch saved code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
-    - main saved code sha: common.js `f393d94f3d5ed6353c487948ddd784846f4ccedb`, repo-resource.test.js `cb3b3651d14f4d79a72f45c7f65d819e7d70248c`
     - `.nvmrc` create succeeded on feature branch; sha `209e3ef4b6247ce746048d5711befda46206d235`
     - `.github/workflows/test.yml` create succeeded on feature branch after token workflow scope update; sha `08895ad5e9a4ab7a72f3d3fe3aaa4cf4e2030bd7`
     - read-back confirmed both files with status OK
@@ -48,6 +46,9 @@ Immediate Gate は7日枠に数えない。
 - `repoResourceGet bulk の files 区切り仕様を branch selector 後に実装する`
 - `docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す`
 - `delta MVP resource layout を feature branch で作る`
+- `delta 社労士試験向け initial roadmap / plan / operations を作る`
+- `delta learning history daily log template を作る`
+- `Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする`
 
 ## Day0（04/28 火）
 
@@ -61,17 +62,10 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-04-28
   due_type: date
-  why_now:
-    - feature branch `feature/atlas-pre-delta-foundation` は作成済みで read-back も確認済みである
-    - ATLAS workflow patch proposal は作成済みであり、branch 上で `.nvmrc` / `.github/workflows/test.yml` を実装する必要があった
-    - CI は以後の branch 開発の verification gate になる
   notes:
     - `.nvmrc` は feature branch に作成済み
     - `.github/workflows/test.yml` は feature branch に作成済み
-    - package-lock.json がないため初期 workflow は npm install を使う
-    - coverage / lint / PR comments は後段
-    - `.nvmrc` read-back OK; sha `209e3ef4b6247ce746048d5711befda46206d235`
-    - `.github/workflows/test.yml` read-back OK; sha `08895ad5e9a4ab7a72f3d3fe3aaa4cf4e2030bd7`
+    - read-back OK
   external:
     todoist_task_id: 6gVGPq8f5mWXJxmH
 
@@ -89,16 +83,8 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day1
   due_date: 2026-04-29
   due_type: date
-  why_now:
-    - branch selector の read / write behavior が確認済みになった
-    - ATLAS workflow が入った後に実装することで回帰確認しやすくなる
   notes:
     - parseFilesParam を comma / newline 両対応にする patch は feature branch と main の両方に保存済み
-    - main `api/repo-resource.js` saved sha: `5791dbab8d3734130f31712e20c2b97dcf6beedc`
-    - main `api/repo-resource.test.js` saved sha: `14dc5d950270559780d8c9efdf2541a11655fce8`
-    - feature branch `api/repo-resource.js` saved sha: `5791dbab8d3734130f31712e20c2b97dcf6beedc`
-    - feature branch `api/repo-resource.test.js` saved sha: `14dc5d950270559780d8c9efdf2541a11655fce8`
-    - test には newline separated files と mixed comma/newline files の validation 確認を追加済み
     - runtime-visible tool で newline separated files が複数 files として bulk read されることを確認済み
     - runtime observation request_id: `f04668a3-f53f-4449-8b33-7e870c1ce4a0`
   external:
@@ -119,17 +105,10 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day2
   due_date: 2026-04-30
   due_type: date
-  why_now:
-    - branch create API は runtime-visible schema と actual branch create behavior まで確認済みになった
-    - docs/10 には branch create 仕様がまだ反映されていなかったため、docs/code/schema 整合のために reflection 案が必要であった
   notes:
-    - docs 直更新ではなく、docs/10 反映案を notes/02_design に完成形で作成済み
-    - draft path: `notes/02_design/2026-04-28_docs_10_repo_resource_branch_create_update_draft.md`
-    - draft sha: `81e4399c67609874d217d188236e982d6752092e`
+    - docs/10 反映案を notes/02_design に完成形で作成済み
     - 人間判断により docs/10 本体へ反映済み
     - docs/10 read-back OK; sha `b38d43cee3dee5f08ff98e75fe8a63e262a3de2e`
-    - docs/10 に `repo` resource / `create_branch` action / branch create response / validation / non-goals / bulk newline separator が反映済み
-    - branch selector docs reflection とは別 task として扱った
   external:
     todoist_task_id: 6gVHhc493Rj8WhFq
 
@@ -148,23 +127,11 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day3
   due_date: 2026-05-01
   due_type: date
-  why_now:
-    - 環境整備後に delta 初期運用へ戻る
-    - delta resource は新規 system resource 群のため branch 上で作るのが正しい
-    - bulk newline runtime reflection は完了済みであり、複数ファイル確認の効率が上がった
   notes:
     - `systems/delta/` の最小 resource layout を `feature/atlas-pre-delta-foundation` 上に作成済み
     - 作成済み: docs / roadmap / plan / operations / history / review / resources / config
-    - `systems/delta/docs/00_delta_index.md` create succeeded; sha `b436e72553a63a4d09bd45e5f4142667f9bd533b`
-    - `systems/delta/roadmap/delta_roadmap.md` create succeeded; sha `c9a92b70c5bc51585f8e6e8264a292b892a0bdd9`
-    - `systems/delta/plan/2026_sharoushi_exam_plan.md` create succeeded; sha `0e74ee79d6a715e695360f04f2338f0faf1d7222`
-    - `systems/delta/operations/active_operations.md` create succeeded; sha `13ecff52dc26d6c4ede18d3d278da9875e8f21e1`
-    - `systems/delta/history/2026-04.md` create succeeded; sha `c22efe3c306c6eb360100a20c217048464367fb6`
-    - `systems/delta/config/delta_schema.yaml` create succeeded; sha `ebaf5f53a84ddde9b955a1982ed764b855e5a91a`
     - `systems/delta/` tree read-back confirmed
     - code resource allowlist に `systems/delta/` を最小追加済み。`systems/` 全体は許可していない
-    - allowlist test guard `api/repo-resource-delta-allowlist.test.js` を main / feature branch に作成済み; sha `e24a3b2ab4562ff85c7c5c3f6b3f2c01abb0b8a2`
-    - main 統合時に docs と一致させる
   external:
     todoist_task_id: 6gVFwG3q3hCHcrcH
 
@@ -181,15 +148,12 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day4
   due_date: 2026-05-02
   due_type: date
-  why_now:
-    - delta resource layout の次に、2026-08-23 から逆算した実運用開始可能な roadmap / plan / operations が必要である
   notes:
     - ユーザー提供の `DELTA initial roadmap / plan / operations` を入力素材として反映済み
-    - `systems/delta/roadmap/delta_roadmap.md` を 3 phase roadmap / fixed rules / recovery policy 付きに更新済み; sha `e380c644bb9e7e66c7989a9531cc97c60f108abb`
-    - `systems/delta/plan/2026_sharoushi_exam_plan.md` を 2026-04-28 から 2026-06-30 までの初期 plan に更新済み; sha `bebb6263999a3c44e0b171422f25019c67307315`
-    - `systems/delta/operations/active_operations.md` を 2026-04-28〜2026-05-04 の Day0〜Day6 学習 operations に更新済み; sha `bbcab07659cbee696ae8b0c41ea36477d3532e11`
+    - `systems/delta/roadmap/delta_roadmap.md` 更新済み; sha `e380c644bb9e7e66c7989a9531cc97c60f108abb`
+    - `systems/delta/plan/2026_sharoushi_exam_plan.md` 更新済み; sha `bebb6263999a3c44e0b171422f25019c67307315`
+    - `systems/delta/operations/active_operations.md` 更新済み; sha `bbcab07659cbee696ae8b0c41ea36477d3532e11`
     - read-back confirmed roadmap / plan / operations with status OK
-    - 最初は API 完成を待たず GitHub markdown と ChatGPT UI の手動運用を前提にする
   external:
     todoist_task_id: 6gVHhgP4WjXwfJJq
 
@@ -207,15 +171,10 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day5
   due_date: 2026-05-03
   due_type: date
-  why_now:
-    - delta は学習履歴を GitHub に保存する前提であり、日次ログ template がないと実運用を開始しにくい
-    - 初期 roadmap / plan / operations は作成済みである
   notes:
     - `systems/delta/history/2026-04.md` を日次学習ログ構造へ更新済み; sha `9edbcb2bda09f3107446eaf3b0a35b128b2d4214`
     - `systems/delta/history/templates/daily_log_template.md` を再利用 template として作成済み; sha `72ad4e4ed7cba4f6bd6f86fcd67a49c582534384`
-    - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含む
     - 2026-04-27 baseline entry と 2026-04-28 planned entry を月次ログに作成済み
-    - DELTA initial plan の Markdown Log Structure と接続済み
     - read-back confirmed monthly history and daily template with status OK
   external:
     todoist_task_id: 6gVHhgq3qgMWh9jq
@@ -223,11 +182,14 @@ Immediate Gate は7日枠に数えない。
 ## Day6（05/04 月）
 
 - task: Phase 1 Todoist / Outlook foundation へ進む前の Phase 0 残件を棚卸しする
+  status: complete
+  completed: true
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
     - notes/04_operations/active_operations.md
     - notes/04_operations/next_operations.md
+    - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
   rolling_day: Day6
   due_date: 2026-05-04
   due_type: date
@@ -235,9 +197,36 @@ Immediate Gate は7日枠に数えない。
     - ATLAS / branch selector / versioning / bulk / docs 整合 / delta を含めて Phase 0 / Phase 1 の境界が変わったため、残件と移行条件の棚卸しが必要である
     - delta MVP resource layout / initial plan / learning history template が完了した
   notes:
-    - active の delta 前環境整備が一段落した後に実行する
+    - Phase 1 を止める blocker は現時点ではない
+    - Phase 0 残件は、近く処理すべき docs / operations 整合残件と、Phase 1 と並行する継続観測残件に分離した
+    - 棚卸し note を作成済み; sha `32ac334de76c2c60620fcab439b1be2e0158599f`
   external:
     todoist_task_id: 6gVHhhGXGmcpRfRq
+
+## Day7（05/05 火）
+
+- task: Phase 1 Todoist foundation entry: Todoist service 境界と一覧取得 API を確認する
+  source_ref:
+    - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - src/services/todoist.js
+    - src/services/todoist/client.js
+    - src/services/tasks/service.js
+    - src/services/tasks/projection.js
+  rolling_day: Day7
+  due_date: 2026-05-05
+  due_type: date
+  why_now:
+    - Phase 0 / delta 前環境整備が完了し、Phase 1 Todoist / Outlook foundation へ進む blocker がない
+    - Phase 1 の最初の完了条件は Todoist task list retrieval である
+    - Outlook 読取へ入る前に、既存 Todoist service / task service / projection / legacy wrapper の境界確認を行う方が安全である
+  notes:
+    - legacy Todoist wrapper 削除前 gate をこの entry task に吸収してよい
+    - docs / plan / code / test を読む
+    - 実装直行ではなく、境界確認と Phase 1 で使う Todoist list API の入口固定を完了条件にする
+  external:
+    todoist_task_id: 6gVVg84rHJc5CMpq
 
 ---
 
@@ -270,4 +259,3 @@ Immediate Gate は7日枠に数えない。
 - branch は Notes-driven development space として扱う
 - branch で開発し、main 統合時に docs / code / config / operations / version を一致させる
 - 現 main に docs/code 不一致がある場合は、新規 branch 開発前に整合回復を優先する
-- delta 開発前に branch selector / branch create / ATLAS / bulk / docs 実態差分の環境整備を優先する
