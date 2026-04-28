@@ -196,9 +196,12 @@ Immediate Gate は7日枠に数えない。
 ## Day5（05/03 日）
 
 - task: delta learning history daily log template を作る
+  status: complete
+  completed: true
   source_ref:
     - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
     - systems/delta/history/2026-04.md
+    - systems/delta/history/templates/daily_log_template.md
     - systems/delta/docs/03_delta_data_model.md
     - systems/delta/plan/2026_sharoushi_exam_plan.md
   rolling_day: Day5
@@ -208,8 +211,12 @@ Immediate Gate は7日枠に数えない。
     - delta は学習履歴を GitHub に保存する前提であり、日次ログ template がないと実運用を開始しにくい
     - 初期 roadmap / plan / operations は作成済みである
   notes:
-    - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含める
-    - DELTA initial plan の Markdown Log Structure と接続する
+    - `systems/delta/history/2026-04.md` を日次学習ログ構造へ更新済み; sha `9edbcb2bda09f3107446eaf3b0a35b128b2d4214`
+    - `systems/delta/history/templates/daily_log_template.md` を再利用 template として作成済み; sha `72ad4e4ed7cba4f6bd6f86fcd67a49c582534384`
+    - date / subject / topic / material / minutes / study_type / result / comprehension / quiz_score / weak_points / next_review_date / source_ref を含む
+    - 2026-04-27 baseline entry と 2026-04-28 planned entry を月次ログに作成済み
+    - DELTA initial plan の Markdown Log Structure と接続済み
+    - read-back confirmed monthly history and daily template with status OK
   external:
     todoist_task_id: 6gVHhgq3qgMWh9jq
 
@@ -226,6 +233,7 @@ Immediate Gate は7日枠に数えない。
   due_type: date
   why_now:
     - ATLAS / branch selector / versioning / bulk / docs 整合 / delta を含めて Phase 0 / Phase 1 の境界が変わったため、残件と移行条件の棚卸しが必要である
+    - delta MVP resource layout / initial plan / learning history template が完了した
   notes:
     - active の delta 前環境整備が一段落した後に実行する
   external:
