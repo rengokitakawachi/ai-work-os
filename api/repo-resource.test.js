@@ -2,7 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import handler from './repo-resource.js';
-import { normalizeBranch } from '../src/services/repo-resource/common.js';
+import {
+  buildCodePath,
+  isAllowedCodePath,
+  normalizeBranch,
+} from '../src/services/repo-resource/common.js';
 import { validateBranchCreateInput } from '../src/services/repo-resource/repo.js';
 
 function createMockRes() {
@@ -58,6 +62,18 @@ test('normalizeBranch rejects invalid branch names', () => {
       (error) => error.code === 'INVALID_REQUEST'
     );
   }
+});
+
+test('code allowlist accepts ATLAS workflow paths only by explicit scope', () => {
+  assert.equal(isAllowedCodePath('.nvmrc'), true);
+  assert.equal(isAllowedCodePath('.github/workflows/test.yml'), true);
+  assert.equal(buildCodePath('.nvmrc'), '.nvmrc');
+  assert.equal(buildCodePath('.github/workflows/test.yml'), '.github/workflows/test.yml');
+
+  assert.equal(isAllowedCodePath('.github/secret.yml'), false);
+  assert.equal(isAllowedCodePath('.env'), false);
+  assert.equal(isAllowedCodePath('docs/10_repo_resource_api.md'), false);
+  assert.equal(isAllowedCodePath('notes/04_operations/active_operations.md'), false);
 });
 
 test('validateBranchCreateInput accepts feature branch from main', () => {
