@@ -107,8 +107,11 @@ Immediate Gate は7日枠に数えない。
 ## Day2（04/30 木）
 
 - task: docs/10 repoResource branch create reflection を runtime確認後に人間判断へ回す
+  status: complete
+  completed: true
   source_ref:
     - notes/02_design/2026-04-27_repo_resource_branch_create_api_design.md
+    - notes/02_design/2026-04-28_docs_10_repo_resource_branch_create_update_draft.md
     - docs/10_repo_resource_api.md
     - config/ai/adam_schema.yaml
     - api/repo-resource.js
@@ -118,10 +121,13 @@ Immediate Gate は7日枠に数えない。
   due_type: date
   why_now:
     - branch create API は runtime-visible schema と actual branch create behavior まで確認済みになった
-    - docs/10 には branch create 仕様がまだ反映されていないため、docs/code/schema 整合のために reflection 案が必要である
+    - docs/10 には branch create 仕様がまだ反映されていないため、docs/code/schema 整合のために reflection 案が必要であった
   notes:
-    - docs 直更新ではなく、docs/10 反映案を notes/02_design に完成形で出す
-    - branch selector docs reflection とは別 task として扱う
+    - docs 直更新ではなく、docs/10 反映案を notes/02_design に完成形で作成済み
+    - draft path: `notes/02_design/2026-04-28_docs_10_repo_resource_branch_create_update_draft.md`
+    - draft sha: `81e4399c67609874d217d188236e982d6752092e`
+    - 人間判断ポイントは `docs/10 に repo resource / create_branch action を正式仕様として反映してよいか` の1点
+    - branch selector docs reflection とは別 task として扱った
   external:
     todoist_task_id: 6gVHhc493Rj8WhFq
 
