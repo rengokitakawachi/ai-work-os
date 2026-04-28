@@ -226,10 +226,11 @@ Daily review minimum steps:
 3. completed task を archive_operations へ移す
 4. 未完了 task の carryover を決める
 5. active_operations / next_operations を reroll する
-6. operations を更新する
-7. operations 更新後に Todoist projection を更新する
-8. daily report を保存する
-9. content draft を保存する
+6. Day capacity を確認し、軽すぎる Day があれば補正または理由を明示する
+7. operations を更新する
+8. operations 更新後に Todoist projection を更新する
+9. daily report を保存する
+10. content draft を保存する
 
 Daily review は operations、Todoist projection、report、content がすべて更新されて初めて完了する。
 Candidate sources 未確認なら fail closed とする。
@@ -318,14 +319,17 @@ Reroll steps:
 3. dependency と completed condition を評価する
 4. relative priority で並べる
 5. active / next / future へ配置する
-6. active_operations と next_operations を更新する
-7. operations 更新後に Todoist へ project する
+6. Day capacity を確認する
+7. active_operations と next_operations を更新する
+8. operations 更新後に Todoist へ project する
 
-Day capacity:
+Day capacity correction:
 
-- task はおおむね 0.5〜1.5 hours
-- 1 day はおおむね 2 hours
-- 明示理由なしに軽すぎる day を作らない
+- 軽すぎる Day は、next_operations や同一テーマの依存しない candidate から補充する
+- 補充 task は dependency / blocker を壊してはならない
+- runtime reflection や external manual gate が後続の前提なら、Day capacity より gate 解消を優先する
+- 補充しない場合は、理由を notes または review report に明示する
+- Day capacity は schedule ではなく、短期実行量の品質チェックとして扱う
 
 完了 task は daily review まで active に残っていてよい。
 Daily review 外で archive / structural move しない。ただし active が壊れている場合は例外。
