@@ -256,7 +256,7 @@ function validateGet(resource, action, query) {
     }
 
     if (action === 'search') {
-      requireParam(query.query, 'query', {
+      requireParam(query.query || query.file, 'query', {
         step: 'validateGet',
         resource,
         action,
@@ -516,7 +516,7 @@ async function dispatchGet(resource, action, query) {
     ref: ensureString(query.ref),
     per_page: ensureString(query.per_page),
     file: ensureString(query.file),
-    path: ensureString(query.path),
+    path: ensureString(query.path || query.files),
   };
 
   if (resource === 'docs') {
@@ -634,7 +634,7 @@ async function dispatchGet(resource, action, query) {
   if (resource === 'repo') {
     if (action === 'search') {
       return searchRepoText(
-        requireParam(query.query, 'query', {
+        requireParam(query.query || query.file, 'query', {
           step: 'dispatchGet',
           resource,
           action,
