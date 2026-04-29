@@ -31,6 +31,7 @@ import {
   showFileAtRef,
   compareRefs,
   searchRepoText,
+  grepRepoText,
 } from '../src/services/repo-resource/repo.js';
 
 import {
@@ -242,7 +243,7 @@ function validateGet(resource, action, query) {
   }
 
   if (resource === 'repo') {
-    if (!['history', 'show', 'compare', 'diff', 'search'].includes(action)) {
+    if (!['history', 'show', 'compare', 'diff', 'search', 'grep'].includes(action)) {
       throw createError({
         status: 400,
         code: 'ACTION_NOT_SUPPORTED',
@@ -255,7 +256,7 @@ function validateGet(resource, action, query) {
       });
     }
 
-    if (action === 'search') {
+    if (action === 'search' || action === 'grep') {
       requireParam(query.query || query.file, 'query', {
         step: 'validateGet',
         resource,
@@ -517,6 +518,8 @@ async function dispatchGet(resource, action, query) {
     per_page: ensureString(query.per_page),
     file: ensureString(query.file),
     path: ensureString(query.path || query.files),
+    file_limit: ensureString(query.limit || query.per_page),
+    match_limit: ensureString(query.num_games),
   };
 
   if (resource === 'docs') {
@@ -634,6 +637,17 @@ async function dispatchGet(resource, action, query) {
   if (resource === 'repo') {
     if (action === 'search') {
       return searchRepoText(
+        requireParam(query.query || query.file, 'query', {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+
+    if (action === 'grep') {
+      return grepRepoText(
         requireParam(query.query || query.file, 'query', {
           step: 'dispatchGet',
           resource,
@@ -818,7 +832,7 @@ function normalizeError(error, context = {}) {
         category: error?.category || 'internal',
         step: error?.step || 'unknown',
         resource: error?.resource || context.resource || '',
-        action: error?.action || context.action || '',
+        action: error?.action || '',
         status: error?.status || 500,
         retryable: Boolean(error?.retryable),
         details: error?.details || {},
