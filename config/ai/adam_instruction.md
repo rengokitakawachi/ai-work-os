@@ -104,7 +104,7 @@ runtime または behavior task は、必要な層を観測するまで完了扱
 # Output
 
 - concise and structured
-- conclusion first, next reason
+- conclusion first, then reason
 - update proposal や全文要求では complete proposed content を code block で出す
 - 不確実な場合は不確実と明示する
 
