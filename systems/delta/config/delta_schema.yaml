@@ -47,6 +47,7 @@ models:
       mismatch_policy: daily_review_correction
     markdown_sections:
       - 実績
+      - L3実績
       - 計画との差分
       - 判断
       - 弱点
@@ -64,11 +65,47 @@ models:
       - study_type
       - subject
       - material
+      - topic
       - planned_scope
       - actual_scope
       - result
       - comprehension
       - weak_points
+      - review_marks
+      - next_review_targets
+    l3_review_marks:
+      double_circle:
+        mark: ◎
+        meaning: 正解し、完全に理解しているので再学習不要
+        review_policy: 原則スキップ可能
+        fields:
+          - count
+          - questions
+      circle:
+        mark: ○
+        meaning: 正解し、理解しているが、再学習の余地はある
+        review_policy: 2巡目以降で確認対象
+        fields:
+          - count
+          - questions
+      triangle:
+        mark: △
+        meaning: 正解だが、理解が不十分なので再度学習
+        review_policy: 次優先で回収
+        fields:
+          - count
+          - questions
+      cross:
+        mark: ×
+        meaning: 不正解、理解していない
+        review_policy: 最優先で回収
+        fields:
+          - count
+          - questions
+    next_review_targets:
+      priority_1_cross: × の問題番号
+      priority_2_triangle: △ の問題番号
+      priority_3_circle: ○ の問題番号
     allowed_values:
       day_type:
         - weekday
@@ -96,8 +133,27 @@ models:
         - slight_delay
         - delay
         - overdone
+      l3_review_priority:
+        - cross
+        - triangle
+        - circle
+        - double_circle
 rules:
   history:
     - operations には実績を書かず、実績は history に集約する
     - review には週次・月次レビューや弱点集約を置く
     - DELTA_META は進捗集計、遅れ検知、弱点抽出、次アクション生成に使う
+  l3:
+    - L3 は必ず問題番号ベースで記録する
+    - 各問題に ◎ / ○ / △ / × を付ける
+    - 復習優先度は × → △ → ○ → ◎ とする
+    - ◎ は正解かつ完全理解で再学習不要
+    - ○ は正解かつ理解しているが再学習の余地あり
+    - △ は正解だが理解不十分
+    - × は不正解または理解していない
+    - 健康保険法では Q5 / Q6 は存在しない
+    - 健康保険法 Q8 は演習対象なし扱い
+    - 1巡目では完璧主義にならず、全範囲を通す
+    - △・× は必ず後で回収できるように問題番号を残す
+    - ○ は余力があれば2巡目で確認する
+    - ◎ は原則スキップ可能
