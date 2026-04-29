@@ -44,6 +44,7 @@ active_operations に入らなかった上位候補を保持する。
 
 ### next に新規追加した task
 
+- `repo history / show / grep の docs・schema・runtime reflection を完了する`
 - `DELTA foundation を main に統合する準備をする`
 - `ATLAS 関係ファイルを systems/atlas に集約する設計を整理する`
 - `DELTA v0.6 operations を Todoist execution view へ投影する`
@@ -58,10 +59,34 @@ active_operations に入らなかった上位候補を保持する。
 - DELTA v0.6 Todoist projection は学習実行 visibility に効くが、会話中の新規候補のため active へ即横入りさせず next に置く
 - DELTA foundation はすでに運用段階にあるため、v0.6 Todoist projection より前に main integration 準備を優先候補として置く
 - ATLAS は Claude を primary executor とする特殊な verification subsystem として扱い、systems/atlas 集約は設計整理後に行う
+- repo history / show / grep は APPEND 復旧のために緊急実装したが、docs / configured Action / runtime-visible schema 反映が未完のため next で明示追跡する
 
 ---
 
 ## タスク
+
+- task: repo history / show / grep の docs・schema・runtime reflection を完了する
+  source_ref:
+    - notes/08_analysis/2026-04-30_issue_log_append_overwrite_regression_analysis.md
+    - docs/10_repo_resource_api.md
+    - config/ai/adam_schema.yaml
+    - api/repo-resource.js
+    - src/services/repo-resource/repo.js
+  why_now:
+    - APPEND 事故の復旧で repo history / show / grep を緊急実装し actual behavior も確認した
+    - ただし docs と configured Action / runtime-visible schema が未反映のため、repo schema / configured Action / runtime / actual behavior がズレている
+    - 今後の regression analysis と正本復旧に関わる基盤機能なので、未追跡のまま放置しない
+  completed_condition:
+    - `docs/10_repo_resource_api.md` に repo history / show / compare / search / grep の仕様を反映する
+    - `config/ai/adam_schema.yaml` の repoResourceGet に repo actions が反映済みであることを確認する
+    - configured Action schema に反映する
+    - runtime-visible schema に repo / history / show / compare / grep が見えることを確認する
+    - actual behavior として `history` / `show` / `grep` を再確認する
+    - `repo/search` は GitHub code search の false negative があり得るため、復旧調査では `repo/grep` を優先するルールを明記する
+  notes:
+    - active 化は次回 reroll で判断する
+    - docs 更新時は docs update proposal guard に従い、対象 docs 全文を code block で提示する
+    - runtime-visible schema と actual behavior を混同しない
 
 - task: DELTA foundation を main に統合する準備をする
   source_ref:
