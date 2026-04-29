@@ -179,8 +179,11 @@ Immediate Gate は7日枠に数えない。
 ## Day0（04/29 水）
 
 - task: docs/05 Phase 0 hardening reflection の本体反映可否を判断する
+  status: complete
+  completed: true
   source_ref:
     - docs/05_roadmap.md
+    - docs/11_doc_style.md
     - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
   rolling_day: Day0
   due_date: 2026-04-29
@@ -193,8 +196,12 @@ Immediate Gate は7日枠に数えない。
     - 反映する場合の対象 section と最小差分を固定する
     - 反映しない場合は理由と再評価地点を残す
   notes:
-    - Immediate Gate `ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する` が未完了なら実行しない
-    - 反映する場合は Write Gate を出して docs/05 の最小差分更新に進む
+    - 判断結果は docs/05 へ反映する
+    - 反映内容は roadmap 詳細拡張ではなく、Phase 0 の foundation 性、軽い準備ではないこと、完了判定が運用可能な common operating model にあることの最小補強とする
+    - 固定した反映対象は `## 目的`、`### Phase 0: Common Operating Model Foundation` の目的 / 位置づけ / 完了イメージ、`## 現在地`
+    - docs/05 の全体構造は維持し、Phase 1 以降や外部サービス詳細は書き換えない
+    - issue routing / intake routing / daily review / DELTA 実装詳細 / active_operations の具体 Day 配置は docs/05 に入れない
+    - docs 本体更新は本 tool の直接 write 対象外のため、この task では反映可否判断と最小差分固定までを完了とする
   external:
     todoist_task_id: 6gVjc5vF39959h3q
 
