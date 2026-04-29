@@ -25,13 +25,18 @@ import {
   updateCode,
 } from '../src/services/repo-resource/code.js';
 
+import { createBranch } from '../src/services/repo-resource/repo.js';
+
 import {
   treeDelta,
   readDelta,
   bulkReadDelta,
 } from '../src/services/delta-resource.js';
 
-import { createBranch } from '../src/services/repo-resource/repo.js';
+import {
+  createDeltaHistory,
+  updateDeltaHistory,
+} from '../src/services/delta-history.js';
 
 import {
   createError,
@@ -133,37 +138,6 @@ function requireContent(value, context) {
   return value;
 }
 
-function validateReadLikeGet(resource, action, query) {
-  if (!['tree', 'read', 'bulk'].includes(action)) {
-    throw createError({
-      status: 400,
-      code: 'ACTION_NOT_SUPPORTED',
-      message: 'action not supported',
-      category: 'routing',
-      step: 'validateGet',
-      resource,
-      action,
-      retryable: false,
-    });
-  }
-
-  if (action === 'read') {
-    requireFile(query.file, {
-      step: 'validateGet',
-      resource,
-      action,
-    });
-  }
-
-  if (action === 'bulk') {
-    parseFilesParam(query.files, {
-      step: 'validateGet',
-      resource,
-      action,
-    });
-  }
-}
-
 function validateGet(resource, action, query) {
   normalizeBranch(query.branch, {
     step: 'validateGet',
@@ -205,7 +179,35 @@ function validateGet(resource, action, query) {
   }
 
   if (resource === 'notes' || resource === 'code' || resource === 'delta') {
-    validateReadLikeGet(resource, action, query);
+    if (!['tree', 'read', 'bulk'].includes(action)) {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validateGet',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    if (action === 'read') {
+      requireFile(query.file, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+    }
+
+    if (action === 'bulk') {
+      parseFilesParam(query.files, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+    }
+
     return;
   }
 
@@ -299,6 +301,35 @@ function validatePost(resource, action, body) {
   }
 
   if (resource === 'code') {
+    if (!['create', 'update'].includes(action)) {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validatePost',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    requireFile(body?.file, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    requireContent(body?.content, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    return;
+  }
+
+  if (resource === 'delta_history') {
     if (!['create', 'update'].includes(action)) {
       throw createError({
         status: 400,
@@ -531,6 +562,22 @@ async function dispatchPost(resource, action, body) {
 
     if (action === 'update') {
       return updateCode(file, content, message, sha, options);
+    }
+  }
+
+  if (resource === 'delta_history') {
+    const content = requireContent(body?.content, {
+      step: 'dispatchPost',
+      resource,
+      action,
+    });
+
+    if (action === 'create') {
+      return createDeltaHistory(file, content, message, options);
+    }
+
+    if (action === 'update') {
+      return updateDeltaHistory(file, content, message, sha, options);
     }
   }
 
