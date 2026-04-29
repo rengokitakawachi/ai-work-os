@@ -101,6 +101,28 @@ export function validateRepoReadPath(file, context = {}) {
   return safe;
 }
 
+function normalizeSearchPath(path, context = {}) {
+  const raw = ensureString(path);
+
+  if (!raw) {
+    return '';
+  }
+
+  if (raw.endsWith('/')) {
+    const safe = assertSafeRelativePath(raw.slice(0, -1) || '.', {
+      step: context.step || 'normalizeSearchPath',
+      resource: 'repo',
+      action: context.action || 'search',
+    });
+    return `${safe}/`;
+  }
+
+  return validateRepoReadPath(raw, {
+    step: context.step || 'normalizeSearchPath',
+    action: context.action || 'search',
+  });
+}
+
 export function validateBranchCreateInput(branchValue, fromBranchValue = 'main') {
   const branch = normalizeBranch(branchValue, {
     step: 'createBranch',
@@ -187,6 +209,67 @@ export function validateBranchCreateInput(branchValue, fromBranchValue = 'main')
   return {
     branch,
     fromBranch,
+  };
+}
+
+export async function searchRepoText(queryValue, options = {}) {
+  const query = ensureString(queryValue);
+
+  if (!query) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'query required',
+      category: 'validation',
+      step: 'searchRepoText',
+      resource: 'repo',
+      action: 'search',
+      retryable: false,
+      details: {
+        field: 'query',
+      },
+    });
+  }
+
+  const path = normalizeSearchPath(options.path || options.file || '', {
+    step: 'searchRepoText',
+    action: 'search',
+  });
+
+  const perPage = ensurePositiveLimit(options.per_page, 20, 100);
+  const { owner, repo } = getConfig({
+    step: 'searchRepoText',
+    resource: 'repo',
+    action: 'search',
+  });
+
+  const qualifiers = [`repo:${owner}/${repo}`];
+  if (path) {
+    qualifiers.push(`path:${path}`);
+  }
+
+  const q = `${JSON.stringify(query)} ${qualifiers.join(' ')}`;
+  const data = await githubRequest(
+    `/search/code${buildQuery({ q, per_page: perPage })}`
+  );
+
+  const items = Array.isArray(data?.items) ? data.items : [];
+
+  return {
+    resource: 'repo',
+    action: 'search',
+    query,
+    path: path || undefined,
+    total_count: data?.total_count || 0,
+    incomplete_results: Boolean(data?.incomplete_results),
+    count: items.length,
+    items: items.map((item) => ({
+      name: item.name,
+      path: item.path,
+      sha: item.sha,
+      html_url: item.html_url,
+      repository: item.repository?.full_name || '',
+    })),
   };
 }
 
