@@ -30,6 +30,7 @@ import {
   getFileHistory,
   showFileAtRef,
   compareRefs,
+  searchRepoText,
 } from '../src/services/repo-resource/repo.js';
 
 import {
@@ -241,7 +242,7 @@ function validateGet(resource, action, query) {
   }
 
   if (resource === 'repo') {
-    if (!['history', 'show', 'compare', 'diff'].includes(action)) {
+    if (!['history', 'show', 'compare', 'diff', 'search'].includes(action)) {
       throw createError({
         status: 400,
         code: 'ACTION_NOT_SUPPORTED',
@@ -252,6 +253,15 @@ function validateGet(resource, action, query) {
         action,
         retryable: false,
       });
+    }
+
+    if (action === 'search') {
+      requireParam(query.query, 'query', {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      return;
     }
 
     if (action === 'history') {
@@ -506,6 +516,7 @@ async function dispatchGet(resource, action, query) {
     ref: ensureString(query.ref),
     per_page: ensureString(query.per_page),
     file: ensureString(query.file),
+    path: ensureString(query.path),
   };
 
   if (resource === 'docs') {
@@ -621,6 +632,17 @@ async function dispatchGet(resource, action, query) {
   }
 
   if (resource === 'repo') {
+    if (action === 'search') {
+      return searchRepoText(
+        requireParam(query.query, 'query', {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+
     if (action === 'history') {
       return getFileHistory(
         requireFile(query.file, {
