@@ -28,6 +28,8 @@ Immediate Gate は7日枠に数えない。
     - repo instruction / knowledge は更新済み
     - repo schema / repo instruction 更新済みと runtime 反映済みを混同しない
     - 反映する Always-On Rule: `operations rolling / daily review では Day capacity を必ず確認し、task はおおむね 0.5〜1.5h、1 day はおおむね 2h として、明示理由なしに軽すぎる Day を作らない`
+  external:
+    todoist_task_id: 6gVgm3VxCq82hr2q
 
 - task: DELTA v0.2 read-only Action runtime behavior confirmation
   type: runtime_reflection_gate
@@ -85,6 +87,8 @@ Immediate Gate は7日枠に数えない。
     - ルール / 禁止事項 / Action 利用ルールは DELTA GPT Instructions 側へ寄せる
     - Knowledge は roadmap / plan / operations / history template / 教材 index / フォーサイト教材を中心にする
     - フォーサイト教材は著作物の可能性が高いため、個人学習用・非公開 GPT Knowledge 前提で扱う
+  external:
+    todoist_task_id: 6gVgm3VQP8GFPwQH
 
 - task: DELTA v0.3 history write を repo-resource 統合方式で実装する
   source_ref:
@@ -209,7 +213,7 @@ Immediate Gate は7日枠に数えない。
   notes:
     - 失敗時は v0.4 を disabled に戻す
   external:
-    todoist_task_id: 6gVXWw74rqV7H
+    todoist_task_id: 6gVXWw74rqV7H8qH
 
 ## Day5（05/04 月）
 
