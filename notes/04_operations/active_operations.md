@@ -326,8 +326,11 @@ Immediate Gate は7日枠に数えない。
 ## Day6（05/05 火）
 
 - task: docs/05_roadmap.md への Phase 0 位置づけ反映案を作る
+  status: complete
+  completed: true
   source_ref:
     - notes/02_design/2026-04-25_phase0_positioning_in_roadmap.md
+    - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - docs/05_roadmap.md
   rolling_day: Day6
@@ -341,7 +344,12 @@ Immediate Gate は7日枠に数えない。
     - Phase 0 positioning の反映差分案を notes/design として作る
     - docs 直更新は人間判断に回す
   notes:
-    - docs/10 branch create reflection や delta 前環境整備の docs 反映案と混線させない
+    - docs/05 と関連 source を再取得した
+    - docs/05 の Phase 0 は大筋で正しいため、新しい phase は追加しない判断にした
+    - `notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md` を作成し保存確認済み
+    - roadmap 反映案は Phase 0 の foundation 性と観測ベース完了判定を最小差分で補強する内容に限定した
+    - routing 細部 / DELTA 実装詳細 / active Day 配置は roadmap に入れない判断とした
+    - docs 直更新はまだ行っていない
   external:
     todoist_task_id: 6gVXWw9XGv6MJvfH
 
