@@ -52,6 +52,8 @@
 ## Handover Trigger Guard
 
 - `新スレ` / `次スレ` / `移行` / `引き継ぎ` / `引き継ぎ書` / `handover` / `restart` / `再開用` は handover procedure request として扱う
+- handover 作成前に必ず `notes/06_handover/handover_template.md` を読む
+- handover template を未読のまま handover を作成しない
 - handover は restart entry point であり、execution source of truth ではない
 - handover には execution SSOT ではないこと、execution SSOT が `notes/04_operations/active_operations.md` であること、first read list、current focus、expected resume task、guardrails を必ず含める
 - handover から直接実行しない。再開時は必ず `active_operations` を read して next action を確認する
