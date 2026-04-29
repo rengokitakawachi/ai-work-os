@@ -67,6 +67,58 @@ runtime behavior confirmation: this handover creation is the confirmation candid
 
 ---
 
+## This thread actions
+
+このスレッドで実施した主な内容は以下。
+
+### Phase 0 hardening への戻し
+
+```text
+- Phase 1 Outlook 実装へ進む前に、Phase 0 hardening を優先する判断を行った
+- docs/05 roadmap reflection draft を作成済みであることを確認した
+- Phase 0 hardening 用に active_operations を reroll した
+- Phase 1 Outlook Calendar API 読取設計は next_operations に残した
+```
+
+### DELTA v0.5 history write recovery
+
+```text
+- DELTA v0.4 では history write が runtime 上使えないように見える問題を確認した
+- server code では delta_history create / update が残っていることを確認した
+- 原因は v0.4 schema の operationId / description が operations write に寄りすぎていたことと判断した
+- systems/delta/config/delta_action_schema_v0.5.yaml を作成した
+- DELTA GPT Actions に v0.5 schema を反映した後、runtime test を実施した
+- deltaWrite が runtime-visible であることを確認した
+- resource=delta_history の controlled history update が成功した
+- invalid history path / invalid extension / unsupported operations create が拒否された
+- read-back で history 追記を確認した
+- DELTA v0.5 history write recovery gate を complete に更新した
+- Todoist task 6gVjpcRR45RcpQqH を close した
+```
+
+### ADAM handover trigger correction
+
+```text
+- handover trigger 欠落が同種ミス2回目であることを確認した
+- 原因は、新スレ / 引き継ぎ書を handover procedure request として扱う trigger が runtime instruction 上弱かったことと判断した
+- config/ai/adam_instruction.md に Handover Trigger Guard を追加した
+- config/ai/adam_knowledge.md の Handover Procedure を強化した
+- active_operations に Immediate Gate `ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する` を追加した
+- ユーザーが ADAM GPT editor へ instruction / knowledge を反映した
+- 現スレッドで handover を作成し、repo に保存した
+```
+
+### Handover write correction
+
+```text
+- 最初は handover をチャット上に出力しただけで repo に保存しなかった
+- ユーザー指摘により、修正後ルールでは handover を notes/06_handover に作成すべきだったと判断した
+- notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md を作成した
+- 保存確認済み
+```
+
+---
+
 ## Recently completed
 
 完了済み。
@@ -79,6 +131,7 @@ runtime behavior confirmation: this handover creation is the confirmation candid
 - Phase 0 roadmap reflection draft completed
 - Phase 0 hardening 用 operations rolling completed
 - ADAM handover trigger rule repo update completed
+- Handover file saved to notes/06_handover
 ```
 
 重要な作成・更新済みファイル。
@@ -87,6 +140,7 @@ runtime behavior confirmation: this handover creation is the confirmation candid
 systems/delta/config/delta_action_schema_v0.5.yaml
 notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
 notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
+notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md
 config/ai/adam_instruction.md
 config/ai/adam_knowledge.md
 ```
