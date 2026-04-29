@@ -63,6 +63,8 @@ Immediate Gate は7日枠に数えない。
 ## Day0（04/29 水）
 
 - task: DELTA Knowledge refresh gate を実行する
+  status: complete
+  completed: true
   source_ref:
     - systems/delta/config/delta_instruction.md
     - systems/delta/config/delta_schema.yaml
@@ -70,6 +72,7 @@ Immediate Gate は7日枠に数えない。
     - systems/delta/plan/2026_sharoushi_exam_plan.md
     - systems/delta/operations/active_operations.md
     - systems/delta/history/templates/daily_log_template.md
+    - DELTA runtime knowledge confirmation 2026-04-29
   rolling_day: Day0
   due_date: 2026-04-29
   due_type: date
@@ -85,8 +88,10 @@ Immediate Gate は7日枠に数えない。
     - フォーサイト教材の追加分類方針を決める
     - v0.3 runtime reflection を妨げる古い参照前提がない状態にする
   notes:
-    - ルール / 禁止事項 / Action 利用ルールは DELTA GPT Instructions 側へ寄せる
-    - Knowledge は roadmap / plan / operations / history template / 教材 index / フォーサイト教材を中心にする
+    - DELTA GPT Knowledge はフォーサイト教材 PDF 20件を参照できている
+    - roadmap / plan / operations / history は Knowledge ではなく repo Action で読む前提を runtime が回答できた
+    - L3 評価は正答数ではなく理解度主軸であることを runtime が回答できた
+    - `delta_instruction.md` と `delta_action_schema_v0.2.yaml` の repo 反映元も更新済み
     - フォーサイト教材は著作物の可能性が高いため、個人学習用・非公開 GPT Knowledge 前提で扱う
   external:
     todoist_task_id: 6gVgm3VQP8GFPwQH
@@ -128,7 +133,6 @@ Immediate Gate は7日枠に数えない。
   due_date: 2026-04-30
   due_type: date
   blocked_by:
-    - DELTA Knowledge refresh gate を実行する
     - DELTA v0.3 history write を repo-resource 統合方式で実装する
   why_now:
     - repo schema / code 保存だけでは runtime-visible schema / actual behavior confirmed にならない
