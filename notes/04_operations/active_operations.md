@@ -19,6 +19,7 @@ Immediate Gate は7日枠に数えない。
     - runtime test 2026-04-29 DELTA relative bulk OK
     - runtime test 2026-04-29 DELTA systems/delta-prefixed bulk INVALID_REQUEST
     - runtime test 2026-04-29 DELTA systems/delta-prefixed bulk OK
+    - DELTA GPT runtime-visible bulk confirmation 2026-04-29 feature/atlas-pre-delta-foundation
   blocks:
     - DELTA tree result から read / bulk へ直接つなぐ調査効率
     - DELTA 学習系 config / history / operations の横断読取効率
@@ -40,6 +41,8 @@ Immediate Gate は7日枠に数えない。
     - 修正済み sha: 46a073e048daef6482efc8174e2eb7b666930915
     - runtime 反映後、`resource=delta` / `files=systems/delta/config/delta_action_schema_v0.2.yaml\nsystems/delta/config/delta_action_schema_v0.3.yaml` の bulk 成功を確認した
     - runtime 反映後、relative path 形式の DELTA bulk 継続成功を確認した
+    - DELTA GPT runtime-visible で `branch=feature/atlas-pre-delta-foundation` / `files=roadmap/delta_roadmap.md, plan/2026_sharoushi_exam_plan.md, operations/active_operations.md, history/2026-04.md` の bulk 成功を確認した
+    - DELTA GPT runtime-visible で top-level `ok:true`、各 file `ok:true`、path / sha / content / resource / root / read_only / status / fetched_at の取得を確認した
     - runtime behavior confirmed
   external:
     todoist_task_id: 6gVmhXg49pwX3HGH
