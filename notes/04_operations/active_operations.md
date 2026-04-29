@@ -42,6 +42,8 @@ Immediate Gate は7日枠に数えない。
     - 修正済み sha: 250d082838609e1487780e1a2a659801a279d656
     - Vercel / runtime 反映後に再確認する
     - 完了までは Day0 へ進まず、この gate を先に閉じる
+  external:
+    todoist_task_id: 6gVmfg7P753HX6JH
 
 - task: DELTA v0.5 write schema で history write を復旧する
   type: runtime_reflection_gate
