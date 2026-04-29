@@ -71,33 +71,41 @@ models:
       - result
       - comprehension
       - weak_points
+      - answer_score
+      - answer_notes
+      - evaluation_basis
       - review_marks
       - next_review_targets
+    l3_evaluation_policy:
+      ssot: understanding
+      answer_score_role: supplemental
+      answer_correctness_role: supplemental
+      rule: 評価記号は正答数から自動決定しない
     l3_review_marks:
       double_circle:
         mark: ◎
-        meaning: 正解し、完全に理解しているので再学習不要
+        meaning: 正解し、完全に理解している。再学習不要
         review_policy: 原則スキップ可能
         fields:
           - count
           - questions
       circle:
         mark: ○
-        meaning: 正解し、理解しているが、再学習の余地はある
+        meaning: 正解し、理解しているが、再学習の余地あり
         review_policy: 2巡目以降で確認対象
         fields:
           - count
           - questions
       triangle:
         mark: △
-        meaning: 正解だが、理解が不十分なので再度学習
+        meaning: 正解・不正解を問わず、理解が不十分。再度学習
         review_policy: 次優先で回収
         fields:
           - count
           - questions
       cross:
         mark: ×
-        meaning: 不正解、理解していない
+        meaning: 正解・不正解を問わず、理解していない、または根拠が崩れている
         review_policy: 最優先で回収
         fields:
           - count
@@ -133,6 +141,8 @@ models:
         - slight_delay
         - delay
         - overdone
+      evaluation_basis:
+        - understanding
       l3_review_priority:
         - cross
         - triangle
@@ -145,12 +155,14 @@ rules:
     - DELTA_META は進捗集計、遅れ検知、弱点抽出、次アクション生成に使う
   l3:
     - L3 は必ず問題番号ベースで記録する
-    - 各問題に ◎ / ○ / △ / × を付ける
+    - 各問題に理解度主軸で ◎ / ○ / △ / × を付ける
+    - 正答数・正誤は補助情報として記録する
+    - 評価記号は正答数から自動決定しない
     - 復習優先度は × → △ → ○ → ◎ とする
     - ◎ は正解かつ完全理解で再学習不要
     - ○ は正解かつ理解しているが再学習の余地あり
-    - △ は正解だが理解不十分
-    - × は不正解または理解していない
+    - △ は正解・不正解を問わず、理解が不十分
+    - × は正解・不正解を問わず、理解していない、または根拠が崩れている
     - 健康保険法では Q5 / Q6 は存在しない
     - 健康保険法 Q8 は演習対象なし扱い
     - 1巡目では完璧主義にならず、全範囲を通す
