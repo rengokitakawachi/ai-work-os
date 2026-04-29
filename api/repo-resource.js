@@ -28,6 +28,17 @@ import {
 import { createBranch } from '../src/services/repo-resource/repo.js';
 
 import {
+  treeDelta,
+  readDelta,
+  bulkReadDelta,
+} from '../src/services/delta-resource.js';
+
+import {
+  createDeltaHistory,
+  updateDeltaHistory,
+} from '../src/services/delta-history.js';
+
+import {
   createError,
   normalizeBranch,
 } from '../src/services/repo-resource/common.js';
@@ -167,11 +178,8 @@ function validateGet(resource, action, query) {
     return;
   }
 
-  if (resource === 'notes' || resource === 'code') {
-    if (
-      (resource === 'notes' && !['tree', 'read', 'bulk'].includes(action)) ||
-      (resource === 'code' && !['tree', 'read', 'bulk'].includes(action))
-    ) {
+  if (resource === 'notes' || resource === 'code' || resource === 'delta') {
+    if (!['tree', 'read', 'bulk'].includes(action)) {
       throw createError({
         status: 400,
         code: 'ACTION_NOT_SUPPORTED',
@@ -321,6 +329,35 @@ function validatePost(resource, action, body) {
     return;
   }
 
+  if (resource === 'delta_history') {
+    if (!['create', 'update'].includes(action)) {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validatePost',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    requireFile(body?.file, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    requireContent(body?.content, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    return;
+  }
+
   throw createError({
     status: 400,
     code: 'RESOURCE_NOT_SUPPORTED',
@@ -422,6 +459,34 @@ async function dispatchGet(resource, action, query) {
     }
   }
 
+  if (resource === 'delta') {
+    if (action === 'tree') {
+      return treeDelta(options);
+    }
+
+    if (action === 'read') {
+      return readDelta(
+        requireFile(query.file, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+
+    if (action === 'bulk') {
+      return bulkReadDelta(
+        parseFilesParam(query.files, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+  }
+
   throw createError({
     status: 400,
     code: 'ACTION_NOT_SUPPORTED',
@@ -497,6 +562,22 @@ async function dispatchPost(resource, action, body) {
 
     if (action === 'update') {
       return updateCode(file, content, message, sha, options);
+    }
+  }
+
+  if (resource === 'delta_history') {
+    const content = requireContent(body?.content, {
+      step: 'dispatchPost',
+      resource,
+      action,
+    });
+
+    if (action === 'create') {
+      return createDeltaHistory(file, content, message, options);
+    }
+
+    if (action === 'update') {
+      return updateDeltaHistory(file, content, message, sha, options);
     }
   }
 
