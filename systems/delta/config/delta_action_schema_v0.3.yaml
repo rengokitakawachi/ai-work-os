@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: DELTA History Write API
   version: "0.3.0"
-  description: Read DELTA resources and create/update DELTA history markdown files under systems/delta/history/ via /api/repo-resource.
+  description: Read DELTA files and write DELTA history markdown files via /api/repo-resource.
 
 servers:
   - url: https://ai-work-os.vercel.app
@@ -142,10 +142,7 @@ paths:
     get:
       operationId: deltaResourceGet
       summary: Read DELTA resources only
-      description: |
-        Read-only access to files under systems/delta/ using the shared repo-resource endpoint.
-        Always set resource=delta.
-        The file and files parameters must be relative to systems/delta/.
+      description: Read files under systems/delta/. Use resource=delta and relative paths only.
       security:
         - bearerAuth: []
       parameters:
@@ -211,12 +208,7 @@ paths:
     post:
       operationId: deltaHistoryWrite
       summary: Create or update DELTA history markdown files only
-      description: |
-        Create or update markdown files under systems/delta/history/ only.
-        Always set resource=delta_history.
-        Allowed actions are create and update.
-        The file parameter must be relative to systems/delta/history/ and must end with .md.
-        Operations writes, deletes, and arbitrary systems/delta writes are intentionally not exposed in v0.3.
+      description: Write only .md files under systems/delta/history/. Use resource=delta_history and action=create or update.
       security:
         - bearerAuth: []
       parameters:
