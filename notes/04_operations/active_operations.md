@@ -22,36 +22,9 @@ Immediate Gate は7日枠に数えない。
   blocks:
     - DELTA daily history logging
     - DELTA 学習実績の repo 永続化
-  completed_condition:
-    - v0.4 schema で history write が runtime 上使えない原因を確認する
-    - server code が `delta_history` create / update を保持していることを確認する
-    - `systems/delta/config/delta_action_schema_v0.5.yaml` を作成する
-    - DELTA GPT Actions に v0.5 schema を設定する
-    - Bearer API Key 認証が保存されていることを確認する
-    - 新しい DELTA runtime で `deltaWrite` が runtime-visible であることを確認する
-    - `resource=delta_history` / `action=update` / `file=2026-04.md` の controlled update を実行する
-    - `deltaResourceGet` で read-back し、history 追記が確認できる
-    - operations write scope が `systems/delta/operations/active_operations.md` only のまま維持されていることを確認する
-  why_now:
-    - DELTA は daily history へ実績を書けなければ学習ログが閉じない
-    - history write は v0.3 で confirmed 済みの必須機能であり、v0.4 schema により runtime 上退行した可能性が高い
-    - server code は残っているため、schema 表現の復旧で解決できる可能性が高い
   notes:
-    - server code は `delta_history` create / update を保持していた
-    - v0.4 schema は operationId / description が operations 専用に見えるため、DELTA runtime が history write を避けたと判断するのは妥当
-    - v0.5 schema は `operationId: deltaWrite` として history / operations の両方を明示した
-    - DELTA GPT Actions に v0.5 schema を設定した
-    - `deltaWrite` が runtime-visible であることを確認した
-    - read existing history は成功した
-    - invalid history path write は `INVALID_REQUEST` で拒否された
-    - invalid history extension write は `INVALID_REQUEST` で拒否された
-    - unsupported operations create は `ACTION_NOT_SUPPORTED` で拒否された
-    - controlled history update は `systems/delta/history/2026-04.md` に限定して成功した
-    - read-back で `<!-- DELTA v0.5 runtime history write test: ok -->` を確認した
-    - previous history sha: deb5c2844c4667eb1cd66a66a009b136f9fe744d
-    - returned history sha: 81b8ee27d2136eaba5a07bb568dd200cbb7d05cd
-    - returned resource: delta_history
-    - returned write_scope: systems/delta/history/*.md
+    - DELTA v0.5 runtime behavior confirmed
+    - controlled history update succeeded
     - operations update は実行していない
     - delete は実行していない
   external:
@@ -59,28 +32,34 @@ Immediate Gate は7日枠に数えない。
 
 - task: ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する
   type: manual_runtime_reflection_gate
-  status: repo_updated
+  status: editor_reflected_runtime_test_pending
   completed: false
   source_ref:
     - config/ai/adam_instruction.md
     - config/ai/adam_knowledge.md
+    - notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md
   blocks:
     - handover / 新スレ移行時の正本誤認防止
     - Phase 0 hardening 中の restart safety
   completed_condition:
     - ADAM instruction repo へ Handover Trigger Guard を反映する
     - ADAM knowledge repo の Handover Procedure に trigger / content contract / forbidden を反映する
+    - ADAM knowledge repo の Handover Procedure に Quality checklist を反映する
     - ADAM GPT editor の Instructions に最新版 `adam_instruction.md` を反映する
     - ADAM GPT editor の Knowledge に最新版 `adam_knowledge.md` を反映する
     - 新しい ADAM runtime で `新スレ` / `引き継ぎ書` が handover procedure trigger として扱われることを確認する
     - 出力に `handover は restart entry point であり execution source of truth ではない`、`Execution SSOT: notes/04_operations/active_operations.md`、first read list、guardrails が含まれることを確認する
+    - 高品質 handover として current state snapshot / this thread actions / risks / source references が含まれることを確認する
   why_now:
     - 同種の handover trigger 欠落が2回発生した
     - handover は stale snapshot を正本化し得るため、Phase 0 hardening より前に修正すべき runtime safety gate である
     - repo 更新だけでは runtime behavior confirmed にならない
   notes:
-    - repo instruction / knowledge は更新済み
-    - runtime reflection は未実施
+    - repo instruction は更新済み
+    - repo knowledge は Handover Trigger / Content contract / Forbidden / Quality checklist まで更新済み
+    - ユーザーが ADAM GPT editor へ instruction / knowledge を反映済み
+    - `notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md` は作成・補完・保存確認済み
+    - runtime behavior confirmation は未完了。新しい ADAM chat で確認が必要
   external:
     todoist_task_id: 6gVjjP88XJg63pRH
 
@@ -109,8 +88,6 @@ Immediate Gate は7日枠に数えない。
     - api/repo-resource.js
     - src/services/delta-resource.js
     - DELTA GPT Actions runtime test result 2026-04-28
-  blocks:
-    - DELTA v0.3 history write を repo-resource 統合方式で実装する
   notes:
     - runtime test で tree / read / bulk がすべて成功した
     - `branch=feature/atlas-pre-delta-foundation` と `read_only: true` を確認した
