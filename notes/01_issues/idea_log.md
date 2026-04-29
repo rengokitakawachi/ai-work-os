@@ -1,129 +1,25 @@
 <<APPEND>>
 
-### 20260418-022
-- title: legacy な Todoist service wrapper を deprecated 化して段階的に廃止する必要がある
-- category: architecture
-- description: `src/services/todoist.js` と `src/services/todoist/client.js` が並行して存在しており、責務が近い重複実装になっている。`client.js` 側は create / update / delete / list、error normalization、context 付き error を備えており、tasks service / projection 側もこちらを参照している。一方 `todoist.js` は旧来の簡易 wrapper で、create/list のみ、error も素朴で、現在の tasks 系設計と整合しにくい。したがって `client.js` を正本とし、`todoist.js` は参照箇所確認 → deprecated 化 → 参照移行 → テスト確認 → 削除、の順で段階的に廃止する必要がある。
-- context: 2026-04-18 の会話で legacy code 廃止の是非を確認する中で、`src/services/todoist.js` と `src/services/todoist/client.js` の並行実装を比較した。`client.js` は `src/services/tasks/service.js` と `src/services/tasks/projection.js` から参照されており、より新しい責務境界に沿っている。一方、`src/services/internal-auth.js` と `src/lib/auth.js` は重複に見えるが、前者は `api/repo-resource.js` で現役利用されているため、同列に legacy と断定するのは早い。まずは Todoist wrapper 側を対象に限定するのが自然である。
-- impact: medium
-- status: open
-- created_at: 2026-04-18
-
-### 20260419-023
-- title: operations 提案時に 1日タスク容量ルールを外して Day が軽すぎる構成を出さないようにする必要がある
-- category: operations
-- description: 会話中に active_operations の再編案を出した際、`issue routing の完成条件を plan / operations に反映する` のような短時間で終わる task を Day0 の単独または主構成に近い形で置いてしまい、`task は 0.5〜1.5h 程度、1日は約2h の task` という既存運用ルールに対して軽すぎる Day 構成を提案してしまった。task 自体は残してよいが、それだけでは Day 容量が不足するため、operations 提案時には各 Day が軽すぎないかを明示的に確認する必要がある。
-- context: 2026-04-19 の会話で、issue routing 完成を最優先に再構成する中、Day0 に軽い方針固定 task を単独で置く提案をした。ユーザーから「タスクは0.5〜1.5hくらいの粒度、1日は2hくらいのタスクという原則を忘れてないか」と指摘があり、Day 構成の容量チェックが抜けていたことが判明した。その後、軽い task を残しつつ次 task を追加する形へ修正した。
-- impact: medium
-- status: open
-- created_at: 2026-04-19
-
-### 20260420-024
-- title: routing と document writing を分離し action plan で引き渡す構造へ改める必要がある
-- category: architecture
-- description: 現在の routing 論点では、情報の再評価、分解 / 統合、送付先判定、後処理、さらに design / plan / operations などの実ドキュメント作成までを一連で考えがちになっている。しかしこのままでは routing の責務が重すぎる。routing は再評価・分解統合・送付先判定・action plan 生成までに留め、実際の document writing / placement は後段 usecase に分離した方がよい。routing と document writing の間は、完成済み文書ではなく `decision + action plan + normalized payload` を受け渡す構造に改める必要がある。
-- context: 2026-04-20 の会話で、routing に再評価、分解 / 統合、design / plan / operations への振り分け、さらに実ドキュメント作成まで一気に背負わせると負荷が重すぎるのではないかという論点が出た。議論の結果、少なくとも document writing は分離すべきであり、routing と writer の間は action plan で引き渡すのが自然という整理になった。
-- impact: high
-- status: open
-- created_at: 2026-04-20
-
-### 20260421-025
-- title: category が弱い medium impact issue を keep レイヤーに残せるかを観測する必要がある
-- category: general
-- description: issue routing の第二バッチで、category が architecture / operations ではない medium impact issue が `route_to: issue` に残るかを確認したい。keep は廃止対象ではなく、弱い issue の保留レイヤーとして機能している必要がある。そのため、route 多様性を増やすだけでなく、keep がなお自然に残るケースを比較対象として用意する必要がある。
-- context: 第一バッチ補正後、architecture / operations は keep gate より先に判定する形へ変更した。これにより design / operations route は回復したが、keep が完全に消えると保留レイヤーとしての役割が失われる。第二バッチでは keep が残るべきケースも観測対象に含める必要がある。
-- impact: medium
-- urgency: medium
-- status: open
-- created_at: 2026-04-21
-
-### 20260421-026
-- title: open 以外の issue を future へ送る判定が運用上も自然か確認する必要がある
-- category: operations
-- description: issue routing の第二バッチで、status が open ではない issue が `route_to: future` へ送られるかを確認したい。future は「今やる対象ではないが保持すべき論点」の受け皿として自然に機能する必要があるため、keep との違いが実運用でも説明できる必要がある。
-- context: 現行 rules では `status !== open` の issue は future に送られる。第一バッチでは open issue しか扱っておらず、future route は未観測である。第二バッチでは blocked / pending / deferred のような非 open status を持つ issue を入れて、future 送付が自然に機能するか確認したい。
-- impact: medium
-- urgency: low
-- status: deferred
-- created_at: 2026-04-21
-
-### 20260421-027
-- title: 役目終了した issue を archive へ送る判定が keep / future と混線しないか確認する必要がある
-- category: operations
-- description: issue routing の第二バッチで、役目終了が明確な closed issue が `route_to: archive` へ送られるかを確認したい。archive は終了済み論点の明確な受け皿である必要があり、keep や future と混線しないことを観測したい。
-- context: 現行 rules では `status === closed` の issue は archive に送られるが、第一バッチでは closed issue を扱っていないため archive route は未観測である。第二バッチでは終了済みの比較用 issue を1件入れて、archive 判定が自然に機能するかを確認する必要がある。
-- impact: low
-- urgency: low
-- status: closed
-- created_at: 2026-04-21
-
-### 20260423-028
-- title: Todoist projection で due_date が create payload へ伝播せず新規 task が日付なしで作られる
-- category: execution
-- description: daily review 後の Todoist projection で、新規に create された active task に due が入らない事象が起きた。`notes/04_operations/active_operations.md` には `due_date` が存在し、repo 側の `src/services/tasks/projection.js` も `due_date` / `rollingDayDate` から Todoist `due_string` / `deadline_date` を組み立てる実装を持っている。しかし、実運用で使っている `projectTasks` の projection 入出力スキーマには `due_date` / `due_type` が存在せず、daily review で Action に渡した current_active_tasks へ due 情報が載らなかった。その結果、新規 create task だけが日付なしで作られる。
-- context: 2026-04-23 の会話で、daily review 後に ADAM 系の新規 Todoist task 3件へ due が入っていないことを確認した。既存継続 task には due が残っていたため、Todoist 側の一般不具合ではなく、新規 create 経路の伝播欠落と判断した。その後、3件には手動で due_date を補正した。根本的には `projectTasks` の task schema に `due_date` / `due_type` を追加し、projection create/update の payload へ伝播させる必要がある。
-- impact: medium
-- urgency: medium
-- status: open
-- created_at: 2026-04-23
-
-### 20260425-029
-- title: ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する必要がある
-- category: architecture
-- description: GPT-5.5 向けには、古い prompt stack をそのまま持ち越すのではなく、期待成果、成功条件、制約、利用可能な証拠、最終出力を中心に整理し、細かな手順や形式制約は procedure spec や Structured Outputs / API schema 側へ逃がす方がよい。現在の ADAM instruction は、SSOT、operations、review、write gate、routing、handover、再発防止などの重要ルールを保持している一方で、常時読む必要のある拘束ルール、状況依存の手順、背景知識、出力形式、API schema に任せるべき制約が同じ層に積まれている。これにより GPT-5.5 ではノイズ化、探索範囲の過度な制限、機械的な出力につながる可能性がある。
-- context: 2026-04-25 の会話で、ユーザーから「5.5向けに再調整した方がいい？」という確認があり、OpenAI の GPT-5.5 向け案内では古い prompt stack の全持ち越しではなく、期待成果・成功条件を明示し、細かな手順指示を減らし、必要なら Structured Outputs や API 側設定に逃がす方針が示されている、という前提が共有された。ADAM ではルール削除ではなく、`Core Instruction`、`Procedure Specs`、`Structured Outputs / API Schema` の3層へ再分解するのが安全という整理になった。
-- impact: high
-- urgency: medium
-- status: open
-- created_at: 2026-04-25
-
-### 20260425-030
-- title: repoResourceGet bulk の files パラメータが改行区切りを複数ファイルとして扱わず 1 パス扱いになる
-- category: api
-- description: 当初は改行区切り未対応に見えたが、再確認で newline separator 自体は成功していた。実害は、tree が返す `docs/...` / `notes/...` / `systems/delta/...` の resource-prefixed path を read / bulk にそのまま渡すと、resource root が二重付与または validation reject される path normalization gap だった。`src/services/repo-resource/common.js` と `src/services/delta-resource.js` を修正し、docs / notes / delta の tree path を read / bulk に直結できるようにした。
-- context: 2026-04-29 の確認で、relative path 形式の newline bulk は成功した。一方 `notes/...` / `docs/...` / `systems/delta/...` prefix 付き path は修正前に失敗した。修正後、ADAM runtime で docs / notes / delta の prefix 付き bulk と relative path bulk の両方が成功し、DELTA GPT runtime-visible でも `branch=feature/atlas-pre-delta-foundation` の `roadmap / plan / operations / history` bulk が成功した。
-- impact: medium
-- urgency: medium
-- status: closed
-- created_at: 2026-04-25
-- closed_at: 2026-04-29
-- resolution:
-  - `src/services/repo-resource/common.js` で docs / notes prefix を正規化
-  - `src/services/delta-resource.js` で `systems/delta/` prefix を正規化
-  - ADAM runtime で docs / notes / delta bulk 成功を確認
-  - DELTA GPT runtime-visible で delta bulk 成功を確認
-
-### 20260430-031
-- title: DELTA v0.6 で operations を Todoist execution view へ投影する
-- category: execution
-- description: DELTA の `systems/delta/operations/active_operations.md` は due_date / due_type / study_type / subject / material などを持つ学習実行順の正本であり、Todoist に projection できる形に近い。v0.6 では DELTA operations を Todoist execution view へ投影し、学習予定の見える化と日次実行性を上げる。ただし Todoist は正本ではなく view とし、DELTA operations を canonical として維持する。
-- context: 2026-04-30 の会話で、ユーザーから「deltaのoperationもtodoist に投影する機能をつけよう。v0.6で」と提案があった。DELTA roadmap / operations では Todoist projection は optional とされており、既存 ADAM projection service `src/services/tasks/projection.js` を profile 拡張すれば、新規 API route を増やさずに実装できる可能性がある。一方で、既存 projection は description ref が ADAM active_operations 固定であり、DELTA 固有 field と source root を分ける必要がある。
+### 20260430-033
+- title: DELTA foundation を main に統合する準備をする
+- category: release_management
+- description: DELTA は roadmap / plan / operations / history が存在し、read-only Action、history write、bulk read も runtime confirmation 済みで、すでに運用段階に入っている。現在は `feature/atlas-pre-delta-foundation` 上で運用されているが、これ以上 v0.6 Todoist projection などを積み増す前に、DELTA foundation を main へ統合する準備を進める必要がある。
+- context: 2026-04-30 の会話で、main 以外に future branch があり同時開発している場合の統合方針を確認した。branch は恒久的な別正本ではなく、main へ統合するための開発空間として扱うのが自然と整理した。そのうえで、DELTA はすでに運用段階に入っているため、近いうちに main へ入れた方がよいと判断した。v0.6 Todoist projection の前に foundation 統合準備を置く方が、main との乖離を抑えられる。
 - impact: high
 - urgency: medium
 - status: open
 - created_at: 2026-04-30
+- completed_condition:
+  - `feature/atlas-pre-delta-foundation` の DELTA 差分を棚卸しする
+  - main に入れるべき DELTA files と、branch に残す files を分ける
+  - `systems/delta/roadmap/delta_roadmap.md` / `plan` / `operations` / `history` / `config` の整合を確認する
+  - ADAM 側 `repoResource delta` resource と docs / code / config の整合を確認する
+  - runtime behavior confirmed 済み項目と未確認項目を列挙する
+  - main 統合後に DELTA GPT runtime で read / bulk / write behavior を再確認する
 - source_ref:
-  - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
-  - systems/delta/operations/active_operations.md
   - systems/delta/roadmap/delta_roadmap.md
-  - src/services/tasks/projection.js
-
-### 20260430-032
-- title: Studyplus API で学習記録の投稿・取得可否を確認する
-- category: external_integration
-- description: Studyplus には外部教材アプリ向け API / SDK が存在するが、公開情報から確認できる中心用途は外部教材アプリから Studyplus へ学習記録を投稿する方向である。DELTA で Studyplus を扱う場合、Studyplus から既存の勉強時間・勉強量を取得できるかは未確認であり、実装前に公式申請・承認条件・read API の有無を確認する必要がある。
-- context: 2026-04-30 の会話で、Studyplus に API 等でアクセスできるかを確認した。公式発表と SDK からは `postRecord` による duration / amount / comment の投稿可能性は確認できたが、既存 Studyplus 記録を一覧取得する API は確認できなかった。承認されても投稿だけで、取得はできない可能性があるため、DELTA canonical history の入力元としてはまだ扱わず、外部投稿先または将来連携候補として分離する。
-- impact: medium
-- urgency: low
-- status: open
-- created_at: 2026-04-30
-- confirmation_needed:
-  - Web backend から Studyplus API を使えるか
-  - 学習記録の投稿だけでなく取得 API があるか
-  - 取得できる場合、取得範囲は本人の記録だけか
-  - 教材別 / 日別 / 期間別の勉強時間を取得できるか
-  - 個人利用・自分用連携が許可されるか
-- source_ref:
-  - Studyplus API terms
-  - Studyplus Android SDK
-  - Studyplus API public announcement
+  - systems/delta/plan/2026_sharoushi_exam_plan.md
+  - systems/delta/operations/active_operations.md
+  - systems/delta/history/2026-04.md
+  - systems/delta/config/delta_action_schema_v0.5.yaml
+  - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
