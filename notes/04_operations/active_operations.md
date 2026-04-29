@@ -10,14 +10,15 @@ Immediate Gate は7日枠に数えない。
 
 - task: DELTA bulk/read で systems/delta prefixed path を正規化し runtime 確認する
   type: runtime_reflection_gate
-  status: repo_updated_runtime_pending
-  completed: false
+  status: complete
+  completed: true
   source_ref:
     - systems/delta/config/delta_action_schema_v0.2.yaml
     - systems/delta/config/delta_action_schema_v0.3.yaml
     - src/services/delta-resource.js
     - runtime test 2026-04-29 DELTA relative bulk OK
     - runtime test 2026-04-29 DELTA systems/delta-prefixed bulk INVALID_REQUEST
+    - runtime test 2026-04-29 DELTA systems/delta-prefixed bulk OK
   blocks:
     - DELTA tree result から read / bulk へ直接つなぐ調査効率
     - DELTA 学習系 config / history / operations の横断読取効率
@@ -34,10 +35,14 @@ Immediate Gate は7日枠に数えない。
     - 既存の DELTA v0.2 runtime confirmation は relative path bulk 成功の確認であり、tree path 直結の確認ではなかった
   notes:
     - ADAM 側 `resource=delta` / relative files bulk は成功した
-    - ADAM 側 `resource=delta` / `systems/delta/` prefix 付き bulk は `INVALID_REQUEST` だった
+    - ADAM 側 `resource=delta` / `systems/delta/` prefix 付き bulk は修正前 `INVALID_REQUEST` だった
     - `src/services/delta-resource.js` は repo 上で修正済み
     - 修正済み sha: 46a073e048daef6482efc8174e2eb7b666930915
-    - runtime 反映後に再確認する
+    - runtime 反映後、`resource=delta` / `files=systems/delta/config/delta_action_schema_v0.2.yaml\nsystems/delta/config/delta_action_schema_v0.3.yaml` の bulk 成功を確認した
+    - runtime 反映後、relative path 形式の DELTA bulk 継続成功を確認した
+    - runtime behavior confirmed
+  external:
+    todoist_task_id: 6gVmhXg49pwX3HGH
 
 - task: repoResource bulk/read で resource-prefixed docs/notes path を正規化し runtime 確認する
   type: runtime_reflection_gate
@@ -483,5 +488,5 @@ Immediate Gate は7日枠に数えない。
 - ADAM / EVE config は現行 `instruction + knowledge + schema` 構成を前提に整合する
 - main は Docs-aligned stable version として扱う
 - branch は Notes-driven development space として扱う
-- branch で開発し、main 統合時に docs / code / config / operations / version を一致させる
+- branch で開発し、main統合時に docs / code / config / operations / version を一致させる
 - 現 main に docs/code 不一致がある場合は、新規 branch 開発前に整合回復を優先する
