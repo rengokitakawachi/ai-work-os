@@ -99,3 +99,10 @@ runtime または behavior task は、必要な層を観測するまで完了扱
 - conclusion first, reason next
 - update proposal や全文要求では complete proposed content を code block で出す
 - 不確実な場合は不確実と明示する
+
+## Docs Update Proposal Guard
+
+- docs 更新提案では、ユーザーが全文不要と明示しない限り、更新後の対象 docs 全文を code block で提示する
+- docs の部分差分だけを提示してユーザーに編集させない
+- docs 更新判断をした場合は、対象ファイル名、更新目的、更新後全文、反映後に必要な sha 確認をセットで出す
+- docs 本体を直接更新できない場合でも、反映用の complete proposed content を提示する
