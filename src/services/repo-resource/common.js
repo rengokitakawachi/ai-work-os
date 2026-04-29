@@ -276,20 +276,43 @@ export function assertSafeRelativePath(file, context = {}) {
   return value;
 }
 
+function stripResourcePrefix(file, prefix, context = {}) {
+  const safe = assertSafeRelativePath(file, context);
+
+  if (safe === prefix.slice(0, -1)) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'file required',
+      category: 'validation',
+      step: context.step || 'stripResourcePrefix',
+      resource: context.resource || '',
+      action: context.action || '',
+      retryable: false,
+      details: {
+        field: 'file',
+        file: safe,
+      },
+    });
+  }
+
+  return safe.startsWith(prefix) ? safe.slice(prefix.length) : safe;
+}
+
 export function buildDocsPath(file, context = {}) {
-  const safe = assertSafeRelativePath(file, {
+  const relative = stripResourcePrefix(file, 'docs/', {
     ...context,
     resource: 'docs',
   });
-  return `docs/${safe}`;
+  return `docs/${relative}`;
 }
 
 export function buildNotesPath(file, context = {}) {
-  const safe = assertSafeRelativePath(file, {
+  const relative = stripResourcePrefix(file, 'notes/', {
     ...context,
     resource: 'notes',
   });
-  return `notes/${safe}`;
+  return `notes/${relative}`;
 }
 
 export function isAllowedCodePath(path) {
