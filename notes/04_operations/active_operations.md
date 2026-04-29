@@ -97,6 +97,8 @@ Immediate Gate は7日枠に数えない。
     todoist_task_id: 6gVgm3VQP8GFPwQH
 
 - task: DELTA v0.3 history write を repo-resource 統合方式で実装する
+  status: complete
+  completed: true
   source_ref:
     - systems/delta/config/delta_action_schema_v0.3.yaml
     - src/services/delta-history.js
@@ -116,9 +118,14 @@ Immediate Gate は7日枠に数えない。
     - schema v0.3 を `/api/repo-resource` 用に更新する
     - 保存後 read-back する
   notes:
-    - 以前作った `api/delta-history.js` route 方式は function 上限のため使用しない
-    - `src/services/delta-history.js` は service 層として再利用してよい
-    - Day0 は Knowledge refresh gate と合わせておおむね 1.5〜2.5h の想定
+    - 新規 API route は作らず、既存 `/api/repo-resource` に統合した
+    - `src/services/delta-history.js` を新規作成した
+    - `api/repo-resource.js` に `resource=delta` GET と `resource=delta_history` POST を統合した
+    - `delta_history` は `create` / `update` のみに限定した
+    - write scope は `systems/delta/history/` 配下の `.md` のみに限定した
+    - `operations` write / delete / arbitrary `systems/delta/` write は公開していない
+    - `systems/delta/config/delta_action_schema_v0.3.yaml` を新規作成した
+    - 実装ファイル一式を read-back 済み
   external:
     todoist_task_id: 6gVXWvpPp8vjgF5H
 
