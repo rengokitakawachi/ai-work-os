@@ -44,6 +44,7 @@ active_operations に入らなかった上位候補を保持する。
 
 ### next に新規追加した task
 
+- `DELTA foundation を main に統合する準備をする`
 - `DELTA v0.6 operations を Todoist execution view へ投影する`
 
 ### 方針変更
@@ -54,10 +55,36 @@ active_operations に入らなかった上位候補を保持する。
 - Outlook read foundation は、Phase 1 re-entry criteria 整理後に active 化を再判断する
 - issue `20260425-030` は bulk separator 問題としては実態修正済みであり、resource-prefixed path normalization gap として閉じる
 - DELTA v0.6 Todoist projection は学習実行 visibility に効くが、会話中の新規候補のため active へ即横入りさせず next に置く
+- DELTA foundation はすでに運用段階にあるため、v0.6 Todoist projection より前に main integration 準備を優先候補として置く
 
 ---
 
 ## タスク
+
+- task: DELTA foundation を main に統合する準備をする
+  source_ref:
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - systems/delta/operations/active_operations.md
+    - systems/delta/history/2026-04.md
+    - systems/delta/config/delta_action_schema_v0.5.yaml
+    - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
+    - notes/01_issues/idea_log.md#20260430-033
+  why_now:
+    - DELTA は read-only / bulk / history write が runtime confirmation 済みで、運用段階に入っている
+    - `feature/atlas-pre-delta-foundation` に v0.6 以降を積み増す前に、foundation を main に統合する方が main との乖離を抑えられる
+    - main は Docs-aligned stable version であり、運用中 subsystem は統合準備対象として扱うべきである
+  completed_condition:
+    - `feature/atlas-pre-delta-foundation` の DELTA 差分を棚卸しする
+    - main に入れるべき DELTA files と、branch に残す files を分ける
+    - `systems/delta/roadmap` / `plan` / `operations` / `history` / `config` の整合を確認する
+    - ADAM 側 `repoResource delta` resource と docs / code / config の整合を確認する
+    - runtime behavior confirmed 済み項目と未確認項目を列挙する
+    - main 統合後に DELTA GPT runtime で read / bulk / write behavior を再確認する
+  notes:
+    - これは main merge 実行そのものではなく、統合準備 gate である
+    - v0.6 Todoist projection より前に優先度比較する
+    - active 化は次回 reroll で Phase 0 hardening との兼ね合いを見て判断する
 
 - task: DELTA v0.6 operations を Todoist execution view へ投影する
   source_ref:
@@ -67,6 +94,7 @@ active_operations に入らなかった上位候補を保持する。
     - systems/delta/plan/2026_sharoushi_exam_plan.md
     - src/services/tasks/projection.js
     - config/ai/adam_schema.yaml
+    - notes/01_issues/idea_log.md#20260430-031
   why_now:
     - DELTA 日次学習の execution visibility を上げる
     - DELTA operations はすでに due_date / due_type / study_type を持ち、Todoist 投影に適した形になっている
@@ -84,6 +112,7 @@ active_operations に入らなかった上位候補を保持する。
     - preferred direction は既存 `/api/tasks/project` と `src/services/tasks/projection.js` の profile 拡張
     - 新規 API route は増やさない
     - Todoist は projection / execution view であり、DELTA operations を正本とする
+    - DELTA foundation main integration 準備を先に評価する
     - active 化は次回 reroll で、Phase 0 hardening / DELTA 優先度を比較して決める
 
 - task: Phase 1 Outlook Calendar API の読取設計を整理する
