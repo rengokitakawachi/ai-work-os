@@ -8,6 +8,42 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- task: DELTA v0.5 write schema で history write を復旧する
+  type: runtime_reflection_gate
+  status: repo_schema_created
+  completed: false
+  source_ref:
+    - systems/delta/config/delta_action_schema_v0.5.yaml
+    - systems/delta/config/delta_action_schema_v0.4.yaml
+    - api/repo-resource.js
+    - src/services/delta-history.js
+    - src/services/delta-operations.js
+  blocks:
+    - DELTA daily history logging
+    - DELTA 学習実績の repo 永続化
+  completed_condition:
+    - v0.4 schema で history write が runtime 上使えない原因を確認する
+    - server code が `delta_history` create / update を保持していることを確認する
+    - `systems/delta/config/delta_action_schema_v0.5.yaml` を作成する
+    - DELTA GPT Actions に v0.5 schema を設定する
+    - Bearer API Key 認証が保存されていることを確認する
+    - 新しい DELTA runtime で `deltaWrite` が runtime-visible であることを確認する
+    - `resource=delta_history` / `action=update` / `file=2026-04.md` の controlled update を実行する
+    - `deltaResourceGet` で read-back し、history 追記が確認できる
+    - operations write scope が `systems/delta/operations/active_operations.md` only のまま維持されていることを確認する
+  why_now:
+    - DELTA は daily history へ実績を書けなければ学習ログが閉じない
+    - history write は v0.3 で confirmed 済みの必須機能であり、v0.4 schema により runtime 上退行した可能性が高い
+    - server code は残っているため、schema 表現の復旧で解決できる可能性が高い
+  notes:
+    - server code は `delta_history` create / update を保持していた
+    - v0.4 schema は operationId / description が operations 専用に見えるため、DELTA runtime が history write を避けたと判断するのは妥当
+    - v0.5 schema は `operationId: deltaWrite` として history / operations の両方を明示した
+    - repo schema 作成済み
+    - runtime reflection は未実施
+  external:
+    todoist_task_id: 6gVjpcRR45RcpQqH
+
 - task: ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する
   type: manual_runtime_reflection_gate
   status: repo_updated
@@ -85,6 +121,7 @@ Immediate Gate は7日枠に数えない。
     - 反映する場合の対象 section と最小差分を固定する
     - 反映しない場合は理由と再評価地点を残す
   notes:
+    - Immediate Gate `DELTA v0.5 write schema で history write を復旧する` が未完了なら、DELTA history logging に依存する作業を実行しない
     - Immediate Gate `ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する` が未完了なら実行しない
     - 反映する場合は Write Gate を出して docs/05 の最小差分更新に進む
   external:
