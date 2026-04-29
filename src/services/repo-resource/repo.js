@@ -30,6 +30,25 @@ const HISTORY_ALLOWED_ROOT_FILES = [
   'README.md',
 ];
 
+const TEXT_EXTENSIONS = new Set([
+  '.md',
+  '.txt',
+  '.js',
+  '.mjs',
+  '.cjs',
+  '.ts',
+  '.tsx',
+  '.jsx',
+  '.json',
+  '.yaml',
+  '.yml',
+  '.html',
+  '.css',
+  '.scss',
+  '.xml',
+  '.csv',
+]);
+
 function encodeGitRefPath(ref) {
   return ref.split('/').map((part) => encodeURIComponent(part)).join('/');
 }
@@ -63,6 +82,28 @@ function buildQuery(params) {
 
   const query = search.toString();
   return query ? `?${query}` : '';
+}
+
+function getExtension(path) {
+  const name = path.split('/').pop() || path;
+  const index = name.lastIndexOf('.');
+  return index >= 0 ? name.slice(index).toLowerCase() : '';
+}
+
+function isAllowedRepoPath(path) {
+  if (HISTORY_ALLOWED_ROOT_FILES.includes(path)) {
+    return true;
+  }
+
+  return HISTORY_ALLOWED_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
+function isLikelyTextPath(path) {
+  if (HISTORY_ALLOWED_ROOT_FILES.includes(path)) {
+    return true;
+  }
+
+  return TEXT_EXTENSIONS.has(getExtension(path));
 }
 
 export function validateRepoReadPath(file, context = {}) {
@@ -114,6 +155,25 @@ function normalizeSearchPath(path, context = {}) {
       resource: 'repo',
       action: context.action || 'search',
     });
+
+    if (!isAllowedRepoPath(`${safe}/`) && !isAllowedRepoPath(safe)) {
+      throw createError({
+        status: 400,
+        code: 'INVALID_REQUEST',
+        message: 'repo search path not allowed',
+        category: 'validation',
+        step: context.step || 'normalizeSearchPath',
+        resource: 'repo',
+        action: context.action || 'search',
+        retryable: false,
+        details: {
+          path: `${safe}/`,
+          allowed_prefixes: HISTORY_ALLOWED_PREFIXES,
+          allowed_root_files: HISTORY_ALLOWED_ROOT_FILES,
+        },
+      });
+    }
+
     return `${safe}/`;
   }
 
@@ -270,6 +330,124 @@ export async function searchRepoText(queryValue, options = {}) {
       html_url: item.html_url,
       repository: item.repository?.full_name || '',
     })),
+  };
+}
+
+export async function grepRepoText(queryValue, options = {}) {
+  const query = ensureString(queryValue);
+
+  if (!query) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'query required',
+      category: 'validation',
+      step: 'grepRepoText',
+      resource: 'repo',
+      action: 'grep',
+      retryable: false,
+      details: {
+        field: 'query',
+      },
+    });
+  }
+
+  const path = normalizeSearchPath(options.path || options.file || '', {
+    step: 'grepRepoText',
+    action: 'grep',
+  });
+  const ref =
+    normalizeBranch(options.ref, {
+      step: 'grepRepoText',
+      resource: 'repo',
+      action: 'grep',
+    }) ||
+    normalizeBranch(options.branch, {
+      step: 'grepRepoText',
+      resource: 'repo',
+      action: 'grep',
+    }) ||
+    '';
+
+  const fileLimit = ensurePositiveLimit(options.file_limit, 200, 1000);
+  const matchLimit = ensurePositiveLimit(options.match_limit, 100, 500);
+  const maxFileSize = ensurePositiveLimit(options.max_file_size, 200000, 1000000);
+
+  const { owner, repo, branch } = getConfig({
+    step: 'grepRepoText',
+    resource: 'repo',
+    action: 'grep',
+    branch: ref,
+  });
+
+  const tree = await githubRequest(
+    `/repos/${owner}/${repo}/git/trees/${encodeURIComponent(ref || branch)}${buildQuery({ recursive: 1 })}`
+  );
+
+  const entries = Array.isArray(tree?.tree) ? tree.tree : [];
+  const targetFiles = entries
+    .filter((entry) => entry?.type === 'blob')
+    .filter((entry) => typeof entry.path === 'string')
+    .filter((entry) => isAllowedRepoPath(entry.path))
+    .filter((entry) => !path || entry.path === path || entry.path.startsWith(path))
+    .filter((entry) => isLikelyTextPath(entry.path))
+    .filter((entry) => Number(entry.size || 0) <= maxFileSize)
+    .slice(0, fileLimit);
+
+  const matches = [];
+  let scanned = 0;
+  let skippedLarge = 0;
+
+  for (const entry of targetFiles) {
+    if (matches.length >= matchLimit) {
+      break;
+    }
+
+    if (Number(entry.size || 0) > maxFileSize) {
+      skippedLarge += 1;
+      continue;
+    }
+
+    const blob = await githubRequest(
+      `/repos/${owner}/${repo}/git/blobs/${entry.sha}`
+    );
+
+    if (blob?.encoding !== 'base64' || typeof blob.content !== 'string') {
+      continue;
+    }
+
+    const content = Buffer.from(blob.content.replace(/\n/g, ''), 'base64').toString('utf8');
+    scanned += 1;
+
+    const lines = content.split(/\r?\n/);
+    for (let index = 0; index < lines.length; index += 1) {
+      if (lines[index].includes(query)) {
+        matches.push({
+          path: entry.path,
+          sha: entry.sha,
+          line: index + 1,
+          preview: lines[index].trim().slice(0, 300),
+        });
+
+        if (matches.length >= matchLimit) {
+          break;
+        }
+      }
+    }
+  }
+
+  return {
+    resource: 'repo',
+    action: 'grep',
+    query,
+    path: path || undefined,
+    ref: ref || branch,
+    scanned_files: scanned,
+    candidate_files: targetFiles.length,
+    skipped_large: skippedLarge,
+    truncated: targetFiles.length >= fileLimit || matches.length >= matchLimit,
+    count: matches.length,
+    matches,
   };
 }
 
