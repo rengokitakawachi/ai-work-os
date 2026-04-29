@@ -1,0 +1,327 @@
+openapi: 3.1.0
+info:
+  title: DELTA Operations Write API
+  version: "0.4.0"
+  description: Read DELTA files and update DELTA active operations via /api/repo-resource.
+
+servers:
+  - url: https://ai-work-os.vercel.app
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+
+  schemas:
+    ErrorObject:
+      type: object
+      additionalProperties: true
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        category:
+          type: string
+        step:
+          type: string
+        resource:
+          type: string
+          enum:
+            - delta
+            - delta_history
+            - delta_operations
+        action:
+          type: string
+        status:
+          type: integer
+        retryable:
+          type: boolean
+        details:
+          type: object
+          additionalProperties: true
+        request_id:
+          type: string
+      required:
+        - code
+        - message
+
+    ErrorResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          $ref: "#/components/schemas/ErrorObject"
+        request_id:
+          type: string
+      required:
+        - ok
+        - error
+
+    DeltaReadResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                type: object
+                additionalProperties: true
+        request_id:
+          type: string
+      required:
+        - ok
+        - data
+
+    DeltaHistoryWriteData:
+      type: object
+      additionalProperties: true
+      properties:
+        resource:
+          type: string
+          enum:
+            - delta_history
+        root:
+          type: string
+          enum:
+            - systems/delta/history/
+        path:
+          type: string
+        sha:
+          type: string
+        branch:
+          type: string
+        status:
+          type: string
+          enum:
+            - CREATED
+            - UPDATED
+        write_scope:
+          type: string
+          enum:
+            - systems/delta/history/*.md
+      required:
+        - resource
+        - root
+        - path
+        - sha
+        - status
+        - write_scope
+
+    DeltaHistoryWriteResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/DeltaHistoryWriteData"
+        request_id:
+          type: string
+      required:
+        - ok
+        - data
+
+    DeltaOperationsWriteData:
+      type: object
+      additionalProperties: true
+      properties:
+        resource:
+          type: string
+          enum:
+            - delta_operations
+        root:
+          type: string
+          enum:
+            - systems/delta/operations/
+        path:
+          type: string
+          enum:
+            - systems/delta/operations/active_operations.md
+        sha:
+          type: string
+        branch:
+          type: string
+        status:
+          type: string
+          enum:
+            - UPDATED
+        write_scope:
+          type: string
+          enum:
+            - systems/delta/operations/active_operations.md
+      required:
+        - resource
+        - root
+        - path
+        - sha
+        - status
+        - write_scope
+
+    DeltaOperationsWriteResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          $ref: "#/components/schemas/DeltaOperationsWriteData"
+        request_id:
+          type: string
+      required:
+        - ok
+        - data
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/repo-resource:
+    get:
+      operationId: deltaResourceGet
+      summary: Read DELTA resources only
+      description: Read files under systems/delta/. Use resource=delta and relative paths only.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - delta
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - tree
+              - read
+              - bulk
+        - name: file
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: files
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: branch
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeltaReadResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "405":
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: deltaOperationsWrite
+      summary: Update DELTA active operations only
+      description: Update only systems/delta/operations/active_operations.md. Use resource=delta_operations and action=update.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - delta_operations
+              - delta_history
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - update
+              - create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                file:
+                  type: string
+                content:
+                  type: string
+                message:
+                  type: string
+                sha:
+                  type: string
+                branch:
+                  type: string
+              required:
+                - file
+                - content
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/DeltaOperationsWriteResponse"
+                  - $ref: "#/components/schemas/DeltaHistoryWriteResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "405":
+          description: Method not allowed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
