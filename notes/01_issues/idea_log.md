@@ -80,9 +80,15 @@
 ### 20260425-030
 - title: repoResourceGet bulk の files パラメータが改行区切りを複数ファイルとして扱わず 1 パス扱いになる
 - category: api
-- description: `repoResourceGet` の `bulk` で `files` に改行区切りの複数パスを渡したところ、API がそれを複数ファイルとして分解せず、改行を含む 1 つの長いファイルパスとして扱い `NOT_FOUND` になった。会話中の handover 作成や関連ファイル一括確認で bulk を使う場面があり、区切り仕様が不明確または改行非対応だと、毎回個別 read に fallback する必要が出る。少なくとも docs / notes / code の bulk で、カンマ区切りと改行区切りの扱いを明確化し、可能なら改行区切りも受け付けるようにした方がよい。
-- context: 2026-04-25 の会話で、`files: "04_operations/active_operations.md\n02_design/2026-04-23_todoist_projection_due_date_propagation_gap.md\n08_analysis/2026-04-25_runtime_projecttasks_schema_not_yet_reflected.md"` のように渡したところ、`Note not found` となり、エラー上も複数ファイルではなく 1 つの長い path として扱われていた。以前にも docs bulk で同種の失敗があり、現状はカンマ区切り前提の可能性が高い。API 側で separator handling を整理し、tool schema / instruction / error message のどこかで期待形式を明示する必要がある。
+- description: 当初は改行区切り未対応に見えたが、再確認で newline separator 自体は成功していた。実害は、tree が返す `docs/...` / `notes/...` / `systems/delta/...` の resource-prefixed path を read / bulk にそのまま渡すと、resource root が二重付与または validation reject される path normalization gap だった。`src/services/repo-resource/common.js` と `src/services/delta-resource.js` を修正し、docs / notes / delta の tree path を read / bulk に直結できるようにした。
+- context: 2026-04-29 の確認で、relative path 形式の newline bulk は成功した。一方 `notes/...` / `docs/...` / `systems/delta/...` prefix 付き path は修正前に失敗した。修正後、ADAM runtime で docs / notes / delta の prefix 付き bulk と relative path bulk の両方が成功し、DELTA GPT runtime-visible でも `branch=feature/atlas-pre-delta-foundation` の `roadmap / plan / operations / history` bulk が成功した。
 - impact: medium
 - urgency: medium
-- status: open
+- status: closed
 - created_at: 2026-04-25
+- closed_at: 2026-04-29
+- resolution:
+  - `src/services/repo-resource/common.js` で docs / notes prefix を正規化
+  - `src/services/delta-resource.js` で `systems/delta/` prefix を正規化
+  - ADAM runtime で docs / notes / delta bulk 成功を確認
+  - DELTA GPT runtime-visible で delta bulk 成功を確認
