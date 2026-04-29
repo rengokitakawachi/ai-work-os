@@ -92,3 +92,18 @@
   - `src/services/delta-resource.js` で `systems/delta/` prefix を正規化
   - ADAM runtime で docs / notes / delta bulk 成功を確認
   - DELTA GPT runtime-visible で delta bulk 成功を確認
+
+### 20260430-031
+- title: DELTA v0.6 で operations を Todoist execution view へ投影する
+- category: execution
+- description: DELTA の `systems/delta/operations/active_operations.md` は due_date / due_type / study_type / subject / material などを持つ学習実行順の正本であり、Todoist に projection できる形に近い。v0.6 では DELTA operations を Todoist execution view へ投影し、学習予定の見える化と日次実行性を上げる。ただし Todoist は正本ではなく view とし、DELTA operations を canonical として維持する。
+- context: 2026-04-30 の会話で、ユーザーから「deltaのoperationもtodoist に投影する機能をつけよう。v0.6で」と提案があった。DELTA roadmap / operations では Todoist projection は optional とされており、既存 ADAM projection service `src/services/tasks/projection.js` を profile 拡張すれば、新規 API route を増やさずに実装できる可能性がある。一方で、既存 projection は description ref が ADAM active_operations 固定であり、DELTA 固有 field と source root を分ける必要がある。
+- impact: high
+- urgency: medium
+- status: open
+- created_at: 2026-04-30
+- source_ref:
+  - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
+  - systems/delta/operations/active_operations.md
+  - systems/delta/roadmap/delta_roadmap.md
+  - src/services/tasks/projection.js
