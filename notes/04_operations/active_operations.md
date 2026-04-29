@@ -10,8 +10,8 @@ Immediate Gate は7日枠に数えない。
 
 - task: ADAM runtime instruction に Day capacity Always-On Rule を反映する
   type: manual_runtime_reflection_gate
-  status: pending
-  completed: false
+  status: complete
+  completed: true
   source_ref:
     - config/ai/adam_instruction.md
     - config/ai/adam_knowledge.md
@@ -26,8 +26,9 @@ Immediate Gate は7日枠に数えない。
     - repo 反映済みでも ADAM runtime へ未反映なら、次回 review / reroll で同じ見落としが再発し得る
   notes:
     - repo instruction / knowledge は更新済み
-    - repo schema / repo instruction 更新済みと runtime 反映済みを混同しない
-    - 反映する Always-On Rule: `operations rolling / daily review では Day capacity を必ず確認し、task はおおむね 0.5〜1.5h、1 day はおおむね 2h として、明示理由なしに軽すぎる Day を作らない`
+    - ADAM runtime で Day capacity Always-On Rule が確認できた
+    - runtime behavior として Day capacity correction 手順も確認できた
+    - 反映済み Always-On Rule: `operations rolling / daily review では Day capacity を必ず確認し、task はおおむね 0.5〜1.5h、1 day はおおむね 2h として、明示理由なしに軽すぎる Day を作らない`
   external:
     todoist_task_id: 6gVgm3VxCq82hr2q
 
@@ -213,7 +214,7 @@ Immediate Gate は7日枠に数えない。
   notes:
     - 失敗時は v0.4 を disabled に戻す
   external:
-    todoist_task_id: 6gVXWw74rqV7H8qH
+    todoist_task_id: 6gVXWw74rqV7H
 
 ## Day5（05/04 月）
 
