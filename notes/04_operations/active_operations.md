@@ -36,6 +36,8 @@ Immediate Gate は7日枠に数えない。
     - `config/ai/adam_instruction.md` は repo 上で更新済み
     - 更新済み sha: e39f6b7b903c12d27e2a4f9999b971758a735e75
     - ユーザーが ADAM GPT editor に反映後、新しい runtime で確認する
+  external:
+    todoist_task_id: 6gVp8CG597rCqW9q
 
 - task: DELTA bulk/read で systems/delta prefixed path を正規化し runtime 確認する
   type: runtime_reflection_gate
