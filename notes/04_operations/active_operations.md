@@ -8,6 +8,37 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- task: DELTA bulk/read で systems/delta prefixed path を正規化し runtime 確認する
+  type: runtime_reflection_gate
+  status: repo_updated_runtime_pending
+  completed: false
+  source_ref:
+    - systems/delta/config/delta_action_schema_v0.2.yaml
+    - systems/delta/config/delta_action_schema_v0.3.yaml
+    - src/services/delta-resource.js
+    - runtime test 2026-04-29 DELTA relative bulk OK
+    - runtime test 2026-04-29 DELTA systems/delta-prefixed bulk INVALID_REQUEST
+  blocks:
+    - DELTA tree result から read / bulk へ直接つなぐ調査効率
+    - DELTA 学習系 config / history / operations の横断読取効率
+  completed_condition:
+    - DELTA relative path bulk が既に成功することを確認する
+    - DELTA `systems/delta/` prefix 付き path が修正前に失敗することを確認する
+    - `src/services/delta-resource.js` で `systems/delta/` prefix 付き path を正規化する
+    - repo code read-back で修正反映を確認する
+    - runtime で `resource=delta` / `files=systems/delta/config/delta_action_schema_v0.2.yaml\nsystems/delta/config/delta_action_schema_v0.3.yaml` の bulk が成功する
+    - runtime で relative path 形式の DELTA bulk が継続して成功する
+  why_now:
+    - DELTA でも tree が返す path をそのまま bulk/read に渡せないと、DELTA runtime 調査効率が落ちる
+    - docs/notes の path normalization と同種の問題であり、今まとめて閉じる方が安全である
+    - 既存の DELTA v0.2 runtime confirmation は relative path bulk 成功の確認であり、tree path 直結の確認ではなかった
+  notes:
+    - ADAM 側 `resource=delta` / relative files bulk は成功した
+    - ADAM 側 `resource=delta` / `systems/delta/` prefix 付き bulk は `INVALID_REQUEST` だった
+    - `src/services/delta-resource.js` は repo 上で修正済み
+    - 修正済み sha: 46a073e048daef6482efc8174e2eb7b666930915
+    - runtime 反映後に再確認する
+
 - task: repoResource bulk/read で resource-prefixed docs/notes path を正規化し runtime 確認する
   type: runtime_reflection_gate
   status: complete
