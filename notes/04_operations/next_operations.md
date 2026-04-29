@@ -4,98 +4,73 @@
 
 active_operations に入らなかった上位候補を保持する。
 
-`next_operations` は、
-7日ローリングの `active_operations` に入らなかったが、
-近い将来に進める前提の task を置くレイヤーとする。
+`next_operations` は、7日ローリングの `active_operations` に入らなかったが、近い将来に進める前提の task を置くレイヤーとする。
 
 ---
 
-## 再評価結果（2026-04-28 daily review）
+## 再評価結果（2026-04-29 Phase 0 hardening reroll）
 
 ### active へ移した task
 
-- `DELTA v0.3 history write を repo-resource 統合方式で実装する`
-- `DELTA v0.3 history write runtime reflection を実行する`
-- `DELTA v0.4 operations write の safety design gate を作る`
-- `DELTA v0.4 operations write を repo-resource 統合方式で実装する`
-- `DELTA v0.4 operations write runtime reflection を実行する`
-- `Phase 1 Todoist foundation entry: Todoist service 境界と一覧取得 API を確認する`
-- `docs/05_roadmap.md への Phase 0 位置づけ反映案を作る`
+- `issue routing completed condition の継続観測項目を weekly review 向けに整理する`
+- `intake routing の archive / pending 後処理を実データで再観測する`
+- `ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る`
 
-### 完了扱いで外した task
+### active に新規配置した Phase 0 hardening task
 
-- `DELTA v0.2 read-only Action runtime behavior confirmation`
+- `docs/05 Phase 0 hardening reflection の本体反映可否を判断する`
+- `issue routing completed condition を active / next / future 判断チェックに落とす`
+- `intake routing の archive / pending 後処理を実データで再観測する準備をする`
+- `intake routing 再観測結果を analysis / operations 候補へ返す`
+- `design routing の最小運用ルールを確認する`
+- `design routing 候補を実データから棚卸しする`
+- `daily / weekly review と routing / rolling の責務境界を実例で確認する`
+- `Phase 0 hardening の follow-up candidate を routing する`
+- `EVE runtime reflection の最小確認プロンプトと完了条件を整理する`
+- `Phase 0 hardening weekly readiness review draft を作る`
+- `Phase 1 re-entry criteria を Phase 0 hardening 結果から整理する`
 
-理由:
+### next に残した task
 
-- DELTA GPT Actions で tree / read / bulk がすべて成功した
-- `branch=feature/atlas-pre-delta-foundation` と `read_only: true` を確認した
-- write / create / update / delete は未実行
+- `Phase 1 Outlook Calendar API の読取設計を整理する`
+- `legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う`
 
 ### 方針変更
 
-- Vercel Hobby の Serverless Functions 上限により、新規 `api/delta-*` route 追加方式は採用しない
-- v0.3 以降も既存 `/api/repo-resource` へ resource を統合する方式で進める
-- schema 更新だけでは runtime confirmed としない
+- Phase 1 は Todoist foundation entry まで完了済みとして扱う
+- Outlook read foundation は一旦 next に残し、Phase 0 hardening の re-entry criteria 整理後に active へ戻す
+- Phase 0 hardening は issue routing / intake routing / design routing / review boundary / runtime reflection の順で固める
 
 ---
 
 ## タスク
 
-- task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
-    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
-  why_now:
-    - issue routing の completed condition は plan / operations に返したが、単発確認と継続確認を分ける必要がある
-    - weekly review で Phase 0 の進捗判断へ返せる形に整理しておく価値がある
-  notes:
-    - 単発確認済みの項目と、継続観測が必要な項目を分ける
-
-- task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
-  source_ref:
-    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
-    - config/ai/adam_instruction.md
-    - config/ai/eve_instruction.md
-    - config/ai/adam_knowledge.md
-    - config/ai/eve_knowledge.md
-    - config/ai/adam_schema.yaml
-    - config/ai/eve_schema.yaml
-  why_now:
-    - instruction / knowledge 再層化は repo 更新だけでは完了しないため、ADAM / EVE それぞれの runtime 反映確認を後段 task として分ける必要がある
-  notes:
-    - completed condition は runtime 上で新 instruction / knowledge / schema scope が観測できること
-    - ADAM と EVE は別 runtime として確認する
-
-- task: intake routing の archive / pending 後処理を実データで再観測する
-  source_ref:
-    - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
-    - notes/02_design/intake_review_and_source_ref_spec.md
-  why_now:
-    - 一般化した rule が、pending_tasks 以外でも破綻しないかを確認する必要がある
-  notes:
-    - 単発確認ではなく、継続観測 task として扱う
-
 - task: Phase 1 Outlook Calendar API の読取設計を整理する
   source_ref:
     - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
     - docs/05_roadmap.md
+    - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
   why_now:
     - Todoist foundation entry の後続として、Outlook を schedule 正本として読む設計が必要になる
+    - ただし Phase 0 hardening の re-entry criteria 整理後に active へ戻す方が安全である
   notes:
     - Outlook 書き込みではなく read-only foundation に限定する
     - 認証 / calendar scope / free-busy 判定を分けて扱う
+    - Phase 0 hardening active の Day6 で re-entry criteria を整理してから再評価する
 
 - task: legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
   source_ref:
     - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
     - src/services/todoist.js
     - src/services/todoist/client.js
   why_now:
-    - wrapper usage 確認は Phase 1 Todoist foundation entry に吸収するが、実削除判断は別 gate として残す方が安全である
+    - Phase 1 Todoist foundation entry で `src/services/todoist/client.js` が SSOT と確認できた
+    - ただし legacy wrapper の削除は repo usage / tests / replacement path が揃ってから判断する方が安全である
   notes:
-    - repo usage / tests / replacement path が揃うまで削除しない
+    - 現時点では deprecated legacy として維持
+    - 即削除しない
+    - Phase 0 hardening 完了後または Phase 1 Todoist 周辺作業再開時に再評価する
 
 ---
 
