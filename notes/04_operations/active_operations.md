@@ -204,9 +204,13 @@ Immediate Gate は7日枠に数えない。
 ## Day3（05/02 土）
 
 - task: DELTA v0.4 operations write を repo-resource 統合方式で実装する
+  status: complete
+  completed: true
   source_ref:
     - api/repo-resource.js
     - src/services/delta-history.js
+    - src/services/delta-operations.js
+    - systems/delta/config/delta_action_schema_v0.4.yaml
     - systems/delta/operations/active_operations.md
   rolling_day: Day3
   due_date: 2026-05-02
@@ -222,7 +226,15 @@ Immediate Gate は7日枠に数えない。
     - schema v0.4 を作成または更新する
     - read-back する
   notes:
-    - v0.3 runtime behavior confirmed 前に実行しない
+    - 新規 API route は作らず、既存 `/api/repo-resource` に統合した
+    - `src/services/delta-operations.js` を新規作成した
+    - `api/repo-resource.js` に `resource=delta_operations` / `action=update` を統合した
+    - write scope は `systems/delta/operations/active_operations.md` のみに限定した
+    - `delta_operations` は `update` only とし、create / delete は server 側で非許可にした
+    - invalid path は service 側で拒否する
+    - invalid content は required markers で拒否する
+    - `systems/delta/config/delta_action_schema_v0.4.yaml` を新規作成した
+    - 実装ファイル一式を read-back 済み
   external:
     todoist_task_id: 6gVXWw2WcrQ8pc7H
 
