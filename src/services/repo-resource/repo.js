@@ -3,7 +3,32 @@ import {
   getConfig,
   githubRequest,
   normalizeBranch,
+  assertSafeRelativePath,
+  decode,
 } from './common.js';
+
+const HISTORY_ALLOWED_PREFIXES = [
+  'docs/',
+  'notes/',
+  'src/',
+  'api/',
+  'lib/',
+  'scripts/',
+  'config/',
+  '.github/workflows/',
+  'systems/',
+];
+
+const HISTORY_ALLOWED_ROOT_FILES = [
+  '.nvmrc',
+  'package.json',
+  'vitest.config.js',
+  'jest.config.js',
+  'tsconfig.json',
+  'eslint.config.js',
+  'pnpm-workspace.yaml',
+  'README.md',
+];
 
 function encodeGitRefPath(ref) {
   return ref.split('/').map((part) => encodeURIComponent(part)).join('/');
@@ -11,6 +36,69 @@ function encodeGitRefPath(ref) {
 
 function isNotFound(error) {
   return error?.code === 'GITHUB_NOT_FOUND' || error?.status === 404;
+}
+
+function ensureString(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function ensurePositiveLimit(value, fallback = 20, max = 100) {
+  const parsed = Number.parseInt(String(value || ''), 10);
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return fallback;
+  }
+
+  return Math.min(parsed, max);
+}
+
+function buildQuery(params) {
+  const search = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && String(value).length > 0) {
+      search.set(key, String(value));
+    }
+  });
+
+  const query = search.toString();
+  return query ? `?${query}` : '';
+}
+
+export function validateRepoReadPath(file, context = {}) {
+  const safe = assertSafeRelativePath(file, {
+    step: context.step || 'validateRepoReadPath',
+    resource: 'repo',
+    action: context.action || '',
+  });
+
+  if (HISTORY_ALLOWED_ROOT_FILES.includes(safe)) {
+    return safe;
+  }
+
+  const isAllowed = HISTORY_ALLOWED_PREFIXES.some((prefix) =>
+    safe.startsWith(prefix)
+  );
+
+  if (!isAllowed) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'repo history path not allowed',
+      category: 'validation',
+      step: context.step || 'validateRepoReadPath',
+      resource: 'repo',
+      action: context.action || '',
+      retryable: false,
+      details: {
+        file: safe,
+        allowed_prefixes: HISTORY_ALLOWED_PREFIXES,
+        allowed_root_files: HISTORY_ALLOWED_ROOT_FILES,
+      },
+    });
+  }
+
+  return safe;
 }
 
 export function validateBranchCreateInput(branchValue, fromBranchValue = 'main') {
@@ -99,6 +187,226 @@ export function validateBranchCreateInput(branchValue, fromBranchValue = 'main')
   return {
     branch,
     fromBranch,
+  };
+}
+
+export async function getFileHistory(file, options = {}) {
+  const path = validateRepoReadPath(file, {
+    step: 'getFileHistory',
+    action: 'history',
+  });
+
+  const ref =
+    normalizeBranch(options.ref, {
+      step: 'getFileHistory',
+      resource: 'repo',
+      action: 'history',
+    }) ||
+    normalizeBranch(options.branch, {
+      step: 'getFileHistory',
+      resource: 'repo',
+      action: 'history',
+    }) ||
+    '';
+
+  const perPage = ensurePositiveLimit(options.per_page, 20, 100);
+  const { owner, repo, branch } = getConfig({
+    step: 'getFileHistory',
+    resource: 'repo',
+    action: 'history',
+    branch: ref,
+  });
+
+  const commits = await githubRequest(
+    `/repos/${owner}/${repo}/commits${buildQuery({
+      path,
+      sha: ref || branch,
+      per_page: perPage,
+    })}`
+  );
+
+  if (!Array.isArray(commits)) {
+    throw createError({
+      status: 502,
+      code: 'GITHUB_ERROR',
+      message: 'GitHub commits response invalid',
+      category: 'service',
+      step: 'getFileHistory',
+      resource: 'repo',
+      action: 'history',
+      retryable: false,
+      details: {
+        file: path,
+      },
+    });
+  }
+
+  return {
+    resource: 'repo',
+    action: 'history',
+    file: path,
+    ref: ref || branch,
+    count: commits.length,
+    commits: commits.map((item) => ({
+      sha: item.sha,
+      html_url: item.html_url,
+      message: item.commit?.message || '',
+      author_name: item.commit?.author?.name || '',
+      author_email: item.commit?.author?.email || '',
+      authored_at: item.commit?.author?.date || '',
+      committer_name: item.commit?.committer?.name || '',
+      committed_at: item.commit?.committer?.date || '',
+    })),
+  };
+}
+
+export async function showFileAtRef(file, refValue, options = {}) {
+  const path = validateRepoReadPath(file, {
+    step: 'showFileAtRef',
+    action: 'show',
+  });
+
+  const ref =
+    normalizeBranch(refValue, {
+      step: 'showFileAtRef',
+      resource: 'repo',
+      action: 'show',
+    }) ||
+    normalizeBranch(options.branch, {
+      step: 'showFileAtRef',
+      resource: 'repo',
+      action: 'show',
+    });
+
+  if (!ref) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'ref required',
+      category: 'validation',
+      step: 'showFileAtRef',
+      resource: 'repo',
+      action: 'show',
+      retryable: false,
+      details: {
+        field: 'ref',
+      },
+    });
+  }
+
+  const { owner, repo } = getConfig({
+    step: 'showFileAtRef',
+    resource: 'repo',
+    action: 'show',
+  });
+
+  const data = await githubRequest(
+    `/repos/${owner}/${repo}/contents/${path}${buildQuery({ ref })}`
+  );
+
+  if (!data || typeof data.content !== 'string') {
+    throw createError({
+      status: 502,
+      code: 'GITHUB_ERROR',
+      message: 'GitHub content missing',
+      category: 'service',
+      step: 'showFileAtRef',
+      resource: 'repo',
+      action: 'show',
+      retryable: false,
+      details: {
+        file: path,
+        ref,
+      },
+    });
+  }
+
+  const content = decode(data.content);
+
+  return {
+    resource: 'repo',
+    action: 'show',
+    file: path,
+    ref,
+    name: data.name,
+    path: data.path,
+    sha: data.sha,
+    size: data.size,
+    content,
+    content_length: content.length,
+    fetched_at: new Date().toISOString(),
+    status: content.length > 0 ? 'OK' : 'EMPTY',
+  };
+}
+
+export async function compareRefs(baseValue, headValue, options = {}) {
+  const base = normalizeBranch(baseValue, {
+    step: 'compareRefs',
+    resource: 'repo',
+    action: 'compare',
+  });
+  const head = normalizeBranch(headValue, {
+    step: 'compareRefs',
+    resource: 'repo',
+    action: 'compare',
+  });
+
+  if (!base || !head) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: 'base and head required',
+      category: 'validation',
+      step: 'compareRefs',
+      resource: 'repo',
+      action: 'compare',
+      retryable: false,
+      details: {
+        missing: [!base ? 'base' : null, !head ? 'head' : null].filter(Boolean),
+      },
+    });
+  }
+
+  const file = ensureString(options.file)
+    ? validateRepoReadPath(options.file, {
+        step: 'compareRefs',
+        action: 'compare',
+      })
+    : '';
+
+  const { owner, repo } = getConfig({
+    step: 'compareRefs',
+    resource: 'repo',
+    action: 'compare',
+  });
+
+  const data = await githubRequest(
+    `/repos/${owner}/${repo}/compare/${encodeURIComponent(base)}...${encodeURIComponent(head)}`
+  );
+
+  const files = Array.isArray(data?.files) ? data.files : [];
+  const filteredFiles = file ? files.filter((item) => item.filename === file) : files;
+
+  return {
+    resource: 'repo',
+    action: 'compare',
+    base,
+    head,
+    file: file || undefined,
+    status: data?.status || '',
+    ahead_by: data?.ahead_by,
+    behind_by: data?.behind_by,
+    total_commits: data?.total_commits,
+    files: filteredFiles.map((item) => ({
+      filename: item.filename,
+      status: item.status,
+      additions: item.additions,
+      deletions: item.deletions,
+      changes: item.changes,
+      patch: item.patch || '',
+      blob_url: item.blob_url || '',
+      raw_url: item.raw_url || '',
+    })),
   };
 }
 
