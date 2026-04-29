@@ -377,20 +377,61 @@ Write Gate では必ず以下を示す。
 
 handover は restart entry point であり、execution source of truth ではない。
 
-Create handover:
+### Trigger
 
-1. handover template を読む
+次の依頼は、明示的に `handover` と書かれていなくても handover procedure request として扱う。
+
+- 新スレ
+- 次スレ
+- 移行
+- 引き継ぎ
+- 引き継ぎ書
+- handover
+- restart
+- 再開用
+
+### Content contract
+
+handover には最低限以下を含める。
+
+1. `This handover is a restart entry point.`
+2. `It is not the execution source of truth.`
+3. Execution SSOT: `notes/04_operations/active_operations.md`
+4. Projection: Todoist
+5. First read list
+6. Current focus
+7. Expected resume task
+8. Guardrails
+9. `Do not execute from this handover without reading active_operations.`
+
+Expected resume task は、handover 作成時点の参考情報として書く。
+再開時には必ず `active_operations` を read して確認する。
+
+### Create handover
+
+1. handover template またはこの procedure を確認する
 2. 必要な docs / notes / code / operations を読む
-3. current state、completed work、open risks、next action をまとめる
-4. `notes/06_handover` へ保存する
-5. 保存確認する
+3. current focus、completed work、open risks、first read list、expected resume task をまとめる
+4. handover が execution source of truth ではないことを明記する
+5. 必要な場合のみ `notes/06_handover` へ保存する
+6. 保存した場合は保存確認する
 
-Resume from handover:
+### Resume from handover
 
 1. latest handover を読む
 2. handover が参照する related docs / notes / code を読む
-3. operations を読む
+3. `notes/04_operations/active_operations.md` を読む
 4. handover 単独ではなく current operations から next action を決める
+
+### Forbidden
+
+handover では次をしてはならない。
+
+- active_operations 全文の代替を書く
+- handover を execution source of truth として扱う
+- Todoist projection を正本として扱う
+- operations を読まずに次 task を断定する
+- stale snapshot をもとに実行を開始する
 
 handover と docs が矛盾する場合は docs を正とする。
 handover と operations execution order が矛盾する場合は、operations が stale / broken でない限り operations を正とする。
