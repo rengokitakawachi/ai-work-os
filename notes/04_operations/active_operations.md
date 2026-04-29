@@ -10,14 +10,15 @@ Immediate Gate は7日枠に数えない。
 
 - task: DELTA v0.5 write schema で history write を復旧する
   type: runtime_reflection_gate
-  status: repo_schema_created
-  completed: false
+  status: complete
+  completed: true
   source_ref:
     - systems/delta/config/delta_action_schema_v0.5.yaml
     - systems/delta/config/delta_action_schema_v0.4.yaml
     - api/repo-resource.js
     - src/services/delta-history.js
     - src/services/delta-operations.js
+    - DELTA v0.5 runtime behavior confirmation 2026-04-29
   blocks:
     - DELTA daily history logging
     - DELTA 学習実績の repo 永続化
@@ -39,8 +40,20 @@ Immediate Gate は7日枠に数えない。
     - server code は `delta_history` create / update を保持していた
     - v0.4 schema は operationId / description が operations 専用に見えるため、DELTA runtime が history write を避けたと判断するのは妥当
     - v0.5 schema は `operationId: deltaWrite` として history / operations の両方を明示した
-    - repo schema 作成済み
-    - runtime reflection は未実施
+    - DELTA GPT Actions に v0.5 schema を設定した
+    - `deltaWrite` が runtime-visible であることを確認した
+    - read existing history は成功した
+    - invalid history path write は `INVALID_REQUEST` で拒否された
+    - invalid history extension write は `INVALID_REQUEST` で拒否された
+    - unsupported operations create は `ACTION_NOT_SUPPORTED` で拒否された
+    - controlled history update は `systems/delta/history/2026-04.md` に限定して成功した
+    - read-back で `<!-- DELTA v0.5 runtime history write test: ok -->` を確認した
+    - previous history sha: deb5c2844c4667eb1cd66a66a009b136f9fe744d
+    - returned history sha: 81b8ee27d2136eaba5a07bb568dd200cbb7d05cd
+    - returned resource: delta_history
+    - returned write_scope: systems/delta/history/*.md
+    - operations update は実行していない
+    - delete は実行していない
   external:
     todoist_task_id: 6gVjpcRR45RcpQqH
 
@@ -121,7 +134,6 @@ Immediate Gate は7日枠に数えない。
     - 反映する場合の対象 section と最小差分を固定する
     - 反映しない場合は理由と再評価地点を残す
   notes:
-    - Immediate Gate `DELTA v0.5 write schema で history write を復旧する` が未完了なら、DELTA history logging に依存する作業を実行しない
     - Immediate Gate `ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する` が未完了なら実行しない
     - 反映する場合は Write Gate を出して docs/05 の最小差分更新に進む
   external:
