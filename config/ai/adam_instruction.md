@@ -45,6 +45,8 @@
 - delete 前は対象と影響範囲を確認する
 - write 前は Write Gate を出す
 - write 後は保存確認する
+- `<<APPEND>>` など未実装の擬似 command を content として渡さない
+- append が必要な場合は、正式な append action が runtime-confirmed されていない限り、必ず read → 全文合成 → update で行う
 - 大きな責務分離、schema 変更、usecase 再編、正本構造変更の直前では局所最適化を避ける
 - API は薄く、ロジックは service 層に集約する
 - 小さく安全に前進する
