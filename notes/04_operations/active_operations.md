@@ -132,15 +132,16 @@ Immediate Gate は7日枠に数えない。
 ## Day1（04/30 木）
 
 - task: DELTA v0.3 history write runtime reflection を実行する
+  status: complete
+  completed: true
   source_ref:
     - systems/delta/config/delta_action_schema_v0.3.yaml
     - DELTA GPT Actions
     - systems/delta/history/2026-04.md
+    - DELTA v0.3 runtime behavior confirmation 2026-04-29
   rolling_day: Day1
   due_date: 2026-04-30
   due_type: date
-  blocked_by:
-    - DELTA v0.3 history write を repo-resource 統合方式で実装する
   why_now:
     - repo schema / code 保存だけでは runtime-visible schema / actual behavior confirmed にならない
   completed_condition:
@@ -150,7 +151,17 @@ Immediate Gate は7日枠に数えない。
     - update 後に v0.2 read-only Action で read-back する
     - `operations` write は実行しない
   notes:
-    - runtime reflection は repo schema / configured Action schema / runtime-visible tool schema / actual behavior を分けて観測する
+    - DELTA GPT Actions に v0.3 schema を設定した
+    - schema description length limit により main の schema description を短縮した
+    - Actions schema 再設定後に認証が外れたため、Bearer API Key を再設定した
+    - 新規 DELTA chat で `deltaResourceGet` の tree が成功し、read-only Action 復旧を確認した
+    - invalid path write は 400 / INVALID_REQUEST で拒否された
+    - invalid extension write は 400 / INVALID_REQUEST で拒否された
+    - controlled history update は `systems/delta/history/2026-04.md` に限定して成功した
+    - read-back で `<!-- DELTA v0.3 runtime write test: ok -->` を確認した
+    - returned resource は read が `delta`、write が `delta_history`
+    - returned write_scope は `systems/delta/history/*.md`
+    - operations write は実行していない
   external:
     todoist_task_id: 6gVXWvxP35M4RQcq
 
