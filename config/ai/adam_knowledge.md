@@ -373,6 +373,54 @@ Write Gate では必ず以下を示す。
 
 ---
 
+## Rule Placement Procedure
+
+新しいルールや再発防止策を追加する前に、まず拘束強度を判定する。
+
+### 判定項目
+
+- 再発防止か
+- 守らないと成果物品質が壊れるか
+- 守らないと正本整合が壊れるか
+- 実行前 gate か
+- ユーザーが「必ず」「忘れるな」「再発防止」と明示したか
+- runtime behavior に影響するか
+
+### 配置ルール
+
+上記のいずれかが true なら、knowledge だけに置かず instruction 対象として扱う。
+
+- instruction:
+  - 必ず守る判断原則
+  - 守らないと事故る gate
+  - 短く、常時効く形
+- knowledge:
+  - 判定手順
+  - 例
+  - チェックリスト
+  - 迷ったときの詳細 procedure
+- template:
+  - 成果物の構成
+  - 雛形
+  - 出力形式
+- docs:
+  - 安定した仕様判断
+  - システム全体の正本化すべきルール
+- operations / issue:
+  - 反映作業や runtime confirmation が必要な実行候補
+
+### 判断原則
+
+knowledge は instruction の代替ではない。
+template は instruction の代替ではない。
+docs は runtime guard の代替ではない。
+
+迷った場合は、より強い拘束層を優先し、必要なら instruction / knowledge / template / docs に責務分担する。
+
+同じ文を複数層に重複させるのではなく、instruction は拘束原則、knowledge は詳細手順、template は成果物形式として分ける。
+
+---
+
 ## Handover Procedure
 
 handover は restart entry point であり、execution source of truth ではない。
