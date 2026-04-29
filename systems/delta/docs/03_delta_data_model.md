@@ -50,18 +50,66 @@ Delta fields:
 
 ## LearningHistory
 
+LearningHistory is stored in monthly files.
+
+Path:
+
+- `systems/delta/history/YYYY-MM.md`
+
+Format:
+
+- Markdown body for human-readable learning history
+- `DELTA_META` YAML block for machine-readable progress tracking
+- one section per day in date order
+
+Role separation:
+
+- `operations/active_operations.md` = future execution order / planned work
+- `history/YYYY-MM.md` = actual learning results
+- `review/` = weekly / monthly review and weak point aggregation
+
+Source of truth by purpose:
+
+- Human-readable source: Markdown body
+- Machine aggregation source: `DELTA_META`
+- If Markdown and `DELTA_META` conflict, daily review must correct the mismatch
+
+Markdown body fields:
+
+- 実績
+- 計画との差分
+- 判断
+- 弱点
+- 次アクション
+- メモ
+
+DELTA_META fields:
+
 - date
-- subject
-- topic
-- material
-- minutes
+- day_type
+- actual_results
+- judgment
+- next_action
+- source_ref
+
+`actual_results` item fields:
+
 - study_type
+- subject
+- material
+- planned_scope
+- actual_scope
 - result
 - comprehension
-- quiz_score
 - weak_points
-- next_review_date
-- source_ref
+
+Allowed values:
+
+- day_type: `weekday | weekend | holiday | exception`
+- study_type: `L1 | L2 | L3 | 秒トレ | review | other`
+- result: `complete | partial | skipped`
+- comprehension: `high | medium | low | unknown`
+- judgment.status: `on_track | slight_delay | delay | overdone`
 
 ## LearningReview
 
