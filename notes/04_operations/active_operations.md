@@ -217,6 +217,7 @@ Immediate Gate は7日枠に数えない。
   completed: true
   source_ref:
     - docs/05_roadmap.md
+    - docs/05_roadmap.md sha 61abe199ee809b0a6ce51aed0f632edd4fd82601
     - docs/11_doc_style.md
     - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
   rolling_day: Day0
@@ -231,11 +232,13 @@ Immediate Gate は7日枠に数えない。
     - 反映しない場合は理由と再評価地点を残す
   notes:
     - 判断結果は docs/05 へ反映する
-    - 反映内容は roadmap 詳細拡張ではなく、Phase 0 の foundation 性、軽い準備ではないこと、完了判定が運用可能な common operating model にあることの最小補強とする
-    - 固定した反映対象は `## 目的`、`### Phase 0: Common Operating Model Foundation` の目的 / 位置づけ / 完了イメージ、`## 現在地`
-    - docs/05 の全体構造は維持し、Phase 1 以降や外部サービス詳細は書き換えない
-    - issue routing / intake routing / daily review / DELTA 実装詳細 / active_operations の具体 Day 配置は docs/05 に入れない
-    - docs 本体更新は本 tool の直接 write 対象外のため、この task では反映可否判断と最小差分固定までを完了とする
+    - docs/05 本体反映済み
+    - docs/05 反映済み sha: 61abe199ee809b0a6ce51aed0f632edd4fd82601
+    - 反映内容は roadmap 詳細拡張ではなく、Phase 0 の foundation 性、軽い準備ではないこと、完了判定が運用可能な common operating model にあることの最小補強とした
+    - 固定した反映対象は `## 目的`、`### Phase 0: Common Operating Model Foundation` の目的 / 位置づけ / 完了イメージ
+    - `## 現在地` は時間で変わる進捗情報のため docs 反映対象から除外した
+    - docs/05 の全体構造は維持し、Phase 1 以降や外部サービス詳細は書き換えていない
+    - issue routing / intake routing / daily review / DELTA 実装詳細 / active_operations の具体 Day 配置は docs/05 に入れていない
   external:
     todoist_task_id: 6gVjc5vF39959h3q
 
