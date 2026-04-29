@@ -38,6 +38,8 @@ import {
   updateDeltaHistory,
 } from '../src/services/delta-history.js';
 
+import { updateDeltaOperations } from '../src/services/delta-operations.js';
+
 import {
   createError,
   normalizeBranch,
@@ -358,6 +360,35 @@ function validatePost(resource, action, body) {
     return;
   }
 
+  if (resource === 'delta_operations') {
+    if (action !== 'update') {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validatePost',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    requireFile(body?.file, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    requireContent(body?.content, {
+      step: 'validatePost',
+      resource,
+      action,
+    });
+
+    return;
+  }
+
   throw createError({
     status: 400,
     code: 'RESOURCE_NOT_SUPPORTED',
@@ -578,6 +609,18 @@ async function dispatchPost(resource, action, body) {
 
     if (action === 'update') {
       return updateDeltaHistory(file, content, message, sha, options);
+    }
+  }
+
+  if (resource === 'delta_operations') {
+    const content = requireContent(body?.content, {
+      step: 'dispatchPost',
+      resource,
+      action,
+    });
+
+    if (action === 'update') {
+      return updateDeltaOperations(file, content, message, sha, options);
     }
   }
 
