@@ -8,6 +8,33 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- task: ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する
+  type: manual_runtime_reflection_gate
+  status: repo_updated
+  completed: false
+  source_ref:
+    - config/ai/adam_instruction.md
+    - config/ai/adam_knowledge.md
+  blocks:
+    - handover / 新スレ移行時の正本誤認防止
+    - Phase 0 hardening 中の restart safety
+  completed_condition:
+    - ADAM instruction repo へ Handover Trigger Guard を反映する
+    - ADAM knowledge repo の Handover Procedure に trigger / content contract / forbidden を反映する
+    - ADAM GPT editor の Instructions に最新版 `adam_instruction.md` を反映する
+    - ADAM GPT editor の Knowledge に最新版 `adam_knowledge.md` を反映する
+    - 新しい ADAM runtime で `新スレ` / `引き継ぎ書` が handover procedure trigger として扱われることを確認する
+    - 出力に `handover は restart entry point であり execution source of truth ではない`、`Execution SSOT: notes/04_operations/active_operations.md`、first read list、guardrails が含まれることを確認する
+  why_now:
+    - 同種の handover trigger 欠落が2回発生した
+    - handover は stale snapshot を正本化し得るため、Phase 0 hardening より前に修正すべき runtime safety gate である
+    - repo 更新だけでは runtime behavior confirmed にならない
+  notes:
+    - repo instruction / knowledge は更新済み
+    - runtime reflection は未実施
+  external:
+    todoist_task_id: 6gVjjP88XJg63pRH
+
 - task: ADAM runtime instruction に Day capacity Always-On Rule を反映する
   type: manual_runtime_reflection_gate
   status: complete
@@ -17,10 +44,6 @@ Immediate Gate は7日枠に数えない。
     - config/ai/adam_knowledge.md
   blocks:
     - 次回以降の daily review / operations reroll の品質保証
-  completed_condition:
-    - ADAM GPT editor の Instructions に Day capacity Always-On Rule を反映する
-    - ADAM GPT editor の Knowledge に最新版 `adam_knowledge.md` を反映する
-    - 新しい ADAM runtime で Day capacity rule が確認できる
   notes:
     - repo instruction / knowledge は更新済み
     - ADAM runtime で Day capacity Always-On Rule が確認できた
@@ -62,6 +85,7 @@ Immediate Gate は7日枠に数えない。
     - 反映する場合の対象 section と最小差分を固定する
     - 反映しない場合は理由と再評価地点を残す
   notes:
+    - Immediate Gate `ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する` が未完了なら実行しない
     - 反映する場合は Write Gate を出して docs/05 の最小差分更新に進む
   external:
     todoist_task_id: 6gVjc5vF39959h3q
@@ -81,6 +105,7 @@ Immediate Gate は7日枠に数えない。
     - 継続観測が必要な項目を列挙する
     - weekly review で確認できる形の checklist draft を作る
   notes:
+    - Immediate Gate `ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する` が未完了なら実行しない
     - 単発確認済み項目と継続観測項目を分ける
   external:
     todoist_task_id: 6gVjc63jPwjrxj6q
