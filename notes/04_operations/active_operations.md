@@ -10,11 +10,12 @@ Immediate Gate は7日枠に数えない。
 
 - task: ADAM docs 更新提案では対象 docs 全文を code block で出す rule を instruction / runtime に反映する
   type: manual_runtime_reflection_gate
-  status: repo_updated_editor_runtime_pending
-  completed: false
+  status: complete
+  completed: true
   source_ref:
     - config/ai/adam_instruction.md
     - ADAM runtime miss 2026-04-29 docs/05 update proposal full text omission
+    - ADAM runtime confirmation 2026-04-29 docs update proposal full text output
   blocks:
     - docs 更新時の人間編集ミス防止
     - docs SSOT 変更時の差分整合
@@ -35,7 +36,9 @@ Immediate Gate は7日枠に数えない。
     - 問題は docs 更新提案時に「原則全文」とする明示が弱く、runtime が部分差分回答へ流れたこと
     - `config/ai/adam_instruction.md` は repo 上で更新済み
     - 更新済み sha: e39f6b7b903c12d27e2a4f9999b971758a735e75
-    - ユーザーが ADAM GPT editor に反映後、新しい runtime で確認する
+    - ユーザーが ADAM GPT editor に反映済み
+    - 新しい runtime で docs 更新提案時に、対象ファイル名 / 更新目的 / 更新後全文 code block / 反映後 sha 確認をセットで出す挙動を確認した
+    - runtime behavior confirmed
   external:
     todoist_task_id: 6gVp8CG597rCqW9q
 
@@ -495,8 +498,6 @@ Immediate Gate は7日枠に数えない。
     - Outlook task を next から active に戻す判断軸を作る
   notes:
     - Phase 1 Outlook Calendar API read design は next に残す
-  external:
-    todoist_task_id: 6gVjc6WRCmM8VxVH
 
 ---
 
