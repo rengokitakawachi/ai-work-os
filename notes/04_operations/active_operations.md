@@ -8,239 +8,11 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
-- task: ADAM docs 更新提案では対象 docs 全文を code block で出す rule を instruction / runtime に反映する
-  type: manual_runtime_reflection_gate
-  status: complete
-  completed: true
-  source_ref:
-    - config/ai/adam_instruction.md
-    - ADAM runtime miss 2026-04-29 docs/05 update proposal full text omission
-    - ADAM runtime confirmation 2026-04-29 docs update proposal full text output
-  blocks:
-    - docs 更新時の人間編集ミス防止
-    - docs SSOT 変更時の差分整合
-    - Phase 0 hardening 中の docs reflection safety
-  completed_condition:
-    - 同種ミスが3回目であることを認める
-    - 原因を rule deletion ではなく instruction の明示不足 / runtime 解釈漏れとして整理する
-    - `config/ai/adam_instruction.md` に Docs Update Proposal Guard を追加する
-    - ADAM GPT editor の Instructions に最新版 `adam_instruction.md` を反映する
-    - 新しい ADAM runtime で docs 更新提案時に、対象ファイル名 / 更新目的 / 更新後全文 code block / 反映後 sha 確認をセットで出すことを確認する
-  why_now:
-    - docs は仕様 SSOT であり、更新提案の部分差分提示は人間編集ミスを誘発する
-    - 同種ミスが3回目で、会話上の注意では再発防止として不十分である
-    - docs/05 reflection の直後であり、次の docs 更新提案の前に runtime safety を固める必要がある
-  notes:
-    - 既存 instruction には `update proposal や全文要求では complete proposed content を code block で出す` は残っていた
-    - 既存 knowledge の Write Gate Procedure にも `反映後全文、または差し替えセクション完成形` は残っていた
-    - 問題は docs 更新提案時に「原則全文」とする明示が弱く、runtime が部分差分回答へ流れたこと
-    - `config/ai/adam_instruction.md` は repo 上で更新済み
-    - 更新済み sha: e39f6b7b903c12d27e2a4f9999b971758a735e75
-    - ユーザーが ADAM GPT editor に反映済み
-    - 新しい runtime で docs 更新提案時に、対象ファイル名 / 更新目的 / 更新後全文 code block / 反映後 sha 確認をセットで出す挙動を確認した
-    - runtime behavior confirmed
-  external:
-    todoist_task_id: 6gVp8CG597rCqW9q
-
-- task: DELTA bulk/read で systems/delta prefixed path を正規化し runtime 確認する
-  type: runtime_reflection_gate
-  status: complete
-  completed: true
-  source_ref:
-    - systems/delta/config/delta_action_schema_v0.2.yaml
-    - systems/delta/config/delta_action_schema_v0.3.yaml
-    - src/services/delta-resource.js
-    - runtime test 2026-04-29 DELTA relative bulk OK
-    - runtime test 2026-04-29 DELTA systems/delta-prefixed bulk INVALID_REQUEST
-    - runtime test 2026-04-29 DELTA systems/delta-prefixed bulk OK
-    - DELTA GPT runtime-visible bulk confirmation 2026-04-29 feature/atlas-pre-delta-foundation
-  blocks:
-    - DELTA tree result から read / bulk へ直接つなぐ調査効率
-    - DELTA 学習系 config / history / operations の横断読取効率
-  completed_condition:
-    - DELTA relative path bulk が既に成功することを確認する
-    - DELTA `systems/delta/` prefix 付き path が修正前に失敗することを確認する
-    - `src/services/delta-resource.js` で `systems/delta/` prefix 付き path を正規化する
-    - repo code read-back で修正反映を確認する
-    - runtime で `resource=delta` / `files=systems/delta/config/delta_action_schema_v0.2.yaml\nsystems/delta/config/delta_action_schema_v0.3.yaml` の bulk が成功する
-    - runtime で relative path 形式の DELTA bulk が継続して成功する
-  why_now:
-    - DELTA でも tree が返す path をそのまま bulk/read に渡せないと、DELTA runtime 調査効率が落ちる
-    - docs/notes の path normalization と同種の問題であり、今まとめて閉じる方が安全である
-    - 既存の DELTA v0.2 runtime confirmation は relative path bulk 成功の確認であり、tree path 直結の確認ではなかった
-  notes:
-    - ADAM 側 `resource=delta` / relative files bulk は成功した
-    - ADAM 側 `resource=delta` / `systems/delta/` prefix 付き bulk は修正前 `INVALID_REQUEST` だった
-    - `src/services/delta-resource.js` は repo 上で修正済み
-    - 修正済み sha: 46a073e048daef6482efc8174e2eb7b666930915
-    - runtime 反映後、`resource=delta` / `files=systems/delta/config/delta_action_schema_v0.2.yaml\nsystems/delta/config/delta_action_schema_v0.3.yaml` の bulk 成功を確認した
-    - runtime 反映後、relative path 形式の DELTA bulk 継続成功を確認した
-    - DELTA GPT runtime-visible で `branch=feature/atlas-pre-delta-foundation` / `files=roadmap/delta_roadmap.md, plan/2026_sharoushi_exam_plan.md, operations/active_operations.md, history/2026-04.md` の bulk 成功を確認した
-    - DELTA GPT runtime-visible で top-level `ok:true`、各 file `ok:true`、path / sha / content / resource / root / read_only / status / fetched_at の取得を確認した
-    - runtime behavior confirmed
-  external:
-    todoist_task_id: 6gVmhXg49pwX3HGH
-
-- task: repoResource bulk/read で resource-prefixed docs/notes path を正規化し runtime 確認する
-  type: runtime_reflection_gate
-  status: complete
-  completed: true
-  source_ref:
-    - notes/01_issues/idea_log.md#20260425-030
-    - docs/10_repo_resource_api.md
-    - api/repo-resource.js
-    - src/services/repo-resource/common.js
-    - src/services/repo-resource/notes.js
-    - src/services/repo-resource/docs.js
-    - runtime test 2026-04-29 repoResourceGet bulk notes-prefixed path NOT_FOUND
-    - runtime test 2026-04-29 repoResourceGet bulk notes-prefixed path OK
-    - runtime test 2026-04-29 repoResourceGet bulk docs-prefixed path OK
-  blocks:
-    - repo tree result から read / bulk へ直接つなぐ調査効率
-    - handover / operations / docs / code の横断読取効率
-    - Phase 0 hardening 中の repo investigation safety
-  completed_condition:
-    - issue 20260425-030 の原因を newline separator ではなく resource-prefixed path normalization gap として整理する
-    - `src/services/repo-resource/common.js` で docs/notes prefix 付き path を正規化する
-    - repo code read-back で修正反映を確認する
-    - runtime で `resource=notes` / `files=notes/04_operations/active_operations.md\nnotes/04_operations/next_operations.md` の bulk が成功する
-    - runtime で `resource=docs` / `files=docs/10_repo_resource_api.md` の read または bulk が成功する
-    - relative path 形式の既存 read / bulk が継続して成功する
-  why_now:
-    - repo tree が返す path をそのまま bulk/read に渡せないと、以後の docs / notes / code 横断調査効率が落ちる
-    - handover 再開、review、routing、code 調査で bulk を頻用するため、Phase 0 hardening より先に修正する価値が高い
-    - docs/10 は comma / newline 両対応を実装済みと定義しており、今回の実害は separator ではなく path 正規化である
-  notes:
-    - newline 区切り自体は `04_operations/active_operations.md\n04_operations/next_operations.md` で runtime 成功を確認した
-    - `notes/` prefix 付き path は修正前 runtime で `NOT_FOUND` だった
-    - `src/services/repo-resource/common.js` は repo 上で修正済み
-    - 修正済み sha: 250d082838609e1487780e1a2a659801a279d656
-    - runtime 反映後、`resource=notes` / `files=notes/04_operations/active_operations.md\nnotes/04_operations/next_operations.md` の bulk 成功を確認した
-    - runtime 反映後、`resource=docs` / `files=docs/10_repo_resource_api.md\n10_repo_resource_api.md` の bulk 成功を確認した
-    - relative path 形式も継続成功を確認した
-    - runtime behavior confirmed
-  external:
-    todoist_task_id: 6gVmfg7P753HX6JH
-
-- task: DELTA v0.5 write schema で history write を復旧する
-  type: runtime_reflection_gate
-  status: complete
-  completed: true
-  source_ref:
-    - systems/delta/config/delta_action_schema_v0.5.yaml
-    - systems/delta/config/delta_action_schema_v0.4.yaml
-    - api/repo-resource.js
-    - src/services/delta-history.js
-    - src/services/delta-operations.js
-    - DELTA v0.5 runtime behavior confirmation 2026-04-29
-  blocks:
-    - DELTA daily history logging
-    - DELTA 学習実績の repo 永続化
-  notes:
-    - DELTA v0.5 runtime behavior confirmed
-    - controlled history update succeeded
-    - operations update は実行していない
-    - delete は実行していない
-  external:
-    todoist_task_id: 6gVjpcRR45RcpQqH
-
-- task: ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する
-  type: manual_runtime_reflection_gate
-  status: complete
-  completed: true
-  source_ref:
-    - config/ai/adam_instruction.md
-    - config/ai/adam_knowledge.md
-    - notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md
-    - ADAM runtime handover trigger confirmation 2026-04-29
-  blocks:
-    - handover / 新スレ移行時の正本誤認防止
-    - Phase 0 hardening 中の restart safety
-  completed_condition:
-    - ADAM instruction repo へ Handover Trigger Guard を反映する
-    - ADAM knowledge repo の Handover Procedure に trigger / content contract / forbidden を反映する
-    - ADAM knowledge repo の Handover Procedure に Quality checklist を反映する
-    - ADAM GPT editor の Instructions に最新版 `adam_instruction.md` を反映する
-    - ADAM GPT editor の Knowledge に最新版 `adam_knowledge.md` を反映する
-    - 新しい ADAM runtime で `新スレ` / `引き継ぎ書` が handover procedure trigger として扱われることを確認する
-    - 出力に `handover は restart entry point であり execution source of truth ではない`、`Execution SSOT: notes/04_operations/active_operations.md`、first read list、guardrails が含まれることを確認する
-    - 高品質 handover として current state snapshot / this thread actions / risks / source references が含まれることを確認する
-  why_now:
-    - 同種の handover trigger 欠落が2回発生した
-    - handover は stale snapshot を正本化し得るため、Phase 0 hardening より前に修正すべき runtime safety gate である
-    - repo 更新だけでは runtime behavior confirmed にならない
-  notes:
-    - repo instruction は更新済み
-    - repo knowledge は Handover Trigger / Content contract / Forbidden / Quality checklist まで更新済み
-    - ユーザーが ADAM GPT editor へ instruction / knowledge を反映済み
-    - `notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md` は作成・補完・保存確認済み
-    - 新しい ADAM chat で `引き継ぎ` 系依頼を handover procedure request として扱い、handover を execution source of truth とせず `active_operations` を読んで次 action を判断した
-    - runtime behavior confirmed
-  external:
-    todoist_task_id: 6gVjjP88XJg63pRH
-
-- task: ADAM runtime instruction に Day capacity Always-On Rule を反映する
-  type: manual_runtime_reflection_gate
-  status: complete
-  completed: true
-  source_ref:
-    - config/ai/adam_instruction.md
-    - config/ai/adam_knowledge.md
-  blocks:
-    - 次回以降の daily review / operations reroll の品質保証
-  notes:
-    - repo instruction / knowledge は更新済み
-    - ADAM runtime で Day capacity Always-On Rule が確認できた
-    - runtime behavior として Day capacity correction 手順も確認できた
-  external:
-    todoist_task_id: 6gVgm3VxCq82hr2q
-
-- task: DELTA v0.2 read-only Action runtime behavior confirmation
-  type: runtime_reflection_gate
-  status: complete
-  completed: true
-  source_ref:
-    - systems/delta/config/delta_action_schema_v0.2.yaml
-    - api/repo-resource.js
-    - src/services/delta-resource.js
-    - DELTA GPT Actions runtime test result 2026-04-28
-  notes:
-    - runtime test で tree / read / bulk がすべて成功した
-    - `branch=feature/atlas-pre-delta-foundation` と `read_only: true` を確認した
+- none
 
 ---
 
-## Day0（04/29 水）
-
-- task: docs/05 Phase 0 hardening reflection の本体反映可否を判断する
-  status: complete
-  completed: true
-  source_ref:
-    - docs/05_roadmap.md
-    - docs/05_roadmap.md sha 61abe199ee809b0a6ce51aed0f632edd4fd82601
-    - docs/11_doc_style.md
-    - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
-  rolling_day: Day0
-  due_date: 2026-04-29
-  due_type: date
-  why_now:
-    - Phase 0 hardening を roadmap の上位意味へ返すか判断する
-    - docs 直更新は reflection draft の人間判断後に行う
-  completed_condition:
-    - reflection draft を読み、docs/05 本体へ反映するか判断する
-    - 反映する場合の対象 section と最小差分を固定する
-    - 反映しない場合は理由と再評価地点を残す
-  notes:
-    - 判断結果は docs/05 へ反映する
-    - docs/05 本体反映済み
-    - docs/05 反映済み sha: 61abe199ee809b0a6ce51aed0f632edd4fd82601
-    - 反映内容は roadmap 詳細拡張ではなく、Phase 0 の foundation 性、軽い準備ではないこと、完了判定が運用可能な common operating model にあることの最小補強とした
-    - 固定した反映対象は `## 目的`、`### Phase 0: Common Operating Model Foundation` の目的 / 位置づけ / 完了イメージ
-    - `## 現在地` は時間で変わる進捗情報のため docs 反映対象から除外した
-    - docs/05 の全体構造は維持し、Phase 1 以降や外部サービス詳細は書き換えていない
-    - issue routing / intake routing / daily review / DELTA 実装詳細 / active_operations の具体 Day 配置は docs/05 に入れていない
-  external:
-    todoist_task_id: 6gVjc5vF39959h3q
+## Day0（04/30 木）
 
 - task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
   source_ref:
@@ -248,32 +20,31 @@ Immediate Gate は7日枠に数えない。
     - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
     - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
   rolling_day: Day0
-  due_date: 2026-04-29
+  due_date: 2026-04-30
   due_type: date
   why_now:
     - Phase 0 hardening の中心は issue routing の運用完成条件を review で読める形にすること
+    - docs/05 reflection と runtime safety gates が完了したため、次に戻るべき先頭 task である
   completed_condition:
     - issue routing の単発確認済み項目を列挙する
     - 継続観測が必要な項目を列挙する
     - weekly review で確認できる形の checklist draft を作る
   notes:
-    - Immediate Gate `ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する` が未完了なら実行しない
     - 単発確認済み項目と継続観測項目を分ける
   external:
     todoist_task_id: 6gVjc63jPwjrxj6q
-
-## Day1（04/30 木）
 
 - task: issue routing completed condition を active / next / future 判断チェックに落とす
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
-  rolling_day: Day1
+  rolling_day: Day0
   due_date: 2026-04-30
   due_type: date
   why_now:
     - route_to: operations が即 active 化ではなく rolling 比較対象であることを運用チェックへ落とす
+    - 直前 task の checklist を operations rolling で使える判断軸へ接続する
   completed_condition:
     - route_to: operations / design / future / archive / issue の後続処理を checklist 化する
     - active / next / future の判断基準に issue routing completed condition を接続する
@@ -283,12 +54,14 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc649M5988WQH
 
+## Day1（05/01 金）
+
 - task: intake routing の archive / pending 後処理を実データで再観測する準備をする
   source_ref:
     - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
     - notes/02_design/intake_review_and_source_ref_spec.md
   rolling_day: Day1
-  due_date: 2026-04-30
+  due_date: 2026-05-01
   due_type: date
   why_now:
     - intake routing の後処理は Phase 0 の継続観測項目として残っている
@@ -301,13 +74,11 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc654hjrvgxXq
 
-## Day2（05/01 金）
-
 - task: intake routing の archive / pending 後処理を実データで再観測する
   source_ref:
     - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
     - notes/02_design/intake_review_and_source_ref_spec.md
-  rolling_day: Day2
+  rolling_day: Day1
   due_date: 2026-05-01
   due_type: date
   blocked_by:
@@ -323,12 +94,14 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc652WPGHgfcH
 
+## Day2（05/02 土）
+
 - task: intake routing 再観測結果を analysis / operations 候補へ返す
   source_ref:
     - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
     - docs/15_notes_system.md
   rolling_day: Day2
-  due_date: 2026-05-01
+  due_date: 2026-05-02
   due_type: date
   blocked_by:
     - intake routing の archive / pending 後処理を実データで再観測する
@@ -343,13 +116,11 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc69Mf869CPRq
 
-## Day3（05/02 土）
-
 - task: design routing の最小運用ルールを確認する
   source_ref:
     - docs/15_notes_system.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day3
+  rolling_day: Day2
   due_date: 2026-05-02
   due_type: date
   why_now:
@@ -363,12 +134,14 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc6944CWV5fCq
 
+## Day3（05/03 日）
+
 - task: design routing 候補を実データから棚卸しする
   source_ref:
     - notes/02_design/
     - docs/15_notes_system.md
   rolling_day: Day3
-  due_date: 2026-05-02
+  due_date: 2026-05-03
   due_type: date
   blocked_by:
     - design routing の最小運用ルールを確認する
@@ -383,14 +156,12 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc6H2m29xF84H
 
-## Day4（05/03 日）
-
 - task: daily / weekly review と routing / rolling の責務境界を実例で確認する
   source_ref:
     - docs/15_notes_system.md
     - docs/17_operations_system.md
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day4
+  rolling_day: Day3
   due_date: 2026-05-03
   due_type: date
   why_now:
@@ -404,12 +175,14 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc6FxwHRVWQmq
 
+## Day4（05/04 月）
+
 - task: Phase 0 hardening の follow-up candidate を routing する
   source_ref:
     - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
     - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
   rolling_day: Day4
-  due_date: 2026-05-03
+  due_date: 2026-05-04
   due_type: date
   why_now:
     - hardening で出た追加候補を即実行せず active / next / future に振り分ける
@@ -422,8 +195,6 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc6Mg38FGc9wq
 
-## Day5（05/04 月）
-
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
     - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
@@ -433,7 +204,7 @@ Immediate Gate は7日枠に数えない。
     - config/ai/eve_knowledge.md
     - config/ai/adam_schema.yaml
     - config/ai/eve_schema.yaml
-  rolling_day: Day5
+  rolling_day: Day4
   due_date: 2026-05-04
   due_type: date
   why_now:
@@ -447,13 +218,16 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc6JJ4q2mxCfH
 
+## Day5（05/05 火）
+
 - task: EVE runtime reflection の最小確認プロンプトと完了条件を整理する
   source_ref:
     - config/ai/eve_instruction.md
     - config/ai/eve_knowledge.md
     - config/ai/eve_schema.yaml
   rolling_day: Day5
-  due_date: 2026-05-04
+  due_date: 2026-05-05
+  due_type: date
   why_now:
     - Phase 1 以降に EVE runtime を使う前に、runtime-visible scope の確認方法を固定する
   completed_condition:
@@ -465,14 +239,12 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc6RR6cP5vGJH
 
-## Day6（05/05 火）
-
 - task: Phase 0 hardening weekly readiness review draft を作る
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
     - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
     - notes/04_operations/active_operations.md
-  rolling_day: Day6
+  rolling_day: Day5
   due_date: 2026-05-05
   due_type: date
   why_now:
@@ -486,12 +258,14 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gVjc6R38pqXWjXq
 
+## Day6（05/06 水）
+
 - task: Phase 1 re-entry criteria を Phase 0 hardening 結果から整理する
   source_ref:
     - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
   rolling_day: Day6
-  due_date: 2026-05-05
+  due_date: 2026-05-06
   due_type: date
   why_now:
     - Outlook read foundation へ戻る前に Phase 0 hardening の最低条件を明確にする
@@ -501,6 +275,10 @@ Immediate Gate は7日枠に数えない。
     - Outlook task を next から active に戻す判断軸を作る
   notes:
     - Phase 1 Outlook Calendar API read design は next に残す
+    - Day6 は Phase 1 re-entry 判断の境界 day として意図的に軽めにする
+    - Outlook read design を同日に前倒しせず、criteria の結果を見てから次回 reroll で active 化する
+  external:
+    todoist_task_id: 6gVjc6WRCmM8VxVH
 
 ---
 
