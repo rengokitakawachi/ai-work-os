@@ -168,10 +168,13 @@ Immediate Gate は7日枠に数えない。
 ## Day2（05/01 金）
 
 - task: DELTA v0.4 operations write の safety design gate を作る
+  status: complete
+  completed: true
   source_ref:
     - systems/delta/operations/active_operations.md
     - systems/delta/config/delta_schema.yaml
     - notes/02_design/2026-04-27_delta_learning_system_fast_track_architecture.md
+    - notes/02_design/2026-04-29_delta_v0_4_operations_write_safety_design.md
   rolling_day: Day2
   due_date: 2026-05-01
   due_type: date
@@ -185,7 +188,16 @@ Immediate Gate は7日枠に数えない。
     - completed_condition / source_ref / read-back / rollback の確認項目を決める
     - v0.4 実装前の invalid path / unsupported action test を定義する
   notes:
-    - まだ operations write は実装しない
+    - safety design note を作成し、保存確認済み
+    - resource は `delta_operations` とする
+    - allowed action は `update` only とする
+    - write scope は `systems/delta/operations/active_operations.md` のみに限定する
+    - create / delete / next_operations update / archive_operations update / arbitrary systems/delta write は禁止する
+    - update model は full replace with validation とする
+    - required validation は path / content / scope validation とする
+    - runtime test は invalid path / invalid content / controlled marker update / read-back とする
+    - rollback は previous sha / Git restore 前提とする
+    - まだ operations write は実装していない
   external:
     todoist_task_id: 6gVXWw4QrfRR8pfH
 
