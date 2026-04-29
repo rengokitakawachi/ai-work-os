@@ -107,3 +107,23 @@
   - systems/delta/operations/active_operations.md
   - systems/delta/roadmap/delta_roadmap.md
   - src/services/tasks/projection.js
+
+### 20260430-032
+- title: Studyplus API で学習記録の投稿・取得可否を確認する
+- category: external_integration
+- description: Studyplus には外部教材アプリ向け API / SDK が存在するが、公開情報から確認できる中心用途は外部教材アプリから Studyplus へ学習記録を投稿する方向である。DELTA で Studyplus を扱う場合、Studyplus から既存の勉強時間・勉強量を取得できるかは未確認であり、実装前に公式申請・承認条件・read API の有無を確認する必要がある。
+- context: 2026-04-30 の会話で、Studyplus に API 等でアクセスできるかを確認した。公式発表と SDK からは `postRecord` による duration / amount / comment の投稿可能性は確認できたが、既存 Studyplus 記録を一覧取得する API は確認できなかった。承認されても投稿だけで、取得はできない可能性があるため、DELTA canonical history の入力元としてはまだ扱わず、外部投稿先または将来連携候補として分離する。
+- impact: medium
+- urgency: low
+- status: open
+- created_at: 2026-04-30
+- confirmation_needed:
+  - Web backend から Studyplus API を使えるか
+  - 学習記録の投稿だけでなく取得 API があるか
+  - 取得できる場合、取得範囲は本人の記録だけか
+  - 教材別 / 日別 / 期間別の勉強時間を取得できるか
+  - 個人利用・自分用連携が許可されるか
+- source_ref:
+  - Studyplus API terms
+  - Studyplus Android SDK
+  - Studyplus API public announcement
