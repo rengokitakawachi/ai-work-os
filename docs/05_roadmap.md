@@ -17,6 +17,13 @@ Phase 0 で共通 operating model を整備し、
 その上で EVE を段階的に成立させるための開発フェーズを整理し、
 roadmap → plan → operations の階層を安定運用するための上位方針を示す。
 
+Phase 0 は、ADAM の開発運用を通じて、
+AI Work OS 全体に共通する routing / planning / review / handover / 正本管理の operating model を固定する foundation phase とする。
+
+この phase の目的は、ADAM 固有の開発支援ルールを増やすことではなく、
+Phase 1 以降の EVE 実行系 plan 群を安全に乗せられる共通骨格を抽出し、
+運用可能な形にすることである。
+
 ---
 
 ## 前提 / 定義
@@ -107,6 +114,10 @@ operations
 ADAM の開発を通じて、
 AI Work OS 全体に共通する operating model を整備する。
 
+この phase の目的は、ADAM 固有の開発支援ルールを増やすことではなく、
+Phase 1 以降の EVE 実行系 plan 群を安全に乗せられる共通骨格を抽出し、
+運用可能な形にすることである。
+
 範囲
 
 - intake routing の位置づけ整理
@@ -123,6 +134,11 @@ AI Work OS 全体に共通する operating model を整備する。
 EVE の実行系機能を本格的に進める前に、
 AI Work OS 全体に共通する operating model を定義する foundation phase とする。
 
+この phase は、Phase 1 を始める前の軽い準備ではない。
+
+Phase 1 以降で Todoist / Outlook / Teams / Obsidian などの実行系・外部接続を安全に進めるために、
+AI Work OS 全体に共通する operating model を固定する foundation phase である。
+
 Phase 1 以降の EVE 実行系 plan 群は、
 この共通骨格の上で進める。
 
@@ -132,6 +148,8 @@ Phase 1 以降の EVE 実行系 plan 群は、
 - ADAM 固有要素と EVE に展開できる共通骨格を分けて説明できる
 - handover を入口にした再開構造が整理されている
 - Phase 1 の EVE 実行系 plan を支える上位骨格が整っている
+- intake routing / issue routing / design routing / operations rolling / review / handover / 正本と view の分離が、実運用の中で説明可能である
+- ADAM 以外にも展開できる common operating model として再利用可能である
 
 現在の plan
 
@@ -419,15 +437,6 @@ review 後の routing 処理として扱う。
 
 ---
 
-## 現在地
-
-現在は Phase 0 を進行中とし、
-Phase 1 の主要 plan 群を準備済みとする。
-
-詳細な進捗は notes/03_plan と notes/04_operations を参照する。
-
----
-
 ## 未解決課題
 
 - Todoist 一覧取得、Outlook 接続、Teams 通知をどの順で安定化するか
@@ -473,4 +482,4 @@ Phase 1 の主要 plan 群を準備済みとする。
 
 ---
 
-最終更新: 2026-04-04
+最終更新: 2026-04-29
