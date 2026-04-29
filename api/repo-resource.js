@@ -25,7 +25,12 @@ import {
   updateCode,
 } from '../src/services/repo-resource/code.js';
 
-import { createBranch } from '../src/services/repo-resource/repo.js';
+import {
+  createBranch,
+  getFileHistory,
+  showFileAtRef,
+  compareRefs,
+} from '../src/services/repo-resource/repo.js';
 
 import {
   treeDelta,
@@ -120,6 +125,28 @@ function requireFile(value, context) {
   return file;
 }
 
+function requireParam(value, field, context) {
+  const safe = ensureString(value);
+
+  if (!safe) {
+    throw createError({
+      status: 400,
+      code: 'INVALID_REQUEST',
+      message: `${field} required`,
+      category: 'validation',
+      step: context.step,
+      resource: context.resource,
+      action: context.action,
+      retryable: false,
+      details: {
+        field,
+      },
+    });
+  }
+
+  return safe;
+}
+
 function requireContent(value, context) {
   if (typeof value !== 'string' || value.length === 0) {
     throw createError({
@@ -211,6 +238,78 @@ function validateGet(resource, action, query) {
     }
 
     return;
+  }
+
+  if (resource === 'repo') {
+    if (!['history', 'show', 'compare', 'diff'].includes(action)) {
+      throw createError({
+        status: 400,
+        code: 'ACTION_NOT_SUPPORTED',
+        message: 'action not supported',
+        category: 'routing',
+        step: 'validateGet',
+        resource,
+        action,
+        retryable: false,
+      });
+    }
+
+    if (action === 'history') {
+      requireFile(query.file, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      normalizeBranch(query.ref, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      return;
+    }
+
+    if (action === 'show') {
+      requireFile(query.file, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      requireParam(query.ref || query.branch, 'ref', {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      normalizeBranch(query.ref, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      return;
+    }
+
+    if (action === 'compare' || action === 'diff') {
+      requireParam(query.base, 'base', {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      requireParam(query.head, 'head', {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      normalizeBranch(query.base, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      normalizeBranch(query.head, {
+        step: 'validateGet',
+        resource,
+        action,
+      });
+      return;
+    }
   }
 
   throw createError({
@@ -404,6 +503,9 @@ function validatePost(resource, action, body) {
 async function dispatchGet(resource, action, query) {
   const options = {
     branch: ensureString(query.branch),
+    ref: ensureString(query.ref),
+    per_page: ensureString(query.per_page),
+    file: ensureString(query.file),
   };
 
   if (resource === 'docs') {
@@ -514,6 +616,53 @@ async function dispatchGet(resource, action, query) {
           action,
         }),
         options
+      );
+    }
+  }
+
+  if (resource === 'repo') {
+    if (action === 'history') {
+      return getFileHistory(
+        requireFile(query.file, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+
+    if (action === 'show') {
+      return showFileAtRef(
+        requireFile(query.file, {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        requireParam(query.ref || query.branch, 'ref', {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        options
+      );
+    }
+
+    if (action === 'compare' || action === 'diff') {
+      return compareRefs(
+        requireParam(query.base, 'base', {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        requireParam(query.head, 'head', {
+          step: 'dispatchGet',
+          resource,
+          action,
+        }),
+        {
+          file: ensureString(query.file),
+        }
       );
     }
   }
