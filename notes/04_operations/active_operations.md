@@ -8,6 +8,35 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- task: ADAM docs 更新提案では対象 docs 全文を code block で出す rule を instruction / runtime に反映する
+  type: manual_runtime_reflection_gate
+  status: repo_updated_editor_runtime_pending
+  completed: false
+  source_ref:
+    - config/ai/adam_instruction.md
+    - ADAM runtime miss 2026-04-29 docs/05 update proposal full text omission
+  blocks:
+    - docs 更新時の人間編集ミス防止
+    - docs SSOT 変更時の差分整合
+    - Phase 0 hardening 中の docs reflection safety
+  completed_condition:
+    - 同種ミスが3回目であることを認める
+    - 原因を rule deletion ではなく instruction の明示不足 / runtime 解釈漏れとして整理する
+    - `config/ai/adam_instruction.md` に Docs Update Proposal Guard を追加する
+    - ADAM GPT editor の Instructions に最新版 `adam_instruction.md` を反映する
+    - 新しい ADAM runtime で docs 更新提案時に、対象ファイル名 / 更新目的 / 更新後全文 code block / 反映後 sha 確認をセットで出すことを確認する
+  why_now:
+    - docs は仕様 SSOT であり、更新提案の部分差分提示は人間編集ミスを誘発する
+    - 同種ミスが3回目で、会話上の注意では再発防止として不十分である
+    - docs/05 reflection の直後であり、次の docs 更新提案の前に runtime safety を固める必要がある
+  notes:
+    - 既存 instruction には `update proposal や全文要求では complete proposed content を code block で出す` は残っていた
+    - 既存 knowledge の Write Gate Procedure にも `反映後全文、または差し替えセクション完成形` は残っていた
+    - 問題は docs 更新提案時に「原則全文」とする明示が弱く、runtime が部分差分回答へ流れたこと
+    - `config/ai/adam_instruction.md` は repo 上で更新済み
+    - 更新済み sha: e39f6b7b903c12d27e2a4f9999b971758a735e75
+    - ユーザーが ADAM GPT editor に反映後、新しい runtime で確認する
+
 - task: DELTA bulk/read で systems/delta prefixed path を正規化し runtime 確認する
   type: runtime_reflection_gate
   status: complete
