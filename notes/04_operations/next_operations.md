@@ -42,6 +42,10 @@ active_operations に入らなかった上位候補を保持する。
 - `Phase 1 Outlook Calendar API の読取設計を整理する`
 - `legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う`
 
+### next に新規追加した task
+
+- `DELTA v0.6 operations を Todoist execution view へ投影する`
+
 ### 方針変更
 
 - Phase 0 hardening の実行順は、issue routing → intake routing → design routing → review boundary → runtime reflection → readiness / re-entry criteria の順で維持する
@@ -49,10 +53,38 @@ active_operations に入らなかった上位候補を保持する。
 - Day6 は Phase 1 re-entry 判断の境界 day として意図的に軽めにし、Outlook read design を同日に前倒ししない
 - Outlook read foundation は、Phase 1 re-entry criteria 整理後に active 化を再判断する
 - issue `20260425-030` は bulk separator 問題としては実態修正済みであり、resource-prefixed path normalization gap として閉じる
+- DELTA v0.6 Todoist projection は学習実行 visibility に効くが、会話中の新規候補のため active へ即横入りさせず next に置く
 
 ---
 
 ## タスク
+
+- task: DELTA v0.6 operations を Todoist execution view へ投影する
+  source_ref:
+    - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
+    - systems/delta/operations/active_operations.md
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - src/services/tasks/projection.js
+    - config/ai/adam_schema.yaml
+  why_now:
+    - DELTA 日次学習の execution visibility を上げる
+    - DELTA operations はすでに due_date / due_type / study_type を持ち、Todoist 投影に適した形になっている
+    - 既存 ADAM projection を汎用化できれば、新規 API route を増やさず v0.6 として実装できる
+  completed_condition:
+    - DELTA v0.6 schema proposal を作る
+    - `projectTasks` または同等 projection usecase が DELTA active operations を受け取れる
+    - dry_run で DELTA operations tasks から Todoist create/update payload が生成される
+    - payload description に DELTA 固有 field と `ref: systems/delta/operations/active_operations.md` が入る
+    - apply で Todoist task が作成または更新される
+    - apply 結果の Todoist task id を DELTA operations へ戻す方法を確認する
+    - ADAM active projection が壊れていないことを確認する
+    - DELTA GPT runtime-visible schema / behavior を確認する
+  notes:
+    - preferred direction は既存 `/api/tasks/project` と `src/services/tasks/projection.js` の profile 拡張
+    - 新規 API route は増やさない
+    - Todoist は projection / execution view であり、DELTA operations を正本とする
+    - active 化は次回 reroll で、Phase 0 hardening / DELTA 優先度を比較して決める
 
 - task: Phase 1 Outlook Calendar API の読取設計を整理する
   source_ref:
