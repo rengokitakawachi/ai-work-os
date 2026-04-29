@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: AI Work OS Repo Resource API
-  version: "2.2.2"
+  version: "2.3.0"
   description: AI Work OS repo access API and Todoist Tasks API
 
 servers:
@@ -245,7 +245,7 @@ components:
           type: array
           items:
             type: string
-          description: For code resource, allowed prefixes are src/, api/, lib/, scripts/, config/
+          description: For code resource, allowed prefixes are src/, api/, lib/, scripts/, config/ plus configured root allowlist.
 
     RepoTreeResponse:
       type: object
@@ -622,7 +622,9 @@ paths:
       operationId: repoResourceGet
       summary: Read repo resources
       description: |
-        Code resource can read files under src/, api/, lib/, scripts/, config/.
+        Read docs, notes, code, delta and repository-level metadata.
+        Code resource can read files under src/, api/, lib/, scripts/, config/ and configured root allowlist.
+        Repo resource supports read-only repository operations such as history, show, compare, search and grep.
       security:
         - bearerAuth: []
       parameters:
@@ -636,6 +638,12 @@ paths:
               - tree
               - read
               - bulk
+              - history
+              - show
+              - compare
+              - diff
+              - search
+              - grep
         - name: resource
           in: query
           required: true
@@ -645,22 +653,66 @@ paths:
               - docs
               - notes
               - code
+              - delta
+              - repo
         - name: file
           in: query
           required: false
           schema:
             type: string
+          description: File path for read/history/show/compare filtering. For repo search/grep, may be used as the query string when query is not available in the runtime schema.
         - name: files
           in: query
           required: false
           schema:
             type: string
+          description: Files list for bulk. For repo search/grep, may be used as path scope when path is not available in the runtime schema.
         - name: branch
           in: query
           required: false
           schema:
             type: string
-          description: Optional Git branch selector. If omitted, uses configured GITHUB_BRANCH or main.
+          description: Optional Git branch selector. For repo show/history/grep it may also be a commit SHA ref when runtime schema lacks ref.
+        - name: base
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Base branch or commit for repo compare/diff.
+        - name: head
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Head branch or commit for repo compare/diff.
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Query string for repo search/grep. If unavailable in runtime schema, use file as query string.
+        - name: path
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Path scope for repo search/grep. If unavailable in runtime schema, use files as path scope.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+          description: Optional file limit for repo grep.
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Optional result limit for repo history/search. Also accepted as grep file limit fallback.
       responses:
         "200":
           description: Success
