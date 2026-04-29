@@ -8,6 +8,27 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- task: ADAM runtime instruction に Day capacity Always-On Rule を反映する
+  type: manual_runtime_reflection_gate
+  status: pending
+  completed: false
+  source_ref:
+    - config/ai/adam_instruction.md
+    - config/ai/adam_knowledge.md
+  blocks:
+    - 次回以降の daily review / operations reroll の品質保証
+  completed_condition:
+    - ADAM GPT editor の Instructions に Day capacity Always-On Rule を反映する
+    - ADAM GPT editor の Knowledge に最新版 `adam_knowledge.md` を反映する
+    - 新しい ADAM runtime で Day capacity rule が確認できる
+  why_now:
+    - Day capacity は operations rolling / daily review の品質に直結する常時制約である
+    - repo 反映済みでも ADAM runtime へ未反映なら、次回 review / reroll で同じ見落としが再発し得る
+  notes:
+    - repo instruction / knowledge は更新済み
+    - repo schema / repo instruction 更新済みと runtime 反映済みを混同しない
+    - 反映する Always-On Rule: `operations rolling / daily review では Day capacity を必ず確認し、task はおおむね 0.5〜1.5h、1 day はおおむね 2h として、明示理由なしに軽すぎる Day を作らない`
+
 - task: DELTA v0.2 read-only Action runtime behavior confirmation
   type: runtime_reflection_gate
   status: complete
@@ -38,6 +59,33 @@ Immediate Gate は7日枠に数えない。
 
 ## Day0（04/29 水）
 
+- task: DELTA Knowledge refresh gate を実行する
+  source_ref:
+    - systems/delta/config/delta_instruction.md
+    - systems/delta/config/delta_schema.yaml
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - systems/delta/operations/active_operations.md
+    - systems/delta/history/templates/daily_log_template.md
+  rolling_day: Day0
+  due_date: 2026-04-29
+  due_type: date
+  why_now:
+    - DELTA v0.3 runtime reflection 前に、DELTA GPT Knowledge から古い endpoint / 古い schema / 重複 instruction を除去する必要がある
+    - フォーサイト教材を追加する前に、Knowledge と Instructions の責務分離を固定する必要がある
+    - Day0 の作業量が v0.3 実装単体では軽すぎるため、同一テーマの前提 gate として補充する
+  completed_condition:
+    - DELTA GPT に入っている Knowledge 一覧を確認する
+    - `delta_instruction.md` / `delta_schema.yaml` を Knowledge から外すか、Instructions / field guide 側に寄せる判断を行う
+    - 古い `/api/delta-resource` 前提の schema / 説明 / テストログを削除候補にする
+    - 残す core knowledge を決める
+    - フォーサイト教材の追加分類方針を決める
+    - v0.3 runtime reflection を妨げる古い参照前提がない状態にする
+  notes:
+    - ルール / 禁止事項 / Action 利用ルールは DELTA GPT Instructions 側へ寄せる
+    - Knowledge は roadmap / plan / operations / history template / 教材 index / フォーサイト教材を中心にする
+    - フォーサイト教材は著作物の可能性が高いため、個人学習用・非公開 GPT Knowledge 前提で扱う
+
 - task: DELTA v0.3 history write を repo-resource 統合方式で実装する
   source_ref:
     - systems/delta/config/delta_action_schema_v0.3.yaml
@@ -60,6 +108,7 @@ Immediate Gate は7日枠に数えない。
   notes:
     - 以前作った `api/delta-history.js` route 方式は function 上限のため使用しない
     - `src/services/delta-history.js` は service 層として再利用してよい
+    - Day0 は Knowledge refresh gate と合わせておおむね 1.5〜2.5h の想定
   external:
     todoist_task_id: 6gVXWvpPp8vjgF5H
 
@@ -74,6 +123,7 @@ Immediate Gate は7日枠に数えない。
   due_date: 2026-04-30
   due_type: date
   blocked_by:
+    - DELTA Knowledge refresh gate を実行する
     - DELTA v0.3 history write を repo-resource 統合方式で実装する
   why_now:
     - repo schema / code 保存だけでは runtime-visible schema / actual behavior confirmed にならない
@@ -159,7 +209,7 @@ Immediate Gate は7日枠に数えない。
   notes:
     - 失敗時は v0.4 を disabled に戻す
   external:
-    todoist_task_id: 6gVXWw74rqV7H8qH
+    todoist_task_id: 6gVXWw74rqV7H
 
 ## Day5（05/04 月）
 
@@ -227,6 +277,7 @@ Immediate Gate は7日枠に数えない。
 - active_operations の各 task は task / source_ref / rolling_day を必須で持つ
 - why_now / notes / due_date / due_type は必要に応じて持つ
 - blocked_by / blocks は依存関係を構造化するために必要に応じて持つ
+- operations rolling / daily review では Day capacity を必ず確認し、task はおおむね 0.5〜1.5h、1 day はおおむね 2h として、明示理由なしに軽すぎる Day を作らない
 - operations は候補を優先順位で並べ、7日枠に入るものを active_operations とする
 - active に入らなかった上位候補を next_operations に置く
 - スコアは補助であり、決定ではない
