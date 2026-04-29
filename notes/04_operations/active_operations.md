@@ -283,14 +283,22 @@ Immediate Gate は7日枠に数えない。
 ## Day5（05/04 月）
 
 - task: Phase 1 Todoist foundation entry: Todoist service 境界と一覧取得 API を確認する
+  status: complete
+  completed: true
   source_ref:
     - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
     - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
     - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
     - src/services/todoist.js
     - src/services/todoist/client.js
     - src/services/tasks/service.js
     - src/services/tasks/projection.js
+    - src/services/tasks/dispatch.js
+    - src/services/tasks/validate.js
+    - api/tasks/index.js
+    - api/tasks/[id].js
+    - api/tasks/project.js
   rolling_day: Day5
   due_date: 2026-05-04
   due_type: date
@@ -304,7 +312,14 @@ Immediate Gate は7日枠に数えない。
     - Phase 1 list retrieval entry point is fixed
     - next implementation task is proposed or routed
   notes:
-    - legacy Todoist wrapper 削除前 gate をこの entry task に吸収してよい
+    - Todoist client SSOT は `src/services/todoist/client.js` と確認した
+    - `src/services/todoist.js` は deprecated legacy wrapper として維持し、今は削除しない
+    - current API surface は `api/tasks/index.js` / `api/tasks/[id].js` / `api/tasks/project.js`
+    - service boundary は handler → validate → dispatch → service/projection → todoist/client.js
+    - list retrieval entry point は `GET /api/tasks` / runtime `listTasks`
+    - list retrieval は runtime で open task 一覧取得済み
+    - Todoist projection ID mismatch risk を確認した
+    - next implementation candidate は `Outlook Calendar read foundation の設計と最小 API 入口を確認する`
   external:
     todoist_task_id: 6gVVg84rHJc5CMpq
 
