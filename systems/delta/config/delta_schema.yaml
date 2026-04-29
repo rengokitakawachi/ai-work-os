@@ -36,16 +36,68 @@ models:
       - next_review_date
       - weak_point_ref
   LearningHistory:
-    fields:
+    storage:
+      path_pattern: systems/delta/history/YYYY-MM.md
+      format: markdown_with_delta_meta_yaml
+      section_unit: one_day
+      append_order: date_ascending
+    source_of_truth:
+      human_readable: markdown_body
+      machine_aggregation: DELTA_META
+      mismatch_policy: daily_review_correction
+    markdown_sections:
+      - 実績
+      - 計画との差分
+      - 判断
+      - 弱点
+      - 次アクション
+      - メモ
+      - DELTA_META
+    delta_meta_fields:
       - date
-      - subject
-      - topic
-      - material
-      - minutes
+      - day_type
+      - actual_results
+      - judgment
+      - next_action
+      - source_ref
+    actual_results_fields:
       - study_type
+      - subject
+      - material
+      - planned_scope
+      - actual_scope
       - result
       - comprehension
-      - quiz_score
       - weak_points
-      - next_review_date
-      - source_ref
+    allowed_values:
+      day_type:
+        - weekday
+        - weekend
+        - holiday
+        - exception
+      study_type:
+        - L1
+        - L2
+        - L3
+        - 秒トレ
+        - review
+        - other
+      result:
+        - complete
+        - partial
+        - skipped
+      comprehension:
+        - high
+        - medium
+        - low
+        - unknown
+      judgment_status:
+        - on_track
+        - slight_delay
+        - delay
+        - overdone
+rules:
+  history:
+    - operations には実績を書かず、実績は history に集約する
+    - review には週次・月次レビューや弱点集約を置く
+    - DELTA_META は進捗集計、遅れ検知、弱点抽出、次アクション生成に使う
