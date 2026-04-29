@@ -7,18 +7,18 @@ import {
 
 export const DELTA_HISTORY_ROOT = 'systems/delta/history/';
 
-export function buildDeltaHistoryPath(file, context = {}) {
+function buildDeltaHistoryPath(file, context = {}) {
   const safe = assertSafeRelativePath(file, {
     step: context.step || 'buildDeltaHistoryPath',
     resource: 'delta_history',
     action: context.action || '',
   });
 
-  if (safe.startsWith('systems/') || safe.startsWith('history/')) {
+  if (safe.startsWith(DELTA_HISTORY_ROOT) || safe.startsWith('systems/')) {
     throw createError({
       status: 400,
       code: 'INVALID_REQUEST',
-      message: 'delta history file must be relative to systems/delta/history',
+      message: 'delta_history file must be relative to systems/delta/history',
       category: 'validation',
       step: context.step || 'buildDeltaHistoryPath',
       resource: 'delta_history',
@@ -35,7 +35,7 @@ export function buildDeltaHistoryPath(file, context = {}) {
     throw createError({
       status: 400,
       code: 'INVALID_REQUEST',
-      message: 'delta history file must be markdown',
+      message: 'delta_history file must be a markdown file',
       category: 'validation',
       step: context.step || 'buildDeltaHistoryPath',
       resource: 'delta_history',
@@ -43,12 +43,17 @@ export function buildDeltaHistoryPath(file, context = {}) {
       retryable: false,
       details: {
         file: safe,
-        required_extension: '.md',
+        allowed_extension: '.md',
       },
     });
   }
 
   return `${DELTA_HISTORY_ROOT}${safe}`;
+}
+
+function normalizeMessage(message, fallback) {
+  const safeMessage = typeof message === 'string' ? message.trim() : '';
+  return safeMessage || fallback;
 }
 
 export async function createDeltaHistory(file, content, message = '', options = {}) {
@@ -85,13 +90,18 @@ export async function createDeltaHistory(file, content, message = '', options = 
     }
   }
 
-  const commitMessage = message || `create ${path}`;
-  const result = await putContentFile(path, content, commitMessage, '', {
-    step: 'createDeltaHistory',
-    resource: 'delta_history',
-    action: 'create',
-    branch: options.branch,
-  });
+  const result = await putContentFile(
+    path,
+    content,
+    normalizeMessage(message, `create ${path}`),
+    '',
+    {
+      step: 'createDeltaHistory',
+      resource: 'delta_history',
+      action: 'create',
+      branch: options.branch,
+    }
+  );
 
   return {
     resource: 'delta_history',
@@ -100,11 +110,17 @@ export async function createDeltaHistory(file, content, message = '', options = 
     sha: result.content.sha,
     branch: result.branch,
     status: 'CREATED',
-    write_scope: 'history_only',
+    write_scope: `${DELTA_HISTORY_ROOT}*.md`,
   };
 }
 
-export async function updateDeltaHistory(file, content, message = '', sha = '', options = {}) {
+export async function updateDeltaHistory(
+  file,
+  content,
+  message = '',
+  sha = '',
+  options = {}
+) {
   const path = buildDeltaHistoryPath(file, {
     step: 'updateDeltaHistory',
     action: 'update',
@@ -143,13 +159,18 @@ export async function updateDeltaHistory(file, content, message = '', sha = '', 
     }
   }
 
-  const commitMessage = message || `update ${path}`;
-  const result = await putContentFile(path, content, commitMessage, currentSha, {
-    step: 'updateDeltaHistory',
-    resource: 'delta_history',
-    action: 'update',
-    branch: options.branch,
-  });
+  const result = await putContentFile(
+    path,
+    content,
+    normalizeMessage(message, `update ${path}`),
+    currentSha,
+    {
+      step: 'updateDeltaHistory',
+      resource: 'delta_history',
+      action: 'update',
+      branch: options.branch,
+    }
+  );
 
   return {
     resource: 'delta_history',
@@ -158,6 +179,6 @@ export async function updateDeltaHistory(file, content, message = '', sha = '', 
     sha: result.content.sha,
     branch: result.branch,
     status: 'UPDATED',
-    write_scope: 'history_only',
+    write_scope: `${DELTA_HISTORY_ROOT}*.md`,
   };
 }
