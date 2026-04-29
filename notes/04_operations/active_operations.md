@@ -8,6 +8,41 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- task: repoResource bulk/read で resource-prefixed docs/notes path を正規化し runtime 確認する
+  type: runtime_reflection_gate
+  status: repo_updated_runtime_pending
+  completed: false
+  source_ref:
+    - notes/01_issues/idea_log.md#20260425-030
+    - docs/10_repo_resource_api.md
+    - api/repo-resource.js
+    - src/services/repo-resource/common.js
+    - src/services/repo-resource/notes.js
+    - src/services/repo-resource/docs.js
+    - runtime test 2026-04-29 repoResourceGet bulk notes-prefixed path NOT_FOUND
+  blocks:
+    - repo tree result から read / bulk へ直接つなぐ調査効率
+    - handover / operations / docs / code の横断読取効率
+    - Phase 0 hardening 中の repo investigation safety
+  completed_condition:
+    - issue 20260425-030 の原因を newline separator ではなく resource-prefixed path normalization gap として整理する
+    - `src/services/repo-resource/common.js` で docs/notes prefix 付き path を正規化する
+    - repo code read-back で修正反映を確認する
+    - runtime で `resource=notes` / `files=notes/04_operations/active_operations.md\nnotes/04_operations/next_operations.md` の bulk が成功する
+    - runtime で `resource=docs` / `files=docs/10_repo_resource_api.md` の read または bulk が成功する
+    - relative path 形式の既存 read / bulk が継続して成功する
+  why_now:
+    - repo tree が返す path をそのまま bulk/read に渡せないと、以後の docs / notes / code 横断調査効率が落ちる
+    - handover 再開、review、routing、code 調査で bulk を頻用するため、Phase 0 hardening より先に修正する価値が高い
+    - docs/10 は comma / newline 両対応を実装済みと定義しており、今回の実害は separator ではなく path 正規化である
+  notes:
+    - newline 区切り自体は `04_operations/active_operations.md\n04_operations/next_operations.md` で runtime 成功を確認した
+    - `notes/` prefix 付き path は runtime で `NOT_FOUND` のまま
+    - `src/services/repo-resource/common.js` は repo 上で修正済み
+    - 修正済み sha: 250d082838609e1487780e1a2a659801a279d656
+    - Vercel / runtime 反映後に再確認する
+    - 完了までは Day0 へ進まず、この gate を先に閉じる
+
 - task: DELTA v0.5 write schema で history write を復旧する
   type: runtime_reflection_gate
   status: complete
