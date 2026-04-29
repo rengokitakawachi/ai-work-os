@@ -32,12 +32,13 @@ Immediate Gate は7日枠に数えない。
 
 - task: ADAM handover trigger Always-On Rule を instruction / knowledge / runtime に反映する
   type: manual_runtime_reflection_gate
-  status: editor_reflected_runtime_test_pending
-  completed: false
+  status: complete
+  completed: true
   source_ref:
     - config/ai/adam_instruction.md
     - config/ai/adam_knowledge.md
     - notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md
+    - ADAM runtime handover trigger confirmation 2026-04-29
   blocks:
     - handover / 新スレ移行時の正本誤認防止
     - Phase 0 hardening 中の restart safety
@@ -59,7 +60,8 @@ Immediate Gate は7日枠に数えない。
     - repo knowledge は Handover Trigger / Content contract / Forbidden / Quality checklist まで更新済み
     - ユーザーが ADAM GPT editor へ instruction / knowledge を反映済み
     - `notes/06_handover/2026-04-29_phase0_hardening_restart_handover.md` は作成・補完・保存確認済み
-    - runtime behavior confirmation は未完了。新しい ADAM chat で確認が必要
+    - 新しい ADAM chat で `引き継ぎ` 系依頼を handover procedure request として扱い、handover を execution source of truth とせず `active_operations` を読んで次 action を判断した
+    - runtime behavior confirmed
   external:
     todoist_task_id: 6gVjjP88XJg63pRH
 
@@ -328,7 +330,6 @@ Immediate Gate は7日枠に数えない。
     - config/ai/eve_schema.yaml
   rolling_day: Day5
   due_date: 2026-05-04
-  due_type: date
   why_now:
     - Phase 1 以降に EVE runtime を使う前に、runtime-visible scope の確認方法を固定する
   completed_condition:
