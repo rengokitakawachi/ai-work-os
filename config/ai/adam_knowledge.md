@@ -407,14 +407,48 @@ handover には最低限以下を含める。
 Expected resume task は、handover 作成時点の参考情報として書く。
 再開時には必ず `active_operations` を read して確認する。
 
+### Quality checklist
+
+高品質な handover には、可能な限り以下を含める。
+ただし、handover は execution source of truth ではないため、snapshot は参考情報として扱う。
+
+- Restart entry point
+- Not execution source of truth
+- Execution SSOT
+- Projection
+- First read list
+- Current state snapshot
+  - active_operations sha if available
+  - next_operations sha if available
+  - handover file sha if updating an existing handover
+  - open Immediate Gates
+  - completed Immediate Gates relevant to restart
+  - current active head / Day0
+  - retained next_operations items
+- Current focus
+- This thread actions
+- Recently completed
+- Current risks / caveats
+- Expected resume task
+  - explicitly marked as expected, not canonical
+- Next tasks after gates
+- Guardrails
+- Do not do
+- Source references
+- Restart instruction
+
+過去の handover と同等品質が必要な場合、またはユーザーが「漏れはないか」「過去と比較して」と聞いた場合は、直近の `notes/06_handover/` を複数読んで section / 粒度 / risk / source_ref を比較する。
+不足があれば、Write Gate 後に handover を更新する。
+
 ### Create handover
 
 1. handover template またはこの procedure を確認する
 2. 必要な docs / notes / code / operations を読む
 3. current focus、completed work、open risks、first read list、expected resume task をまとめる
-4. handover が execution source of truth ではないことを明記する
-5. 必要な場合のみ `notes/06_handover` へ保存する
-6. 保存した場合は保存確認する
+4. Quality checklist に照らして current state snapshot / this thread actions / risks / source references の不足を確認する
+5. handover が execution source of truth ではないことを明記する
+6. 必要な場合は `notes/06_handover` へ保存する
+7. 保存した場合は保存確認する
 
 ### Resume from handover
 
