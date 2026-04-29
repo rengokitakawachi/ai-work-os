@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: DELTA Read-only Resource API
-  version: "0.2.0"
-  description: Read-only GitHub resource access for DELTA learning system under systems/delta/.
+  version: "0.2.1"
+  description: Read-only GitHub resource access for DELTA learning system under systems/delta/ via /api/repo-resource.
 
 servers:
   - url: https://ai-work-os.vercel.app
@@ -15,6 +15,37 @@ components:
       bearerFormat: API Key
 
   schemas:
+    ErrorObject:
+      type: object
+      additionalProperties: true
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        category:
+          type: string
+        step:
+          type: string
+        resource:
+          type: string
+          enum:
+            - delta
+        action:
+          type: string
+        status:
+          type: integer
+        retryable:
+          type: boolean
+        details:
+          type: object
+          additionalProperties: true
+        request_id:
+          type: string
+      required:
+        - code
+        - message
+
     ErrorResponse:
       type: object
       additionalProperties: true
@@ -23,32 +54,9 @@ components:
           type: boolean
           const: false
         error:
-          type: object
-          additionalProperties: true
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            category:
-              type: string
-            step:
-              type: string
-            resource:
-              type: string
-              enum:
-                - delta
-            action:
-              type: string
-            status:
-              type: integer
-            retryable:
-              type: boolean
-            details:
-              type: object
-              additionalProperties: true
-            request_id:
-              type: string
+          $ref: "#/components/schemas/ErrorObject"
+        request_id:
+          type: string
       required:
         - ok
         - error
@@ -93,6 +101,10 @@ components:
         read_only:
           type: boolean
           const: true
+      required:
+        - resource
+        - root
+        - read_only
 
     DeltaTreeResponse:
       type: object
@@ -142,6 +154,12 @@ components:
         read_only:
           type: boolean
           const: true
+      required:
+        - resource
+        - root
+        - path
+        - content
+        - read_only
 
     DeltaFileReadResponse:
       type: object
@@ -217,21 +235,36 @@ components:
         - ok
         - data
 
+    DeltaResourceGetResponse:
+      oneOf:
+        - $ref: "#/components/schemas/DeltaTreeResponse"
+        - $ref: "#/components/schemas/DeltaFileReadResponse"
+        - $ref: "#/components/schemas/DeltaBulkResponse"
+
 security:
   - bearerAuth: []
 
 paths:
-  /api/delta-resource:
+  /api/repo-resource:
     get:
       operationId: deltaResourceGet
       summary: Read DELTA resources only
       description: |
-        Read-only access to files under systems/delta/.
+        Read-only access to files under systems/delta/ using the shared repo-resource endpoint.
+        Always set resource=delta.
         The file and files parameters must be relative to systems/delta/.
         Write actions are intentionally not exposed in v0.2.
       security:
         - bearerAuth: []
       parameters:
+        - name: resource
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - delta
+          description: Must be delta.
         - name: action
           in: query
           required: true
@@ -265,10 +298,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/DeltaTreeResponse"
-                  - $ref: "#/components/schemas/DeltaFileReadResponse"
-                  - $ref: "#/components/schemas/DeltaBulkResponse"
+                $ref: "#/components/schemas/DeltaResourceGetResponse"
         "400":
           description: Invalid request
           content:
