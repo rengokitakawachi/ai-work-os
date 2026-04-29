@@ -241,9 +241,13 @@ Immediate Gate は7日枠に数えない。
 ## Day4（05/03 日）
 
 - task: DELTA v0.4 operations write runtime reflection を実行する
+  status: complete
+  completed: true
   source_ref:
     - DELTA GPT Actions
+    - systems/delta/config/delta_action_schema_v0.4.yaml
     - systems/delta/operations/active_operations.md
+    - DELTA v0.4 runtime behavior confirmation 2026-04-29
   rolling_day: Day4
   due_date: 2026-05-03
   due_type: date
@@ -258,7 +262,21 @@ Immediate Gate は7日枠に数えない。
     - read-back で expected diff を確認する
     - unexpected write scope がないことを確認する
   notes:
-    - 失敗時は v0.4 を disabled に戻す
+    - DELTA GPT Actions に v0.4 schema を設定した
+    - Production deploy は latest main で Ready だった
+    - read existing operations は成功した
+    - invalid path write は 400 / INVALID_REQUEST で拒否された
+    - invalid sibling operations write は 400 / INVALID_REQUEST で拒否された
+    - invalid content write は 400 / INVALID_REQUEST で拒否された
+    - controlled operations update は `systems/delta/operations/active_operations.md` に限定して成功した
+    - read-back で `<!-- DELTA v0.4 runtime operations write test: ok -->` を確認した
+    - required markers は read-back で保持されていた
+    - previous sha: 6170f20970348d5f8aacc16c30b806aac7e9037c
+    - returned sha: ae57ff241fbf2b4524c555dfd40ea0a92a7894f4
+    - returned resource: delta_operations
+    - returned write_scope: systems/delta/operations/active_operations.md
+    - history write は実行していない
+    - next_operations write は実行していない
   external:
     todoist_task_id: 6gVXWw74rqV7H
 
