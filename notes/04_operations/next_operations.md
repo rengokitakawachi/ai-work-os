@@ -45,6 +45,7 @@ active_operations に入らなかった上位候補を保持する。
 ### next に新規追加した task
 
 - `DELTA foundation を main に統合する準備をする`
+- `ATLAS 関係ファイルを systems/atlas に集約する設計を整理する`
 - `DELTA v0.6 operations を Todoist execution view へ投影する`
 
 ### 方針変更
@@ -56,6 +57,7 @@ active_operations に入らなかった上位候補を保持する。
 - issue `20260425-030` は bulk separator 問題としては実態修正済みであり、resource-prefixed path normalization gap として閉じる
 - DELTA v0.6 Todoist projection は学習実行 visibility に効くが、会話中の新規候補のため active へ即横入りさせず next に置く
 - DELTA foundation はすでに運用段階にあるため、v0.6 Todoist projection より前に main integration 準備を優先候補として置く
+- ATLAS は Claude を primary executor とする特殊な verification subsystem として扱い、systems/atlas 集約は設計整理後に行う
 
 ---
 
@@ -85,6 +87,28 @@ active_operations に入らなかった上位候補を保持する。
     - これは main merge 実行そのものではなく、統合準備 gate である
     - v0.6 Todoist projection より前に優先度比較する
     - active 化は次回 reroll で Phase 0 hardening との兼ね合いを見て判断する
+
+- task: ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
+  source_ref:
+    - docs/05_roadmap.md
+    - docs/17_operations_system.md
+    - docs/15_notes_system.md
+    - notes/01_issues/idea_log.md#20260430-034
+  why_now:
+    - ATLAS 関係ファイルを集約しないと、Claude 向け prompt / verification report / fixture / policy / handover が散在しやすい
+    - ATLAS は test / verification / CI review system であり、systems 配下に subsystem として置く方が DELTA と構造的に揃う
+    - ただし ATLAS は Claude が primary executor を担う特殊 subsystem のため、DELTA と同型で作る前に責務境界を固定する必要がある
+  completed_condition:
+    - ATLAS の primary executor が Claude であることを明記する
+    - ADAM の責務を controller / integration / consistency に限定する
+    - `systems/atlas/` に置くものと置かないものを分ける
+    - 既存 ATLAS 関係ファイルの移動候補を棚卸しする
+    - `systems/atlas/README.md` / roadmap / verification / prompts の初期構成案を作る
+    - ATLAS outputs は verification evidence であり execution SSOT ではないことを明記する
+  notes:
+    - これは folder 作成そのものではなく設計整理 task
+    - systems/atlas を作る場合も、ADAM active_operations の代替にはしない
+    - Claude の一時会話ログ全文は置かず、verification evidence / reports / prompts を置く
 
 - task: DELTA v0.6 operations を Todoist execution view へ投影する
   source_ref:
