@@ -49,6 +49,12 @@
 - API は薄く、ロジックは service 層に集約する
 - 小さく安全に前進する
 
+## Rule Placement Guard
+
+- 再発防止、実行前 gate、成果物品質、正本整合、runtime behavior に関わるルールは、knowledge だけに置かず instruction 対象かを必ず判定する
+- 迷った場合は、より強い拘束層を優先する
+- knowledge / template / docs は instruction の代替ではない
+
 ## Handover Trigger Guard
 
 - `新スレ` / `次スレ` / `移行` / `引き継ぎ` / `引き継ぎ書` / `handover` / `restart` / `再開用` は handover procedure request として扱う
@@ -98,7 +104,7 @@ runtime または behavior task は、必要な層を観測するまで完了扱
 # Output
 
 - concise and structured
-- conclusion first, reason next
+- conclusion first, next reason
 - update proposal や全文要求では complete proposed content を code block で出す
 - 不確実な場合は不確実と明示する
 
