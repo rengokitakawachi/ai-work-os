@@ -12,235 +12,94 @@ Immediate Gate は7日枠に数えない。
 
 ---
 
-## Day0（04/30 木）
+## Day0（05/01 金）
 
-- task: ADAM instruction 最新変更の runtime 反映確認を行う
+- task: ADAM Proactive Focus Completion Guard の runtime 反映確認を行う
   source_ref:
     - config/ai/adam_instruction.md
-    - config/ai/adam_knowledge.md
-    - config/ai/adam_schema.yaml
-    - notes/08_analysis/2026-04-30_issue_log_append_overwrite_regression_analysis.md
+    - notes/08_analysis/2026-04-30_phase0_hardening_weekly_readiness_review_draft.md
+    - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
   rolling_day: Day0
-  due_date: 2026-04-30
+  due_date: 2026-05-01
   due_type: date
   why_now:
-    - handover template 必読、Rule Placement Guard、擬似 APPEND 禁止など、再発防止に関わる instruction 変更を repo に反映した
-    - repo instruction 更新だけでは ADAM GPT runtime に反映済みとはみなせない
-    - runtime 反映未確認のまま次作業へ進むと、同じ判断ミスや write 事故が再発する可能性がある
-    - user pointed out this instruction reflection may also be left over
+    - 2026-04-30 に `Proactive Focus Completion Guard` を repo instruction へ追加した
+    - repo 更新だけでは configured GPT / runtime 反映済みとはみなせない
+    - 次 task へ進む前に phase-critical gate を自律検知する挙動は ADAM の実行品質に直結する
   completed_condition:
     - repo の `config/ai/adam_instruction.md` 最新 sha を確認する
-    - configured ADAM GPT editor / runtime に反映済みかを区別する
-    - runtime-visible behavior として、handover template 必読、Rule Placement Guard、擬似 APPEND 禁止を確認する最小プロンプトを作る
-    - 必要なら manual reflection gate として未完了状態を明示する
-    - runtime behavior confirmation が終わるまで completed にしない
+    - configured GPT / runtime 反映済みかを repo 更新と分けて報告する
+    - runtime behavior として、次 task へ進む前に completed now / remaining gates / next closure action / phase-critical 判定を行えるか確認する
+    - repo updated / configured reflected / runtime-visible behavior confirmed / actual behavior confirmed を分けて記録する
   notes:
-    - repo schema / configured Action schema / runtime-visible schema / actual behavior を混同しない
-    - instruction は常時拘束ルールなので、knowledge 更新だけでは完了扱いにしない
+    - この会話内では guard を適用済みだが、configured GPT runtime 反映は別層
 
-- task: repo history / show / grep の docs 反映案を作る
+- task: routing session checklist に transform / relocation / archive same-folder rule を反映する
   source_ref:
-    - notes/08_analysis/2026-04-30_issue_log_append_overwrite_regression_analysis.md
-    - docs/10_repo_resource_api.md
-    - config/ai/adam_schema.yaml
-    - api/repo-resource.js
-    - src/services/repo-resource/repo.js
+    - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
+    - notes/08_analysis/2026-04-30_routing_session_checklist.md
+    - notes/08_analysis/2026-04-30_weekly_review_routing_session_integration.md
   rolling_day: Day0
-  due_date: 2026-04-30
-  due_type: date
-  why_now:
-    - APPEND 復旧のために repo history / show / grep を緊急実装したが、docs/10 が create_branch のみの旧仕様のままで docs/code/schema が不一致になっている
-    - docs は仕様 SSOT であり、実装済み repository-level read operation を docs に反映しないまま進めると仕様判断が崩れる
-    - user requested this be added to today's tasks
-  completed_condition:
-    - `docs/10_repo_resource_api.md` の現行内容を読む
-    - repo history / show / compare / diff / search / grep の反映方針を整理する
-    - docs update proposal guard に従い、更新後の `docs/10_repo_resource_api.md` 全文を code block で提示する
-    - configured Action / runtime-visible schema が未反映であることを docs または注記で混同しない
-  notes:
-    - これは docs 反映案作成 task であり、直接 docs 本体を更新できない場合は complete proposed content を出す
-    - Day0 は容量超過気味だが、正本整合回復のため優先追加する
-
-- task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/08_analysis/2026-04-21_issue_routing_operations_candidate_rolling_connection_observation.md
-    - notes/08_analysis/2026-04-21_issue_routing_keep_future_archive_operational_validity.md
-  rolling_day: Day0
-  due_date: 2026-04-30
-  due_type: date
-  why_now:
-    - Phase 0 hardening の中心は issue routing の運用完成条件を review で読める形にすること
-    - docs/05 reflection と runtime safety gates が完了したため、次に戻るべき先頭 task である
-  completed_condition:
-    - issue routing の単発確認済み項目を列挙する
-    - 継続観測が必要な項目を列挙する
-    - weekly review で確認できる形の checklist draft を作る
-  notes:
-    - 単発確認済み項目と継続観測項目を分ける
-  external:
-    todoist_task_id: 6gVjc63jPwjrxj6q
-
-- task: issue routing completed condition を active / next / future 判断チェックに落とす
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-  rolling_day: Day0
-  due_date: 2026-04-30
-  due_type: date
-  why_now:
-    - route_to: operations が即 active 化ではなく rolling 比較対象であることを運用チェックへ落とす
-    - 直前 task の checklist を operations rolling で使える判断軸へ接続する
-  completed_condition:
-    - route_to: operations / design / future / archive / issue の後続処理を checklist 化する
-    - active / next / future の判断基準に issue routing completed condition を接続する
-    - operations rolling で使える candidate check として保存する
-  notes:
-    - plan / operations で読める checklist 形式を目指す
-  external:
-    todoist_task_id: 6gVjc649M5988WQH
-
-## Day1（05/01 金）
-
-- task: intake routing の archive / pending 後処理を実データで再観測する準備をする
-  source_ref:
-    - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
-    - notes/02_design/intake_review_and_source_ref_spec.md
-  rolling_day: Day1
   due_date: 2026-05-01
   due_type: date
   why_now:
-    - intake routing の後処理は Phase 0 の継続観測項目として残っている
+    - routing core は「蓄積情報の整理・分解・結合・価値化・滞留解消」として再定義された
+    - ただし checklist には transform / relocation / archive same-folder rule がまだ明文化されていない
+    - routing 実行時に archive 移動してよい条件と、design → future/design のような relocation routing を分ける必要がある
   completed_condition:
-    - 観測対象の inbox / dev_memo / pending_tasks 型入力を選定する
-    - archive / pending / keep の観測項目を定義する
-    - 実行前に想定される送付先と後処理条件を整理する
+    - routing session の出力型を transform / relocation / retain / pending / archive に分ける
+    - transform では新 file 作成・source_ref・old file archive を標準処理として明記する
+    - relocation では existing file を別 layer へ移す条件を明記する
+    - archive 先は原則 `notes/99_archive/<same-layer>/...` とする rule を明記する
+    - 更新後 read-back / sha を確認する
   notes:
-    - 観測対象の inbox / dev_memo / pending_tasks 型入力を選定する
-  external:
-    todoist_task_id: 6gVjc654hjrvgxXq
+    - routing の滞留解消機能に直結するため、Phase 1 re-entry より先に閉じる
 
-- task: intake routing の archive / pending 後処理を実データで再観測する
+## Day1（05/02 土）
+
+- task: routing session を weekly review procedure / knowledge へ反映する
   source_ref:
-    - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
-    - notes/02_design/intake_review_and_source_ref_spec.md
-  rolling_day: Day1
-  due_date: 2026-05-01
-  due_type: date
-  blocked_by:
-    - intake routing の archive / pending 後処理を実データで再観測する準備をする
-  why_now:
-    - 一般化した postprocess rule が pending_tasks 以外でも破綻しないか確認する
-  completed_condition:
-    - 選定した実データで intake routing を観測する
-    - route 結果と postprocess 結果を分けて記録する
-    - archive / pending / keep の判断が破綻しないか確認する
-  notes:
-    - 観測結果は analysis に保存する
-  external:
-    todoist_task_id: 6gVjc652WPGHgfcH
-
-## Day2（05/02 土）
-
-- task: intake routing 再観測結果を analysis / operations 候補へ返す
-  source_ref:
-    - notes/02_design/2026-04-26_intake_inbox_postprocess_general_rule.md
-    - docs/15_notes_system.md
-  rolling_day: Day2
-  due_date: 2026-05-02
-  due_type: date
-  blocked_by:
-    - intake routing の archive / pending 後処理を実データで再観測する
-  why_now:
-    - 観測だけで終えず、routing 判定軸や後処理ルールの修正要否を残す
-  completed_condition:
-    - observation を analysis note に保存する
-    - rule 修正が必要か判断する
-    - follow-up があれば next_operations 候補として整理する
-  notes:
-    - 必要なら follow-up を next_operations に送る
-  external:
-    todoist_task_id: 6gVjc69Mf869CPRq
-
-- task: design routing の最小運用ルールを確認する
-  source_ref:
-    - docs/15_notes_system.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day2
-  due_date: 2026-05-02
-  due_type: date
-  why_now:
-    - Phase 0 完成対象のうち design routing の運用確認が相対的に薄い
-  completed_condition:
-    - docs / design / future/design / archive / operations candidate の判定軸を確認する
-    - docs 昇格条件と design retain 条件を分ける
-    - design routing が review の代替ではないことを確認する
-  notes:
-    - docs / design / future/design / archive / operations candidate の判定軸を確認する
-  external:
-    todoist_task_id: 6gVjc6944CWV5fCq
-
-## Day3（05/03 日）
-
-- task: design routing 候補を実データから棚卸しする
-  source_ref:
-    - notes/02_design/
-    - docs/15_notes_system.md
-  rolling_day: Day3
-  due_date: 2026-05-03
-  due_type: date
-  blocked_by:
-    - design routing の最小運用ルールを確認する
-  why_now:
-    - 最小運用ルールを実データで確認する必要がある
-  completed_condition:
-    - design layer から routing 候補を数件抽出する
-    - docs 昇格候補 / future 候補 / archive 候補 / retain を分類する
-    - 実行候補化すべき design があれば operations candidate として整理する
-  notes:
-    - docs 昇格候補と future/archive 候補を混同しない
-  external:
-    todoist_task_id: 6gVjc6H2m29xF84H
-
-- task: daily / weekly review と routing / rolling の責務境界を実例で確認する
-  source_ref:
+    - notes/08_analysis/2026-04-30_weekly_review_routing_session_integration.md
+    - notes/08_analysis/2026-04-30_routing_session_checklist.md
+    - config/ai/adam_knowledge.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-  rolling_day: Day3
-  due_date: 2026-05-03
+  rolling_day: Day1
+  due_date: 2026-05-02
   due_type: date
   why_now:
-    - Phase 0 hardening では review に routing を背負わせない境界を固定する必要がある
+    - routing session は weekly review の主要発動地点として整理された
+    - ただし procedure / docs 反映要否が残っている
+    - daily review が report 作成だけでなく content / routing candidate を扱うことも含め、review procedure に接続する必要がある
   completed_condition:
-    - daily review / weekly review / routing / rolling の入出力を比較する
-    - review が report 作成だけではないことを再確認する
-    - routing が review の代替ではないことを整理する
+    - adam_knowledge.md の weekly review procedure 更新要否を判断する
+    - docs/15 / docs/17 への反映要否を判断する
+    - 必要な場合は Write Gate 後に full replacement または docs proposal を作る
+    - routing session が review の代替ではなく、weekly review 内で呼び出される usecase であることを明記する
   notes:
-    - daily review / weekly review / routing / rolling の入出力を比較する
-  external:
-    todoist_task_id: 6gVjc6FxwHRVWQmq
+    - docs 更新は docs update proposal guard に従う
 
-## Day4（05/04 月）
-
-- task: Phase 0 hardening の follow-up candidate を routing する
+- task: archive 判定済み未移動一覧を current rule に合わせて作る
   source_ref:
-    - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
-    - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
-  rolling_day: Day4
-  due_date: 2026-05-04
+    - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
+    - notes/08_analysis/2026-04-30_design_routing_candidate_inventory.md
+    - notes/08_analysis/2026-04-30_routing_session_checklist.md
+  rolling_day: Day1
+  due_date: 2026-05-02
   due_type: date
   why_now:
-    - hardening で出た追加候補を即実行せず active / next / future に振り分ける
+    - routing は archive 判定だけで放置すると滞留解消機能にならない
+    - routing 実行時に archive move してよい方針へ修正されたため、未移動対象を current rule で整理する必要がある
   completed_condition:
-    - hardening で発生した候補を一覧化する
-    - active / next / future / archive の行き先を決める
-    - Phase 1 Outlook へ戻す条件を更新する
+    - archive decision / archive candidate / pending / relocation / retain を分ける
+    - physical move 済み / 未済みを分ける
+    - move すべきもの、retain すべきもの、review 待ちを分ける
+    - archive 先を同等 layer 構造で提案する
+    - この task で移動するか、別 file move task に送るか判断する
   notes:
-    - Phase 1 Outlook へ戻す条件も確認する
-  external:
-    todoist_task_id: 6gVjc6Mg38FGc9wq
+    - 2026-04-30 に draft は作成したが、transform / relocation 方針反映前のため current rule で作り直す
+
+## Day2（05/03 日）
 
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
@@ -251,29 +110,27 @@ Immediate Gate は7日枠に数えない。
     - config/ai/eve_knowledge.md
     - config/ai/adam_schema.yaml
     - config/ai/eve_schema.yaml
-  rolling_day: Day4
-  due_date: 2026-05-04
+  rolling_day: Day2
+  due_date: 2026-05-03
   due_type: date
   why_now:
-    - repo 更新と runtime 反映を区別する Phase 0 ルールを ADAM / EVE にも適用する
+    - repo 更新と runtime 反映を区別する Phase 0 ルールを ADAM / EVE に適用する
+    - Proactive Focus Completion Guard の反映確認とあわせ、runtime reflection の残範囲を明確にする
   completed_condition:
     - ADAM runtime 確認項目を定義する
     - EVE runtime 確認項目を定義する
     - repo schema / configured Action / runtime-visible schema / actual behavior の確認層を分ける
+    - 実行 gate と task 作成 gateを分ける
   notes:
     - ADAM と EVE は別 runtime として確認する
-  external:
-    todoist_task_id: 6gVjc6JJ4q2mxCfH
-
-## Day5（05/05 火）
 
 - task: EVE runtime reflection の最小確認プロンプトと完了条件を整理する
   source_ref:
     - config/ai/eve_instruction.md
     - config/ai/eve_knowledge.md
     - config/ai/eve_schema.yaml
-  rolling_day: Day5
-  due_date: 2026-05-05
+  rolling_day: Day2
+  due_date: 2026-05-03
   due_type: date
   why_now:
     - Phase 1 以降に EVE runtime を使う前に、runtime-visible scope の確認方法を固定する
@@ -283,49 +140,93 @@ Immediate Gate は7日枠に数えない。
     - 実行を別 gate として扱うか判断する
   notes:
     - 実行は別 gate として扱ってよい
-  external:
-    todoist_task_id: 6gVjc6RR6cP5vGJH
 
-- task: Phase 0 hardening weekly readiness review draft を作る
-  source_ref:
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/02_design/2026-04-29_phase0_hardening_roadmap_reflection_draft.md
-    - notes/04_operations/active_operations.md
-  rolling_day: Day5
-  due_date: 2026-05-05
-  due_type: date
-  why_now:
-    - Phase 0 hardening の結果を weekly review で判断できる形に集約する
-  completed_condition:
-    - Phase 0 hardening の確認済み項目を整理する
-    - 残る継続観測項目を整理する
-    - weekly review に渡す判断材料を作る
-  notes:
-    - report 作成ではなく、weekly review に渡す readiness draft とする
-  external:
-    todoist_task_id: 6gVjc6R38pqXWjXq
-
-## Day6（05/06 水）
+## Day3（05/04 月）
 
 - task: Phase 1 re-entry criteria を Phase 0 hardening 結果から整理する
   source_ref:
     - notes/08_analysis/2026-04-28_phase0_remaining_inventory_before_phase1.md
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
-  rolling_day: Day6
-  due_date: 2026-05-06
+    - notes/08_analysis/2026-04-30_phase0_hardening_weekly_readiness_review_draft.md
+    - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
+  rolling_day: Day3
+  due_date: 2026-05-04
   due_type: date
   why_now:
-    - Outlook read foundation へ戻る前に Phase 0 hardening の最低条件を明確にする
+    - Outlook read foundation へ戻る前に Phase 0 hardening と routing core 再定義の最低条件を明確にする
   completed_condition:
     - Phase 1 Outlook read foundation に戻る条件を整理する
     - Phase 0 hardening と並行可能な条件を整理する
+    - routing session / weekly review integration が Phase 1 re-entry を阻害しない条件を明示する
     - Outlook task を next から active に戻す判断軸を作る
   notes:
-    - Phase 1 Outlook Calendar API read design は next に残す
-    - Day6 は Phase 1 re-entry 判断の境界 day として意図的に軽めにする
-    - Outlook read design を同日に前倒しせず、criteria の結果を見てから次回 reroll で active 化する
-  external:
-    todoist_task_id: 6gVjc6WRCmM8VxVH
+    - Outlook read design は next に残し、criteria の結果を見て active 化する
+
+## Day4（05/05 火）
+
+- task: Phase 1 Outlook Calendar API の読取設計を整理する
+  source_ref:
+    - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+    - docs/05_roadmap.md
+    - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
+  rolling_day: Day4
+  due_date: 2026-05-05
+  due_type: date
+  why_now:
+    - Todoist foundation entry の後続として、Outlook を schedule 正本として読む設計が必要になる
+    - Phase 1 re-entry criteria 完了後に active 化する自然な次候補である
+  completed_condition:
+    - current Outlook-related code / config / docs を棚卸しする
+    - calendar read endpoint または missing endpoint を特定する
+    - required auth model を確認する
+    - event response shape を提案する
+    - free/busy calculation prerequisites を列挙する
+    - 次の implementation task を routing する
+  notes:
+    - Outlook 書き込みではなく read-only foundation に限定する
+
+## Day5（05/06 水）
+
+- task: repo history / show / grep の docs・schema・runtime reflection 残範囲を再確認する
+  source_ref:
+    - docs/10_repo_resource_api.md
+    - config/ai/adam_schema.yaml
+    - notes/08_analysis/2026-04-30_phase0_hardening_followup_candidate_routing.md
+  rolling_day: Day5
+  due_date: 2026-05-06
+  due_type: date
+  why_now:
+    - history / grep は runtime behavior confirmed だが、show / compare / diff / search の actual behavior は未確認のまま残っている
+    - repo schema / configured Action / runtime-visible schema / actual behavior を混同しないため、残範囲を明確にする
+  completed_condition:
+    - docs/10 の反映済み範囲を確認する
+    - runtime-visible schema confirmed 範囲を確認する
+    - actual behavior confirmed / unconfirmed を分ける
+    - 残りを next / future / no-op に振り分ける
+  notes:
+    - 2026-04-30 の更新で v2.3.0 相当 schema は確認済みだが、全 action behavior は未確認
+
+## Day6（05/07 木）
+
+- task: legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
+  source_ref:
+    - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+    - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
+    - src/services/todoist.js
+    - src/services/todoist/client.js
+  rolling_day: Day6
+  due_date: 2026-05-07
+  due_type: date
+  why_now:
+    - Phase 1 Todoist foundation entry で `src/services/todoist/client.js` が SSOT と確認できた
+    - ただし legacy wrapper の削除は repo usage / tests / replacement path が揃ってから判断する方が安全である
+  completed_condition:
+    - repo usage を確認する
+    - replacement path を確認する
+    - tests / runtime impact を確認する
+    - delete / retain / future の判断を行う
+  notes:
+    - 現時点では deprecated legacy として維持
 
 ---
 
