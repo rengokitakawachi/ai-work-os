@@ -33,6 +33,8 @@ Immediate Gate は7日枠に数えない。
     - repo updated / configured reflected / runtime-visible behavior confirmed / actual behavior confirmed を分けて記録する
   notes:
     - この会話内では guard を適用済みだが、configured GPT runtime 反映は別層
+  external:
+    todoist_task_id: 6gW4H84g6Hcwx33H
 
 - task: routing session checklist に transform / relocation / archive same-folder rule を反映する
   source_ref:
@@ -54,6 +56,8 @@ Immediate Gate は7日枠に数えない。
     - 更新後 read-back / sha を確認する
   notes:
     - routing の滞留解消機能に直結するため、Phase 1 re-entry より先に閉じる
+  external:
+    todoist_task_id: 6gW4H88XWVJGPjMH
 
 ## Day1（05/02 土）
 
@@ -78,6 +82,8 @@ Immediate Gate は7日枠に数えない。
     - routing session が review の代替ではなく、weekly review 内で呼び出される usecase であることを明記する
   notes:
     - docs 更新は docs update proposal guard に従う
+  external:
+    todoist_task_id: 6gW4H8FHfVFqXrWq
 
 - task: archive 判定済み未移動一覧を current rule に合わせて作る
   source_ref:
@@ -98,6 +104,8 @@ Immediate Gate は7日枠に数えない。
     - この task で移動するか、別 file move task に送るか判断する
   notes:
     - 2026-04-30 に draft は作成したが、transform / relocation 方針反映前のため current rule で作り直す
+  external:
+    todoist_task_id: 6gW4H8J22QFHPCVH
 
 ## Day2（05/03 日）
 
@@ -123,6 +131,8 @@ Immediate Gate は7日枠に数えない。
     - 実行 gate と task 作成 gateを分ける
   notes:
     - ADAM と EVE は別 runtime として確認する
+  external:
+    todoist_task_id: 6gW4H8PjHpjw7q7q
 
 - task: EVE runtime reflection の最小確認プロンプトと完了条件を整理する
   source_ref:
@@ -140,6 +150,8 @@ Immediate Gate は7日枠に数えない。
     - 実行を別 gate として扱うか判断する
   notes:
     - 実行は別 gate として扱ってよい
+  external:
+    todoist_task_id: 6gW4H8WC38gVjjCH
 
 ## Day3（05/04 月）
 
@@ -161,6 +173,8 @@ Immediate Gate は7日枠に数えない。
     - Outlook task を next から active に戻す判断軸を作る
   notes:
     - Outlook read design は next に残し、criteria の結果を見て active 化する
+  external:
+    todoist_task_id: 6gW4H8Wx6C8cp8hH
 
 ## Day4（05/05 火）
 
@@ -184,6 +198,8 @@ Immediate Gate は7日枠に数えない。
     - 次の implementation task を routing する
   notes:
     - Outlook 書き込みではなく read-only foundation に限定する
+  external:
+    todoist_task_id: 6gW4H8g4c2HCvvRH
 
 ## Day5（05/06 水）
 
@@ -205,6 +221,8 @@ Immediate Gate は7日枠に数えない。
     - 残りを next / future / no-op に振り分ける
   notes:
     - 2026-04-30 の更新で v2.3.0 相当 schema は確認済みだが、全 action behavior は未確認
+  external:
+    todoist_task_id: 6gW4H8h3P22gwPvq
 
 ## Day6（05/07 木）
 
@@ -219,7 +237,7 @@ Immediate Gate は7日枠に数えない。
   due_type: date
   why_now:
     - Phase 1 Todoist foundation entry で `src/services/todoist/client.js` が SSOT と確認できた
-    - ただし legacy wrapper の削除は repo usage / tests / replacement path が揃ってから判断する方が安全である
+    - ただし legacy wrapper の削除は repo usage / tests / replacement path が揃ってから判断する方が安全
   completed_condition:
     - repo usage を確認する
     - replacement path を確認する
@@ -227,6 +245,8 @@ Immediate Gate は7日枠に数えない。
     - delete / retain / future の判断を行う
   notes:
     - 現時点では deprecated legacy として維持
+  external:
+    todoist_task_id: 6gW4H8wXXwCx2Rvq
 
 ---
 
