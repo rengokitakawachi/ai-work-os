@@ -373,6 +373,150 @@ Write Gate では必ず以下を示す。
 
 ---
 
+## Tool Result Integrity Procedure
+
+Action / API / search / grep / history / dry_run の結果は、層と限界を明示して扱う。
+
+### 必須区別
+
+- runtime-visible schema
+- actual tool behavior
+- repo implementation
+- configured Action schema
+- canonical file state
+- projection / external view
+
+### 失敗時の扱い
+
+- tool call が失敗した場合、読めた / 書けた / 検索できたふりをしない
+- partial success と complete success を分ける
+- error response は原因推定ではなく観測結果として記録する
+- search 0件は対象不在の証明ではない
+- GitHub code search のような index 型検索は false negative を許容し、重要確認では grep / direct read / history / show など別経路で確認する
+- dry_run 成功を apply 成功とみなさない
+- apply 成功を external projection の同期完了とみなさない
+
+### 報告形式
+
+結果報告では、必要に応じて次を分ける。
+
+- repo code updated
+- repo schema updated
+- configured Action reflected
+- runtime-visible schema confirmed
+- actual behavior confirmed
+- canonical file updated
+- external projection synchronized
+
+---
+
+## Single vs Continuous Confirmation Procedure
+
+一度確認できたことと、今後も継続して守れることを分ける。
+
+### 単発確認
+
+次は単発確認で閉じてよい場合がある。
+
+- ある API call が expected response を返した
+- 保存後 read-back で content が一致した
+- dry_run payload が expected shape になった
+- 1つの file history / show / grep が成功した
+
+### 継続確認
+
+次は単発確認だけで閉じない。
+
+- behavior が今後の会話や別 runtime でも守られる必要がある
+- instruction / knowledge / schema の runtime 反映が必要
+- daily / weekly review で繰り返し確認するべき運用 rule
+- projection / external system と同期し続ける必要がある
+- routing / rolling の判断品質を複数事例で観測する必要がある
+
+### 分離ルール
+
+- 単発確認で十分な task と、継続観測 task を分ける
+- 継続確認が必要なら active / next / review checklist / issue に送る
+- 「この会話では効いた」を「運用として完成した」とみなさない
+
+---
+
+## Problem Handling Procedure
+
+問題を見つけたら、直し方に入る前に扱い方を判定する。
+
+### 3択
+
+- 今すぐ直す
+- 観測だけ記録して止める
+- issue / next_operations / future / design に送って後段で再評価する
+
+### 今すぐ直す条件
+
+- 正本欠損や破損のリスクがある
+- 後続 task を実行不能にする
+- security / privacy / data loss / external side effect の危険がある
+- runtime reflection gate として後続の前提になっている
+- user が明示的に早急対応を求めた
+
+### 記録して止める条件
+
+- 本筋 task の completed condition に直結しない
+- 近い次段の大きな構造変更で前提が変わる
+- 局所最適化に見える
+- 観測価値はあるが今すぐ実装する必要はない
+
+### 後段へ送る条件
+
+- design が必要
+- docs / schema / runtime reflection が必要
+- operations rolling で優先度比較すべき
+- future issue として保持するのが自然
+
+### 注意
+
+問題を見つけた勢いで active 外 task を実行しない。
+ただし正本欠損、data loss、runtime blocker のような Immediate Gate 相当は、理由を明示して構造回復を優先できる。
+
+---
+
+## Regression Analysis Procedure
+
+instruction / schema / docs / code の変更後に重大ミスが増えた場合、regression analysis として扱う。
+
+### 手順
+
+1. history で変更境界を特定する
+2. regression 前 baseline を取得する
+3. regression 後の複数 checkpoint を取得する
+4. current state を取得する
+5. 削除 / 弱体化 / 移動された guard を分類する
+6. 現在の instruction / knowledge / schema / docs のどこに戻すべきかを Rule Placement Guard で判定する
+7. instruction は短い常時 gate、knowledge は詳細 procedure、docs は安定仕様、operations は反映作業として分担する
+8. runtime reflection が必要なら completed にしない
+
+### 比較観点
+
+- Source of Truth
+- active-first execution
+- write gate
+- review start gate
+- routing / rolling separation
+- schema reflection
+- tool result integrity
+- single vs continuous confirmation
+- problem handling gate
+- handover restart contract
+- docs update output rules
+
+### 禁止
+
+- 旧 instruction を丸ごと戻して肥大化させない
+- knowledge に置いたことを runtime guard 完了とみなさない
+- repo 更新だけで runtime behavior が変わったとみなさない
+
+---
+
 ## Rule Placement Procedure
 
 新しいルールや再発防止策を追加する前に、まず拘束強度を判定する。
