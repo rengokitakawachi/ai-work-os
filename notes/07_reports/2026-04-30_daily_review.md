@@ -35,22 +35,22 @@ completed condition:
 
 ## candidate sources checked
 
+- `config/ai/adam_knowledge.md`
 - `notes/04_operations/active_operations.md`
 - `notes/04_operations/next_operations.md`
 - `notes/04_operations/archive_operations.md`
-- `config/ai/adam_knowledge.md`
 - `notes/08_analysis/2026-04-30_phase0_hardening_weekly_readiness_review_draft.md`
 - `notes/02_design/2026-04-30_routing_core_concept_redefinition.md`
 - `notes/08_analysis/2026-04-30_routing_session_checklist.md`
 - `notes/08_analysis/2026-04-30_weekly_review_routing_session_integration.md`
 
-Some expected issue routing artifact filenames were not found by direct read. The consolidated readiness draft records the issue routing outcomes, so this review uses the consolidated draft as the available source of truth for this review pass. Search 0件は対象不在の証明として扱わない。
+Some expected issue routing artifact filenames were not found by direct read / grep. Search 0件は対象不在の証明ではないため、consolidated readiness draft を available source として扱った。
 
 ---
 
 ## completed today
 
-The following active tasks are complete or complete enough to archive from active during daily review:
+The following active tasks were completed or complete enough to remove from active during daily review:
 
 - ADAM instruction 最新変更の runtime 反映確認を行う
 - repo history / show / grep の docs 反映案を作る
@@ -64,6 +64,8 @@ The following active tasks are complete or complete enough to archive from activ
 - daily / weekly review と routing / rolling の責務境界を実例で確認する
 - Phase 0 hardening の follow-up candidate を routing する
 - Phase 0 hardening weekly readiness review draft を作る
+
+Note: completed recognition was used for daily reroll. `archive_operations.md` update remains pending because append is unsupported and full replacement is required to preserve existing history safely.
 
 ---
 
@@ -112,7 +114,11 @@ routing session の出力は transform / relocation / retain / pending / archive
 
 ## active_operations
 
-Day0 を 2026-05-01 起点に更新した。
+Updated.
+
+sha after Todoist ID reflection:
+
+`bc766b35a7d9c76d0533f94c9feb746a808bc2df`
 
 Day0:
 
@@ -147,7 +153,13 @@ Day6:
 
 ## next_operations
 
-Next に残したもの:
+Updated.
+
+sha:
+
+`69e8e282d733046f30a06bbe0c43e0c9126de4cc`
+
+Next retains:
 
 - DELTA foundation を main に統合する準備をする
 - ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
@@ -159,6 +171,44 @@ New next candidates:
 - ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する
 - notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
 - docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する
+
+## archive_operations
+
+Not updated yet.
+
+Reason:
+
+- append action is not available
+- `<<APPEND>>` is forbidden
+- safe update requires read → full content synthesis → update
+- existing archive history is large, and overwriting it with partial content would violate Tool Result Integrity / write safety
+
+Required next action:
+
+- update `archive_operations.md` by full replacement, preserving existing history and adding a `2026-04-30 daily review` section
+
+---
+
+## Todoist projection
+
+Completed.
+
+`projectTasks(mode=dry_run)` succeeded, then `projectTasks(mode=apply)` succeeded.
+
+Created Todoist task IDs:
+
+- `ADAM Proactive Focus Completion Guard の runtime 反映確認を行う`: `6gW4H84g6Hcwx33H`
+- `routing session checklist に transform / relocation / archive same-folder rule を反映する`: `6gW4H88XWVJGPjMH`
+- `routing session を weekly review procedure / knowledge へ反映する`: `6gW4H8FHfVFqXrWq`
+- `archive 判定済み未移動一覧を current rule に合わせて作る`: `6gW4H8J22QFHPCVH`
+- `ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る`: `6gW4H8PjHpjw7q7q`
+- `EVE runtime reflection の最小確認プロンプトと完了条件を整理する`: `6gW4H8WC38gVjjCH`
+- `Phase 1 re-entry criteria を Phase 0 hardening 結果から整理する`: `6gW4H8Wx6C8cp8hH`
+- `Phase 1 Outlook Calendar API の読取設計を整理する`: `6gW4H8g4c2HCvvRH`
+- `repo history / show / grep の docs・schema・runtime reflection 残範囲を再確認する`: `6gW4H8h3P22gwPvq`
+- `legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う`: `6gW4H8wXXwCx2Rvq`
+
+Todoist task IDs were reflected back into `active_operations.md`.
 
 ---
 
@@ -180,17 +230,17 @@ Day6 has 1 legacy deletion gate. Light but acceptable as a tail task and safety 
 
 ---
 
-## Todoist projection
-
-Todoist projection is required after operations update.
-
-Projection should use current active_operations as canonical source. Todoist is projection only.
-
----
-
 ## content seed
 
-A content seed file was created for the following themes:
+Created:
+
+`notes/09_content/2026-04-30_ai_work_os_routing_content_seed.md`
+
+sha:
+
+`1fad3507848a1bc45772a992d5424d1ec4b15b16`
+
+Themes:
 
 - AI Work OS はなぜ routing / review / rolling を分けるのか
 - routing を都度 issue 処理から蓄積情報の価値化装置へ戻す
@@ -202,8 +252,7 @@ A content seed file was created for the following themes:
 
 ## remaining gates
 
-- `archive_operations.md` の既存履歴を保持した full replacement update
-- Todoist projection apply
+- `archive_operations.md` に 2026-04-30 completed tasks を safe full replacement で追記する
 - ADAM configured GPT / runtime reflection for Proactive Focus Completion Guard
 - routing_session_checklist の transform / relocation / archive same-folder rule 反映
 - weekly review procedure / knowledge への routing session 反映
@@ -212,6 +261,16 @@ A content seed file was created for the following themes:
 
 ## judgment
 
-2026-04-30 daily review は、active / next reroll、daily report、content seed 作成まで完了した。
+2026-04-30 daily review は、active / next reroll、Todoist projection、daily report、content seed 作成まで完了した。
 
-ただし、archive_operations update と Todoist projection apply が残るため、review 完了は pending とする。
+ただし、`archive_operations.md` への完了タスク追記だけは安全上未完である。
+
+Therefore:
+
+```text
+Daily review execution: mostly complete
+Canonical active_operations: updated
+Todoist projection: updated
+Report/content: saved
+Archive operations update: pending safe full replacement
+```
