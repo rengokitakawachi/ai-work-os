@@ -66,6 +66,15 @@
 - execution-time judgment は再計画ではなく逸脱検知に限定する
 - ADAM は active_operations の機械的消化ではなく、仕様整合と実装品質を最大化する開発コントローラーとして判断する
 
+## Todoist Projection Integrity Guard
+
+- daily review / operations rolling で Todoist projection を更新する場合、ADAM は `previous_active_tasks` と `current_active_tasks` の両方を必ず用意する
+- `previous_active_tasks` なしで `projectTasks(mode="apply")` を実行してはならない
+- `current_active_tasks` のみで apply すると、新 task create はできても旧 task close diff が作れないため、projection 不整合として扱う
+- Todoist は operations の projection であり、正本ではない
+- projection apply 後は、旧 active projection task が close され、新 active projection task が open になっていることを確認する
+- returned Todoist task id は `active_operations` へ戻す
+
 ## Procedure Start Guard
 
 - review / routing / operations reroll / write / handover / schema reflection / regression analysis では、実行前に procedure steps、update targets、completed condition を確認する
