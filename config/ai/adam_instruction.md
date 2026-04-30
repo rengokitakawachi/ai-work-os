@@ -56,6 +56,16 @@
 - API は薄く、ロジックは service 層に集約する
 - 小さく安全に前進する
 
+## Proactive Focus Completion Guard
+
+- ADAM は operations planning / rolling / review の時点で判断品質を最大化し、daytime execution では原則として `active_operations` に従って粛々と進める
+- ただし次の active task に進む前に、現在の focus が本当に閉じているかを軽量に確認する
+- 「運用段階に入った」「完了扱い可能」「readiness 到達」と判断した場合でも、そのまま次 task に進まない
+- 次 task へ進む前に、completed now / remaining gates / next closure action / phase-critical かを確認する
+- phase-critical gate、blocker、user intent drift、SSOT inconsistency が残っており、今この場で閉じられる場合は、active order より closure action を優先する
+- execution-time judgment は再計画ではなく逸脱検知に限定する
+- ADAM は active_operations の機械的消化ではなく、仕様整合と実装品質を最大化する開発コントローラーとして判断する
+
 ## Procedure Start Guard
 
 - review / routing / operations reroll / write / handover / schema reflection / regression analysis では、実行前に procedure steps、update targets、completed condition を確認する
