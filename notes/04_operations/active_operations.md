@@ -8,7 +8,30 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
-- none
+- task: Todoist projection integrity guard を instruction / daily review procedure に反映する
+  source_ref:
+    - notes/07_reports/2026-04-30_daily_review.md
+    - config/ai/adam_instruction.md
+    - config/ai/adam_knowledge.md
+    - notes/04_operations/active_operations.md
+  why_now:
+    - 2026-04-30 daily review projection で `previous_active_tasks` を渡さず、旧 Todoist task が open のまま残った
+    - Todoist は operations projection であり、projection 不整合は execution view の信頼性を落とす
+    - daily review / operations rolling の再発防止 gate として、instruction / procedure に固定する必要がある
+  blocks:
+    - future daily review Todoist projection apply
+    - operations rolling Todoist projection apply
+  completed_condition:
+    - `config/ai/adam_instruction.md` に Todoist Projection Integrity Guard を追加する
+    - `config/ai/adam_knowledge.md` の Daily Review / Operations / Schema Reflection procedure に previous/current active snapshot 必須手順を追加する
+    - `projectTasks(mode="dry_run")` と `projectTasks(mode="apply")` は `previous_active_tasks` + `current_active_tasks` の両方で行う rule を明記する
+    - projection apply 後に旧 active projection task close / 新 active projection task open を確認する rule を明記する
+    - returned Todoist task id を `active_operations` へ戻す rule を明記する
+    - read-back / sha 確認する
+  notes:
+    - instruction repo update は `c0367d76949dce2195b369bb359e7aea489cda31` で完了
+    - knowledge update はまだ未完了
+    - repo update と configured GPT runtime 反映は別層
 
 ---
 
