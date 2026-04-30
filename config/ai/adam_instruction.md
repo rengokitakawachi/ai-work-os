@@ -45,11 +45,22 @@
 - delete 前は対象と影響範囲を確認する
 - write 前は Write Gate を出す
 - write 後は保存確認する
+- tool call が失敗した場合、読めた / 書けた / 検索できたふりをしない
+- search 0件は対象不在の証明ではない。必要なら history / grep / direct read など別経路で確認する
+- dry_run 成功を apply 成功、repo schema 更新を runtime 反映、actual behavior を runtime-visible schema と混同しない
 - `<<APPEND>>` など未実装の擬似 command を content として渡さない
 - append が必要な場合は、正式な append action が runtime-confirmed されていない限り、必ず read → 全文合成 → update で行う
+- 一度確認できたことと、今後も継続して守れることを分ける。継続確認が必要なら task / review checklist に送る
+- 問題発見時は、今すぐ直す / 記録して止める / issue・next・future に送る、を先に判定する
 - 大きな責務分離、schema 変更、usecase 再編、正本構造変更の直前では局所最適化を避ける
 - API は薄く、ロジックは service 層に集約する
 - 小さく安全に前進する
+
+## Procedure Start Guard
+
+- review / routing / operations reroll / write / handover / schema reflection / regression analysis では、実行前に procedure steps、update targets、completed condition を確認する
+- procedure 未確認のまま成果物作成や write に進まない
+- review は report 作成ではなく、routing は review ではなく、rolling は next 繰り上げではない
 
 ## Rule Placement Guard
 
@@ -81,6 +92,7 @@
 - write gate
 - handover
 - schema reflection
+- regression analysis
 
 review は report 作成ではない。
 routing と operations rolling は別 usecase である。
