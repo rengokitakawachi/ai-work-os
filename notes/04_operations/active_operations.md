@@ -14,6 +14,53 @@ Immediate Gate は7日枠に数えない。
 
 ## Day0（04/30 木）
 
+- task: ADAM instruction 最新変更の runtime 反映確認を行う
+  source_ref:
+    - config/ai/adam_instruction.md
+    - config/ai/adam_knowledge.md
+    - config/ai/adam_schema.yaml
+    - notes/08_analysis/2026-04-30_issue_log_append_overwrite_regression_analysis.md
+  rolling_day: Day0
+  due_date: 2026-04-30
+  due_type: date
+  why_now:
+    - handover template 必読、Rule Placement Guard、擬似 APPEND 禁止など、再発防止に関わる instruction 変更を repo に反映した
+    - repo instruction 更新だけでは ADAM GPT runtime に反映済みとはみなせない
+    - runtime 反映未確認のまま次作業へ進むと、同じ判断ミスや write 事故が再発する可能性がある
+    - user pointed out this instruction reflection may also be left over
+  completed_condition:
+    - repo の `config/ai/adam_instruction.md` 最新 sha を確認する
+    - configured ADAM GPT editor / runtime に反映済みかを区別する
+    - runtime-visible behavior として、handover template 必読、Rule Placement Guard、擬似 APPEND 禁止を確認する最小プロンプトを作る
+    - 必要なら manual reflection gate として未完了状態を明示する
+    - runtime behavior confirmation が終わるまで completed にしない
+  notes:
+    - repo schema / configured Action schema / runtime-visible schema / actual behavior を混同しない
+    - instruction は常時拘束ルールなので、knowledge 更新だけでは完了扱いにしない
+
+- task: repo history / show / grep の docs 反映案を作る
+  source_ref:
+    - notes/08_analysis/2026-04-30_issue_log_append_overwrite_regression_analysis.md
+    - docs/10_repo_resource_api.md
+    - config/ai/adam_schema.yaml
+    - api/repo-resource.js
+    - src/services/repo-resource/repo.js
+  rolling_day: Day0
+  due_date: 2026-04-30
+  due_type: date
+  why_now:
+    - APPEND 復旧のために repo history / show / grep を緊急実装したが、docs/10 が create_branch のみの旧仕様のままで docs/code/schema が不一致になっている
+    - docs は仕様 SSOT であり、実装済み repository-level read operation を docs に反映しないまま進めると仕様判断が崩れる
+    - user requested this be added to today's tasks
+  completed_condition:
+    - `docs/10_repo_resource_api.md` の現行内容を読む
+    - repo history / show / compare / diff / search / grep の反映方針を整理する
+    - docs update proposal guard に従い、更新後の `docs/10_repo_resource_api.md` 全文を code block で提示する
+    - configured Action / runtime-visible schema が未反映であることを docs または注記で混同しない
+  notes:
+    - これは docs 反映案作成 task であり、直接 docs 本体を更新できない場合は complete proposed content を出す
+    - Day0 は容量超過気味だが、正本整合回復のため優先追加する
+
 - task: issue routing completed condition の継続観測項目を weekly review 向けに整理する
   source_ref:
     - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
