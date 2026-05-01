@@ -8,45 +8,34 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-04-30 daily review）
+## 再評価結果（2026-05-01 routing closure update）
 
-### active へ移動した / 繰り越した task
+### completed and removed from next
+
+- `archive 判定済み inbox file を archive へ移動する`
+
+Completion evidence:
+
+- `notes/99_archive/00_inbox/2026-03-23_inbox_web_digest.md` created and read-back confirmed
+- `notes/99_archive/00_inbox/260322_091234AIエージェントの作り方完全ガイド｜失敗しない開発5ステップと選定方法 ｜SIGNATE総研.md` created and read-back confirmed
+- original `notes/00_inbox/2026-03-23_inbox_web_digest.md` deleted and post-delete `NOT_FOUND` confirmed
+- original `notes/00_inbox/260322_091234AIエージェントの作り方完全ガイド｜失敗しない開発5ステップと選定方法 ｜SIGNATE総研.md` deleted and post-delete `NOT_FOUND` confirmed
+- result recorded in `notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md`
+
+### active / completed context
+
+The following task remains active or completed-at-runtime but awaits daily review structural handling:
 
 - `ADAM Proactive Focus Completion Guard の runtime 反映確認を行う`
 - `routing session checklist に transform / relocation / archive same-folder rule を反映する`
 - `routing session を weekly review procedure / knowledge へ反映する`
 - `archive 判定済み未移動一覧を current rule に合わせて作る`
-- `ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る`
-- `EVE runtime reflection の最小確認プロンプトと完了条件を整理する`
-- `Phase 1 re-entry criteria を Phase 0 hardening 結果から整理する`
-- `Phase 1 Outlook Calendar API の読取設計を整理する`
-- `repo history / show / grep の docs・schema・runtime reflection 残範囲を再確認する`
-- `legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う`
 
-### active から完了退避した task
-
-- `ADAM instruction 最新変更の runtime 反映確認を行う`
-- `repo history / show / grep の docs 反映案を作る`
-- `issue routing completed condition の継続観測項目を weekly review 向けに整理する`
-- `issue routing completed condition を active / next / future 判断チェックに落とす`
-- `intake routing の archive / pending 後処理を実データで再観測する準備をする`
-- `intake routing の archive / pending 後処理を実データで再観測する`
-- `intake routing 再観測結果を analysis / operations 候補へ返す`
-- `design routing の最小運用ルールを確認する`
-- `design routing 候補を実データから棚卸しする`
-- `daily / weekly review と routing / rolling の責務境界を実例で確認する`
-- `Phase 0 hardening の follow-up candidate を routing する`
-- `Phase 0 hardening weekly readiness review draft を作る`
-
-### next に残した task
+### retained next candidates
 
 - `DELTA foundation を main に統合する準備をする`
 - `ATLAS 関係ファイルを systems/atlas に集約する設計を整理する`
 - `DELTA v0.6 operations を Todoist execution view へ投影する`
-
-### next に新規追加した task
-
-- `archive 判定済み inbox file を archive へ移動する`
 - `ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する`
 - `notes delete API draft と current repoResourceWrite delete semantics の差分を確認する`
 - `docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する`
@@ -56,7 +45,7 @@ active_operations に入らなかった上位候補を保持する。
 - routing は都度 issue 処理ではなく、蓄積情報の整理・分解・結合・価値化・滞留解消機能として再定義した。
 - 会話中の軽量分類は pre-routing / triage として扱う。
 - weekly review は routing session の主要発動地点とする。
-- routing session の出力型として transform / relocation / retain / pending / archive を明示する必要がある。
+- routing session の出力型として transform / relocation / retain / pending / archive を明示する。
 - routing 実行時、archive 判定が clear なものは Write Gate 後に同一 session 内で archive へ移してよい。
 - archive 先は原則 `notes/99_archive/<same-layer>/...` とする。
 - Phase 1 Outlook read foundation は Phase 1 re-entry criteria の完了後に active 化する。
@@ -135,29 +124,11 @@ active_operations に入らなかった上位候補を保持する。
     - preferred direction は既存 `/api/tasks/project` と `src/services/tasks/projection.js` の profile 拡張
     - 新規 API route は増やさない
 
-- task: archive 判定済み inbox file を archive へ移動する
-  source_ref:
-    - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
-    - notes/00_inbox/2026-03-23_inbox_web_digest.md
-    - notes/00_inbox/260322_091234AIエージェントの作り方完全ガイド｜失敗しない開発5ステップと選定方法 ｜SIGNATE総研.md
-  why_now:
-    - archive 判定済み file を inbox に残し続けると routing の滞留解消機能が弱くなる
-    - routing 実行時に clear archive decision は archive move してよい方針にした
-  completed_condition:
-    - 対象 file を read する
-    - archive destination を `notes/99_archive/00_inbox/` 配下で決める
-    - source_ref が派生先に残っていることを確認する
-    - Write Gate を出す
-    - archive copy を作成する
-    - original delete の是非と安全性を確認する
-    - read-back / existence check を行う
-  notes:
-    - delete original は impact 確認後に行う
-
 - task: ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する
   source_ref:
     - notes/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md
     - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
+    - notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
   why_now:
     - 対象Cは pending 例外が成立した
     - ADAM を「自律的に行動する OS」として説明する抽象概念 chunk は design / content に転用価値がある
@@ -175,8 +146,10 @@ active_operations に入らなかった上位候補を保持する。
     - notes/02_design/2026-03-24_notes_delete_api_draft.md
     - docs/10_repo_resource_api.md
     - config/ai/adam_schema.yaml
+    - notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
   why_now:
     - design routing で archive candidate と判定されたが、delete semantics は安全性が高く差分確認なしに archive しない
+    - actual delete behavior では `resource=notes` の file path に `notes/` prefix を付けると validation error になり、allowed prefixes は `00_inbox/` などであることを観測した
   completed_condition:
     - docs/10_repo_resource_api.md を読む
     - current repoResourceWrite schema / actual behavior を確認する
@@ -187,6 +160,7 @@ active_operations に入らなかった上位候補を保持する。
   source_ref:
     - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
     - notes/08_analysis/2026-04-30_weekly_review_routing_session_integration.md
+    - notes/08_analysis/2026-04-30_routing_session_checklist.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
   why_now:
