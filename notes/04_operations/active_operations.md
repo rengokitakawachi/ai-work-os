@@ -107,6 +107,8 @@ Immediate Gate は7日枠に数えない。
     - docs に置かず notes / knowledge に留める範囲も明示する
   notes:
     - docs/15 が主対象、docs/17 は operations boundary のみが対象候補
+  external:
+    todoist_task_id: 6gWG92HjPG42mh4q
 
 ## Day2（05/04 月）
 
@@ -175,6 +177,8 @@ Immediate Gate は7日枠に数えない。
     - 元 file の pending 継続または archive 化条件を明示する
   notes:
     - 最新 OpenAI 情報を扱う場合は web / official source 確認が必要
+  external:
+    todoist_task_id: 6gWG92RX28p37gfq
 
 - task: notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
   source_ref:
@@ -193,6 +197,8 @@ Immediate Gate は7日枠に数えない。
     - current repoResourceWrite schema / actual behavior を確認する
     - design draft のどの部分が現行とズレているか整理する
     - archive / future/design retain / docs update candidate のどれにするか判断する
+  external:
+    todoist_task_id: 6gWG92XP7RcR2pfq
 
 ## Day4（05/06 水）
 
@@ -219,6 +225,8 @@ Immediate Gate は7日枠に数えない。
     - Write Gate 後に delete / move を実行する
     - write 後に read-back / NOT_FOUND / destination 確認を行う
     - cleanup 結果を routing session summary または cleanup report に記録する
+  external:
+    todoist_task_id: 6gWG92WFmxFQJ6GH
 
 - task: legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
   source_ref:
@@ -270,6 +278,8 @@ Immediate Gate は7日枠に数えない。
   notes:
     - これは main merge 実行そのものではなく、統合準備 gate である
     - v0.6 Todoist projection より前に優先度比較する
+  external:
+    todoist_task_id: 6gWG92fMVFcPFfRH
 
 - task: ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
   source_ref:
@@ -293,6 +303,8 @@ Immediate Gate は7日枠に数えない。
     - ATLAS outputs は verification evidence であり execution SSOT ではないことを明記する
   notes:
     - folder 作成そのものではなく設計整理 task
+  external:
+    todoist_task_id: 6gWG92Xxm538rMXq
 
 ## Day6（05/08 金）
 
@@ -324,6 +336,8 @@ Immediate Gate は7日枠に数えない。
   notes:
     - preferred direction は既存 `/api/tasks/project` と `src/services/tasks/projection.js` の profile 拡張
     - 新規 API route は増やさない
+  external:
+    todoist_task_id: 6gWG92hh5RJfg2MH
 
 ---
 
