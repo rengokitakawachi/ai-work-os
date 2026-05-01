@@ -262,6 +262,31 @@ weekly review までの短期履歴置き場であり、
 - `Phase 1 Todoist foundation entry` は未着手として carryover した
   - DELTA 開発優先により Day5 へ繰り下げた
 
+--- 2026-05-01 daily review ---
+
+- `ADAM Proactive Focus Completion Guard の runtime 反映確認を行う` を完了した
+  - repo instruction latest sha: `c0367d76949dce2195b369bb359e7aea489cda31`
+  - repo updated: confirmed
+  - configured GPT reflected: not directly observable
+  - runtime-visible behavior: partially confirmed
+  - actual behavior: partially confirmed
+  - continuous adherence: ongoing observation
+  - evidence: `notes/08_analysis/2026-05-01_adam_proactive_focus_completion_guard_runtime_confirmation.md`
+- `routing session checklist に transform / relocation / archive same-folder rule を反映する` を完了した
+  - routing session output types: transform / relocation / retain / pending / archive を明記
+  - archive same-layer rule: `notes/99_archive/<same-layer>/...` を明記
+  - checklist read-back sha: `95490c31860d8f0676790fa8dde2475291b67bb8`
+- `routing session を weekly review procedure / knowledge へ反映する` を完了した
+  - knowledge core weekly routing session procedure: reflected
+  - one-time inbox cleanup: issue へ移動し、knowledge には常設しない判断
+  - docs/15 / docs/17: read and reflection scope judged
+  - evidence: `notes/08_analysis/2026-05-01_routing_session_weekly_review_procedure_reflection_judgment.md`
+- `archive 判定済み未移動一覧を current rule に合わせて作る` を完了した
+  - archive / archive candidate / pending / split required / relocation candidate / retain を分離
+  - clear archive decision 2件を physical move 済み
+  - remaining gates を split / diff check / relocation review に分離
+  - evidence: `notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md`
+
 ---
 
 ## ルール
