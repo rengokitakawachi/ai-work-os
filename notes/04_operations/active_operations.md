@@ -14,6 +14,33 @@ Immediate Gate は7日枠に数えない。
 
 ## Day0（05/02 土）
 
+- task: DELTA daily operations plan-gap check を instruction / knowledge / schema 反映 task に分解する
+  source_ref:
+    - notes/01_issues/2026-05-01_delta_daily_operations_plan_gap_check_issue.md
+    - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - systems/delta/operations/active_operations.md
+    - systems/delta/history/2026-05.md
+  rolling_day: Day0
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - DELTA の daily operations 生成が直近反応型になり、長期・中期計画からの逆算が必須プロセスとして働いていない問題が発生した
+    - 2026-05-02 の学習予定提示で、plan 上は Q9-1〜Q11 想定、actual は Q3-3 にもかかわらず、甘い必達ラインが出た
+    - DELTA operations の根幹品質に関わり、DELTA foundation / v0.6 projection より前に修正方針を active へ入れる必要がある
+  completed_condition:
+    - DELTA instruction / knowledge / schema / operations generation code or prompt のどこに反映すべきかを層分離する
+    - plan-gap check の必須 read set を定義する
+    - `gap_status` / `operation_mode` / `recovery_required` の配置先を決める
+    - `survival_line` と `plan_minimum_line` の分離を反映対象にする
+    - 明日の予定出力テンプレートを反映対象にする
+    - runtime confirmation fixture として 2026-05-02 case を定義する
+    - 後続 implementation / runtime reflection task を active / next / future に routing する
+  notes:
+    - これは即実装ではなく、修正作業を安全に分解する gate
+    - DELTA v0.6 Todoist projection はこの修正方針の後に扱う
+
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
     - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
@@ -42,17 +69,19 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gW4H8PjHpjw7q7q
 
+## Day1（05/03 日）
+
 - task: EVE runtime reflection の最小確認プロンプトと完了条件を整理する
   source_ref:
     - config/ai/eve_instruction.md
     - config/ai/eve_knowledge.md
     - config/ai/eve_schema.yaml
-  rolling_day: Day0
-  due_date: 2026-05-02
+  rolling_day: Day1
+  due_date: 2026-05-03
   due_type: date
   why_now:
     - Phase 1 以降に EVE runtime を使う前に、runtime-visible scope の確認方法を固定する
-    - ADAM / EVE instruction 反映作業と同日に EVE 側の最小確認プロンプトを準備する方が反映漏れを抑えられる
+    - ADAM / EVE instruction 反映作業と連続して EVE 側の最小確認プロンプトを準備する方が反映漏れを抑えられる
   completed_condition:
     - EVE runtime で確認すべき instruction / knowledge / schema scope を列挙する
     - 最小確認プロンプトを作る
@@ -61,8 +90,6 @@ Immediate Gate は7日枠に数えない。
     - 実行は別 gate として扱ってよい
   external:
     todoist_task_id: 6gW4H8WC38gVjjCH
-
-## Day1（05/03 日）
 
 - task: Phase 1 re-entry criteria を Phase 0 hardening 結果から整理する
   source_ref:
@@ -86,6 +113,8 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gW4H8Wx6C8cp8hH
 
+## Day2（05/04 月）
+
 - task: docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する
   source_ref:
     - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
@@ -93,8 +122,8 @@ Immediate Gate は7日枠に数えない。
     - notes/08_analysis/2026-04-30_routing_session_checklist.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
-  rolling_day: Day1
-  due_date: 2026-05-03
+  rolling_day: Day2
+  due_date: 2026-05-04
   due_type: date
   why_now:
     - routing core は運用設計として大きく再定義された
@@ -109,8 +138,6 @@ Immediate Gate は7日枠に数えない。
     - docs/15 が主対象、docs/17 は operations boundary のみが対象候補
   external:
     todoist_task_id: 6gWG92HjPG42mh4q
-
-## Day2（05/04 月）
 
 - task: Phase 1 Outlook Calendar API の読取設計を整理する
   source_ref:
@@ -135,13 +162,15 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gW4H8g4c2HCvvRH
 
+## Day3（05/05 火）
+
 - task: repo history / show / grep の docs・schema・runtime reflection 残範囲を再確認する
   source_ref:
     - docs/10_repo_resource_api.md
     - config/ai/adam_schema.yaml
     - notes/08_analysis/2026-04-30_phase0_hardening_followup_candidate_routing.md
-  rolling_day: Day2
-  due_date: 2026-05-04
+  rolling_day: Day3
+  due_date: 2026-05-05
   due_type: date
   why_now:
     - history / grep は runtime behavior confirmed だが、show / compare / diff / search の actual behavior は未確認のまま残っている
@@ -155,8 +184,6 @@ Immediate Gate は7日枠に数えない。
     - 2026-04-30 の更新で v2.3.0 相当 schema は確認済みだが、全 action behavior は未確認
   external:
     todoist_task_id: 6gW4H8h3P22gwPvq
-
-## Day3（05/05 火）
 
 - task: ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する
   source_ref:
@@ -180,14 +207,16 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gWG92RX28p37gfq
 
+## Day4（05/06 水）
+
 - task: notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
   source_ref:
     - notes/02_design/2026-03-24_notes_delete_api_draft.md
     - docs/10_repo_resource_api.md
     - config/ai/adam_schema.yaml
     - notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
-  rolling_day: Day3
-  due_date: 2026-05-05
+  rolling_day: Day4
+  due_date: 2026-05-06
   due_type: date
   why_now:
     - design routing で archive candidate と判定されたが、delete semantics は安全性が高く差分確認なしに archive しない
@@ -199,8 +228,6 @@ Immediate Gate は7日枠に数えない。
     - archive / future/design retain / docs update candidate のどれにするか判断する
   external:
     todoist_task_id: 6gWG92XP7RcR2pfq
-
-## Day4（05/06 水）
 
 - task: 現在の inbox を一回整理する
   source_ref:
@@ -228,14 +255,16 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gWG92WFmxFQJ6GH
 
+## Day5（05/07 木）
+
 - task: legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
   source_ref:
     - notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
     - src/services/todoist.js
     - src/services/todoist/client.js
-  rolling_day: Day4
-  due_date: 2026-05-06
+  rolling_day: Day5
+  due_date: 2026-05-07
   due_type: date
   why_now:
     - Phase 1 Todoist foundation entry で `src/services/todoist/client.js` が SSOT と確認できた
@@ -249,8 +278,6 @@ Immediate Gate は7日枠に数えない。
     - 現時点では deprecated legacy として維持
   external:
     todoist_task_id: 6gW4H8wXXwCx2Rvq
-
-## Day5（05/07 木）
 
 - task: DELTA foundation を main に統合する準備をする
   source_ref:
@@ -281,14 +308,16 @@ Immediate Gate は7日枠に数えない。
   external:
     todoist_task_id: 6gWG92fMVFcPFfRH
 
+## Day6（05/08 金）
+
 - task: ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
   source_ref:
     - docs/05_roadmap.md
     - docs/17_operations_system.md
     - docs/15_notes_system.md
     - notes/01_issues/idea_log.md#20260430-034
-  rolling_day: Day5
-  due_date: 2026-05-07
+  rolling_day: Day6
+  due_date: 2026-05-08
   due_type: date
   why_now:
     - ATLAS 関係ファイルを集約しないと、Claude 向け prompt / verification report / fixture / policy / handover が散在しやすい
@@ -305,39 +334,6 @@ Immediate Gate は7日枠に数えない。
     - folder 作成そのものではなく設計整理 task
   external:
     todoist_task_id: 6gWG92Xxm538rMXq
-
-## Day6（05/08 金）
-
-- task: DELTA v0.6 operations を Todoist execution view へ投影する
-  source_ref:
-    - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
-    - systems/delta/operations/active_operations.md
-    - systems/delta/roadmap/delta_roadmap.md
-    - systems/delta/plan/2026_sharoushi_exam_plan.md
-    - src/services/tasks/projection.js
-    - config/ai/adam_schema.yaml
-    - notes/01_issues/idea_log.md#20260430-031
-  rolling_day: Day6
-  due_date: 2026-05-08
-  due_type: date
-  why_now:
-    - DELTA 日次学習の execution visibility を上げる
-    - DELTA operations はすでに due_date / due_type / study_type を持ち、Todoist 投影に適した形になっている
-    - 既存 ADAM projection を汎用化できれば、新規 API route を増やさず v0.6 として実装できる
-  completed_condition:
-    - DELTA v0.6 schema proposal を作る
-    - `projectTasks` または同等 projection usecase が DELTA active operations を受け取れる
-    - dry_run で DELTA operations tasks から Todoist create/update payload が生成される
-    - payload description に DELTA 固有 field と `ref: systems/delta/operations/active_operations.md` が入る
-    - apply で Todoist task が作成または更新される
-    - apply 結果の Todoist task id を DELTA operations へ戻す方法を確認する
-    - ADAM active projection が壊れていないことを確認する
-    - DELTA GPT runtime-visible schema / behavior を確認する
-  notes:
-    - preferred direction は既存 `/api/tasks/project` と `src/services/tasks/projection.js` の profile 拡張
-    - 新規 API route は増やさない
-  external:
-    todoist_task_id: 6gWG92hh5RJfg2MH
 
 ---
 
