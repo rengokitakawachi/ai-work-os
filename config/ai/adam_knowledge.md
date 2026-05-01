@@ -280,38 +280,47 @@ weekly review routing session input:
 - `notes/09_content`
 - `notes/80_future`
 - archive decision backlog
+- 本システムと無関係な test clip cleanup
+- inbox direct child normalization
+- inbox nested folder cleanup
 
 weekly review routing session steps:
 
 1. routing 対象範囲を決める
 2. 古いもの、滞留しているもの、archive 判定済み未移動を優先する
 3. source を読む
-4. chunk / theme に分解する
-5. 関連 source と統合し、価値化する
-6. routing output type を決める
+4. inbox では test clip / direct child / nested folder を識別する
+5. chunk / theme に分解する
+6. 関連 source と統合し、価値化する
+7. routing output type を決める
    - transform
    - relocation
    - retain
    - pending
    - archive
-7. transform の場合、新 file を作り、`source_ref` を入れ、元 file の archive destination を決める
-8. relocation の場合、existing file の new layer と recheck point を決める
-9. archive の場合、原則 `notes/99_archive/<same-layer>/...` を destination とする
-10. pending / retain の場合、理由と再評価地点を明示する
-11. operations candidate は rolling に渡し、直接 active 化しない
-12. content seed は `notes/09_content` 候補として扱う
-13. physical move が必要な場合は Write Gate 後に実行する
-14. routing session summary を weekly review output に含める
+   - delete candidate
+8. transform の場合、新 file を作り、`source_ref` を入れ、元 file の archive destination を決める
+9. relocation の場合、existing file の new layer と recheck point を決める
+10. archive の場合、原則 `notes/99_archive/<same-layer>/...` を destination とする
+11. delete の場合、本システムと無関係で source_ref / future / design / issue / operations / content 価値がないことを確認する
+12. pending / retain の場合、理由と再評価地点を明示する
+13. operations candidate は rolling に渡し、直接 active 化しない
+14. content seed は `notes/09_content` 候補として扱う
+15. physical move / delete が必要な場合は Write Gate 後に実行する
+16. routing session summary を weekly review output に含める
 
 weekly review routing session completed condition:
 
 - processed sources を列挙した
-- transform / relocation / retain / pending / archive を分類した
+- transform / relocation / retain / pending / archive / delete candidate を分類した
 - derived output / source_ref / postprocess を記録した
 - archive 判定済み未移動を確認した
+- test clip delete candidate / deleted items を記録した
+- inbox direct child normalization decision を記録した
+- nested folder cleanup decision を記録した
 - content seed を抽出した
 - operations candidate を rolling に渡した
-- physical move done / not done を分けた
+- physical move / delete done / not done を分けた
 - remaining gates と next review point を記録した
 
 ---
@@ -331,6 +340,25 @@ Routing types:
 - design routing: design note を docs / design / future/design / archive / operations candidate へ送る
 - conversation routing: 会話中の新論点を active execution に横入りさせず捕捉する
 
+Routing destination set:
+
+- issue
+- operations candidate
+- design
+- docs candidate
+- future
+- decision
+- content
+- archive
+- delete candidate
+
+Routing state / postprocess:
+
+- pending
+- retain
+- relocation
+- split required
+
 Routing output types:
 
 - transform:
@@ -347,6 +375,8 @@ Routing output types:
   - 判断不能理由、解除条件、再評価地点を明示する
 - archive:
   - 役目終了 file を `notes/99_archive/<same-layer>/...` へ移す
+- delete candidate:
+  - 本システムと無関係で、source_ref / future / design / issue / operations / content の価値がない file を削除候補にする
 
 Core rule:
 
@@ -356,12 +386,56 @@ Core rule:
 - issue
 - operations candidate
 - design
+- docs candidate
 - future
+- decision
 - archive
 - content
+- delete candidate
 - routing session input
 
 operations candidate の場合でも、active / next / future の配置は rolling で決める。
+
+analysis は routing destination ではなく、作業ログである。
+content は外部記事要約ではなく、AI Work OS / ADAM / EVE / DELTA の開発・運用から生まれた独自価値のネタ帳である。
+routing は無理に流す処理ではない。issue keep / design retain は正当な判断であり、保持理由と再評価地点を持つ。
+
+Destination constraints:
+
+- intake routing:
+  - primary: issue / design / future / archive
+  - allowed: operations candidate / content
+  - exceptional: docs candidate / decision / delete candidate
+  - inbox は routing 後できるだけ空に近づける
+- issue routing:
+  - primary: operations candidate / design / future / archive / issue keep
+  - allowed: decision
+  - exceptional: docs candidate / content
+  - issue を無理に operations / design へ送らない
+- design routing:
+  - primary: docs candidate / design retain / future/design / archive / operations candidate
+  - allowed: decision / issue / content
+  - exceptional: none
+  - 今着手しないだけで future へ送らない
+- routing session:
+  - primary: issue / operations candidate / design / future / archive
+  - allowed: docs candidate / decision / content / delete candidate
+  - exceptional: none
+  - routing session は個別 routing の batch ではなく、横断統合 usecase
+- conversation / pre-routing:
+  - primary: issue / operations candidate / design / future / content
+  - allowed: decision
+  - exceptional: docs candidate / archive
+
+Inbox cleanup rules:
+
+- inbox は未整理入力の入口であり保管庫ではない
+- 本システムと無関係な test clip は archive ではなく delete してよい
+- delete 前に対象と影響範囲を確認し、Write Gate 後に delete する
+- inbox 直下にある web / dev_memo 相当 file は、物理配置ではなく内容に応じて web / dev_memo / raw memo / user memo / imported article 相当として扱う
+- inbox 直下にあることだけを理由に routing 不能または pending としない
+- inbox 配下にさらに下層 folder がある場合、それは原則として構造ミスであり、正規 layer とみなさない
+- nested folder は中身を読み、必要な destination へ routing / move / delete し、空 folder が残らないように解消する
 
 Issue routing:
 
@@ -375,26 +449,34 @@ Issue routing:
 Intake routing:
 
 1. inbox source を読む
-2. 必要なら chunk / item に split する
-3. 1 theme 1 memo にする
-4. derived output に source_ref を残す
-5. destination を決める
-6. inbox postprocess を決める
-   - processing complete なら archive 原則
-   - explicit reason がある場合のみ pending
+2. test clip / direct child / nested folder を識別する
+3. 本システムと無関係な test clip は delete candidate とする
+4. inbox 直下 file は内容で web / dev_memo / raw memo / user memo / imported article 相当へ分類する
+5. nested folder 内 file は正規構造ではなく中身で分類する
+6. 必要なら chunk / item に split する
+7. 1 theme 1 memo にする
+8. derived output に source_ref を残す
+9. destination を決める
+10. inbox postprocess を決める
+    - processing complete なら archive 原則
+    - explicit reason がある場合のみ pending
+    - unrelated test clip は delete candidate
+    - nested folder は中身処理後に解消
 
 Routing session minimum steps:
 
 1. 対象 source を読む
-2. chunk / item / theme に分解する
-3. 関連する既存 notes / docs / operations / issues を確認する
-4. 重複・統合可能性を判断する
-5. transform / relocation / retain / pending / archive を決める
-6. 必要なら derived output を作り、source_ref を残す
-7. destination を決める
-8. 元 file の postprocess を決める
-9. archive / pending / future / retain / relocation の理由を明示する
-10. physical move が必要なら Write Gate 後に実行する
+2. inbox では test clip / direct child / nested folder を確認する
+3. chunk / item / theme に分解する
+4. 関連する既存 notes / docs / operations / issues を確認する
+5. 重複・統合可能性を判断する
+6. transform / relocation / retain / pending / archive / delete candidate を決める
+7. 必要なら derived output を作り、source_ref を残す
+8. destination を決める
+9. 元 file の postprocess を決める
+10. archive / pending / future / retain / relocation / delete candidate の理由を明示する
+11. physical move / delete が必要なら Write Gate 後に実行する
+12. delete 後は NOT_FOUND を確認する
 
 Routing は destination と follow-up state が明示されたら完了する。
 Issue 保存だけでは routing 完了ではない。
