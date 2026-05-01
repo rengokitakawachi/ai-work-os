@@ -18,7 +18,7 @@ routing は、単なる行き先判定や folder 移動ではない。
 - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
 - notes/08_analysis/2026-04-30_design_routing_candidate_inventory.md
 - notes/08_analysis/2026-04-30_weekly_review_routing_session_integration.md
-- notes/08_analysis/2026-05-01_routing_type_destination_constraints.md
+- notes/02_design/2026-05-01_routing_type_destination_constraints.md
 - docs/15_notes_system.md
 - docs/17_operations_system.md
 
