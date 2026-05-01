@@ -40,6 +40,8 @@ Immediate Gate は7日枠に数えない。
   notes:
     - これは即実装ではなく、修正作業を安全に分解する gate
     - DELTA v0.6 Todoist projection はこの修正方針の後に扱う
+  external:
+    todoist_task_id: 6gWGH6f5vQhpF7gq
 
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
