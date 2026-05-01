@@ -17,6 +17,7 @@ routing は、単なる行き先判定や folder 移動ではない。
 - notes/08_analysis/2026-04-30_phase0_hardening_weekly_readiness_review_draft.md
 - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
 - notes/08_analysis/2026-04-30_design_routing_candidate_inventory.md
+- notes/08_analysis/2026-04-30_weekly_review_routing_session_integration.md
 - docs/15_notes_system.md
 - docs/17_operations_system.md
 
@@ -40,6 +41,98 @@ pre-routing / triage は会話中や issue 発生時の軽量分類であり、r
 
 ---
 
+## routing session output types
+
+routing session の出力型は次に分ける。
+
+### 1. transform routing
+
+source file から情報を chunk に分解し、関連 chunk を統合し、新しい整理済み file を作る。
+
+標準処理:
+
+1. source file を読む
+2. chunk / theme に分解する
+3. 関連 source と結合する
+4. 新しい整理済み file を作成する
+5. 新 file に `source_ref` を入れる
+6. 元 source file の役目が終わったら archive へ移す
+
+例:
+
+```text
+old:
+notes/00_inbox/article_a.md
+notes/00_inbox/article_b.md
+
+new:
+notes/02_design/2026-04-30_ai_agent_operation_principles.md
+
+archive:
+notes/99_archive/00_inbox/article_a.md
+notes/99_archive/00_inbox/article_b.md
+```
+
+### 2. relocation routing
+
+既存 file の内容価値はそのまま残し、より適切な layer へ移す。
+
+例:
+
+```text
+old:
+notes/02_design/foo.md
+
+new location:
+notes/80_future/design/foo.md
+```
+
+relocation は archive ではない。
+
+relocation では、必要に応じて移動先 file に routing metadata を追加する。
+
+```markdown
+## routing note
+
+- routed_at: YYYY-MM-DD
+- from: <old path>
+- reason: <why this layer is more appropriate>
+- recheck: <when / where to revisit>
+```
+
+### 3. retain routing
+
+現 layer に残す理由が明確な場合、retain とする。
+
+retain は滞留ではなく、意図的な現 layer 維持である。
+
+### 4. pending routing
+
+判断不能理由があり、解除条件と再評価地点がある場合、pending とする。
+
+pending は逃げ場ではない。
+
+### 5. archive routing
+
+役目終了した file を archive へ移す。
+
+archive 先は原則として、`notes/99_archive/<same-layer>/...` とする。
+
+例:
+
+```text
+notes/00_inbox/foo.md
+→ notes/99_archive/00_inbox/foo.md
+
+notes/02_design/bar.md
+→ notes/99_archive/02_design/bar.md
+
+notes/08_analysis/baz.md
+→ notes/99_archive/08_analysis/baz.md
+```
+
+---
+
 ## 0. session setup
 
 routing session 開始前に確認する。
@@ -47,7 +140,7 @@ routing session 開始前に確認する。
 - [ ] routing 対象範囲を決めた
 - [ ] session の目的を1文で書ける
 - [ ] weekly review の一部か、dedicated routing session かを決めた
-- [ ]対象 layer を決めた
+- [ ] 対象 layer を決めた
   - [ ] inbox
   - [ ] dev memo
   - [ ] issue
@@ -55,6 +148,12 @@ routing session 開始前に確認する。
   - [ ] analysis
   - [ ] content seed
   - [ ] future / pending
+- [ ] routing output type を使う方針を確認した
+  - [ ] transform
+  - [ ] relocation
+  - [ ] retain
+  - [ ] pending
+  - [ ] archive
 - [ ] physical move を今回行うか、postprocess decision までに留めるかを決めた
 - [ ] write が必要な場合は Write Gate を出す方針を確認した
 
@@ -92,7 +191,7 @@ routing session 開始前に確認する。
 - [ ] design note の滞留を確認した
 - [ ] docs 昇格候補を抽出した
 - [ ] design retain が妥当なものを抽出した
-- [ ] future/design 候補を抽出した
+- [ ] future/design へ relocation すべきものを抽出した
 - [ ] archive candidate を抽出した
 - [ ] operations candidate 化できるものを抽出した
 
@@ -124,6 +223,8 @@ routing session 開始前に確認する。
 - [ ] 他 source と結合できる chunk を見つけた
 - [ ] 単独では弱いが、他情報と合わせると価値が出る chunk を見つけた
 - [ ] 判断不能 chunk を pending 候補として分けた
+- [ ] transform routing が必要な chunk を抽出した
+- [ ] relocation routing で十分な file を抽出した
 
 chunk 記録形式:
 
@@ -134,6 +235,7 @@ summary:
 related_sources:
 candidate_destination:
 value_if_combined:
+routing_output_type:
 postprocess_note:
 ```
 
@@ -152,10 +254,12 @@ postprocess_note:
 - [ ] operations candidate にできる具体 task を抽出した
 - [ ] content seed として読者価値がある形にできるか確認した
 - [ ] docs 昇格候補として安定しているか確認した
+- [ ] transform routing で作る新 file の destination を決めた
+- [ ] new file に含める source_ref を決めた
 
 value-up 記録形式:
 
-```text id="5hlj15"
+```text
 theme:
 combined_sources:
 new_value:
@@ -168,7 +272,7 @@ remaining_uncertainty:
 
 ## 4. destination decision
 
-chunk / theme ごとに destination を決める。
+chunk / theme / file ごとに destination を決める。
 
 ### docs candidate
 
@@ -199,12 +303,14 @@ chunk / theme ごとに destination を決める。
 - [ ] active / next / future の配置を rolling で比較する価値がある
 - [ ] 即 active 化していない
 
-### future
+### future / relocation
 
 - [ ] 今は扱わない理由がある
 - [ ] phase 不一致 / 前提待ち / 優先度待ちが説明できる
 - [ ] 再評価地点がある
 - [ ] archive ではない
+- [ ] existing file をそのまま future/design などへ移す方が自然か判断した
+- [ ] relocation metadata が必要か判断した
 
 ### archive
 
@@ -212,7 +318,8 @@ chunk / theme ごとに destination を決める。
 - [ ] source_ref が派生先に残っている
 - [ ] 元 file を残す必要が弱い
 - [ ] pending 理由を1文で説明できない
-- [ ] physical move の要否を判断した
+- [ ] archive destination が `notes/99_archive/<same-layer>/...` で決まっている
+- [ ] routing session 内で physical move してよいか判断した
 
 ### pending
 
@@ -231,8 +338,9 @@ chunk / theme ごとに destination を決める。
 
 destination 記録形式:
 
-```text id="ciyg1i"
-chunk_or_theme:
+```text
+chunk_or_theme_or_file:
+routing_output_type:
 destination:
 reason:
 source_ref:
@@ -241,7 +349,53 @@ completed_condition_or_recheck:
 
 ---
 
-## 5. postprocess decision
+## 5. output creation
+
+routing session で作る output を決める。
+
+### transform output
+
+- [ ] 新 file の destination を決めた
+- [ ] 新 file の title / filename を決めた
+- [ ] 新 file の目的を明記した
+- [ ] 新 file に `source_ref` を入れた
+- [ ] chunk / theme の統合結果を入れた
+- [ ] 元 source file の postprocess を決めた
+- [ ] 元 source file が archive 対象なら archive destination を決めた
+
+transform output 記録形式:
+
+```text
+new_file:
+source_ref:
+combined_chunks:
+new_value:
+old_files_postprocess:
+archive_destinations:
+```
+
+### relocation output
+
+- [ ] existing file の価値をそのまま保つ方がよい
+- [ ] 現 layer より適切な destination layer がある
+- [ ] archive ではなく relocation である
+- [ ] relocation destination を決めた
+- [ ] 必要なら routing metadata を追加する
+- [ ] old path と new path を記録する
+
+relocation output 記録形式:
+
+```text
+old_file:
+new_file:
+reason:
+recheck:
+metadata_added:
+```
+
+---
+
+## 6. postprocess decision
 
 元 source file ごとに postprocess を決める。
 
@@ -250,7 +404,7 @@ postprocess options:
 - archive
 - pending
 - retain
-- future
+- relocate
 - split required
 - delete candidate
 
@@ -258,8 +412,8 @@ postprocess options:
 
 - [ ] 主要 chunk が派生先へ送られた
 - [ ] source_ref が派生先に残っている
-- [ ] 元 file を inbox / dev memo に残す理由がない
-- [ ] archive 移動先が明確
+- [ ] 元 file を inbox / dev memo / design / analysis に残す理由がない
+- [ ] archive 移動先が `notes/99_archive/<same-layer>/...` で明確
 - [ ] physical move を今回するか、review action に送るかを決めた
 
 ### pending
@@ -274,6 +428,13 @@ postprocess options:
 - [ ] 現 layer に残す理由がある
 - [ ] 次に確認する論点が明確
 - [ ] 滞留ではなく意図的 retain である
+
+### relocate
+
+- [ ] existing file をそのまま別 layer に移す方が自然
+- [ ] relocation destination が明確
+- [ ] archive ではない理由が明確
+- [ ] recheck point がある
 
 ### split required
 
@@ -290,7 +451,7 @@ postprocess options:
 
 postprocess 記録形式:
 
-```text id="k44dnw"
+```text
 source_file:
 postprocess:
 reason:
@@ -300,7 +461,7 @@ next_action:
 
 ---
 
-## 6. physical move / write handling
+## 7. physical move / write handling
 
 routing session で write / move が必要な場合の扱い。
 
@@ -308,6 +469,9 @@ routing session で write / move が必要な場合の扱い。
 - [ ] create 前に同名・近接ファイルを確認した
 - [ ] update は full replacement と理解している
 - [ ] append に `<<APPEND>>` を使っていない
+- [ ] transform output の新 file を作る場合、source_ref を入れた
+- [ ] relocation の場合、old path / new path / reason / recheck を記録した
+- [ ] archive の場合、destination は原則 `notes/99_archive/<same-layer>/...` とした
 - [ ] archive / move / delete 前に影響範囲を確認した
 - [ ] Write Gate を出した
 - [ ] write 後に read-back / sha 確認した
@@ -315,14 +479,17 @@ routing session で write / move が必要な場合の扱い。
 
 注意:
 
-```text id="xexqk1"
+```text
 archive 判定と archive 移動は別。
 ただし archive 判定だけで放置し続けると、routing の滞留解消価値が落ちる。
+
+routing session 内で archive decision が clear なものは、Write Gate 後に archive へ移してよい。
+迷うもの、確認 gate が残るもの、delete が絡むものは pending / candidate として残す。
 ```
 
 ---
 
-## 7. outputs
+## 8. outputs
 
 routing session の出力は最低限次を含む。
 
@@ -330,26 +497,31 @@ routing session の出力は最低限次を含む。
 - [ ] processed sources
 - [ ] chunk / theme decomposition
 - [ ] integration / value-up result
+- [ ] routing output type decisions
+- [ ] transform outputs
+- [ ] relocation outputs
 - [ ] destination decisions
 - [ ] postprocess decisions
 - [ ] operations candidates
 - [ ] content seeds
-- [ ] archive / pending / retain / split required 一覧
+- [ ] archive / pending / retain / relocation / split required 一覧
 - [ ] physical move done / not done
 - [ ] remaining gates
 - [ ] next review point
 
 summary format:
 
-```text id="wqm85o"
+```text
 routing_session:
 scope:
 processed_sources:
-derived_outputs:
+transform_outputs:
+relocation_outputs:
 operations_candidates:
 content_seeds:
 archive_decisions:
 pending_decisions:
+retain_decisions:
 physical_moves:
 remaining_gates:
 next_review:
@@ -357,7 +529,7 @@ next_review:
 
 ---
 
-## 8. weekly review integration
+## 9. weekly review integration
 
 weekly review で routing session を使う場合、次を確認する。
 
@@ -366,6 +538,8 @@ weekly review で routing session を使う場合、次を確認する。
 - [ ] archive 判定済み未移動が減った
 - [ ] pending 理由が更新された
 - [ ] content seed が抽出された
+- [ ] transform output が作成された
+- [ ] relocation output が記録された
 - [ ] operations candidate が rolling に渡された
 - [ ] future / archive / retain が更新された
 - [ ] source_ref が残っている
@@ -375,17 +549,22 @@ weekly review で routing session を使う場合、次を確認する。
 
 ## completed condition
 
-この checklist の completed condition:
+この checklist update の completed condition:
 
-- inbox / dev memo / issue / design / analysis / content seed の確認項目を作る
-- chunk 分解 / 統合 / source_ref / postprocess / physical move の checklist を作る
-- weekly review で使える形式にする
+- routing session の出力型を transform / relocation / retain / pending / archive に分ける
+- transform では新 file 作成・source_ref・old file archive を標準処理として明記する
+- relocation では existing file を別 layer へ移す条件を明記する
+- archive 先は原則 `notes/99_archive/<same-layer>/...` とする rule を明記する
+- 更新後 read-back / sha を確認する
 
 対応:
 
-- 各 layer の確認項目を作成した。
-- chunk 分解 / 統合 / destination / postprocess / physical move の checklist を作成した。
-- weekly review integration section を作成した。
+- routing session output types section を追加した。
+- transform routing の標準処理を追加した。
+- relocation routing と routing metadata を追加した。
+- archive same-layer rule を追加した。
+- output creation section を追加した。
+- physical move / write handling に transform / relocation / same-folder archive rule を追加した。
 
 ---
 
@@ -393,4 +572,6 @@ weekly review で routing session を使う場合、次を確認する。
 
 この checklist により、routing core concept は実運用へ落とせる状態に近づいた。
 
-次に必要なのは、weekly review procedure へ routing session を組み込むこと、または archive 判定済み未移動一覧を作ることである。
+routing session は、単なる行き先判定ではなく、transform / relocation / retain / pending / archive を使い分けながら、情報を価値化し、滞留を解消する usecase として扱う。
+
+次に必要なのは、weekly review procedure への反映、archive 判定済み未移動一覧の current rule での再作成、または docs/15 / docs/17 への安定仕様反映判断である。
