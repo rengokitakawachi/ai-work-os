@@ -235,6 +235,31 @@ Daily review minimum steps:
 Daily review は operations、Todoist projection、report、content がすべて更新されて初めて完了する。
 Candidate sources 未確認なら fail closed とする。
 
+### Daily Review Todoist Projection Procedure
+
+Todoist は operations の projection であり、正本ではない。
+daily review / operations rolling で Todoist projection を更新する場合、旧 active task を閉じ、新 active task を作成または更新するため、必ず review 前後の active snapshot を両方使う。
+
+手順:
+
+1. review 前の `active_operations.md` snapshot を `previous_active_tasks` として保持する
+2. review 後の `active_operations.md` snapshot を `current_active_tasks` として作る
+3. `projectTasks(mode="dry_run")` を `previous_active_tasks` と `current_active_tasks` の両方で実行する
+4. dry_run で close / create / update の差分を確認する
+5. close 対象に旧 active task が含まれることを確認する
+6. create / update 対象が current active と一致することを確認する
+7. 問題なければ `projectTasks(mode="apply")` を `previous_active_tasks` と `current_active_tasks` の両方で実行する
+8. apply 後、Todoist open task を確認する
+9. 旧 active projection task が close され、新 active projection task が open になっていることを確認する
+10. returned Todoist task id を `active_operations.md` の `external.todoist_task_id` に戻す
+11. projection 結果と未解消差分を daily report に記録する
+
+禁止:
+
+- `previous_active_tasks` なしで `projectTasks(mode="apply")` を実行しない
+- `current_active_tasks` のみで apply した結果を projection synchronized とみなさない
+- Todoist open task 表示を operations 正本として扱わない
+
 ---
 
 ## Routing Procedure
@@ -322,6 +347,10 @@ Reroll steps:
 6. Day capacity を確認する
 7. active_operations と next_operations を更新する
 8. operations 更新後に Todoist へ project する
+   - `previous_active_tasks` と `current_active_tasks` の両方を渡す
+   - dry_run で close / create / update diff を確認する
+   - apply 後に Todoist open task を確認する
+   - returned Todoist task id を `active_operations` へ戻す
 
 Day capacity correction:
 
@@ -714,6 +743,9 @@ Projection-specific rule:
 - Todoist is projection
 - update operations first
 - project to Todoist after operations update
+- Todoist projection apply では `previous_active_tasks` と `current_active_tasks` の両方を渡す
+- `previous_active_tasks` なしの apply は旧 task close diff を作れないため projection synchronized とみなさない
+- apply 後に旧 active projection task close / 新 active projection task open を確認する
 - returned Todoist task IDs を operations に戻す
 
 schema task を閉じるときは、どの level が完了したかを明示する。
