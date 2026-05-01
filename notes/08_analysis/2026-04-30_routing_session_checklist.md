@@ -18,6 +18,7 @@ routing は、単なる行き先判定や folder 移動ではない。
 - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
 - notes/08_analysis/2026-04-30_design_routing_candidate_inventory.md
 - notes/08_analysis/2026-04-30_weekly_review_routing_session_integration.md
+- notes/08_analysis/2026-05-01_routing_type_destination_constraints.md
 - docs/15_notes_system.md
 - docs/17_operations_system.md
 
@@ -31,13 +32,21 @@ routing session は、次を目的にする。
 - 情報を chunk / theme に分解する
 - 関連情報と結合して価値を高める
 - source_ref を残して再利用可能にする
-- docs / design / issue / operations candidate / future / archive / content へ送る
+- docs candidate / design / issue / operations candidate / future / archive / content / decision へ送る
 - 元 file の postprocess を決める
 - archive 判定だけで放置しない
 
 routing session は、pre-routing / triage とは異なる。
 
 pre-routing / triage は会話中や issue 発生時の軽量分類であり、routing session は蓄積情報の整理・価値化・滞留解消である。
+
+routing は「無理に流す」処理ではない。
+
+保持が最適な場合は issue keep / design retain を選んでよい。  
+ただし保持する場合は、保持理由、再評価地点、次に見る条件を明示する。
+
+inbox は未整理情報の入口であり保管庫ではない。  
+routing 後、inbox はできるだけ空に近い方がよい。
 
 ---
 
@@ -133,6 +142,68 @@ notes/08_analysis/baz.md
 
 ---
 
+## routing destination constraints quick reference
+
+### destination
+
+routing destination は原則として次を使う。
+
+- issue
+- operations candidate
+- design
+- docs candidate
+- future
+- decision
+- content
+- archive
+
+### state / postprocess
+
+以下は destination ではなく state / postprocess として扱う。
+
+- pending
+- retain
+- relocation
+- split required
+
+### analysis
+
+analysis は routing destination ではなく、作業ログである。
+
+### content
+
+content は外部記事要約ではなく、AI Work OS / ADAM / EVE / DELTA の開発・運用から生まれた独自価値のネタ帳である。
+
+### intake routing
+
+- primary: issue / design / future / archive
+- allowed: operations candidate / content
+- exceptional: docs candidate / decision
+- note: inbox は routing 後できるだけ空に近づける
+
+### issue routing
+
+- primary: operations candidate / design / future / archive / issue
+- allowed: decision
+- exceptional: docs candidate / content
+- note: issue を無理に operations / design に送らない。issue keep は正当な destination。
+
+### design routing
+
+- primary: docs candidate / design / future / archive / operations candidate
+- allowed: decision / issue / content
+- exceptional: none
+- note: 今すぐ着手しない design を無理に future へ送らない。design retain は正当な判断。
+
+### routing session
+
+- primary: issue / operations candidate / design / future / archive
+- allowed: docs candidate / decision / content
+- exceptional: none
+- note: routing session は個別 routing の batch ではなく、横断統合 usecase。
+
+---
+
 ## 0. session setup
 
 routing session 開始前に確認する。
@@ -148,6 +219,7 @@ routing session 開始前に確認する。
   - [ ] analysis
   - [ ] content seed
   - [ ] future / pending
+- [ ] routing type / destination constraints を確認した
 - [ ] routing output type を使う方針を確認した
   - [ ] transform
   - [ ] relocation
@@ -170,6 +242,8 @@ routing session 開始前に確認する。
 - [ ] 処理済みっぽい file と未処理 file を分けた
 - [ ] 古い file を優先対象に入れた
 - [ ] source_ref を派生先に残せるか確認した
+- [ ] routing 後に inbox を空に近づける方針を確認した
+- [ ] pending として残す場合、未処理理由 / 解除条件 / 再評価地点を持てるか確認した
 
 ### dev memo
 
@@ -185,6 +259,9 @@ routing session 開始前に確認する。
 - [ ] route_to が必要な issue を抽出した
 - [ ] completed / archive できる issue を抽出した
 - [ ] operations candidate 化できる issue を抽出した
+- [ ] design 化できる issue を抽出した
+- [ ] issue keep が妥当なものを抽出した
+- [ ] issue keep の場合、保持理由 / 再評価地点 / 次に見る条件を明示できるか確認した
 
 ### design
 
@@ -194,6 +271,10 @@ routing session 開始前に確認する。
 - [ ] future/design へ relocation すべきものを抽出した
 - [ ] archive candidate を抽出した
 - [ ] operations candidate 化できるものを抽出した
+- [ ] issue 化すべき未解決問題を抽出した
+- [ ] content seed になりうる独自価値を抽出した
+- [ ] 今すぐ着手しないだけで future に送っていないか確認した
+- [ ] design retain の場合、保持理由 / 再評価地点 / 次に見る条件を明示できるか確認した
 
 ### analysis
 
@@ -201,12 +282,14 @@ routing session 開始前に確認する。
 - [ ] plan / design / operations / content に返すべきものを抽出した
 - [ ] observation と decision を分けた
 - [ ] completed recognition と継続観測を分けた
+- [ ] analysis を final destination として扱っていないか確認した
 
 ### content seed
 
 - [ ] note 記事化できる素材を抽出した
 - [ ] 失敗談 / 設計判断 / before-after / 読者への示唆を分けた
 - [ ] AI Work OS / ADAM / EVE / DELTA の開発過程として価値があるか確認した
+- [ ] 外部記事要約だけを content として扱っていないか確認した
 - [ ] notes/09_content に送るべきか判断した
 
 ---
@@ -225,6 +308,7 @@ routing session 開始前に確認する。
 - [ ] 判断不能 chunk を pending 候補として分けた
 - [ ] transform routing が必要な chunk を抽出した
 - [ ] relocation routing で十分な file を抽出した
+- [ ] issue keep / design retain が最適な chunk を無理に流していないか確認した
 
 chunk 記録形式:
 
@@ -252,7 +336,7 @@ postprocess_note:
 - [ ] 複数 source をまとめて design note にできるか確認した
 - [ ] issue にするべき未解決問題を抽出した
 - [ ] operations candidate にできる具体 task を抽出した
-- [ ] content seed として読者価値がある形にできるか確認した
+- [ ] AI Work OS 由来の独自価値として content seed にできるか確認した
 - [ ] docs 昇格候補として安定しているか確認した
 - [ ] transform routing で作る新 file の destination を決めた
 - [ ] new file に含める source_ref を決めた
@@ -288,13 +372,15 @@ chunk / theme / file ごとに destination を決める。
 - [ ] docs 昇格にはまだ早い
 - [ ] 責務や例外を整理する価値がある
 - [ ] future/design より現 phase に近い
+- [ ] design retain する場合、保持理由と再評価地点が明確
 
 ### issue
 
 - [ ] 未解決問題である
-- [ ] completed condition を作れる
+- [ ] completed condition を作れる、または issue keep 理由を説明できる
 - [ ] design / operations / future に送る前に問題として保持すべき
 - [ ] issue が溜まり場にならないよう route point を持てる
+- [ ] issue keep する場合、保持理由と再評価地点が明確
 
 ### operations candidate
 
@@ -311,6 +397,7 @@ chunk / theme / file ごとに destination を決める。
 - [ ] archive ではない
 - [ ] existing file をそのまま future/design などへ移す方が自然か判断した
 - [ ] relocation metadata が必要か判断した
+- [ ] 単に今着手しないだけで future に送っていないか確認した
 
 ### archive
 
@@ -320,6 +407,7 @@ chunk / theme / file ごとに destination を決める。
 - [ ] pending 理由を1文で説明できない
 - [ ] archive destination が `notes/99_archive/<same-layer>/...` で決まっている
 - [ ] routing session 内で physical move してよいか判断した
+- [ ] archive 前に必要情報が適切な destination へ移ったか確認した
 
 ### pending
 
@@ -334,6 +422,8 @@ chunk / theme / file ごとに destination を決める。
 - [ ] 将来 note 記事化できる
 - [ ] 収益化を見据えた読者価値がある
 - [ ] 設計判断 / 失敗 / before-after / 示唆がある
+- [ ] AI Work OS / ADAM / EVE / DELTA の開発・運用から生まれた独自価値である
+- [ ] 外部記事や design 内容の単なる要約ではない
 - [ ] notes/09_content に送る候補として扱う
 
 destination 記録形式:
@@ -536,6 +626,8 @@ weekly review で routing session を使う場合、次を確認する。
 - [ ] inbox / dev memo の滞留が減った
 - [ ] issue / design / analysis の滞留が減った
 - [ ] archive 判定済み未移動が減った
+- [ ] issue keep の理由と再評価地点が明示された
+- [ ] design retain の理由と再評価地点が明示された
 - [ ] pending 理由が更新された
 - [ ] content seed が抽出された
 - [ ] transform output が作成された
@@ -555,6 +647,11 @@ weekly review で routing session を使う場合、次を確認する。
 - transform では新 file 作成・source_ref・old file archive を標準処理として明記する
 - relocation では existing file を別 layer へ移す条件を明記する
 - archive 先は原則 `notes/99_archive/<same-layer>/...` とする rule を明記する
+- routing type / destination constraints を quick reference として明記する
+- inbox は routing 後できるだけ空に近い方がよいと明記する
+- issue keep / design retain は正当な判断と明記する
+- content は本システム由来の独自価値に限定すると明記する
+- analysis は routing destination ではないと明記する
 - 更新後 read-back / sha を確認する
 
 対応:
@@ -563,6 +660,8 @@ weekly review で routing session を使う場合、次を確認する。
 - transform routing の標準処理を追加した。
 - relocation routing と routing metadata を追加した。
 - archive same-layer rule を追加した。
+- routing destination constraints quick reference を追加した。
+- inbox / issue / design / analysis / content の実行チェックを補強した。
 - output creation section を追加した。
 - physical move / write handling に transform / relocation / same-folder archive rule を追加した。
 
@@ -574,4 +673,9 @@ weekly review で routing session を使う場合、次を確認する。
 
 routing session は、単なる行き先判定ではなく、transform / relocation / retain / pending / archive を使い分けながら、情報を価値化し、滞留を解消する usecase として扱う。
 
-次に必要なのは、weekly review procedure への反映、archive 判定済み未移動一覧の current rule での再作成、または docs/15 / docs/17 への安定仕様反映判断である。
+ただし routing は「無理に流す」処理ではない。  
+issue keep / design retain は正当な判断である。
+
+一方で inbox は未整理情報の入口であり、routing 後はできるだけ空に近づける。
+
+次に必要なのは、docs/15 / docs/17 への安定仕様反映判断、または adam_knowledge.md の Routing Procedure への最新 constraints 反映である。
