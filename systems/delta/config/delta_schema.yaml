@@ -4,13 +4,26 @@ purpose: learning_support
 exam:
   name: 社会保険労務士試験
   date: 2026-08-23
+version_scope:
+  current_target: v0.6_integrated_operations_upgrade
+  scope:
+    - daily_history_primary_source
+    - plan_gap_check
+    - progress_granularity
+    - recommended_lines
+    - todoist_projection
 resources:
   docs: systems/delta/docs
   roadmap: systems/delta/roadmap
   plan: systems/delta/plan
   operations: systems/delta/operations
   history: systems/delta/history
+  history_daily: systems/delta/history/daily
+  history_monthly: systems/delta/history/monthly
+  history_legacy_monthly: systems/delta/history/YYYY-MM.md
   review: systems/delta/review
+  review_weekly: systems/delta/review/weekly
+  review_monthly: systems/delta/review/monthly
   materials: systems/delta/resources/materials.md
 models:
   LearningOperationTask:
@@ -35,19 +48,120 @@ models:
       - comprehension
       - next_review_date
       - weak_point_ref
+      - page_range
+      - next_start_page
+      - questions
+      - question_range
+      - next_question
+      - plan_anchor
+      - current_position
+      - actual_position
+      - expected_position
+      - gap_status
+      - operation_mode
+      - recovery_required
+      - recommended_lines
+      - uncertainty
+      - external
+    source_of_truth:
+      role: next_action_source
+      rule: operations stores what to do next, not actual performance records
+    projection:
+      todoist:
+        role: projection
+        canonical_source: systems/delta/operations/active_operations.md
+        external_id_path: external.todoist_task_id
+
+  ProgressPosition:
+    fields:
+      - study_type
+      - subject
+      - material
+      - chapter
+      - topic
+      - page_range
+      - next_start_page
+      - questions
+      - question_id
+      - question_range
+      - next_question
+      - as_of
+      - source_ref
+      - uncertainty
+    rules:
+      - L1_L2_use_page_range_and_next_start_page
+      - L3_uses_question_id_questions_and_next_question
+      - chapter_is_context_not_progress_ssot
+
+  PlanGapCheck:
+    required_read_set:
+      - roadmap
+      - plan
+      - operations
+      - latest_daily_history
+      - monthly_summary_as_summary_or_fallback
+      - legacy_monthly_as_migration_fallback_only
+    fields:
+      - plan_target_by_date
+      - expected_position
+      - actual_as_of_date
+      - current_position
+      - actual_position_source
+      - gap_status
+      - operation_mode
+      - recovery_required
+      - uncertainty
+    line_definitions:
+      survival_line: zero_prevention_minimum
+      plan_minimum_line: minimum_required_to_avoid_plan_collapse
+      standard_line: realistic_delay_reduction_line
+      stretch_line: optional_recovery_acceleration_line
+
+  RecommendedLines:
+    storage:
+      primary: systems/delta/operations/active_operations.md
+      generated_at: daily_review
+    fields:
+      - fixed_at
+      - source_review
+      - plan_anchor
+      - current_position
+      - expected_position
+      - gap_status
+      - operation_mode
+      - must_line
+      - standard_line
+      - stretch_line
+      - defer
+      - recompute_triggers
+      - revision_history
+    daytime_rule:
+      default_behavior: recall_saved_lines_without_recompute
+      recompute_only_with_trigger: true
+
   LearningHistory:
     storage:
-      path_pattern: systems/delta/history/YYYY-MM.md
+      primary_daily_path_pattern: systems/delta/history/daily/YYYY-MM-DD.md
+      monthly_summary_path_pattern: systems/delta/history/monthly/YYYY-MM.md
+      legacy_monthly_path_pattern: systems/delta/history/YYYY-MM.md
       format: markdown_with_delta_meta_yaml
-      section_unit: one_day
-      append_order: date_ascending
+      daily_section_unit: one_day
+      monthly_role: summary_view
+      legacy_role: migration_source
     source_of_truth:
+      primary_actual_record: daily_history
+      monthly_summary: derived_view
+      legacy_monthly: fallback_or_migration_source
       human_readable: markdown_body
       machine_aggregation: DELTA_META
       mismatch_policy: daily_review_correction
-    markdown_sections:
+    daily_markdown_sections:
       - 実績
+      - L1実績
+      - L2実績
       - L3実績
+      - 秒トレ実績
+      - study_time
       - 計画との差分
       - 判断
       - 弱点
@@ -57,6 +171,7 @@ models:
     delta_meta_fields:
       - date
       - day_type
+      - planned_tasks
       - actual_results
       - judgment
       - next_action
@@ -65,9 +180,16 @@ models:
       - study_type
       - subject
       - material
+      - chapter
       - topic
       - planned_scope
       - actual_scope
+      - page_range
+      - next_start_page
+      - questions
+      - question_id
+      - question_range
+      - next_question
       - result
       - comprehension
       - weak_points
@@ -76,6 +198,55 @@ models:
       - evaluation_basis
       - review_marks
       - next_review_targets
+      - uncertainty
+    one_question_l3_write_rule:
+      write_target: systems/delta/history/daily/YYYY-MM-DD.md
+      do_not_write:
+        - systems/delta/history/monthly/YYYY-MM.md
+        - systems/delta/history/YYYY-MM.md
+        - systems/delta/operations/active_operations.md
+
+  Review:
+    storage:
+      weekly_path_pattern: systems/delta/review/weekly/YYYY-Www.md
+      monthly_path_pattern: systems/delta/review/monthly/YYYY-MM.md
+    role: judgment_layer
+    records:
+      - weekly_review
+      - monthly_review
+      - delay_judgment
+      - plan_revision_judgment
+      - operations_change_reason
+    rules:
+      - review_is_not_raw_performance_history
+      - review_may_update_operations_during_daily_or_weekly_review
+
+  TodoistProjection:
+    role: projection
+    canonical_source: systems/delta/operations/active_operations.md
+    fields:
+      - projection_profile
+      - project_id
+      - labels
+      - due_date
+      - due_type
+      - description
+      - external.todoist_task_id
+    description_fields:
+      - profile
+      - subject
+      - study_type
+      - material
+      - topic
+      - recommended_lines_summary
+      - source_ref
+      - ref
+    rules:
+      - todoist_is_not_canonical
+      - dry_run_and_apply_are_separate
+      - write_back_todoist_task_id_after_apply_when_possible
+
+  L3Evaluation:
     l3_evaluation_policy:
       ssot: understanding
       answer_score_role: supplemental
@@ -114,58 +285,120 @@ models:
       priority_1_cross: × の問題番号
       priority_2_triangle: △ の問題番号
       priority_3_circle: ○ の問題番号
-    allowed_values:
-      day_type:
-        - weekday
-        - weekend
-        - holiday
-        - exception
-      study_type:
-        - L1
-        - L2
-        - L3
-        - 秒トレ
-        - review
-        - other
-      result:
-        - complete
-        - partial
-        - skipped
-      comprehension:
-        - high
-        - medium
-        - low
-        - unknown
-      judgment_status:
-        - on_track
-        - slight_delay
-        - delay
-        - overdone
-      evaluation_basis:
-        - understanding
-      l3_review_priority:
-        - cross
-        - triangle
-        - circle
-        - double_circle
+
+allowed_values:
+  day_type:
+    - weekday
+    - weekend
+    - holiday
+    - exception
+    - weekend_gw_l3_focus
+    - mixed
+  study_type:
+    - L1
+    - L2
+    - L3
+    - 秒トレ
+    - review
+    - other
+  result:
+    - complete
+    - partial
+    - skipped
+    - provisional
+  comprehension:
+    - high
+    - medium
+    - low
+    - unknown
+  judgment_status:
+    - ahead
+    - on_track
+    - slight_delay
+    - delayed
+    - critical_delay
+    - partial_must_line_reached
+    - overdone
+    - uncertain
+    - needs_confirmation
+  gap_status:
+    - ahead
+    - on_track
+    - delayed
+    - critical_delay
+    - uncertain
+    - needs_confirmation
+  operation_mode:
+    - normal
+    - recovery_required
+    - compression_required
+    - confirmation_required
+  evaluation_basis:
+    - understanding
+  l3_review_priority:
+    - cross
+    - triangle
+    - circle
+    - double_circle
+  uncertainty_type:
+    - page_range_unknown
+    - question_range_unknown
+    - study_type_unknown
+    - material_unknown
+    - actual_position_uncertain
+  due_type:
+    - date
+    - deadline
+  projection_profile:
+    - delta
+
 rules:
   history:
-    - operations には実績を書かず、実績は history に集約する
-    - review には週次・月次レビューや弱点集約を置く
-    - DELTA_META は進捗集計、遅れ検知、弱点抽出、次アクション生成に使う
+    - daily_history_is_primary_source_of_truth
+    - monthly_history_is_summary_view
+    - legacy_monthly_history_is_migration_source
+    - operations_do_not_store_actual_performance
+    - one_question_l3_records_update_daily_history_only
+    - monthly_summary_is_not_updated_for_each_one_question_record
+    - review_is_judgment_layer_not_raw_history
+  plan_gap:
+    - plan_gap_check_required_before_daily_operations_generation
+    - read_roadmap_plan_operations_latest_daily_history_before_proposal
+    - compare_precise_units_not_chapter_only
+    - mark_uncertain_when_precise_position_missing
+    - survival_line_and_plan_minimum_line_are_separate
+    - delayed_or_critical_delay_uses_plan_minimum_line_as_user_facing_must_line
+  progress_granularity:
+    - L1_L2_use_page_range_and_next_start_page
+    - L3_uses_question_id_questions_and_next_question
+    - chapter_is_context_only
+    - chapter_only_input_must_be_normalized_or_marked_uncertain
+    - confirmation_next_action_required_when_mapping_unavailable
+  recommended_lines:
+    - generated_at_daily_review
+    - stored_in_active_operations
+    - daytime_recall_does_not_recompute_by_default
+    - recompute_requires_trigger
+    - preserve_previous_baseline_when_recomputed
   l3:
-    - L3 は必ず問題番号ベースで記録する
-    - 各問題に理解度主軸で ◎ / ○ / △ / × を付ける
-    - 正答数・正誤は補助情報として記録する
-    - 評価記号は正答数から自動決定しない
-    - 復習優先度は × → △ → ○ → ◎ とする
-    - ◎ は正解かつ完全理解で再学習不要
-    - ○ は正解かつ理解しているが再学習の余地あり
-    - △ は正解・不正解を問わず、理解が不十分
-    - × は正解・不正解を問わず、理解していない、または根拠が崩れている
-    - 健康保険法では Q5 / Q6 は存在しない
-    - 健康保険法 Q8 は演習対象なし扱い
-    - 1巡目では完璧主義にならず、全範囲を通す
-    - △・× は必ず後で回収できるように問題番号を残す
-    - ○ は余力があれば2巡目で確認する
-    - ◎ は原則スキップ可能
+    - L3_is_question_number_based
+    - each_question_has_understanding_based_review_mark
+    - answer_score_and_correctness_are_supplemental
+    - review_mark_is_not_auto_determined_from_score
+    - review_priority_is_cross_triangle_circle_double_circle
+    - health_insurance_Q5_Q6_do_not_exist
+    - health_insurance_Q8_is_not_exercise_target
+    - first_pass_should_not_be_perfectionist
+    - triangle_and_cross_must_keep_question_ids_for_recovery
+    - circle_may_be_checked_in_second_pass
+    - double_circle_can_be_skipped_by_default
+  projection:
+    - todoist_is_projection_not_canonical
+    - operations_must_be_updated_before_projection
+    - dry_run_success_is_not_apply_success
+    - apply_success_is_not_write_back_success
+    - todoist_task_id_write_back_required_to_claim_projection_sync
+  output:
+    - conclusion_first_then_reason
+    - separate_plan_actual_judgment_next_action
+    - avoid_nested_fenced_code_blocks_in_long_form_requests
