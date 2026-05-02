@@ -8,7 +8,30 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
-- none
+- gate: DELTA configured GPT Action の deltaResourceGet read failure を解消する
+  status: blocked
+  source_ref:
+    - systems/delta/config/delta_action_schema.yaml
+    - systems/delta/config/delta_action_schema_v0.6.yaml
+    - systems/delta/config/delta_instruction.md
+    - notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md
+  blocks:
+    - DELTA v0.6 operations shape proposal を作成する
+    - DELTA v0.6 runtime confirmation fixtures を実行する
+  why_now:
+    - DELTA 新スレッドで branch 指定ありの deltaResourceGet read / bulk / tree がすべて ClientResponseError になった
+    - ADAM runtime では同じ resource=delta / branch=feature/atlas-pre-delta-foundation / file=operations/active_operations.md の read が成功した
+    - backend endpoint / resource / relative path / branch 自体は ADAM から成功しているため、DELTA configured GPT 側の Action 設定・認証・貼付 schema・runtime response handling を切り分ける必要がある
+    - DELTA active_operations / daily history / plan / roadmap が読めない限り、operations shape proposal は実データ確認不能になる
+  completed_condition:
+    - DELTA GPT configured Action の authentication を確認する
+    - DELTA GPT configured Action に `systems/delta/config/delta_action_schema.yaml` 相当が反映されていることを確認する
+    - DELTA GPT 新スレッドで `resource=delta`, `action=read`, `branch=feature/atlas-pre-delta-foundation`, `file=operations/active_operations.md` が成功する
+    - 失敗時は HTTP status / response body / auth configuration のどこで失敗しているかを記録する
+  notes:
+    - ADAM backend check succeeded, so this is not currently treated as repo file absence
+    - Branch omission aloneではなかった。branch 指定ありでも DELTA configured GPT は ClientResponseError
+    - 第一候補は DELTA GPT Actions の認証設定不備または pasted schema / server / privacy/auth configuration mismatch
 
 ---
 
@@ -121,6 +144,8 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
+  blocked_by:
+    - DELTA configured GPT Action の deltaResourceGet read failure を解消する
   why_now:
     - DELTA v0.6 config rules は feature branch に反映済み
     - 次に DELTA active_operations を v0.6 schema に合わせ、recommended_lines / plan-gap fields / precise progress units を持てる形にする必要がある
