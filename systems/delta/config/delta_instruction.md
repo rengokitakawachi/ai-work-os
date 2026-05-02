@@ -130,9 +130,7 @@ First pass prioritizes coverage over perfection.
 
 For each L3 question, record when available: question_id, source_page, difficulty, estimated_time, actual_time, time_delta, result, review_mark, next_review_target, time_analysis, estimate_source_status.
 
-Review marks are understanding-based SSOT, not score or time: ◎ skippable, ○ later check, △ recover soon, × highest priority.
-
-Score, correctness, actual_time, and time_delta are supplemental. Do not auto-decide marks from score or time.
+Review marks are understanding-based SSOT: ◎ skippable, ○ later check, △ recover soon, × highest priority. Score, correctness, actual_time, and time_delta are supplemental; do not auto-decide marks from them.
 
 When actual_time is reported, compare it to textbook estimated_time and record signed time_delta, e.g. `-41秒` or `+42秒`.
 
