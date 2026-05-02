@@ -8,46 +8,56 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-05-02 DELTA v0.6 rolling）
+## 再評価結果（2026-05-02 daily review）
 
-DELTA v0.6 の残 task を候補に加え、active_operations を再ローリングした。
+明日以降の再開性を優先し、ADAM / EVE / DELTA の Action schema 正規ファイル名固定 task を active Day0 に追加した。
 
-### active_operations に入れた DELTA v0.6 task
+DELTA v0.6 は引き続き active 主線として維持する。
 
+### active_operations に残した / 追加した主な task
+
+- `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
 - `DELTA v0.6 operations shape を feature branch に反映する`
 - `DELTA configured GPT で bulk / tree / recommended_lines recall を確認する`
 - `DELTA chapter-only normalization fixture を実行する`
-- `DELTA one-question daily-history write fixture を実行する`
+- `DELTA daily review write + operations update fixture を実行する`
 - `DELTA write resource schema reflection gate を整理する`
 - `DELTA Todoist projection profile を設計・実装する`
 - `DELTA Todoist dry_run / apply / write-back fixture を実行する`
 
 Reason:
 
-- DELTA configured GPT Action の最小 read blocker は Bearer API key 設定により解消した
-- DELTA v0.6 は config だけでなく operations shape / runtime fixture / projection まで含めた integrated operations upgrade である
+- Action schema 命名規約の未固定は configured GPT 反映ミスを再発させる
+- DELTA v0.6 は config / operations / runtime write / projection の一連の完成が必要
 - operations shape が固定されないと runtime fixture / Todoist projection の確認が進まない
-
-### active_operations から外した既存候補
-
-以下は7日枠から外し、次回 rolling / daily review で再評価する。
-
-- `現在の inbox を一回整理する`
-- `legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う`
-- `DELTA foundation を main に統合する準備をする`
-- `ATLAS 関係ファイルを systems/atlas に集約する設計を整理する`
-
-Reason:
-
-- DELTA v0.6 runtime readiness が現時点の blocker 解消後の最優先
-- inbox cleanup / legacy wrapper / ATLAS 整理は重要だが、DELTA v0.6 の正本運用完成より後でよい
-- DELTA foundation main 統合は、v0.6 operations shape と runtime fixture の結果を見てから行う方が安全
 
 ---
 
 ## タスク
 
-### 1. 現在の inbox を一回整理する
+### 1. notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
+
+source_ref:
+
+- notes/02_design/2026-03-24_notes_delete_api_draft.md
+- docs/10_repo_resource_api.md
+- config/ai/adam_action_schema.yaml
+- notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
+
+why_next:
+
+- active Day6 から外したが、repoResourceWrite delete semantics の整理は Phase 0 hardening の残件として近い将来必要
+- DELTA v0.6 runtime readiness と schema reflection を優先するため next に送る
+
+completed_condition:
+
+- docs/10_repo_resource_api.md を読む
+- current repoResourceWrite schema / actual behavior を確認する
+- archive / future/design retain / docs update candidate のどれにするか判断する
+
+---
+
+### 2. 現在の inbox を一回整理する
 
 source_ref:
 
@@ -73,7 +83,7 @@ completed_condition:
 
 ---
 
-### 2. legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
+### 3. legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
 
 source_ref:
 
@@ -97,7 +107,7 @@ completed_condition:
 
 ---
 
-### 3. DELTA foundation を main に統合する準備をする
+### 4. DELTA foundation を main に統合する準備をする
 
 source_ref:
 
@@ -125,7 +135,7 @@ completed_condition:
 
 ---
 
-### 4. ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
+### 5. ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
 
 source_ref:
 
@@ -149,7 +159,7 @@ completed_condition:
 
 ---
 
-### 5. DELTA monthly summary rebuild automation を設計する
+### 6. DELTA monthly summary rebuild automation を設計する
 
 source_ref:
 
@@ -172,7 +182,7 @@ completed_condition:
 
 ---
 
-### 6. DELTA dedicated append_daily_event action を検討する
+### 7. DELTA dedicated append_daily_event action を検討する
 
 source_ref:
 
@@ -194,7 +204,7 @@ completed_condition:
 
 ---
 
-### 7. DELTA review automation / analytics を v0.7 候補として整理する
+### 8. DELTA review automation / analytics を v0.7 候補として整理する
 
 source_ref:
 
@@ -227,10 +237,6 @@ completed_condition:
 - 会話中に新規タスク候補が発生した場合も、まずは reroll により active / next / future を決める
 - backlog 化しない
 - 80_future の代替として使わない
-- 削除済みの `config/ai/common_*` / `config/ai/procedures/*` 構造は再作成しない
-- ADAM / EVE config は現行 `instruction + knowledge + schema` 構成を前提に整合する
 - main は Docs-aligned stable version として扱う
 - branch は Notes-driven development space として扱う
 - merge 時に docs / code / config / operations / version を一致させる
-- ATLAS は test / verification / CI review system として扱う
-- DELTA v0.3 以降は新規 API route を増やさず、既存 `/api/repo-resource` 統合方式で進める
