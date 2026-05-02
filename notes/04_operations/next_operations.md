@@ -8,71 +8,210 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-05-02 DELTA v0.6 integrated scope update）
+## 再評価結果（2026-05-02 DELTA v0.6 rolling）
 
-### integrated into active_operations
+DELTA v0.6 の残 task を候補に加え、active_operations を再ローリングした。
 
-以下は独立 next task ではなく、active Day0 の `DELTA v0.6 Integrated Operations Upgrade` scope に吸収した。
+### active_operations に入れた DELTA v0.6 task
 
-- `DELTA v0.6 operations を Todoist execution view へ投影する`
+- `DELTA v0.6 operations shape を feature branch に反映する`
+- `DELTA configured GPT で bulk / tree / recommended_lines recall を確認する`
+- `DELTA chapter-only normalization fixture を実行する`
+- `DELTA one-question daily-history write fixture を実行する`
+- `DELTA write resource schema reflection gate を整理する`
+- `DELTA Todoist projection profile を設計・実装する`
+- `DELTA Todoist dry_run / apply / write-back fixture を実行する`
 
 Reason:
 
-- DELTA v0.6 は、operations generation quality と Todoist projection を一括で扱う integrated operations upgrade とする
-- Todoist projection は後回しではなく v0.6 scope に含める
-- ただし実行順は、plan-gap check / progress granularity / recommended_lines の反映方針を先に固定し、その後 projection を実装・確認する
-- projection は generated operations の見える化であり、operations generation correctness の後に実行する
+- DELTA configured GPT Action の最小 read blocker は Bearer API key 設定により解消した
+- DELTA v0.6 は config だけでなく operations shape / runtime fixture / projection まで含めた integrated operations upgrade である
+- operations shape が固定されないと runtime fixture / Todoist projection の確認が進まない
 
-### active v0.6 scope
+### active_operations から外した既存候補
 
-Active task:
+以下は7日枠から外し、次回 rolling / daily review で再評価する。
 
-- `DELTA v0.6 Integrated Operations Upgrade を instruction / knowledge / schema / projection 反映 task に分解する`
+- `現在の inbox を一回整理する`
+- `legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う`
+- `DELTA foundation を main に統合する準備をする`
+- `ATLAS 関係ファイルを systems/atlas に集約する設計を整理する`
 
-Included scope:
+Reason:
 
-- plan-gap check
-- progress granularity
-- recommended_lines daily-review fixation
-- Todoist execution view projection
+- DELTA v0.6 runtime readiness が現時点の blocker 解消後の最優先
+- inbox cleanup / legacy wrapper / ATLAS 整理は重要だが、DELTA v0.6 の正本運用完成より後でよい
+- DELTA foundation main 統合は、v0.6 operations shape と runtime fixture の結果を見てから行う方が安全
 
 ---
 
 ## タスク
 
-現在、active_operations に入らなかった近未来候補はなし。
+### 1. 現在の inbox を一回整理する
 
-新規候補が発生した場合は、daily / weekly review または operations rolling で active / next / future を比較する。
+source_ref:
+
+- notes/01_issues/2026-05-01_inbox_cleanup_once_issue.md
+- notes/02_design/2026-05-01_routing_type_destination_constraints.md
+- notes/08_analysis/2026-04-30_routing_session_checklist.md
+
+why_next:
+
+- inbox には開発時の test clip / 直下配置 / 下層 folder など一回限りの整理対象が残る
+- ただし DELTA v0.6 runtime readiness よりは後でよい
+
+completed_condition:
+
+- `notes/00_inbox` の current tree を確認する
+- 本システムと無関係な test clip を列挙する
+- delete candidate ごとに削除理由を明示する
+- inbox 直下の web / dev_memo 相当 file を分類する
+- inbox 配下の余計な下層 folder を列挙する
+- delete 前に対象と影響範囲を確認する
+- Write Gate 後に delete / move を実行する
+- write 後に read-back / NOT_FOUND / destination 確認を行う
 
 ---
 
-## 参考: 2026-05-01 daily review で promoted 済み
+### 2. legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
 
-以下は daily review reroll により active_operations へ移動済み。
+source_ref:
 
-- `docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する`
-- `ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する`
-- `notes delete API draft と current repoResourceWrite delete semantics の差分を確認する`
-- `DELTA foundation を main に統合する準備をする`
-- `ATLAS 関係ファイルを systems/atlas に集約する設計を整理する`
+- notes/02_design/2026-04-18_legacy_todoist_wrapper_deprecation_design.md
+- notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
+- src/services/todoist.js
+- src/services/todoist/client.js
 
-### completed and removed from next
+why_next:
 
-- `archive 判定済み inbox file を archive へ移動する`
+- Phase 1 Todoist foundation entry で `src/services/todoist/client.js` が SSOT と確認できている
+- 削除は repo usage / tests / replacement path が揃ってから判断する方が安全
+- DELTA projection profile 実装後に再評価する方が影響確認しやすい
 
-Completion evidence:
+completed_condition:
 
-- `notes/99_archive/00_inbox/2026-03-23_inbox_web_digest.md` created and read-back confirmed
-- `notes/99_archive/00_inbox/260322_091234AIエージェントの作り方完全ガイド｜失敗しない開発5ステップと選定方法 ｜SIGNATE総研.md` created and read-back confirmed
-- original `notes/00_inbox/2026-03-23_inbox_web_digest.md` deleted and post-delete `NOT_FOUND` confirmed
-- original `notes/00_inbox/260322_091234AIエージェントの作り方完全ガイド｜失敗しない開発5ステップと選定方法 ｜SIGNATE総研.md` deleted and post-delete `NOT_FOUND` confirmed
-- result recorded in `notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md`
+- repo usage を確認する
+- replacement path を確認する
+- tests / runtime impact を確認する
+- delete / retain / future の判断を行う
 
-### captured candidate
+---
 
-- `現在の inbox を一回整理する`
-  - source: `notes/01_issues/2026-05-01_inbox_cleanup_once_issue.md`
-  - result: active_operations Day4 に配置済み
+### 3. DELTA foundation を main に統合する準備をする
+
+source_ref:
+
+- systems/delta/roadmap/delta_roadmap.md
+- systems/delta/plan/2026_sharoushi_exam_plan.md
+- systems/delta/operations/active_operations.md
+- systems/delta/history/2026-04.md
+- systems/delta/config/delta_action_schema_v0.5.yaml
+- notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
+- notes/01_issues/idea_log.md#20260430-033
+
+why_next:
+
+- DELTA は operational subsystem だが、v0.6 operations shape / runtime fixture / projection 結果を見てから main 統合準備をする方が安全
+- 参照 source_ref の `delta_action_schema_v0.5.yaml` は stale の可能性があるため、v0.6 schema 整理後に棚卸しする
+
+completed_condition:
+
+- `feature/atlas-pre-delta-foundation` の DELTA 差分を棚卸しする
+- main に入れるべき DELTA files と、branch に残す files を分ける
+- `systems/delta/roadmap` / `plan` / `operations` / `history` / `config` の整合を確認する
+- ADAM 側 `repoResource delta` resource と docs / code / config の整合を確認する
+- runtime behavior confirmed 済み項目と未確認項目を列挙する
+- main 統合後に DELTA GPT runtime で read / bulk / write behavior を再確認する
+
+---
+
+### 4. ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
+
+source_ref:
+
+- docs/05_roadmap.md
+- docs/17_operations_system.md
+- docs/15_notes_system.md
+- notes/01_issues/idea_log.md#20260430-034
+
+why_next:
+
+- ATLAS 関係ファイルの集約は重要だが、DELTA v0.6 runtime readiness と Phase 1 re-entry 条件の後でよい
+
+completed_condition:
+
+- ATLAS の primary executor が Claude であることを明記する
+- ADAM の責務を controller / integration / consistency に限定する
+- `systems/atlas/` に置くものと置かないものを分ける
+- 既存 ATLAS 関係ファイルの移動候補を棚卸しする
+- `systems/atlas/README.md` / roadmap / verification / prompts の初期構成案を作る
+- ATLAS outputs は verification evidence であり execution SSOT ではないことを明記する
+
+---
+
+### 5. DELTA monthly summary rebuild automation を設計する
+
+source_ref:
+
+- notes/02_design/2026-05-02_delta_history_daily_files_design.md
+- systems/delta/history/daily/2026-05-02.md
+- systems/delta/history/monthly/2026-05.md
+- systems/delta/config/delta_schema.yaml
+
+why_next:
+
+- v0.6 では daily history が primary source で monthly summary は summary view
+- 2026-05-02 の daily history と monthly summary には current_position のズレが観測された
+- ただし one-question write や operations shape より後でよい
+
+completed_condition:
+
+- daily history から monthly summary を rebuild する入力 / 出力 / write scope を定義する
+- one-question write 時には monthly summary を更新しない rule と整合させる
+- daily review / monthly review のどちらで rebuild するか判断する
+
+---
+
+### 6. DELTA dedicated append_daily_event action を検討する
+
+source_ref:
+
+- systems/delta/config/delta_action_schema.yaml
+- systems/delta/config/delta_schema.yaml
+- notes/02_design/2026-05-02_delta_history_daily_files_design.md
+
+why_next:
+
+- 現 v0.6 Action schema は full content create/update 方式
+- L3 1問実績のたびに全文更新すると衝突や破損リスクがある
+- ただし v0.6 の最小 write fixture 後に判断すべき
+
+completed_condition:
+
+- full-content update のリスクを整理する
+- append_daily_event action の必要性を判断する
+- 実装する場合の endpoint / schema / idempotency / read-back policy を定義する
+
+---
+
+### 7. DELTA review automation / analytics を v0.7 候補として整理する
+
+source_ref:
+
+- systems/delta/config/delta_schema.yaml
+- systems/delta/history/daily/
+- systems/delta/review/
+
+why_next:
+
+- v0.6 は operations / history / projection の安定化が主目的
+- review automation / analytics は v0.7 候補として分離する方が安全
+
+completed_condition:
+
+- v0.6 scope から外す理由を明示する
+- v0.7 候補として必要 input / output / metrics を整理する
+- active に戻す再評価条件を決める
 
 ---
 
