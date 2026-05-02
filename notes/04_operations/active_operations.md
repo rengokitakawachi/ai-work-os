@@ -14,14 +14,16 @@ Immediate Gate は7日枠に数えない。
 
 ## Day0（05/02 土）
 
-- task: DELTA daily operations plan-gap check / progress granularity / recommended lines を instruction / knowledge / schema 反映 task に分解する
+- task: DELTA v0.6 Integrated Operations Upgrade を instruction / knowledge / schema / projection 反映 task に分解する
   source_ref:
+    - notes/02_design/2026-05-02_delta_v0_6_integrated_operations_upgrade.md
     - notes/01_issues/2026-05-01_delta_daily_operations_plan_gap_check_issue.md
     - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
     - notes/01_issues/2026-05-02_delta_progress_granularity_rule_issue.md
     - notes/02_design/2026-05-02_delta_progress_granularity_rule_design.md
     - notes/01_issues/2026-05-02_delta_recommended_line_generation_issue.md
     - notes/02_design/2026-05-02_delta_recommended_line_generation_design.md
+    - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
     - systems/delta/roadmap/delta_roadmap.md
     - systems/delta/plan/2026_sharoushi_exam_plan.md
     - systems/delta/operations/active_operations.md
@@ -34,9 +36,11 @@ Immediate Gate は7日枠に数えない。
     - 2026-05-02 の学習予定提示で、plan 上は Q9-1〜Q11 想定、actual は Q3-3 にもかかわらず、甘い必達ラインが出た
     - ユーザーの章単位報告を page_range / question_id へ正規化できないと plan-gap check 自体の精度が落ちる
     - recommended_lines が日中の都度再見積もりになると、operations が正本として機能せず、日中判断が揺れる
-    - DELTA operations の根幹品質に関わり、DELTA foundation / v0.6 projection より前に修正方針を active へ入れる必要がある
+    - Todoist projection は重要だが、正しい DELTA operations を生成できることと同じ v0.6 scope で扱う方が実運用価値が高い
+    - DELTA v0.6 は「正しい operations を生成し、それを execution view に投影する」一括 upgrade として扱う
   completed_condition:
-    - DELTA instruction / knowledge / schema / operations generation code or prompt のどこに反映すべきかを層分離する
+    - DELTA v0.6 scope を integrated operations upgrade として定義する
+    - DELTA instruction / knowledge / schema / operations generation code or prompt / projection service のどこに反映すべきかを層分離する
     - plan-gap check の必須 read set を定義する
     - `gap_status` / `operation_mode` / `recovery_required` の配置先を決める
     - `survival_line` と `plan_minimum_line` の分離を反映対象にする
@@ -61,14 +65,17 @@ Immediate Gate は7日枠に数えない。
       - recompute_triggers
     - 日中の「今日の推奨ラインは？」には saved recommended_lines を提示し、原則再計算しない rule を反映対象にする
     - recompute_triggers を定義し、明示条件がある場合だけ日中再計算できる rule を反映対象にする
+    - Todoist projection を v0.6 scope に含める
+    - DELTA Todoist projection profile / target / description shape / write-back path を反映対象にする
+    - Todoist は DELTA operations の正本ではなく projection であることを反映対象にする
     - 長文依頼文で nested fenced code block を使わない output rule の配置先を決める
     - 明日の予定出力テンプレートを反映対象にする
-    - runtime confirmation fixture として 2026-05-02 case、7章完了 case、3章終わり case、recommended_lines recall case、explicit recompute case を定義する
-    - 後続 implementation / runtime reflection task を active / next / future に routing する
+    - runtime confirmation fixture として 2026-05-02 case、7章完了 case、3章終わり case、recommended_lines recall case、explicit recompute case、Todoist dry_run/apply/write-back case を定義する
+    - 後続 implementation / runtime reflection task を active / next / future に routingする
   notes:
-    - これは即実装ではなく、修正作業を安全に分解する gate
+    - これは即実装ではなく、v0.6 修正作業を安全に分解する gate
     - progress granularity と recommended_lines 固定は plan-gap check の前提条件として同一 task に統合する
-    - DELTA v0.6 Todoist projection はこの修正方針の後に扱う
+    - Todoist projection は v0.6 に含めるが、実行順は operations generation correctness の後
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
 
