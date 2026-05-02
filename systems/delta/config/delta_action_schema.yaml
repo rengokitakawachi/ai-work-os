@@ -1,11 +1,14 @@
 openapi: 3.1.0
 info:
   title: DELTA Resource API
-  version: "0.6.0"
-  description: Read DELTA resources and create/update DELTA daily history files via /api/repo-resource.
+  version: "0.6.1"
+  description: Read DELTA resources, write DELTA daily history, and update DELTA active operations via /api/repo-resource.
 
 servers:
   - url: https://ai-work-os.vercel.app
+
+security:
+  - bearerAuth: []
 
 components:
   securitySchemes:
@@ -25,28 +28,6 @@ components:
         error:
           type: object
           additionalProperties: true
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            category:
-              type: string
-            step:
-              type: string
-            resource:
-              type: string
-            action:
-              type: string
-            status:
-              type: integer
-            retryable:
-              type: boolean
-            details:
-              type: object
-              additionalProperties: true
-            request_id:
-              type: string
         request_id:
           type: string
       required:
@@ -91,8 +72,6 @@ components:
                 - delta_history
             root:
               type: string
-              enum:
-                - systems/delta/history/
             path:
               type: string
             sha:
@@ -112,8 +91,62 @@ components:
         - ok
         - data
 
-security:
-  - bearerAuth: []
+    DeltaOperationsWriteResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        ok:
+          type: boolean
+          const: true
+        data:
+          type: object
+          additionalProperties: true
+          properties:
+            resource:
+              type: string
+              enum:
+                - delta_operations
+            root:
+              type: string
+              enum:
+                - systems/delta/operations/
+            path:
+              type: string
+            sha:
+              type: string
+            branch:
+              type: string
+            status:
+              type: string
+              enum:
+                - UPDATED
+            write_scope:
+              type: string
+        request_id:
+          type: string
+      required:
+        - ok
+        - data
+
+    DeltaWriteRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        file:
+          type: string
+          description: Relative path under the selected DELTA write root.
+        content:
+          type: string
+          description: Full markdown content to create or replace.
+        message:
+          type: string
+        sha:
+          type: string
+        branch:
+          type: string
+      required:
+        - file
+        - content
 
 paths:
   /api/repo-resource:
@@ -145,19 +178,16 @@ paths:
           required: false
           schema:
             type: string
-          description: Relative path under systems/delta/, e.g. operations/active_operations.md.
         - name: files
           in: query
           required: false
           schema:
             type: string
-          description: Comma or newline separated relative paths under systems/delta/.
         - name: branch
           in: query
           required: false
           schema:
             type: string
-          description: Optional Git branch selector.
       responses:
         "200":
           description: Success
@@ -187,7 +217,7 @@ paths:
     post:
       operationId: deltaHistoryWrite
       summary: Create or update DELTA history markdown files
-      description: Create or update markdown files under systems/delta/history/. Always set resource=delta_history. File paths are relative to systems/delta/history/.
+      description: Create/update markdown files under systems/delta/history/. Use resource=delta_history. File paths are relative to systems/delta/history/.
       security:
         - bearerAuth: []
       parameters:
@@ -211,24 +241,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: false
-              properties:
-                file:
-                  type: string
-                  description: Relative path under systems/delta/history/, e.g. daily/2026-05-02.md.
-                content:
-                  type: string
-                  description: Full markdown content to create or replace.
-                message:
-                  type: string
-                sha:
-                  type: string
-                branch:
-                  type: string
-              required:
-                - file
-                - content
+              $ref: "#/components/schemas/DeltaWriteRequest"
       responses:
         "200":
           description: Success
@@ -248,8 +261,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-        "405":
-          description: Method not allowed
+
+  /api/repo-resource?resource=delta_operations&action=update:
+    post:
+      operationId: deltaOperationsWrite
+      summary: Update DELTA active operations
+      description: Update systems/delta/operations/active_operations.md after daily review. Use file=active_operations.md. Do not store actual performance records in operations.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeltaWriteRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeltaOperationsWriteResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
