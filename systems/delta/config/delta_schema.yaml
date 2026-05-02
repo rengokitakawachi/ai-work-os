@@ -11,6 +11,7 @@ version_scope:
     - plan_gap_check
     - progress_granularity
     - recommended_lines
+    - daily_review_operations_update
     - todoist_projection
     - l3_difficulty_estimated_time_recording
 resources:
@@ -18,6 +19,7 @@ resources:
   roadmap: systems/delta/roadmap
   plan: systems/delta/plan
   operations: systems/delta/operations
+  operations_active: systems/delta/operations/active_operations.md
   history: systems/delta/history
   history_daily: systems/delta/history/daily
   history_monthly: systems/delta/history/monthly
@@ -26,6 +28,20 @@ resources:
   review_weekly: systems/delta/review/weekly
   review_monthly: systems/delta/review/monthly
   materials: systems/delta/resources/materials.md
+write_resources:
+  delta_history:
+    root: systems/delta/history/
+    actions:
+      - create
+      - update
+    role: actual_history_write
+  delta_operations:
+    root: systems/delta/operations/
+    allowed_files:
+      - active_operations.md
+    actions:
+      - update
+    role: next_action_operations_update
 models:
   LearningOperationTask:
     base_fields:
@@ -44,11 +60,6 @@ models:
       - material
       - study_type
       - estimated_minutes
-      - target_score
-      - actual_score
-      - comprehension
-      - next_review_date
-      - weak_point_ref
       - page_range
       - next_start_page
       - questions
@@ -61,6 +72,13 @@ models:
       - gap_status
       - operation_mode
       - recovery_required
+      - must_line
+      - standard_line
+      - stretch_line
+      - recovery_targets
+      - defer
+      - recompute_triggers
+      - next_review_checkpoint
       - recommended_lines
       - uncertainty
       - external
@@ -72,6 +90,53 @@ models:
         role: projection
         canonical_source: systems/delta/operations/active_operations.md
         external_id_path: external.todoist_task_id
+
+  DailyReviewOperationsUpdate:
+    trigger:
+      - user_says_today_finished
+      - study_time_recorded
+      - sokutore_completion_recorded
+      - daily_history_judgment_fixed
+      - daily_history_next_action_fixed
+      - delta_declares_daily_history_confirmed
+    required_read_set:
+      - roadmap
+      - plan
+      - operations
+      - daily_history_for_target_date
+      - recent_daily_history_as_needed
+      - monthly_summary_as_summary_or_fallback
+      - legacy_monthly_as_migration_fallback_only
+    flow:
+      - confirm_or_update_daily_history
+      - confirm_study_time_L1_L2_L3_sokutore
+      - confirm_judgment_and_next_action_candidates
+      - compare_expected_position_and_current_position
+      - update_active_operations
+      - report_history_sha_and_operations_sha
+    output_fields:
+      - next_day_main_objective
+      - plan_anchor
+      - current_position
+      - expected_position
+      - gap_status
+      - operation_mode
+      - must_line
+      - standard_line
+      - stretch_line
+      - recovery_targets
+      - defer
+      - recompute_triggers
+      - next_review_checkpoint
+    write_target:
+      resource: delta_operations
+      file: active_operations.md
+      canonical_path: systems/delta/operations/active_operations.md
+    rules:
+      - daily_review_is_not_complete_after_history_write_alone
+      - active_operations_must_be_updated_after_daily_history_confirmation
+      - tomorrow_questions_read_saved_operations_not_recomputed_by_default
+      - actual_performance_records_remain_in_daily_history
 
   ProgressPosition:
     fields:
@@ -169,14 +234,6 @@ models:
       - 次アクション
       - メモ
       - DELTA_META
-    delta_meta_fields:
-      - date
-      - day_type
-      - planned_tasks
-      - actual_results
-      - judgment
-      - next_action
-      - source_ref
     actual_results_fields:
       - study_type
       - subject
@@ -304,47 +361,6 @@ models:
       - dry_run_and_apply_are_separate
       - write_back_todoist_task_id_after_apply_when_possible
 
-  L3Evaluation:
-    l3_evaluation_policy:
-      ssot: understanding
-      answer_score_role: supplemental
-      answer_correctness_role: supplemental
-      time_delta_role: supplemental
-      rule: 評価記号は正答数・正誤・時間差分から自動決定しない
-    l3_review_marks:
-      double_circle:
-        mark: ◎
-        meaning: 正解し、完全に理解している。再学習不要
-        review_policy: 原則スキップ可能
-        fields:
-          - count
-          - questions
-      circle:
-        mark: ○
-        meaning: 正解し、理解しているが、再学習の余地あり
-        review_policy: 2巡目以降で確認対象
-        fields:
-          - count
-          - questions
-      triangle:
-        mark: △
-        meaning: 正解・不正解を問わず、理解が不十分。再度学習
-        review_policy: 次優先で回収
-        fields:
-          - count
-          - questions
-      cross:
-        mark: ×
-        meaning: 正解・不正解を問わず、理解していない、または根拠が崩れている
-        review_policy: 最優先で回収
-        fields:
-          - count
-          - questions
-    next_review_targets:
-      priority_1_cross: × の問題番号
-      priority_2_triangle: △ の問題番号
-      priority_3_circle: ○ の問題番号
-
 allowed_values:
   day_type:
     - weekday
@@ -367,11 +383,6 @@ allowed_values:
     - partial
     - skipped
     - provisional
-  comprehension:
-    - high
-    - medium
-    - low
-    - unknown
   difficulty:
     - A
     - B
@@ -401,11 +412,13 @@ allowed_values:
     - on_track
     - delayed
     - critical_delay
+    - delayed_but_recovering
     - uncertain
     - needs_confirmation
   operation_mode:
     - normal
     - recovery_required
+    - recovery_forward
     - compression_required
     - confirmation_required
   evaluation_basis:
@@ -438,25 +451,27 @@ rules:
     - one_question_l3_records_update_daily_history_only
     - monthly_summary_is_not_updated_for_each_one_question_record
     - review_is_judgment_layer_not_raw_history
+  daily_review:
+    - daily_review_must_update_active_operations_after_history_confirmation
+    - operations_update_phase_runs_on_day_closure
+    - report_both_history_sha_and_operations_sha
+    - tomorrow_questions_read_saved_operations
   plan_gap:
     - plan_gap_check_required_before_daily_operations_generation
     - read_roadmap_plan_operations_latest_daily_history_before_proposal
     - compare_precise_units_not_chapter_only
     - mark_uncertain_when_precise_position_missing
     - survival_line_and_plan_minimum_line_are_separate
-    - delayed_or_critical_delay_uses_plan_minimum_line_as_user_facing_must_line
   progress_granularity:
     - L1_L2_use_page_range_and_next_start_page
     - L3_uses_question_id_questions_and_next_question
     - chapter_is_context_only
     - chapter_only_input_must_be_normalized_or_marked_uncertain
-    - confirmation_next_action_required_when_mapping_unavailable
   recommended_lines:
     - generated_at_daily_review
     - stored_in_active_operations
     - daytime_recall_does_not_recompute_by_default
     - recompute_requires_trigger
-    - preserve_previous_baseline_when_recomputed
   l3:
     - L3_is_question_number_based
     - each_question_has_understanding_based_review_mark
@@ -466,13 +481,8 @@ rules:
     - review_mark_is_not_auto_determined_from_score_or_time
     - unconfirmed_estimate_requires_estimate_source_status_and_next_action
     - problem_header_must_be_checked_not_only_answer_tail
-    - review_priority_is_cross_triangle_circle_double_circle
     - health_insurance_Q5_Q6_do_not_exist
     - health_insurance_Q8_is_not_exercise_target
-    - first_pass_should_not_be_perfectionist
-    - triangle_and_cross_must_keep_question_ids_for_recovery
-    - circle_may_be_checked_in_second_pass
-    - double_circle_can_be_skipped_by_default
   projection:
     - todoist_is_projection_not_canonical
     - operations_must_be_updated_before_projection
