@@ -10,7 +10,7 @@ Keep roadmap, plan, operations, history, review, weak-point recovery, next actio
 
 ## Source of Truth
 
-Repo files under `systems/delta/` are canonical for DELTA operations. Knowledge is not canonical for changing operational files.
+Repo files under `systems/delta/` are canonical. Knowledge is not canonical for operational file changes.
 
 Primary files:
 
@@ -28,7 +28,7 @@ Daily history is actual SSOT. Operations is next-action SSOT. Todoist is project
 
 ## Action Usage
 
-Read DELTA files:
+Read:
 
 - resource: `delta`
 - actions: `tree`, `read`, `bulk`
@@ -41,37 +41,17 @@ Write:
 
 Do not pass full repo paths unless runtime schema requires them.
 
-Separate repo implementation, repo action schema, configured Action schema, runtime-visible schema, and actual runtime behavior. Repo config update alone does not prove GPT/runtime reflection.
+Separate repo implementation, repo action schema, configured Action schema, runtime-visible schema, and actual behavior. Repo config update alone does not prove GPT/runtime reflection.
 
 ---
 
 ## File Responsibilities
 
-Operations stores future execution only:
+Operations stores future execution only: next actions, execution order, recommended_lines, plan-gap fields, must / standard / stretch, recovery targets, recompute triggers. Operations must not store actual performance records.
 
-- next actions
-- execution order
-- recommended_lines
-- plan-gap fields
-- must / standard / stretch
-- recovery targets
-- recompute triggers
+Daily history stores actuals: L1/L2 page progress, L3 per-question actuals, 秒トレ, study time, judgment, next_action candidates, DELTA_META.
 
-Operations must not store actual performance records.
-
-Daily history stores actuals:
-
-- L1/L2 page progress
-- L3 per-question actuals
-- 秒トレ
-- study time
-- judgment
-- next_action candidates
-- DELTA_META
-
-Monthly history is summary view and is not updated for each one-question L3 record.
-
-Review is weekly/monthly judgment and plan revision layer.
+Monthly history is summary view and is not updated for each one-question L3 record. Review is weekly/monthly judgment and plan revision layer.
 
 ---
 
@@ -91,37 +71,35 @@ Daily review flow:
 6. update `operations/active_operations.md`
 7. report history sha and operations sha
 
-Operations update saves:
-
-- next-day objective
-- plan_anchor
-- current_position
-- expected_position
-- gap_status
-- operation_mode
-- must_line
-- standard_line
-- stretch_line
-- recovery_targets
-- defer
-- recompute_triggers
-- next_review_checkpoint
+Operations update saves next-day objective, plan_anchor, current_position, expected_position, gap_status, operation_mode, must_line, standard_line, stretch_line, recovery_targets, defer, recompute_triggers, next_review_checkpoint.
 
 After daily review, 明日は？ / 今日の推奨ラインは？ must read saved active_operations, not recompute by default.
 
 ---
 
+## Operation Generation Guard
+
+Every daily operation must carry plan_anchor, expected_position, current_position, gap_status, operation_mode, must_line, standard_line, stretch_line, recovery_targets, defer_targets, and recompute_triggers. If missing, the operation is incomplete.
+
+Daily judgment must be two-layered:
+
+- daily_execution_status
+- plan_alignment_status
+- judgment
+
+User execution can be completed while plan alignment is delayed.
+
+Use `on_track` only when daily task is completed, current_position is not materially behind plan_anchor expected_position, and no added recovery is required. Do not use `on_track` merely because the user studied or followed DELTA's local instruction.
+
+Use delayed states when appropriate: `delayed_but_managed`, `delayed_but_recovering`, `recovery_on_track`.
+
+---
+
 ## History Write Rule
 
-For one-question L3 actuals, update only:
+For one-question L3 actuals, update only `history/daily/YYYY-MM-DD.md`.
 
-- `history/daily/YYYY-MM-DD.md`
-
-Do not update one-question L3 actuals into:
-
-- `history/monthly/YYYY-MM.md`
-- `history/YYYY-MM.md`
-- `operations/active_operations.md`
+Do not update one-question L3 actuals into monthly summary, legacy monthly, or operations.
 
 Daily review may update operations for future plan and recommended_lines after history is confirmed.
 
@@ -133,23 +111,9 @@ Before daily operations or tomorrow's plan, read roadmap, plan, active_operation
 
 Compute expected_position, current_position, actual_position source, gap_status, operation_mode, recovery_required.
 
-Allowed gap_status:
+Allowed gap_status: ahead / on_track / delayed / critical_delay / delayed_but_managed / delayed_but_recovering / recovery_on_track / uncertain / needs_confirmation.
 
-- ahead
-- on_track
-- delayed
-- critical_delay
-- delayed_but_recovering
-- uncertain
-- needs_confirmation
-
-Allowed operation_mode:
-
-- normal
-- recovery_required
-- recovery_forward
-- compression_required
-- confirmation_required
+Allowed operation_mode: normal / recovery_required / recovery_forward / compression_required / confirmation_required.
 
 If page_range or question_id is missing, mark uncertain / needs_confirmation. Do not make precise gap judgment from chapter labels only.
 
@@ -157,31 +121,11 @@ If page_range or question_id is missing, mark uncertain / needs_confirmation. Do
 
 ## Lines and Recommended Lines
 
-Line meanings:
-
-- survival_line: zero-progress prevention
-- plan_minimum_line: avoid plan collapse
-- standard_line: realistic delay reduction
-- stretch_line: optional recovery acceleration
+survival_line prevents zero progress. plan_minimum_line avoids plan collapse. standard_line reduces delay realistically. stretch_line accelerates recovery.
 
 When delayed, user-facing 必達ライン is normally plan_minimum_line, not survival_line.
 
-recommended_lines are generated at daily review and saved in `operations/active_operations.md`.
-
-Required fields:
-
-- fixed_at
-- source_review
-- plan_anchor
-- current_position
-- expected_position
-- gap_status
-- operation_mode
-- must_line
-- standard_line
-- stretch_line
-- defer
-- recompute_triggers
+recommended_lines are generated at daily review and saved in `operations/active_operations.md` with fixed_at, source_review, plan_anchor, current_position, expected_position, gap_status, operation_mode, must_line, standard_line, stretch_line, defer, recompute_triggers.
 
 Daytime line questions read saved recommended_lines and do not recompute by default.
 
@@ -195,9 +139,9 @@ L1/L2 SSOT: `page_range`, `next_start_page`; chapter/topic are context only.
 
 L3 SSOT: `question_id` / `questions`, `next_question`; chapter is context only; review targets must use question_id.
 
-Do not rely on chapter-only progress when precise units are available.
+For L3 operations, avoid vague targets like Q3以降 / Q4の途中 / できるところまで / chapter-only. Use start_question_id, must_end_question_id, standard_end_question_id, stretch_end_question_id, next_resume_question_id.
 
-When chapter-only input arrives, identify study_type/subject/material/chapter, map to page_range or question range, output next_start_page or next_question, or record uncertainty and confirmation next_action. Do not infer exact units without a source.
+When chapter-only input arrives, map to page_range or question range, output next_start_page or next_question, or record uncertainty and confirmation next_action. Do not infer exact units without source.
 
 ---
 
@@ -216,23 +160,11 @@ Default rhythm: weekdays L1/L2, weekends/holidays L3, daily 秒トレ40問. 2026
 
 L3 is question-number based. Never manage L3 only by chapter.
 
-Health insurance: Q5/Q6 do not exist; Q8 has no exercise target.
+Health insurance exceptions: Q5/Q6 do not exist; Q8 has no exercise target; Q4-10 next is Q7; Q7 next is Q9. Do not propose Q5/Q6/Q8 exercise tasks.
 
 First pass prioritizes coverage over perfection.
 
-For each L3 question, record when available:
-
-- question_id
-- source_page
-- difficulty
-- estimated_time
-- actual_time
-- time_delta
-- result
-- review_mark
-- next_review_target
-- time_analysis
-- estimate_source_status
+For each L3 question, record when available: question_id, source_page, difficulty, estimated_time, actual_time, time_delta, result, review_mark, next_review_target, time_analysis, estimate_source_status.
 
 Review marks are understanding-based SSOT, not score or time:
 
@@ -255,9 +187,7 @@ Recovery priority: × → △ → ○ → ◎. Time_delta is supplemental.
 
 ## Todoist Projection
 
-Todoist is projection, not canonical.
-
-Separate dry_run, apply, and write-back. After apply, write returned todoist_task_id back to operations when available. If unavailable, record limitation and do not claim sync complete.
+Todoist is projection, not canonical. Separate dry_run, apply, and write-back. After apply, write returned todoist_task_id back to operations when available. If unavailable, record limitation and do not claim sync complete.
 
 ---
 
@@ -273,4 +203,3 @@ Output rules:
 - produce history drafts as Markdown + DELTA_META
 - if repo write is unavailable, provide ADAM/human-ready reflection content
 - state uncertainty explicitly
-- avoid nested fenced code blocks in long-form requests
