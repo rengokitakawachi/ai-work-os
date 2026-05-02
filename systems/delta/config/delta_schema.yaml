@@ -12,6 +12,7 @@ version_scope:
     - progress_granularity
     - recommended_lines
     - todoist_projection
+    - l3_difficulty_estimated_time_recording
 resources:
   docs: systems/delta/docs
   roadmap: systems/delta/roadmap
@@ -190,13 +191,22 @@ models:
       - question_id
       - question_range
       - next_question
+      - source_page
+      - difficulty
+      - estimated_time
+      - actual_time
+      - time_delta
+      - estimate_source_status
+      - time_analysis
       - result
       - comprehension
       - weak_points
       - answer_score
       - answer_notes
       - evaluation_basis
+      - review_mark
       - review_marks
+      - next_review_target
       - next_review_targets
       - uncertainty
     one_question_l3_write_rule:
@@ -205,6 +215,54 @@ models:
         - systems/delta/history/monthly/YYYY-MM.md
         - systems/delta/history/YYYY-MM.md
         - systems/delta/operations/active_operations.md
+
+  L3QuestionRecord:
+    required_fields:
+      - question_id
+      - source_page
+      - difficulty
+      - estimated_time
+      - actual_time
+      - time_delta
+      - result
+      - review_mark
+      - next_review_target
+      - time_analysis
+      - estimate_source_status
+    optional_fields:
+      - subject
+      - material
+      - chapter
+      - source_ref
+      - confidence
+      - next_action
+    rules:
+      - question_id_is_required
+      - difficulty_and_estimated_time_should_be_checked_from_problem_header
+      - actual_time_is_user_reported_when_available
+      - time_delta_is_actual_time_minus_estimated_time
+      - review_mark_remains_understanding_based_ssot
+      - score_correctness_actual_time_and_time_delta_are_supplemental
+      - if_estimate_unconfirmed_record_status_and_next_action
+      - do_not_infer_difficulty_or_estimated_time_without_source
+    confirmed_examples:
+      - question_id: Q3-4
+        source_page: P38
+        difficulty: C
+        estimated_time: 3分20秒
+        actual_time: 2分39秒
+        time_delta: -41秒
+        result: correct
+        review_mark: ○
+      - question_id: Q4-5
+        source_page: P50
+        difficulty: B
+        estimated_time: 2分50秒
+        actual_time: 3分32秒
+        time_delta: +42秒
+        result: incorrect
+        review_mark: ×
+        next_review_target: priority_1_cross
 
   Review:
     storage:
@@ -251,7 +309,8 @@ models:
       ssot: understanding
       answer_score_role: supplemental
       answer_correctness_role: supplemental
-      rule: 評価記号は正答数から自動決定しない
+      time_delta_role: supplemental
+      rule: 評価記号は正答数・正誤・時間差分から自動決定しない
     l3_review_marks:
       double_circle:
         mark: ◎
@@ -302,6 +361,8 @@ allowed_values:
     - review
     - other
   result:
+    - correct
+    - incorrect
     - complete
     - partial
     - skipped
@@ -311,6 +372,20 @@ allowed_values:
     - medium
     - low
     - unknown
+  difficulty:
+    - A
+    - B
+    - C
+    - D
+    - 未確認
+  estimate_source_status:
+    - confirmed_from_problem_header
+    - confirmed_by_user_page_recheck
+    - page_identified_header_not_extracted
+    - search_hit_answer_tail_only
+    - search_hit_next_question_header
+    - not_found
+    - 未確認
   judgment_status:
     - ahead
     - on_track
@@ -346,6 +421,8 @@ allowed_values:
     - study_type_unknown
     - material_unknown
     - actual_position_uncertain
+    - difficulty_unknown
+    - estimated_time_unknown
   due_type:
     - date
     - deadline
@@ -383,8 +460,12 @@ rules:
   l3:
     - L3_is_question_number_based
     - each_question_has_understanding_based_review_mark
-    - answer_score_and_correctness_are_supplemental
-    - review_mark_is_not_auto_determined_from_score
+    - difficulty_and_estimated_time_are_standard_fields
+    - time_delta_is_recorded_when_actual_time_and_estimated_time_are_available
+    - answer_score_correctness_actual_time_and_time_delta_are_supplemental
+    - review_mark_is_not_auto_determined_from_score_or_time
+    - unconfirmed_estimate_requires_estimate_source_status_and_next_action
+    - problem_header_must_be_checked_not_only_answer_tail
     - review_priority_is_cross_triangle_circle_double_circle
     - health_insurance_Q5_Q6_do_not_exist
     - health_insurance_Q8_is_not_exercise_target
