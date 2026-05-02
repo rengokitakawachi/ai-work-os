@@ -38,6 +38,8 @@ import {
   updateDeltaHistory,
 } from '../src/services/delta-history.js';
 
+import { updateDeltaOperations } from '../src/services/delta-operations.js';
+
 import {
   createError,
   normalizeBranch,
@@ -66,9 +68,7 @@ function parseFilesParam(value, context) {
       resource: context.resource,
       action: context.action,
       retryable: false,
-      details: {
-        field: 'files',
-      },
+      details: { field: 'files' },
     });
   }
 
@@ -87,9 +87,7 @@ function parseFilesParam(value, context) {
       resource: context.resource,
       action: context.action,
       retryable: false,
-      details: {
-        field: 'files',
-      },
+      details: { field: 'files' },
     });
   }
 
@@ -109,9 +107,7 @@ function requireFile(value, context) {
       resource: context.resource,
       action: context.action,
       retryable: false,
-      details: {
-        field: 'file',
-      },
+      details: { field: 'file' },
     });
   }
 
@@ -129,9 +125,7 @@ function requireContent(value, context) {
       resource: context.resource,
       action: context.action,
       retryable: false,
-      details: {
-        field: 'content',
-      },
+      details: { field: 'content' },
     });
   }
 
@@ -147,450 +141,140 @@ function validateGet(resource, action, query) {
 
   if (resource === 'docs') {
     if (!['list', 'read', 'bulk'].includes(action)) {
-      throw createError({
-        status: 400,
-        code: 'ACTION_NOT_SUPPORTED',
-        message: 'action not supported',
-        category: 'routing',
-        step: 'validateGet',
-        resource,
-        action,
-        retryable: false,
-      });
+      throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'validateGet', resource, action, retryable: false });
     }
-
-    if (action === 'read') {
-      requireFile(query.file, {
-        step: 'validateGet',
-        resource,
-        action,
-      });
-    }
-
-    if (action === 'bulk') {
-      parseFilesParam(query.files, {
-        step: 'validateGet',
-        resource,
-        action,
-      });
-    }
-
+    if (action === 'read') requireFile(query.file, { step: 'validateGet', resource, action });
+    if (action === 'bulk') parseFilesParam(query.files, { step: 'validateGet', resource, action });
     return;
   }
 
   if (resource === 'notes' || resource === 'code' || resource === 'delta') {
     if (!['tree', 'read', 'bulk'].includes(action)) {
-      throw createError({
-        status: 400,
-        code: 'ACTION_NOT_SUPPORTED',
-        message: 'action not supported',
-        category: 'routing',
-        step: 'validateGet',
-        resource,
-        action,
-        retryable: false,
-      });
+      throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'validateGet', resource, action, retryable: false });
     }
-
-    if (action === 'read') {
-      requireFile(query.file, {
-        step: 'validateGet',
-        resource,
-        action,
-      });
-    }
-
-    if (action === 'bulk') {
-      parseFilesParam(query.files, {
-        step: 'validateGet',
-        resource,
-        action,
-      });
-    }
-
+    if (action === 'read') requireFile(query.file, { step: 'validateGet', resource, action });
+    if (action === 'bulk') parseFilesParam(query.files, { step: 'validateGet', resource, action });
     return;
   }
 
-  throw createError({
-    status: 400,
-    code: 'RESOURCE_NOT_SUPPORTED',
-    message: 'resource not supported',
-    category: 'routing',
-    step: 'validateGet',
-    resource,
-    action,
-    retryable: false,
-  });
+  throw createError({ status: 400, code: 'RESOURCE_NOT_SUPPORTED', message: 'resource not supported', category: 'routing', step: 'validateGet', resource, action, retryable: false });
 }
 
 function validatePost(resource, action, body) {
-  normalizeBranch(body?.branch, {
-    step: 'validatePost',
-    resource,
-    action,
-  });
+  normalizeBranch(body?.branch, { step: 'validatePost', resource, action });
 
   if (resource === 'repo') {
     if (action !== 'create_branch') {
-      throw createError({
-        status: 400,
-        code: 'ACTION_NOT_SUPPORTED',
-        message: 'action not supported',
-        category: 'routing',
-        step: 'validatePost',
-        resource,
-        action,
-        retryable: false,
-      });
+      throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'validatePost', resource, action, retryable: false });
     }
-
     if (!ensureString(body?.branch)) {
-      throw createError({
-        status: 400,
-        code: 'INVALID_REQUEST',
-        message: 'branch required',
-        category: 'validation',
-        step: 'validatePost',
-        resource,
-        action,
-        retryable: false,
-        details: {
-          field: 'branch',
-        },
-      });
+      throw createError({ status: 400, code: 'INVALID_REQUEST', message: 'branch required', category: 'validation', step: 'validatePost', resource, action, retryable: false, details: { field: 'branch' } });
     }
-
-    normalizeBranch(body?.from_branch, {
-      step: 'validatePost',
-      resource,
-      action,
-    });
-
+    normalizeBranch(body?.from_branch, { step: 'validatePost', resource, action });
     return;
   }
 
   if (resource === 'notes') {
     if (!['create', 'update', 'delete'].includes(action)) {
-      throw createError({
-        status: 400,
-        code: 'ACTION_NOT_SUPPORTED',
-        message: 'action not supported',
-        category: 'routing',
-        step: 'validatePost',
-        resource,
-        action,
-        retryable: false,
-      });
+      throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'validatePost', resource, action, retryable: false });
     }
-
-    requireFile(body?.file, {
-      step: 'validatePost',
-      resource,
-      action,
-    });
-
-    if (action !== 'delete') {
-      requireContent(body?.content, {
-        step: 'validatePost',
-        resource,
-        action,
-      });
-    }
-
+    requireFile(body?.file, { step: 'validatePost', resource, action });
+    if (action !== 'delete') requireContent(body?.content, { step: 'validatePost', resource, action });
     return;
   }
 
   if (resource === 'code') {
     if (!['create', 'update'].includes(action)) {
-      throw createError({
-        status: 400,
-        code: 'ACTION_NOT_SUPPORTED',
-        message: 'action not supported',
-        category: 'routing',
-        step: 'validatePost',
-        resource,
-        action,
-        retryable: false,
-      });
+      throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'validatePost', resource, action, retryable: false });
     }
-
-    requireFile(body?.file, {
-      step: 'validatePost',
-      resource,
-      action,
-    });
-
-    requireContent(body?.content, {
-      step: 'validatePost',
-      resource,
-      action,
-    });
-
+    requireFile(body?.file, { step: 'validatePost', resource, action });
+    requireContent(body?.content, { step: 'validatePost', resource, action });
     return;
   }
 
   if (resource === 'delta_history') {
     if (!['create', 'update'].includes(action)) {
-      throw createError({
-        status: 400,
-        code: 'ACTION_NOT_SUPPORTED',
-        message: 'action not supported',
-        category: 'routing',
-        step: 'validatePost',
-        resource,
-        action,
-        retryable: false,
-      });
+      throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'validatePost', resource, action, retryable: false });
     }
-
-    requireFile(body?.file, {
-      step: 'validatePost',
-      resource,
-      action,
-    });
-
-    requireContent(body?.content, {
-      step: 'validatePost',
-      resource,
-      action,
-    });
-
+    requireFile(body?.file, { step: 'validatePost', resource, action });
+    requireContent(body?.content, { step: 'validatePost', resource, action });
     return;
   }
 
-  throw createError({
-    status: 400,
-    code: 'RESOURCE_NOT_SUPPORTED',
-    message: 'resource not supported',
-    category: 'routing',
-    step: 'validatePost',
-    resource,
-    action,
-    retryable: false,
-  });
+  if (resource === 'delta_operations') {
+    if (action !== 'update') {
+      throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'validatePost', resource, action, retryable: false });
+    }
+    requireFile(body?.file, { step: 'validatePost', resource, action });
+    requireContent(body?.content, { step: 'validatePost', resource, action });
+    return;
+  }
+
+  throw createError({ status: 400, code: 'RESOURCE_NOT_SUPPORTED', message: 'resource not supported', category: 'routing', step: 'validatePost', resource, action, retryable: false });
 }
 
 async function dispatchGet(resource, action, query) {
-  const options = {
-    branch: ensureString(query.branch),
-  };
+  const options = { branch: ensureString(query.branch) };
 
   if (resource === 'docs') {
-    if (action === 'list') {
-      return listDocs(options);
-    }
-
-    if (action === 'read') {
-      return readDoc(
-        requireFile(query.file, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
-
-    if (action === 'bulk') {
-      return bulkReadDocs(
-        parseFilesParam(query.files, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
+    if (action === 'list') return listDocs(options);
+    if (action === 'read') return readDoc(requireFile(query.file, { step: 'dispatchGet', resource, action }), options);
+    if (action === 'bulk') return bulkReadDocs(parseFilesParam(query.files, { step: 'dispatchGet', resource, action }), options);
   }
 
   if (resource === 'notes') {
-    if (action === 'tree') {
-      return treeNotes(options);
-    }
-
-    if (action === 'read') {
-      return readNote(
-        requireFile(query.file, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
-
-    if (action === 'bulk') {
-      return bulkReadNotes(
-        parseFilesParam(query.files, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
+    if (action === 'tree') return treeNotes(options);
+    if (action === 'read') return readNote(requireFile(query.file, { step: 'dispatchGet', resource, action }), options);
+    if (action === 'bulk') return bulkReadNotes(parseFilesParam(query.files, { step: 'dispatchGet', resource, action }), options);
   }
 
   if (resource === 'code') {
-    if (action === 'tree') {
-      return treeCode(options);
-    }
-
-    if (action === 'read') {
-      return readCode(
-        requireFile(query.file, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
-
-    if (action === 'bulk') {
-      return bulkReadCode(
-        parseFilesParam(query.files, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
+    if (action === 'tree') return treeCode(options);
+    if (action === 'read') return readCode(requireFile(query.file, { step: 'dispatchGet', resource, action }), options);
+    if (action === 'bulk') return bulkReadCode(parseFilesParam(query.files, { step: 'dispatchGet', resource, action }), options);
   }
 
   if (resource === 'delta') {
-    if (action === 'tree') {
-      return treeDelta(options);
-    }
-
-    if (action === 'read') {
-      return readDelta(
-        requireFile(query.file, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
-
-    if (action === 'bulk') {
-      return bulkReadDelta(
-        parseFilesParam(query.files, {
-          step: 'dispatchGet',
-          resource,
-          action,
-        }),
-        options
-      );
-    }
+    if (action === 'tree') return treeDelta(options);
+    if (action === 'read') return readDelta(requireFile(query.file, { step: 'dispatchGet', resource, action }), options);
+    if (action === 'bulk') return bulkReadDelta(parseFilesParam(query.files, { step: 'dispatchGet', resource, action }), options);
   }
 
-  throw createError({
-    status: 400,
-    code: 'ACTION_NOT_SUPPORTED',
-    message: 'action not supported',
-    category: 'routing',
-    step: 'dispatchGet',
-    resource,
-    action,
-    retryable: false,
-  });
+  throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'dispatchGet', resource, action, retryable: false });
 }
 
 async function dispatchPost(resource, action, body) {
   const message = ensureString(body?.message);
 
-  if (resource === 'repo') {
-    if (action === 'create_branch') {
-      return createBranch(
-        ensureString(body?.branch),
-        ensureString(body?.from_branch) || 'main',
-        message
-      );
-    }
+  if (resource === 'repo' && action === 'create_branch') {
+    return createBranch(ensureString(body?.branch), ensureString(body?.from_branch) || 'main', message);
   }
 
-  const file = requireFile(body?.file, {
-    step: 'dispatchPost',
-    resource,
-    action,
-  });
-
+  const file = requireFile(body?.file, { step: 'dispatchPost', resource, action });
   const sha = ensureString(body?.sha);
-  const options = {
-    branch: ensureString(body?.branch),
-  };
+  const options = { branch: ensureString(body?.branch) };
 
   if (resource === 'notes') {
-    if (action === 'create') {
-      const content = requireContent(body?.content, {
-        step: 'dispatchPost',
-        resource,
-        action,
-      });
-
-      return createNote(file, content, message, options);
-    }
-
-    if (action === 'update') {
-      const content = requireContent(body?.content, {
-        step: 'dispatchPost',
-        resource,
-        action,
-      });
-
-      return updateNote(file, content, message, sha, options);
-    }
-
-    if (action === 'delete') {
-      return deleteNote(file, message, sha, options);
-    }
+    if (action === 'create') return createNote(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, options);
+    if (action === 'update') return updateNote(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, sha, options);
+    if (action === 'delete') return deleteNote(file, message, sha, options);
   }
 
   if (resource === 'code') {
-    const content = requireContent(body?.content, {
-      step: 'dispatchPost',
-      resource,
-      action,
-    });
-
-    if (action === 'create') {
-      return createCode(file, content, message, options);
-    }
-
-    if (action === 'update') {
-      return updateCode(file, content, message, sha, options);
-    }
+    if (action === 'create') return createCode(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, options);
+    if (action === 'update') return updateCode(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, sha, options);
   }
 
   if (resource === 'delta_history') {
-    const content = requireContent(body?.content, {
-      step: 'dispatchPost',
-      resource,
-      action,
-    });
-
-    if (action === 'create') {
-      return createDeltaHistory(file, content, message, options);
-    }
-
-    if (action === 'update') {
-      return updateDeltaHistory(file, content, message, sha, options);
-    }
+    if (action === 'create') return createDeltaHistory(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, options);
+    if (action === 'update') return updateDeltaHistory(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, sha, options);
   }
 
-  throw createError({
-    status: 400,
-    code: 'ACTION_NOT_SUPPORTED',
-    message: 'action not supported',
-    category: 'routing',
-    step: 'dispatchPost',
-    resource,
-    action,
-    retryable: false,
-  });
+  if (resource === 'delta_operations' && action === 'update') {
+    return updateDeltaOperations(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, sha, options);
+  }
+
+  throw createError({ status: 400, code: 'ACTION_NOT_SUPPORTED', message: 'action not supported', category: 'routing', step: 'dispatchPost', resource, action, retryable: false });
 }
 
 function normalizeError(error, context = {}) {
@@ -615,7 +299,7 @@ function normalizeError(error, context = {}) {
 }
 
 function logError(error, context = {}) {
-  const payload = {
+  console.error(JSON.stringify({
     level: 'error',
     request_id: context.requestId || '',
     method: context.method || '',
@@ -628,32 +312,21 @@ function logError(error, context = {}) {
     status: error?.status || 500,
     retryable: Boolean(error?.retryable),
     details: error?.details || {},
-    cause: error?.cause
-      ? {
-          name: error.cause.name,
-          message: error.cause.message,
-        }
-      : null,
-  };
-
-  console.error(JSON.stringify(payload));
+    cause: error?.cause ? { name: error.cause.name, message: error.cause.message } : null,
+  }));
 }
 
 export default async function handler(req, res) {
   cors(res);
 
-  if (req.method === 'OPTIONS') {
-    return res.end();
-  }
+  if (req.method === 'OPTIONS') return res.end();
 
   const requestId = createRequestId();
   const method = ensureString(req.method).toUpperCase();
   const resource = ensureString(req.query?.resource);
   const action = ensureString(req.query?.action);
 
-  if (!auth(req, res)) {
-    return;
-  }
+  if (!auth(req, res)) return;
 
   try {
     if (!action || !resource) {
@@ -666,62 +339,26 @@ export default async function handler(req, res) {
         resource,
         action,
         retryable: false,
-        details: {
-          missing: [
-            !action ? 'action' : null,
-            !resource ? 'resource' : null,
-          ].filter(Boolean),
-        },
+        details: { missing: [!action ? 'action' : null, !resource ? 'resource' : null].filter(Boolean) },
       });
     }
 
     if (method === 'GET') {
       validateGet(resource, action, req.query || {});
       const data = await dispatchGet(resource, action, req.query || {});
-      return res.json({
-        ok: true,
-        data,
-        request_id: requestId,
-      });
+      return res.json({ ok: true, data, request_id: requestId });
     }
 
     if (method === 'POST') {
       validatePost(resource, action, req.body || {});
       const data = await dispatchPost(resource, action, req.body || {});
-      return res.json({
-        ok: true,
-        data,
-        request_id: requestId,
-      });
+      return res.json({ ok: true, data, request_id: requestId });
     }
 
-    throw createError({
-      status: 405,
-      code: 'METHOD_NOT_ALLOWED',
-      message: 'method not allowed',
-      category: 'routing',
-      step: 'handler',
-      resource,
-      action,
-      retryable: false,
-      details: {
-        method,
-      },
-    });
+    throw createError({ status: 405, code: 'METHOD_NOT_ALLOWED', message: 'method not allowed', category: 'routing', step: 'handler', resource, action, retryable: false, details: { method } });
   } catch (error) {
-    logError(error, {
-      requestId,
-      method,
-      resource,
-      action,
-    });
-
-    const normalized = normalizeError(error, {
-      requestId,
-      resource,
-      action,
-    });
-
+    logError(error, { requestId, method, resource, action });
+    const normalized = normalizeError(error, { requestId, resource, action });
     return res.status(normalized.status).json(normalized.body);
   }
 }
