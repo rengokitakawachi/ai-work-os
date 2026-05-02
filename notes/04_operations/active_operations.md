@@ -28,28 +28,11 @@ Immediate Gate は7日枠に数えない。
   due_type: date
   status: completed
   completed: true
-  why_now:
-    - ADAM は開発コントローラーであり、ADAM の runtime behavior が安定しないと DELTA 開発判断も不安定になる
-    - ADAM / EVE runtime reflection checklist は作成済みだが、runtime fixture 実行はまだ完了していない
-    - DELTA v0.6 開発に戻る前に、ADAM の active-first / Write Gate / schema reflection / tool result integrity / routing separation が現 runtime で効くことを層別に確認する必要がある
-  completed_condition:
-    - ADAM checklist A1 active-first execution の現 runtime evidence を記録する
-    - ADAM checklist A2 user reprioritization handling の現 runtime evidence を記録する
-    - ADAM checklist A3 Write Gate behavior の現 runtime evidence を記録する
-    - ADAM checklist A4 tool result integrity の現 runtime evidence を記録する
-    - ADAM checklist A5 schema reflection separation の現 runtime evidence を記録する
-    - ADAM checklist A6 Todoist projection integrity の未実行 / 実行不能 / 実行済みを層別に記録する
-    - ADAM checklist A7 routing / rolling separation の現 runtime evidence を記録する
-    - ADAM checklist A8 handover guard は未実行なら未確認として残す
-    - ADAM checklist A9 Proactive Focus Completion Guard の現 runtime evidence を記録する
-    - repo config state / configured GPT state / runtime-visible schema / actual behavior / sustained behavior を分けて確認結果を記録する
-    - 未確認項目を follow-up task として active / next / future に routing する
   notes:
-    - この task は ADAM runtime の実行確認であり、EVE runtime fixture 実行は別 task として扱う
-    - configured GPT Instruction はユーザー報告により repo 最新 `config/ai/adam_instruction.md` 相当に更新済みとして記録した
-    - Knowledge と Schema はユーザー確認により repo 最新と整合しており差し替え不要として記録した
-    - Todoist projection fixture は dry_run まで確認済み。apply / external sync は未確認として follow-up に残す
-    - completed condition は notes/08_analysis/2026-05-02_adam_runtime_reflection_fixture_results.md の保存と read-back により満たした
+    - ADAM runtime reflection fixture result は保存・read-back 済み
+    - configured GPT Instruction はユーザー報告により repo 最新相当に更新済み
+    - Knowledge / Schema はユーザー確認により repo 最新と整合済み
+    - Todoist projection fixture は dry_run まで確認済み。apply / external sync は未確認 follow-up
 
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
@@ -66,22 +49,8 @@ Immediate Gate は7日枠に数えない。
   due_type: date
   status: completed
   completed: true
-  why_now:
-    - ADAM は開発コントローラーであり、ADAM の instruction / knowledge / runtime behavior が安定しないと DELTA 開発判断も不安定になる
-    - repo 更新と runtime 反映を区別する Phase 0 ルールを ADAM / EVE に適用する
-    - Proactive Focus Completion Guard の反映確認とあわせ、runtime reflection の残範囲を明確にする
-    - ユーザー判断として、DELTA v0.6 より先に ADAM 側の安定化を優先する
-  completed_condition:
-    - ADAM runtime 確認項目を定義する
-    - EVE runtime 確認項目を定義する
-    - repo schema / configured Action / runtime-visible schema / actual behavior の確認層を分ける
-    - 実行 gate と task 作成 gateを分ける
-    - configured GPT への反映が必要な範囲を、manual reflection checklist として切り出す
   notes:
-    - ADAM と EVE は別 runtime として確認する
-    - repo instruction 更新だけで configured GPT reflection 済みとはみなさない
-    - DELTA v0.6 開発は ADAM 安定化後に再開する
-    - task creation gate は notes/08_analysis/2026-05-02_adam_eve_runtime_reflection_checklist.md の作成と read-back により完了
+    - ADAM / EVE runtime reflection checklist 作成・read-back 済み
   external:
     todoist_task_id: 6gW4H8PjHpjw7q7q
 
@@ -107,68 +76,18 @@ Immediate Gate は7日枠に数えない。
   due_type: date
   status: completed
   completed: true
-  why_now:
-    - DELTA の daily operations 生成が直近反応型になり、長期・中期計画からの逆算が必須プロセスとして働いていない問題が発生した
-    - 2026-05-02 の学習予定提示で、plan 上は Q9-1〜Q11 想定、actual は Q3-3 にもかかわらず、甘い必達ラインが出た
-    - ユーザーの章単位報告を page_range / question_id へ正規化できないと plan-gap check 自体の精度が落ちる
-    - recommended_lines が日中の都度再見積もりになると、operations が正本として機能せず、日中判断が揺れる
-    - L3 1問記録ごとに月次 history 全体を更新すると、速度・衝突・破損リスクが上がる
-    - Todoist projection は重要だが、正しい DELTA operations を生成できることと同じ v0.6 scope で扱う方が実運用価値が高い
-    - DELTA v0.6 は「正しい実績を軽量に記録し、正しい operations を生成し、それを execution view に投影する」一括 upgrade として扱う
-  completed_condition:
-    - DELTA v0.6 scope を integrated operations upgrade として定義する
-    - DELTA instruction / knowledge / schema / operations generation code or prompt / projection service のどこに反映すべきかを層分離する
-    - daily history を primary source of truth とするか判断し、反映対象にする
-    - monthly history を daily history 由来の summary view とする rule を反映対象にする
-    - review を判断の正本として history と分離する rule を反映対象にする
-    - L3 1問実績は `systems/delta/history/daily/YYYY-MM-DD.md` のみを更新し、monthly summary / operations を更新しない rule を反映対象にする
-    - daily / monthly / review の write scope と path convention を定義する
-    - legacy `systems/delta/history/YYYY-MM.md` の migration 方針を定義する
-    - plan-gap check の必須 read set を定義する
-    - `gap_status` / `operation_mode` / `recovery_required` の配置先を決める
-    - `survival_line` と `plan_minimum_line` の分離を反映対象にする
-    - progress SSOT を study_type ごとに定義する
-    - L1 / L2 は `page_range` / `next_start_page` を必須粒度にする
-    - L3 は `questions` / `question_id` / `next_question` を必須粒度にする
-    - chapter-only input を page_range / question_id へ正規化する rule を反映対象にする
-    - 変換不能時は未確定記録と confirmation next_action を残す rule を反映対象にする
-    - operations / history / next_action / review / plan-gap check で章だけの表現を残さない rule を反映対象にする
-    - recommended_lines は daily review で生成し active_operations に保存する rule を反映対象にする
-    - recommended_lines の fields を定義する
-      - fixed_at
-      - plan_anchor
-      - current_position
-      - expected_position
-      - gap_status
-      - operation_mode
-      - must_line
-      - standard_line
-      - stretch_line
-      - defer
-      - recompute_triggers
-    - 日中の「今日の推奨ラインは？」には saved recommended_lines を提示し、原則再計算しない rule を反映対象にする
-    - recompute_triggers を定義し、明示条件がある場合だけ日中再計算できる rule を反映対象にする
-    - Todoist projection を v0.6 scope に含める
-    - DELTA Todoist projection profile / target / description shape / write-back path を反映対象にする
-    - Todoist は DELTA operations の正本ではなく projection であることを反映対象にする
-    - 長文依頼文で nested fenced code block を使わない output rule の配置先を決める
-    - 明日の予定出力テンプレートを反映対象にする
-    - runtime confirmation fixture として daily history write case、monthly no-write case、2026-05-02 case、7章完了 case、3章終わり case、recommended_lines recall case、explicit recompute case、Todoist dry_run/apply/write-back case を定義する
-    - 後続 implementation / runtime reflection task を active / next / future に routingする
   notes:
-    - これは即実装ではなく、v0.6 修正作業を安全に分解する gate
-    - 分解結果は notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md に保存し read-back 済み
-    - active continuation は `DELTA v0.6 config reflection proposal を作成する`
+    - 分解結果は notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md に保存・read-back 済み
+    - active continuation は DELTA v0.6 config reflection proposal
     - next candidates は DELTA operations shape proposal / projection profile implementation / write resource schema reflection / runtime confirmation fixtures
     - future candidates は append_daily_event / monthly summary rebuild automation / v0.7 review analytics
-    - daily history source split は plan-gap check / progress granularity / recommended_lines の前提条件として同一 task に統合する
-    - Todoist projection は v0.6 に含めるが、実行順は history source split と operations generation correctness の後
     - `systems/delta/config/delta_action_schema_v0.5.yaml` は参照 path で NOT_FOUND。source_ref は stale または未作成として扱う
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
 
 - task: DELTA v0.6 config reflection proposal を作成する
   source_ref:
+    - notes/02_design/2026-05-02_delta_v0_6_config_reflection_proposal.md
     - notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md
     - notes/02_design/2026-05-02_delta_v0_6_integrated_operations_upgrade.md
     - notes/02_design/2026-05-02_delta_history_daily_files_design.md
@@ -180,22 +99,38 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
+  status: completed
+  completed: true
+  notes:
+    - proposal note は notes/02_design/2026-05-02_delta_v0_6_config_reflection_proposal.md に保存・read-back 済み
+    - proposal には delta_instruction.md と delta_schema.yaml の complete proposed content を含めた
+    - DELTA knowledge file は現 branch では未確認。現時点では作成せず、instruction + schema に反映する判断
+    - repo config update / configured DELTA GPT reflection / runtime-visible schema / actual behavior は未完了の別 gate
+
+- task: DELTA v0.6 config files を feature branch に反映する
+  source_ref:
+    - notes/02_design/2026-05-02_delta_v0_6_config_reflection_proposal.md
+    - systems/delta/config/delta_instruction.md
+    - systems/delta/config/delta_schema.yaml
+    - systems/delta/config/delta_action_schema_v0.2.yaml
+    - systems/delta/config/delta_action_schema_v0.3.yaml
+  rolling_day: Day0
+  due_date: 2026-05-02
+  due_type: date
   why_now:
     - DELTA v0.6 の後続実装は、daily history / plan-gap / progress granularity / recommended_lines / projection boundary のルールが config に反映されてから進める必要がある
-    - 現行 DELTA instruction / schema には v0.6 の daily history primary source、recommended_lines、plan-gap fields が不足している
-    - operations shape や Todoist projection の前に、DELTA の instruction / schema 反映案を固める必要がある
+    - config reflection proposal は complete proposed content を含めて保存済み
+    - repo config update と runtime reflection を分けたうえで、まず feature branch の config state を更新する
   completed_condition:
-    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_instruction.md` を読む
-    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_schema.yaml` を読む
-    - v0.6 で instruction に追加すべき rules を complete proposed content または patch plan として整理する
-    - v0.6 で schema に追加すべき models / fields / rules を complete proposed content または patch plan として整理する
-    - DELTA knowledge file が存在するか確認し、存在しない場合は作成要否を判断する
-    - repo config update と configured DELTA GPT reflection / runtime behavior を混同しない
-    - 後続の operations shape proposal / projection profile / schema reflection / runtime fixture task を next candidates として維持する
+    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_instruction.md` を read する
+    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_schema.yaml` を read する
+    - proposal note の complete proposed content を基に両 file を update する
+    - update 前に Write Gate を出す
+    - update 後に read-back し sha を記録する
+    - repo config updated と configured DELTA GPT reflected / runtime-visible schema confirmed / actual behavior confirmed を混同しない
   notes:
-    - この task は config reflection proposal であり、DELTA runtime reflection 完了ではない
-    - write が必要な場合は branch / target / sha を確認し、Write Gate 後に実行する
-    - DELTA write resource schema は別 gate として扱う
+    - write target は feature/atlas-pre-delta-foundation branch
+    - DELTA action schema v0.6 と runtime reflection は別 task として扱う
 
 ## Day1（05/03 日）
 
@@ -207,13 +142,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day1
   due_date: 2026-05-03
   due_type: date
-  why_now:
-    - Phase 1 以降に EVE runtime を使う前に、runtime-visible scope の確認方法を固定する
-    - ADAM / EVE instruction 反映作業と連続して EVE 側の最小確認プロンプトを準備する方が反映漏れを抑えられる
-  completed_condition:
-    - EVE runtime で確認すべき instruction / knowledge / schema scope を列挙する
-    - 最小確認プロンプトを作る
-    - 実行を別 gate として扱うか判断する
   notes:
     - 実行は別 gate として扱ってよい
   external:
@@ -228,14 +156,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day1
   due_date: 2026-05-03
   due_type: date
-  why_now:
-    - Outlook read foundation へ戻る前に Phase 0 hardening と routing core 再定義の最低条件を明確にする
-    - ADAM / EVE runtime reflection task の次に、Phase 1 へ戻れる条件を固定する必要がある
-  completed_condition:
-    - Phase 1 Outlook read foundation に戻る条件を整理する
-    - Phase 0 hardening と並行可能な条件を整理する
-    - routing session / weekly review integration が Phase 1 re-entry を阻害しない条件を明示する
-    - Outlook task を next から active に戻す判断軸を作る
   notes:
     - Outlook read design は re-entry criteria の結果を見て active 作業として扱う
   external:
@@ -253,15 +173,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day2
   due_date: 2026-05-04
   due_type: date
-  why_now:
-    - routing core は運用設計として大きく再定義された
-    - docs は仕様 SSOT であり、安定仕様として昇格できる範囲を判断する必要がある
-    - Phase 1 re-entry criteria の前提として、routing core が docs 昇格対象かを切り分ける
-  completed_condition:
-    - docs/15 / docs/17 を読む
-    - routing core / weekly routing session のうち安定仕様化できる範囲を判断する
-    - docs update proposal guard に従い、必要なら更新後全文を提示する
-    - docs に置かず notes / knowledge に留める範囲も明示する
   notes:
     - docs/15 が主対象、docs/17 は operations boundary のみが対象候補
   external:
@@ -275,16 +186,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day2
   due_date: 2026-05-04
   due_type: date
-  why_now:
-    - Todoist foundation entry の後続として、Outlook を schedule 正本として読む設計が必要になる
-    - Phase 1 re-entry criteria 完了後に active 化する自然な次候補である
-  completed_condition:
-    - current Outlook-related code / config / docs を棚卸しする
-    - calendar read endpoint または missing endpoint を特定する
-    - required auth model を確認する
-    - event response shape を提案する
-    - free/busy calculation prerequisites を列挙する
-    - 次の implementation task を routing する
   notes:
     - Outlook 書き込みではなく read-only foundation に限定する
   external:
@@ -300,14 +201,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day3
   due_date: 2026-05-05
   due_type: date
-  why_now:
-    - history / grep は runtime behavior confirmed だが、show / compare / diff / search の actual behavior は未確認のまま残っている
-    - repo schema / configured Action / runtime-visible schema / actual behavior を混同しないため、残範囲を明確にする
-  completed_condition:
-    - docs/10 の反映済み範囲を確認する
-    - runtime-visible schema confirmed 範囲を確認する
-    - actual behavior confirmed / unconfirmed を分ける
-    - 残りを next / future / no-op に振り分ける
   notes:
     - 2026-04-30 の更新で v2.3.0 相当 schema は確認済みだが、全 action behavior は未確認
   external:
@@ -321,15 +214,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day3
   due_date: 2026-05-05
   due_type: date
-  why_now:
-    - 対象Cは pending 例外が成立した
-    - ADAM を「自律的に行動する OS」として説明する抽象概念 chunk は design / content に転用価値がある
-    - 製品仕様・プラン・利用制限は時間変化するため公式情報確認が必要
-  completed_condition:
-    - 抽象概念 chunk と製品仕様 chunk を分離する
-    - 抽象概念 chunk を design / content 素材として保存するか判断する
-    - 製品仕様 chunk は公式情報確認が必要な issue / future として整理する
-    - 元 file の pending 継続または archive 化条件を明示する
   notes:
     - 最新 OpenAI 情報を扱う場合は web / official source 確認が必要
   external:
@@ -346,14 +230,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day4
   due_date: 2026-05-06
   due_type: date
-  why_now:
-    - design routing で archive candidate と判定されたが、delete semantics は安全性が高く差分確認なしに archive しない
-    - actual delete behavior では `resource=notes` の file path に `notes/` prefix を付けると validation error になり、allowed prefixes は `00_inbox/` などであることを観測した
-  completed_condition:
-    - docs/10_repo_resource_api.md を読む
-    - current repoResourceWrite schema / actual behavior を確認する
-    - design draft のどの部分が現行とズレているか整理する
-    - archive / future/design retain / docs update candidate のどれにするか判断する
   external:
     todoist_task_id: 6gWG92XP7RcR2pfq
 
@@ -365,21 +241,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day4
   due_date: 2026-05-06
   due_type: date
-  why_now:
-    - 現在の inbox には開発時の test clip / 直下配置 / 下層 folder など一回限りの整理対象がある
-    - 恒久 knowledge ではなく cleanup issue として扱う判断になった
-    - routing session の滞留解消機能を実運用で確認する素材にもなる
-  completed_condition:
-    - `notes/00_inbox` の current tree を確認する
-    - 本システムと無関係な test clip を列挙する
-    - delete candidate ごとに削除理由を明示する
-    - inbox 直下の web / dev_memo 相当 file を分類する
-    - inbox 配下の余計な下層 folder を列挙する
-    - 下層 folder 内 file の移動 / routing / delete 方針を決める
-    - delete 前に対象と影響範囲を確認する
-    - Write Gate 後に delete / move を実行する
-    - write 後に read-back / NOT_FOUND / destination 確認を行う
-    - cleanup 結果を routing session summary または cleanup report に記録する
   external:
     todoist_task_id: 6gWG92WFmxFQJ6GH
 
@@ -394,14 +255,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day5
   due_date: 2026-05-07
   due_type: date
-  why_now:
-    - Phase 1 Todoist foundation entry で `src/services/todoist/client.js` が SSOT と確認できた
-    - ただし legacy wrapper の削除は repo usage / tests / replacement path が揃ってから判断する方が安全
-  completed_condition:
-    - repo usage を確認する
-    - replacement path を確認する
-    - tests / runtime impact を確認する
-    - delete / retain / future の判断を行う
   notes:
     - 現時点では deprecated legacy として維持
   external:
@@ -419,17 +272,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day5
   due_date: 2026-05-07
   due_type: date
-  why_now:
-    - DELTA は read-only / bulk / history write が runtime confirmation 済みで、運用段階に入っている
-    - `feature/atlas-pre-delta-foundation` に v0.6 以降を積み増す前に、foundation を main に統合する方が main との乖離を抑えられる
-    - main は Docs-aligned stable version であり、運用中 subsystem は統合準備対象として扱うべきである
-  completed_condition:
-    - `feature/atlas-pre-delta-foundation` の DELTA 差分を棚卸しする
-    - main に入れるべき DELTA files と、branch に残す files を分ける
-    - `systems/delta/roadmap` / `plan` / `operations` / `history` / `config` の整合を確認する
-    - ADAM 側 `repoResource delta` resource と docs / code / config の整合を確認する
-    - runtime behavior confirmed 済み項目と未確認項目を列挙する
-    - main 統合後に DELTA GPT runtime で read / bulk / write behavior を再確認する
   notes:
     - これは main merge 実行そのものではなく、統合準備 gate である
     - v0.6 Todoist projection より前に優先度比較する
@@ -447,17 +289,6 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day6
   due_date: 2026-05-08
   due_type: date
-  why_now:
-    - ATLAS 関係ファイルを集約しないと、Claude 向け prompt / verification report / fixture / policy / handover が散在しやすい
-    - ATLAS は test / verification / CI review system であり、systems 配下に subsystem として置く方が DELTA と構造的に揃う
-    - ただし ATLAS は Claude が primary executor を担う特殊 subsystem のため、DELTA と同型で作る前に責務境界を固定する必要がある
-  completed_condition:
-    - ATLAS の primary executor が Claude であることを明記する
-    - ADAM の責務を controller / integration / consistency に限定する
-    - `systems/atlas/` に置くものと置かないものを分ける
-    - 既存 ATLAS 関係ファイルの移動候補を棚卸しする
-    - `systems/atlas/README.md` / roadmap / verification / prompts の初期構成案を作る
-    - ATLAS outputs は verification evidence であり execution SSOT ではないことを明記する
   notes:
     - folder 作成そのものではなく設計整理 task
   external:
