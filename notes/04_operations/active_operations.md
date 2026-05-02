@@ -17,6 +17,7 @@ Immediate Gate は7日枠に数えない。
 - task: ADAM runtime reflection fixtures を実行して、反映済み / 未反映を層別に記録する
   source_ref:
     - notes/08_analysis/2026-05-02_adam_eve_runtime_reflection_checklist.md
+    - notes/08_analysis/2026-05-02_adam_runtime_reflection_fixture_results.md
     - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
     - config/ai/adam_instruction.md
     - config/ai/adam_knowledge.md
@@ -25,6 +26,8 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
+  status: completed
+  completed: true
   why_now:
     - ADAM は開発コントローラーであり、ADAM の runtime behavior が安定しないと DELTA 開発判断も不安定になる
     - ADAM / EVE runtime reflection checklist は作成済みだが、runtime fixture 実行はまだ完了していない
@@ -43,8 +46,10 @@ Immediate Gate は7日枠に数えない。
     - 未確認項目を follow-up task として active / next / future に routing する
   notes:
     - この task は ADAM runtime の実行確認であり、EVE runtime fixture 実行は別 task として扱う
-    - configured GPT への manual reflection は API で観測できないため、確認不能なら未確認として記録する
-    - Todoist projection fixture は外部副作用を伴うため、dry_run 可能範囲と apply 必要範囲を分ける
+    - configured GPT Instruction はユーザー報告により repo 最新 `config/ai/adam_instruction.md` 相当に更新済みとして記録した
+    - Knowledge と Schema はユーザー確認により repo 最新と整合しており差し替え不要として記録した
+    - Todoist projection fixture は dry_run まで確認済み。apply / external sync は未確認として follow-up に残す
+    - completed condition は notes/08_analysis/2026-05-02_adam_runtime_reflection_fixture_results.md の保存と read-back により満たした
 
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
