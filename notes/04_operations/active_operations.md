@@ -14,6 +14,36 @@ Immediate Gate は7日枠に数えない。
 
 ## Day0（05/02 土）
 
+- task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
+  source_ref:
+    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
+    - config/ai/adam_instruction.md
+    - config/ai/eve_instruction.md
+    - config/ai/adam_knowledge.md
+    - config/ai/eve_knowledge.md
+    - config/ai/adam_schema.yaml
+    - config/ai/eve_schema.yaml
+  rolling_day: Day0
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - ADAM は開発コントローラーであり、ADAM の instruction / knowledge / runtime behavior が安定しないと DELTA 開発判断も不安定になる
+    - repo 更新と runtime 反映を区別する Phase 0 ルールを ADAM / EVE に適用する
+    - Proactive Focus Completion Guard の反映確認とあわせ、runtime reflection の残範囲を明確にする
+    - ユーザー判断として、DELTA v0.6 より先に ADAM 側の安定化を優先する
+  completed_condition:
+    - ADAM runtime 確認項目を定義する
+    - EVE runtime 確認項目を定義する
+    - repo schema / configured Action / runtime-visible schema / actual behavior の確認層を分ける
+    - 実行 gate と task 作成 gateを分ける
+    - configured GPT への反映が必要な範囲を、manual reflection checklist として切り出す
+  notes:
+    - ADAM と EVE は別 runtime として確認する
+    - repo instruction 更新だけで configured GPT reflection 済みとはみなさない
+    - DELTA v0.6 開発は ADAM 安定化後に再開する
+  external:
+    todoist_task_id: 6gW4H8PjHpjw7q7q
+
 - task: DELTA v0.6 Integrated Operations Upgrade を instruction / knowledge / schema / projection 反映 task に分解する
   source_ref:
     - notes/02_design/2026-05-02_delta_v0_6_integrated_operations_upgrade.md
@@ -85,36 +115,9 @@ Immediate Gate は7日枠に数えない。
     - これは即実装ではなく、v0.6 修正作業を安全に分解する gate
     - daily history source split は plan-gap check / progress granularity / recommended_lines の前提条件として同一 task に統合する
     - Todoist projection は v0.6 に含めるが、実行順は history source split と operations generation correctness の後
+    - ADAM 安定化を先に行うため、Day0 の2番目に下げる
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
-
-- task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
-  source_ref:
-    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
-    - config/ai/adam_instruction.md
-    - config/ai/eve_instruction.md
-    - config/ai/adam_knowledge.md
-    - config/ai/eve_knowledge.md
-    - config/ai/adam_schema.yaml
-    - config/ai/eve_schema.yaml
-  rolling_day: Day0
-  due_date: 2026-05-02
-  due_type: date
-  why_now:
-    - repo 更新と runtime 反映を区別する Phase 0 ルールを ADAM / EVE に適用する
-    - Proactive Focus Completion Guard の反映確認とあわせ、runtime reflection の残範囲を明確にする
-    - ユーザー判断として ADAM / EVE instruction 反映は明日実施する方針になった
-  completed_condition:
-    - ADAM runtime 確認項目を定義する
-    - EVE runtime 確認項目を定義する
-    - repo schema / configured Action / runtime-visible schema / actual behavior の確認層を分ける
-    - 実行 gate と task 作成 gateを分ける
-    - configured GPT への反映が必要な範囲を、manual reflection checklist として切り出す
-  notes:
-    - ADAM と EVE は別 runtime として確認する
-    - repo instruction 更新だけで configured GPT reflection 済みとはみなさない
-  external:
-    todoist_task_id: 6gW4H8PjHpjw7q7q
 
 ## Day1（05/03 日）
 
