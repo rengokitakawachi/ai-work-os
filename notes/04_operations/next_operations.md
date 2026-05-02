@@ -8,58 +8,41 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
-## 再評価結果（2026-05-01 post-daily-review rolling）
+## 再評価結果（2026-05-02 DELTA v0.6 integrated scope update）
 
-### newly promoted to active_operations
+### integrated into active_operations
 
-- `DELTA daily operations plan-gap check を instruction / knowledge / schema 反映 task に分解する`
-
-Reason:
-
-- DELTA daily operations 生成が直近反応型になり、長期・中期計画からの逆算が必須プロセスとして働いていない問題が発生した
-- DELTA operations の根幹品質に関わり、DELTA foundation / v0.6 projection より前に修正方針を active へ入れる必要がある
-
-### moved back from active_operations to next_operations
+以下は独立 next task ではなく、active Day0 の `DELTA v0.6 Integrated Operations Upgrade` scope に吸収した。
 
 - `DELTA v0.6 operations を Todoist execution view へ投影する`
 
 Reason:
 
-- DELTA plan-gap check が未解決のまま projection を進めると、誤った daily operations を Todoist に可視化するリスクがある
-- v0.6 projection は重要だが、plan-gap check の設計・反映方針を先に決めるべき
+- DELTA v0.6 は、operations generation quality と Todoist projection を一括で扱う integrated operations upgrade とする
+- Todoist projection は後回しではなく v0.6 scope に含める
+- ただし実行順は、plan-gap check / progress granularity / recommended_lines の反映方針を先に固定し、その後 projection を実装・確認する
+- projection は generated operations の見える化であり、operations generation correctness の後に実行する
+
+### active v0.6 scope
+
+Active task:
+
+- `DELTA v0.6 Integrated Operations Upgrade を instruction / knowledge / schema / projection 反映 task に分解する`
+
+Included scope:
+
+- plan-gap check
+- progress granularity
+- recommended_lines daily-review fixation
+- Todoist execution view projection
 
 ---
 
 ## タスク
 
-- task: DELTA v0.6 operations を Todoist execution view へ投影する
-  source_ref:
-    - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
-    - systems/delta/operations/active_operations.md
-    - systems/delta/roadmap/delta_roadmap.md
-    - systems/delta/plan/2026_sharoushi_exam_plan.md
-    - src/services/tasks/projection.js
-    - config/ai/adam_schema.yaml
-    - notes/01_issues/idea_log.md#20260430-031
-  why_now:
-    - DELTA 日次学習の execution visibility を上げる
-    - DELTA operations は due_date / due_type / study_type を持ち、Todoist 投影に適した形になっている
-    - ただし plan-gap check 未解決のまま projection すると、甘い operations を external execution view へ投影するリスクがある
-  completed_condition:
-    - DELTA v0.6 schema proposal を作る
-    - `projectTasks` または同等 projection usecase が DELTA active operations を受け取れる
-    - dry_run で DELTA operations tasks から Todoist create/update payload が生成される
-    - payload description に DELTA 固有 field と `ref: systems/delta/operations/active_operations.md` が入る
-    - apply で Todoist task が作成または更新される
-    - apply 結果の Todoist task id を DELTA operations へ戻す方法を確認する
-    - ADAM active projection が壊れていないことを確認する
-    - DELTA GPT runtime-visible schema / behavior を確認する
-  notes:
-    - preferred direction は既存 `/api/tasks/project` と `src/services/tasks/projection.js` の profile 拡張
-    - 新規 API route は増やさない
-    - DELTA plan-gap check 修正方針の後に再 active 化する
-  external:
-    todoist_task_id: 6gWG92hh5RJfg2MH
+現在、active_operations に入らなかった近未来候補はなし。
+
+新規候補が発生した場合は、daily / weekly review または operations rolling で active / next / future を比較する。
 
 ---
 
