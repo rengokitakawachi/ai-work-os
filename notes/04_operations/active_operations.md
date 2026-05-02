@@ -11,6 +11,7 @@ Immediate Gate は7日枠に数えない。
 - gate: DELTA configured GPT Action の deltaResourceGet read failure を解消する
   status: blocked
   source_ref:
+    - notes/08_analysis/2026-05-02_delta_configured_action_read_failure_diagnosis.md
     - systems/delta/config/delta_action_schema.yaml
     - systems/delta/config/delta_action_schema_v0.6.yaml
     - systems/delta/config/delta_instruction.md
@@ -32,6 +33,7 @@ Immediate Gate は7日枠に数えない。
     - ADAM backend check succeeded, so this is not currently treated as repo file absence
     - Branch omission aloneではなかった。branch 指定ありでも DELTA configured GPT は ClientResponseError
     - 第一候補は DELTA GPT Actions の認証設定不備または pasted schema / server / privacy/auth configuration mismatch
+    - 診断結果と最小再テストプロンプトは notes/08_analysis/2026-05-02_delta_configured_action_read_failure_diagnosis.md に保存済み
 
 ---
 
@@ -156,7 +158,7 @@ Immediate Gate は7日枠に数えない。
     - plan_anchor / current_position / expected_position / gap_status / operation_mode / recovery_required の配置案を作る
     - recommended_lines の fixed_at / source_review / must_line / standard_line / stretch_line / defer / recompute_triggers を含む proposal を作る
     - L1/L2 は page_range / next_start_page、L3 は question range / next_question に正規化する proposal を作る
-    - operations update は proposal task と別 gate にするか、同 task 内で Write Gate 後に実行するか判断する
+    - operations update は proposal task と別 gate にするか、同 task内で Write Gate 後に実行するか判断する
     - repo config state / DELTA operations state / runtime behavior を混同しない
   notes:
     - この task は operations shape proposal。実更新する場合は branch / sha / Write Gate / read-back が必要
