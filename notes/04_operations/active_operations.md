@@ -14,6 +14,38 @@ Immediate Gate は7日枠に数えない。
 
 ## Day0（05/02 土）
 
+- task: ADAM runtime reflection fixtures を実行して、反映済み / 未反映を層別に記録する
+  source_ref:
+    - notes/08_analysis/2026-05-02_adam_eve_runtime_reflection_checklist.md
+    - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
+    - config/ai/adam_instruction.md
+    - config/ai/adam_knowledge.md
+    - config/ai/adam_schema.yaml
+    - notes/04_operations/active_operations.md
+  rolling_day: Day0
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - ADAM は開発コントローラーであり、ADAM の runtime behavior が安定しないと DELTA 開発判断も不安定になる
+    - ADAM / EVE runtime reflection checklist は作成済みだが、runtime fixture 実行はまだ完了していない
+    - DELTA v0.6 開発に戻る前に、ADAM の active-first / Write Gate / schema reflection / tool result integrity / routing separation が現 runtime で効くことを層別に確認する必要がある
+  completed_condition:
+    - ADAM checklist A1 active-first execution の現 runtime evidence を記録する
+    - ADAM checklist A2 user reprioritization handling の現 runtime evidence を記録する
+    - ADAM checklist A3 Write Gate behavior の現 runtime evidence を記録する
+    - ADAM checklist A4 tool result integrity の現 runtime evidence を記録する
+    - ADAM checklist A5 schema reflection separation の現 runtime evidence を記録する
+    - ADAM checklist A6 Todoist projection integrity の未実行 / 実行不能 / 実行済みを層別に記録する
+    - ADAM checklist A7 routing / rolling separation の現 runtime evidence を記録する
+    - ADAM checklist A8 handover guard は未実行なら未確認として残す
+    - ADAM checklist A9 Proactive Focus Completion Guard の現 runtime evidence を記録する
+    - repo config state / configured GPT state / runtime-visible schema / actual behavior / sustained behavior を分けて確認結果を記録する
+    - 未確認項目を follow-up task として active / next / future に routing する
+  notes:
+    - この task は ADAM runtime の実行確認であり、EVE runtime fixture 実行は別 task として扱う
+    - configured GPT への manual reflection は API で観測できないため、確認不能なら未確認として記録する
+    - Todoist projection fixture は外部副作用を伴うため、dry_run 可能範囲と apply 必要範囲を分ける
+
 - task: ADAM / EVE instruction 再層化後の runtime 反映確認 task を作る
   source_ref:
     - notes/02_design/2026-04-26_adam_eve_instruction_schema_layering.md
@@ -23,9 +55,12 @@ Immediate Gate は7日枠に数えない。
     - config/ai/eve_knowledge.md
     - config/ai/adam_schema.yaml
     - config/ai/eve_schema.yaml
+    - notes/08_analysis/2026-05-02_adam_eve_runtime_reflection_checklist.md
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
+  status: completed
+  completed: true
   why_now:
     - ADAM は開発コントローラーであり、ADAM の instruction / knowledge / runtime behavior が安定しないと DELTA 開発判断も不安定になる
     - repo 更新と runtime 反映を区別する Phase 0 ルールを ADAM / EVE に適用する
@@ -41,6 +76,7 @@ Immediate Gate は7日枠に数えない。
     - ADAM と EVE は別 runtime として確認する
     - repo instruction 更新だけで configured GPT reflection 済みとはみなさない
     - DELTA v0.6 開発は ADAM 安定化後に再開する
+    - task creation gate は notes/08_analysis/2026-05-02_adam_eve_runtime_reflection_checklist.md の作成と read-back により完了
   external:
     todoist_task_id: 6gW4H8PjHpjw7q7q
 
@@ -115,7 +151,7 @@ Immediate Gate は7日枠に数えない。
     - これは即実装ではなく、v0.6 修正作業を安全に分解する gate
     - daily history source split は plan-gap check / progress granularity / recommended_lines の前提条件として同一 task に統合する
     - Todoist projection は v0.6 に含めるが、実行順は history source split と operations generation correctness の後
-    - ADAM 安定化を先に行うため、Day0 の2番目に下げる
+    - ADAM 安定化を先に行うため、Day0 の3番目に下げる
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
 
