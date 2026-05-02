@@ -12,6 +12,7 @@ version_scope:
     - progress_granularity
     - recommended_lines
     - daily_review_operations_update
+    - operation_generation_judgment_regression_guard
     - todoist_projection
     - l3_difficulty_estimated_time_recording
 resources:
@@ -54,6 +55,18 @@ models:
       - notes
       - status
       - completed
+    required_delta_fields_for_daily_task:
+      - plan_anchor
+      - expected_position
+      - current_position
+      - gap_status
+      - operation_mode
+      - must_line
+      - standard_line
+      - stretch_line
+      - recovery_targets
+      - defer_targets
+      - recompute_triggers
     delta_fields:
       - subject
       - topic
@@ -65,6 +78,11 @@ models:
       - questions
       - question_range
       - next_question
+      - start_question_id
+      - must_end_question_id
+      - standard_end_question_id
+      - stretch_end_question_id
+      - next_resume_question_id
       - plan_anchor
       - current_position
       - actual_position
@@ -76,6 +94,7 @@ models:
       - standard_line
       - stretch_line
       - recovery_targets
+      - defer_targets
       - defer
       - recompute_triggers
       - next_review_checkpoint
@@ -85,11 +104,59 @@ models:
     source_of_truth:
       role: next_action_source
       rule: operations stores what to do next, not actual performance records
-    projection:
-      todoist:
-        role: projection
-        canonical_source: systems/delta/operations/active_operations.md
-        external_id_path: external.todoist_task_id
+    validation_rules:
+      - daily_operations_missing_plan_anchor_are_incomplete
+      - L3_operations_must_use_real_question_ids
+      - vague_L3_targets_are_warning_or_invalid
+      - health_insurance_exceptions_must_be_applied
+
+  OperationGenerationGuard:
+    required_daily_operation_fields:
+      - plan_anchor
+      - expected_position
+      - current_position
+      - gap_status
+      - operation_mode
+      - must_line
+      - standard_line
+      - stretch_line
+      - recovery_targets
+      - defer_targets
+      - recompute_triggers
+    two_layer_judgment:
+      fields:
+        - daily_execution_status
+        - plan_alignment_status
+        - judgment
+      rule: user_execution_can_be_completed_while_plan_alignment_is_delayed
+    on_track_strict_conditions:
+      - daily_task_completed
+      - current_position_not_materially_behind_expected_position
+      - no_additional_recovery_required_for_tomorrow_or_later
+    delayed_allowed_judgments:
+      - delayed_but_managed
+      - delayed_but_recovering
+      - recovery_on_track
+    L3_operation_target_fields:
+      - start_question_id
+      - must_end_question_id
+      - standard_end_question_id
+      - stretch_end_question_id
+      - next_resume_question_id
+    vague_L3_targets:
+      - Q3以降
+      - Q4の途中
+      - できるところまで
+      - chapter_only
+    health_insurance_exceptions:
+      missing_questions:
+        - Q5
+        - Q6
+      no_exercise_target:
+        - Q8
+      transitions:
+        Q4-10: Q7
+        Q7: Q9
 
   DailyReviewOperationsUpdate:
     trigger:
@@ -110,7 +177,7 @@ models:
     flow:
       - confirm_or_update_daily_history
       - confirm_study_time_L1_L2_L3_sokutore
-      - confirm_judgment_and_next_action_candidates
+      - confirm_two_layer_judgment_and_next_action_candidates
       - compare_expected_position_and_current_position
       - update_active_operations
       - report_history_sha_and_operations_sha
@@ -125,7 +192,7 @@ models:
       - standard_line
       - stretch_line
       - recovery_targets
-      - defer
+      - defer_targets
       - recompute_triggers
       - next_review_checkpoint
     write_target:
@@ -137,6 +204,7 @@ models:
       - active_operations_must_be_updated_after_daily_history_confirmation
       - tomorrow_questions_read_saved_operations_not_recomputed_by_default
       - actual_performance_records_remain_in_daily_history
+      - on_track_requires_plan_alignment_not_only_daily_execution
 
   ProgressPosition:
     fields:
@@ -151,6 +219,8 @@ models:
       - question_id
       - question_range
       - next_question
+      - start_question_id
+      - next_resume_question_id
       - as_of
       - source_ref
       - uncertainty
@@ -173,6 +243,9 @@ models:
       - actual_as_of_date
       - current_position
       - actual_position_source
+      - daily_execution_status
+      - plan_alignment_status
+      - judgment
       - gap_status
       - operation_mode
       - recovery_required
@@ -234,6 +307,10 @@ models:
       - 次アクション
       - メモ
       - DELTA_META
+    judgment_fields:
+      - daily_execution_status
+      - plan_alignment_status
+      - judgment
     actual_results_fields:
       - study_type
       - subject
@@ -347,15 +424,6 @@ models:
       - due_type
       - description
       - external.todoist_task_id
-    description_fields:
-      - profile
-      - subject
-      - study_type
-      - material
-      - topic
-      - recommended_lines_summary
-      - source_ref
-      - ref
     rules:
       - todoist_is_not_canonical
       - dry_run_and_apply_are_separate
@@ -383,6 +451,19 @@ allowed_values:
     - partial
     - skipped
     - provisional
+  daily_execution_status:
+    - completed
+    - partial
+    - skipped
+    - overdone
+    - uncertain
+  plan_alignment_status:
+    - ahead
+    - on_track
+    - delayed
+    - critical_delay
+    - uncertain
+    - needs_confirmation
   difficulty:
     - A
     - B
@@ -403,6 +484,9 @@ allowed_values:
     - slight_delay
     - delayed
     - critical_delay
+    - delayed_but_managed
+    - delayed_but_recovering
+    - recovery_on_track
     - partial_must_line_reached
     - overdone
     - uncertain
@@ -412,7 +496,9 @@ allowed_values:
     - on_track
     - delayed
     - critical_delay
+    - delayed_but_managed
     - delayed_but_recovering
+    - recovery_on_track
     - uncertain
     - needs_confirmation
   operation_mode:
@@ -456,6 +542,10 @@ rules:
     - operations_update_phase_runs_on_day_closure
     - report_both_history_sha_and_operations_sha
     - tomorrow_questions_read_saved_operations
+  judgment:
+    - separate_daily_execution_status_and_plan_alignment_status
+    - on_track_requires_daily_completion_and_plan_alignment
+    - completed_execution_can_still_be_delayed_plan_alignment
   plan_gap:
     - plan_gap_check_required_before_daily_operations_generation
     - read_roadmap_plan_operations_latest_daily_history_before_proposal
@@ -474,6 +564,8 @@ rules:
     - recompute_requires_trigger
   l3:
     - L3_is_question_number_based
+    - L3_operations_must_use_real_question_ids
+    - vague_L3_targets_are_warning_or_invalid
     - each_question_has_understanding_based_review_mark
     - difficulty_and_estimated_time_are_standard_fields
     - time_delta_is_recorded_when_actual_time_and_estimated_time_are_available
@@ -483,6 +575,8 @@ rules:
     - problem_header_must_be_checked_not_only_answer_tail
     - health_insurance_Q5_Q6_do_not_exist
     - health_insurance_Q8_is_not_exercise_target
+    - health_insurance_Q4_10_next_is_Q7
+    - health_insurance_Q7_next_is_Q9
   projection:
     - todoist_is_projection_not_canonical
     - operations_must_be_updated_before_projection
