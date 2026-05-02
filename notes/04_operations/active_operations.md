@@ -87,6 +87,7 @@ Immediate Gate は7日枠に数えない。
 
 - task: DELTA v0.6 Integrated Operations Upgrade を instruction / knowledge / schema / projection 反映 task に分解する
   source_ref:
+    - notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md
     - notes/02_design/2026-05-02_delta_v0_6_integrated_operations_upgrade.md
     - notes/01_issues/2026-05-01_delta_daily_operations_plan_gap_check_issue.md
     - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
@@ -104,6 +105,8 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
+  status: completed
+  completed: true
   why_now:
     - DELTA の daily operations 生成が直近反応型になり、長期・中期計画からの逆算が必須プロセスとして働いていない問題が発生した
     - 2026-05-02 の学習予定提示で、plan 上は Q9-1〜Q11 想定、actual は Q3-3 にもかかわらず、甘い必達ラインが出た
@@ -154,11 +157,45 @@ Immediate Gate は7日枠に数えない。
     - 後続 implementation / runtime reflection task を active / next / future に routingする
   notes:
     - これは即実装ではなく、v0.6 修正作業を安全に分解する gate
+    - 分解結果は notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md に保存し read-back 済み
+    - active continuation は `DELTA v0.6 config reflection proposal を作成する`
+    - next candidates は DELTA operations shape proposal / projection profile implementation / write resource schema reflection / runtime confirmation fixtures
+    - future candidates は append_daily_event / monthly summary rebuild automation / v0.7 review analytics
     - daily history source split は plan-gap check / progress granularity / recommended_lines の前提条件として同一 task に統合する
     - Todoist projection は v0.6 に含めるが、実行順は history source split と operations generation correctness の後
-    - ADAM 安定化を先に行うため、Day0 の3番目に下げる
+    - `systems/delta/config/delta_action_schema_v0.5.yaml` は参照 path で NOT_FOUND。source_ref は stale または未作成として扱う
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
+
+- task: DELTA v0.6 config reflection proposal を作成する
+  source_ref:
+    - notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md
+    - notes/02_design/2026-05-02_delta_v0_6_integrated_operations_upgrade.md
+    - notes/02_design/2026-05-02_delta_history_daily_files_design.md
+    - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
+    - notes/02_design/2026-05-02_delta_progress_granularity_rule_design.md
+    - notes/02_design/2026-05-02_delta_recommended_line_generation_design.md
+    - systems/delta/config/delta_instruction.md
+    - systems/delta/config/delta_schema.yaml
+  rolling_day: Day0
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - DELTA v0.6 の後続実装は、daily history / plan-gap / progress granularity / recommended_lines / projection boundary のルールが config に反映されてから進める必要がある
+    - 現行 DELTA instruction / schema には v0.6 の daily history primary source、recommended_lines、plan-gap fields が不足している
+    - operations shape や Todoist projection の前に、DELTA の instruction / schema 反映案を固める必要がある
+  completed_condition:
+    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_instruction.md` を読む
+    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_schema.yaml` を読む
+    - v0.6 で instruction に追加すべき rules を complete proposed content または patch plan として整理する
+    - v0.6 で schema に追加すべき models / fields / rules を complete proposed content または patch plan として整理する
+    - DELTA knowledge file が存在するか確認し、存在しない場合は作成要否を判断する
+    - repo config update と configured DELTA GPT reflection / runtime behavior を混同しない
+    - 後続の operations shape proposal / projection profile / schema reflection / runtime fixture task を next candidates として維持する
+  notes:
+    - この task は config reflection proposal であり、DELTA runtime reflection 完了ではない
+    - write が必要な場合は branch / target / sha を確認し、Write Gate 後に実行する
+    - DELTA write resource schema は別 gate として扱う
 
 ## Day1（05/03 日）
 
