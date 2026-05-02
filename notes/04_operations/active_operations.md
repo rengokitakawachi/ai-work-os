@@ -14,12 +14,14 @@ Immediate Gate は7日枠に数えない。
 
 ## Day0（05/02 土）
 
-- task: DELTA daily operations plan-gap check / progress granularity を instruction / knowledge / schema 反映 task に分解する
+- task: DELTA daily operations plan-gap check / progress granularity / recommended lines を instruction / knowledge / schema 反映 task に分解する
   source_ref:
     - notes/01_issues/2026-05-01_delta_daily_operations_plan_gap_check_issue.md
     - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
     - notes/01_issues/2026-05-02_delta_progress_granularity_rule_issue.md
     - notes/02_design/2026-05-02_delta_progress_granularity_rule_design.md
+    - notes/01_issues/2026-05-02_delta_recommended_line_generation_issue.md
+    - notes/02_design/2026-05-02_delta_recommended_line_generation_design.md
     - systems/delta/roadmap/delta_roadmap.md
     - systems/delta/plan/2026_sharoushi_exam_plan.md
     - systems/delta/operations/active_operations.md
@@ -30,7 +32,8 @@ Immediate Gate は7日枠に数えない。
   why_now:
     - DELTA の daily operations 生成が直近反応型になり、長期・中期計画からの逆算が必須プロセスとして働いていない問題が発生した
     - 2026-05-02 の学習予定提示で、plan 上は Q9-1〜Q11 想定、actual は Q3-3 にもかかわらず、甘い必達ラインが出た
-    - さらに、ユーザーの章単位報告を page_range / question_id へ正規化できないと plan-gap check 自体の精度が落ちる
+    - ユーザーの章単位報告を page_range / question_id へ正規化できないと plan-gap check 自体の精度が落ちる
+    - recommended_lines が日中の都度再見積もりになると、operations が正本として機能せず、日中判断が揺れる
     - DELTA operations の根幹品質に関わり、DELTA foundation / v0.6 projection より前に修正方針を active へ入れる必要がある
   completed_condition:
     - DELTA instruction / knowledge / schema / operations generation code or prompt のどこに反映すべきかを層分離する
@@ -43,13 +46,28 @@ Immediate Gate は7日枠に数えない。
     - chapter-only input を page_range / question_id へ正規化する rule を反映対象にする
     - 変換不能時は未確定記録と confirmation next_action を残す rule を反映対象にする
     - operations / history / next_action / review / plan-gap check で章だけの表現を残さない rule を反映対象にする
+    - recommended_lines は daily review で生成し active_operations に保存する rule を反映対象にする
+    - recommended_lines の fields を定義する
+      - fixed_at
+      - plan_anchor
+      - current_position
+      - expected_position
+      - gap_status
+      - operation_mode
+      - must_line
+      - standard_line
+      - stretch_line
+      - defer
+      - recompute_triggers
+    - 日中の「今日の推奨ラインは？」には saved recommended_lines を提示し、原則再計算しない rule を反映対象にする
+    - recompute_triggers を定義し、明示条件がある場合だけ日中再計算できる rule を反映対象にする
     - 長文依頼文で nested fenced code block を使わない output rule の配置先を決める
     - 明日の予定出力テンプレートを反映対象にする
-    - runtime confirmation fixture として 2026-05-02 case、7章完了 case、3章終わり case を定義する
+    - runtime confirmation fixture として 2026-05-02 case、7章完了 case、3章終わり case、recommended_lines recall case、explicit recompute case を定義する
     - 後続 implementation / runtime reflection task を active / next / future に routing する
   notes:
     - これは即実装ではなく、修正作業を安全に分解する gate
-    - progress granularity は plan-gap check の前提条件として同一 task に統合する
+    - progress granularity と recommended_lines 固定は plan-gap check の前提条件として同一 task に統合する
     - DELTA v0.6 Todoist projection はこの修正方針の後に扱う
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
