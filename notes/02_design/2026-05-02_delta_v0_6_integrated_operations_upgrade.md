@@ -2,7 +2,7 @@
 
 ## purpose
 
-DELTA v0.6 を、daily operations generation の品質改善と Todoist projection を一括で扱う integrated operations upgrade として再定義する。
+DELTA v0.6 を、daily operations generation の品質改善、daily history primary source of truth 化、Todoist projection を一括で扱う integrated operations upgrade として再定義する。
 
 ---
 
@@ -11,10 +11,12 @@ DELTA v0.6 を、daily operations generation の品質改善と Todoist projecti
 - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
 - notes/02_design/2026-05-02_delta_progress_granularity_rule_design.md
 - notes/02_design/2026-05-02_delta_recommended_line_generation_design.md
+- notes/02_design/2026-05-02_delta_history_daily_files_design.md
 - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
 - notes/01_issues/2026-05-01_delta_daily_operations_plan_gap_check_issue.md
 - notes/01_issues/2026-05-02_delta_progress_granularity_rule_issue.md
 - notes/01_issues/2026-05-02_delta_recommended_line_generation_issue.md
+- notes/01_issues/2026-05-02_delta_history_daily_files_issue.md
 - systems/delta/roadmap/delta_roadmap.md
 - systems/delta/plan/2026_sharoushi_exam_plan.md
 - systems/delta/operations/active_operations.md
@@ -24,12 +26,13 @@ DELTA v0.6 を、daily operations generation の品質改善と Todoist projecti
 
 ## conclusion
 
-DELTA v0.6 は、次の両方を含む一括 upgrade とする。
+DELTA v0.6 は、次を含む一括 upgrade とする。
 
 1. daily operations generation intelligence
-2. Todoist execution view projection
+2. daily history primary source of truth
+3. Todoist execution view projection
 
-分けるより、v0.6 を「正しい operations を生成し、それを実行 view に投影する」単位として扱う方が実運用価値が高い。
+分けるより、v0.6 を「正しい実績を軽量に記録し、正しい operations を生成し、それを execution view に投影する」単位として扱う方が実運用価値が高い。
 
 ---
 
@@ -43,16 +46,16 @@ DELTA v0.6 Integrated Operations Upgrade
 
 ### 1. plan-gap check
 
-DELTA daily operations generation は、直近反応型ではなく、roadmap / plan / operations / history から逆算する。
+DELTA daily operations generation は、直近反応型ではなく、roadmap / plan / operations / daily history から逆算する。
 
 Required behavior:
 
 - roadmap を読む
 - plan を読む
 - active_operations を読む
-- latest history を読む
+- latest daily history を読む
 - plan 上の期待到達点を抽出する
-- history 上の現在地を抽出する
+- daily history 上の現在地を抽出する
 - gap_status を判定する
 - operation_mode を決める
 - survival_line と plan_minimum_line を分ける
@@ -72,7 +75,7 @@ Required behavior:
 - page_range / question_id に変換する
 - 変換不能なら未確定として記録する
 - confirmation next_action を残す
-- operations / history / review / plan-gap check で章だけの表現を使わない
+- operations / daily history / review / plan-gap check で章だけの表現を使わない
 
 ### 3. recommended_lines
 
@@ -90,7 +93,27 @@ Required behavior:
 - 原則として日中再計算しない
 - explicit recompute trigger がある場合だけ再計算する
 
-### 4. Todoist projection
+### 4. daily history primary source of truth
+
+DELTA history の一次記録は daily file とする。
+
+Required structure:
+
+- systems/delta/history/daily/YYYY-MM-DD.md
+- systems/delta/history/monthly/YYYY-MM.md
+- systems/delta/review/weekly/YYYY-Www.md
+- systems/delta/review/monthly/YYYY-MM.md
+
+Required behavior:
+
+- L3 1問記録は daily history のみを更新する
+- monthly history は daily history から生成・更新される summary view とする
+- review は判断の正本として history と分離する
+- operations は次アクションの正本であり、実績は書かない
+- plan-gap check は daily history を current_position の primary source とする
+- legacy `systems/delta/history/YYYY-MM.md` は移行中の monthly summary / legacy source として扱う
+
+### 5. Todoist projection
 
 DELTA active_operations を Todoist execution view に投影する。
 
@@ -110,19 +133,24 @@ Required behavior:
 
 v0.6 は一括 version だが、実行順は固定する。
 
-1. operations generation rules
+1. storage / record source rules
+   - daily history primary source of truth
+   - monthly summary view
+   - review judgment layer
+2. operations generation rules
    - plan-gap check
    - progress granularity
    - recommended_lines
-2. operations schema / active_operations shape
-3. runtime confirmation fixtures
-4. Todoist projection profile
-5. dry_run
-6. apply
-7. write-back todoist_task_id
+3. operations schema / active_operations shape
+4. runtime confirmation fixtures
+5. Todoist projection profile
+6. dry_run
+7. apply
+8. write-back todoist_task_id
 
 Reason:
 
+- plan-gap check と recommended_lines は daily actuals を前提にするため、history source split を先に定義する
 - projection は generated operations の見える化であり、operations generation rules が先に安定している必要がある
 - ただし version としては同じ v0.6 に含める
 
@@ -135,6 +163,7 @@ Reason:
 - Outlook / calendar 連携
 - 学習教材 mapping の完全自動化
 - monthly review 全自動集計
+- append 専用 action の必須実装
 
 ---
 
@@ -147,6 +176,7 @@ Reason:
 
 ### v0.6
 
+- Daily history primary source of truth
 - Daily operations generation quality
 - Progress normalization
 - Recommended lines fixation
@@ -159,6 +189,7 @@ Reason:
 - calendar integration
 - adaptive replanning
 - weak point recovery automation
+- dedicated append_daily_event action
 
 ---
 
@@ -166,12 +197,14 @@ Reason:
 
 1. DELTA instruction
    - v0.6 operating rules
+   - daily history as primary history source
    - daily review generated recommended_lines
    - no chapter-only operations
    - no daytime recompute by default
    - Todoist is projection
 
 2. DELTA knowledge
+   - daily history procedure
    - plan-gap procedure
    - progress normalization procedure
    - recommended_lines procedure
@@ -179,6 +212,7 @@ Reason:
    - runtime confirmation fixtures
 
 3. DELTA schema
+   - daily history paths
    - plan_anchor
    - actual_position
    - gap_status
@@ -190,6 +224,7 @@ Reason:
    - external.todoist_task_id
 
 4. code / service layer
+   - repoResource delta path allowlist for daily / monthly / review paths
    - projectTasks or projection service profile for DELTA
    - description generation for DELTA
    - dry_run / apply behavior
@@ -199,9 +234,17 @@ Reason:
    - update systems/delta/operations/active_operations.md shape
    - add recommended_lines
    - add precise progress units
-   - retain source_ref to roadmap / plan / history
+   - retain source_ref to roadmap / plan / daily history
 
-6. runtime confirmation
+6. history / review
+   - create daily history path
+   - keep or migrate legacy monthly file
+   - create monthly summary path
+   - create review weekly / monthly path when needed
+
+7. runtime confirmation
+   - L3 one-question daily history write
+   - monthly summary no-write on one-question record
    - 2026-05-02 delayed case
    - 7章完了 normalization
    - 3章終わり normalization
@@ -217,6 +260,10 @@ Reason:
 
 DELTA v0.6 is complete when:
 
+- daily history is defined as primary source of truth
+- monthly history is defined as summary view
+- review is defined as judgment layer
+- one-question L3 write targets daily history only
 - plan-gap check is reflected in DELTA instruction / knowledge / schema or generator
 - progress granularity is reflected in DELTA instruction / knowledge / schema or generator
 - recommended_lines are generated in daily review and stored in active_operations
@@ -234,11 +281,11 @@ DELTA v0.6 is complete when:
 
 - type: operations candidate / active integrated scope
 - version: DELTA v0.6
-- active task should be renamed to reflect integrated v0.6 scope
+- active task should include daily history file split as part of integrated v0.6 scope
 - previous `DELTA v0.6 operations Todoist projection` next task should be merged into the same v0.6 scope, not kept as an independent later version
 
 ---
 
 ## note
 
-Todoist projection is not deprioritized. It remains in v0.6, but its implementation comes after operations generation correctness within the same version.
+Todoist projection is not deprioritized. It remains in v0.6, but its implementation comes after daily history source split and operations generation correctness within the same version.
