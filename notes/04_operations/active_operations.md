@@ -23,6 +23,8 @@ Immediate Gate は7日枠に数えない。
     - notes/02_design/2026-05-02_delta_progress_granularity_rule_design.md
     - notes/01_issues/2026-05-02_delta_recommended_line_generation_issue.md
     - notes/02_design/2026-05-02_delta_recommended_line_generation_design.md
+    - notes/01_issues/2026-05-02_delta_history_daily_files_issue.md
+    - notes/02_design/2026-05-02_delta_history_daily_files_design.md
     - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
     - systems/delta/roadmap/delta_roadmap.md
     - systems/delta/plan/2026_sharoushi_exam_plan.md
@@ -36,11 +38,18 @@ Immediate Gate は7日枠に数えない。
     - 2026-05-02 の学習予定提示で、plan 上は Q9-1〜Q11 想定、actual は Q3-3 にもかかわらず、甘い必達ラインが出た
     - ユーザーの章単位報告を page_range / question_id へ正規化できないと plan-gap check 自体の精度が落ちる
     - recommended_lines が日中の都度再見積もりになると、operations が正本として機能せず、日中判断が揺れる
+    - L3 1問記録ごとに月次 history 全体を更新すると、速度・衝突・破損リスクが上がる
     - Todoist projection は重要だが、正しい DELTA operations を生成できることと同じ v0.6 scope で扱う方が実運用価値が高い
-    - DELTA v0.6 は「正しい operations を生成し、それを execution view に投影する」一括 upgrade として扱う
+    - DELTA v0.6 は「正しい実績を軽量に記録し、正しい operations を生成し、それを execution view に投影する」一括 upgrade として扱う
   completed_condition:
     - DELTA v0.6 scope を integrated operations upgrade として定義する
     - DELTA instruction / knowledge / schema / operations generation code or prompt / projection service のどこに反映すべきかを層分離する
+    - daily history を primary source of truth とするか判断し、反映対象にする
+    - monthly history を daily history 由来の summary view とする rule を反映対象にする
+    - review を判断の正本として history と分離する rule を反映対象にする
+    - L3 1問実績は `systems/delta/history/daily/YYYY-MM-DD.md` のみを更新し、monthly summary / operations を更新しない rule を反映対象にする
+    - daily / monthly / review の write scope と path convention を定義する
+    - legacy `systems/delta/history/YYYY-MM.md` の migration 方針を定義する
     - plan-gap check の必須 read set を定義する
     - `gap_status` / `operation_mode` / `recovery_required` の配置先を決める
     - `survival_line` と `plan_minimum_line` の分離を反映対象にする
@@ -70,12 +79,12 @@ Immediate Gate は7日枠に数えない。
     - Todoist は DELTA operations の正本ではなく projection であることを反映対象にする
     - 長文依頼文で nested fenced code block を使わない output rule の配置先を決める
     - 明日の予定出力テンプレートを反映対象にする
-    - runtime confirmation fixture として 2026-05-02 case、7章完了 case、3章終わり case、recommended_lines recall case、explicit recompute case、Todoist dry_run/apply/write-back case を定義する
+    - runtime confirmation fixture として daily history write case、monthly no-write case、2026-05-02 case、7章完了 case、3章終わり case、recommended_lines recall case、explicit recompute case、Todoist dry_run/apply/write-back case を定義する
     - 後続 implementation / runtime reflection task を active / next / future に routingする
   notes:
     - これは即実装ではなく、v0.6 修正作業を安全に分解する gate
-    - progress granularity と recommended_lines 固定は plan-gap check の前提条件として同一 task に統合する
-    - Todoist projection は v0.6 に含めるが、実行順は operations generation correctness の後
+    - daily history source split は plan-gap check / progress granularity / recommended_lines の前提条件として同一 task に統合する
+    - Todoist projection は v0.6 に含めるが、実行順は history source split と operations generation correctness の後
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
 
