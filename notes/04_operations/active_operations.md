@@ -58,19 +58,11 @@ Immediate Gate は7日枠に数えない。
   source_ref:
     - notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md
     - notes/02_design/2026-05-02_delta_v0_6_integrated_operations_upgrade.md
-    - notes/01_issues/2026-05-01_delta_daily_operations_plan_gap_check_issue.md
     - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
-    - notes/01_issues/2026-05-02_delta_progress_granularity_rule_issue.md
     - notes/02_design/2026-05-02_delta_progress_granularity_rule_design.md
-    - notes/01_issues/2026-05-02_delta_recommended_line_generation_issue.md
     - notes/02_design/2026-05-02_delta_recommended_line_generation_design.md
-    - notes/01_issues/2026-05-02_delta_history_daily_files_issue.md
     - notes/02_design/2026-05-02_delta_history_daily_files_design.md
     - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
-    - systems/delta/roadmap/delta_roadmap.md
-    - systems/delta/plan/2026_sharoushi_exam_plan.md
-    - systems/delta/operations/active_operations.md
-    - systems/delta/history/2026-05.md
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
@@ -78,9 +70,6 @@ Immediate Gate は7日枠に数えない。
   completed: true
   notes:
     - 分解結果は notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md に保存・read-back 済み
-    - active continuation は DELTA v0.6 config reflection proposal
-    - next candidates は DELTA operations shape proposal / projection profile implementation / write resource schema reflection / runtime confirmation fixtures
-    - future candidates は append_daily_event / monthly summary rebuild automation / v0.7 review analytics
     - `systems/delta/config/delta_action_schema_v0.5.yaml` は参照 path で NOT_FOUND。source_ref は stale または未作成として扱う
   external:
     todoist_task_id: 6gWGH6f5vQhpF7gq
@@ -89,13 +78,6 @@ Immediate Gate は7日枠に数えない。
   source_ref:
     - notes/02_design/2026-05-02_delta_v0_6_config_reflection_proposal.md
     - notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md
-    - notes/02_design/2026-05-02_delta_v0_6_integrated_operations_upgrade.md
-    - notes/02_design/2026-05-02_delta_history_daily_files_design.md
-    - notes/02_design/2026-05-01_delta_daily_operations_plan_gap_check_design.md
-    - notes/02_design/2026-05-02_delta_progress_granularity_rule_design.md
-    - notes/02_design/2026-05-02_delta_recommended_line_generation_design.md
-    - systems/delta/config/delta_instruction.md
-    - systems/delta/config/delta_schema.yaml
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
@@ -105,7 +87,7 @@ Immediate Gate は7日枠に数えない。
     - proposal note は notes/02_design/2026-05-02_delta_v0_6_config_reflection_proposal.md に保存・read-back 済み
     - proposal には delta_instruction.md と delta_schema.yaml の complete proposed content を含めた
     - DELTA knowledge file は現 branch では未確認。現時点では作成せず、instruction + schema に反映する判断
-    - repo config update / configured DELTA GPT reflection / runtime-visible schema / actual behavior は未完了の別 gate
+    - repo config update / configured DELTA GPT reflection / runtime-visible schema / actual behavior は別 gate
 
 - task: DELTA v0.6 config files を feature branch に反映する
   source_ref:
@@ -117,20 +99,43 @@ Immediate Gate は7日枠に数えない。
   rolling_day: Day0
   due_date: 2026-05-02
   due_type: date
-  why_now:
-    - DELTA v0.6 の後続実装は、daily history / plan-gap / progress granularity / recommended_lines / projection boundary のルールが config に反映されてから進める必要がある
-    - config reflection proposal は complete proposed content を含めて保存済み
-    - repo config update と runtime reflection を分けたうえで、まず feature branch の config state を更新する
-  completed_condition:
-    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_instruction.md` を read する
-    - feature/atlas-pre-delta-foundation の `systems/delta/config/delta_schema.yaml` を read する
-    - proposal note の complete proposed content を基に両 file を update する
-    - update 前に Write Gate を出す
-    - update 後に read-back し sha を記録する
-    - repo config updated と configured DELTA GPT reflected / runtime-visible schema confirmed / actual behavior confirmed を混同しない
+  status: completed
+  completed: true
   notes:
     - write target は feature/atlas-pre-delta-foundation branch
+    - `systems/delta/config/delta_instruction.md` updated and read-back confirmed sha `659a126d143b574b35c2e25d964127822eeab20d`
+    - `systems/delta/config/delta_schema.yaml` updated and read-back confirmed sha `bb053f8ef96b1402b90740f36a183d574a245e38`
+    - これは repo config state の更新であり、configured DELTA GPT reflection / runtime-visible schema / actual behavior は未確認
     - DELTA action schema v0.6 と runtime reflection は別 task として扱う
+
+- task: DELTA v0.6 operations shape proposal を作成する
+  source_ref:
+    - notes/08_analysis/2026-05-02_delta_v0_6_task_decomposition.md
+    - notes/02_design/2026-05-02_delta_v0_6_config_reflection_proposal.md
+    - systems/delta/config/delta_instruction.md
+    - systems/delta/config/delta_schema.yaml
+    - systems/delta/operations/active_operations.md
+    - systems/delta/history/daily/2026-05-02.md
+    - systems/delta/history/monthly/2026-05.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+  rolling_day: Day0
+  due_date: 2026-05-02
+  due_type: date
+  why_now:
+    - DELTA v0.6 config rules は feature branch に反映済み
+    - 次に DELTA active_operations を v0.6 schema に合わせ、recommended_lines / plan-gap fields / precise progress units を持てる形にする必要がある
+    - Todoist projection と runtime fixture は、operations shape が固定されてから行う方が安全
+  completed_condition:
+    - feature/atlas-pre-delta-foundation の `systems/delta/operations/active_operations.md` を read する
+    - latest daily history / monthly summary / plan を read する
+    - plan_anchor / current_position / expected_position / gap_status / operation_mode / recovery_required の配置案を作る
+    - recommended_lines の fixed_at / source_review / must_line / standard_line / stretch_line / defer / recompute_triggers を含む proposal を作る
+    - L1/L2 は page_range / next_start_page、L3 は question range / next_question に正規化する proposal を作る
+    - operations update は proposal task と別 gate にするか、同 task 内で Write Gate 後に実行するか判断する
+    - repo config state / DELTA operations state / runtime behavior を混同しない
+  notes:
+    - この task は operations shape proposal。実更新する場合は branch / sha / Write Gate / read-back が必要
+    - projection profile implementation / write resource schema reflection / runtime fixtures は後続 task
 
 ## Day1（05/03 日）
 
