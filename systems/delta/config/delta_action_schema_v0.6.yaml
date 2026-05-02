@@ -1,11 +1,14 @@
 openapi: 3.1.0
 info:
   title: DELTA Resource API
-  version: "0.6.0"
-  description: Read DELTA resources and create/update DELTA daily history files via /api/repo-resource.
+  version: "0.6.1"
+  description: Read DELTA resources, write DELTA daily history, and update DELTA active operations via /api/repo-resource.
 
 servers:
   - url: https://ai-work-os.vercel.app
+
+security:
+  - bearerAuth: []
 
 components:
   securitySchemes:
@@ -25,28 +28,6 @@ components:
         error:
           type: object
           additionalProperties: true
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            category:
-              type: string
-            step:
-              type: string
-            resource:
-              type: string
-            action:
-              type: string
-            status:
-              type: integer
-            retryable:
-              type: boolean
-            details:
-              type: object
-              additionalProperties: true
-            request_id:
-              type: string
         request_id:
           type: string
       required:
@@ -74,7 +55,7 @@ components:
         - ok
         - data
 
-    DeltaHistoryWriteResponse:
+    DeltaWriteResponse:
       type: object
       additionalProperties: true
       properties:
@@ -89,10 +70,9 @@ components:
               type: string
               enum:
                 - delta_history
+                - delta_operations
             root:
               type: string
-              enum:
-                - systems/delta/history/
             path:
               type: string
             sha:
@@ -112,8 +92,25 @@ components:
         - ok
         - data
 
-security:
-  - bearerAuth: []
+    DeltaWriteRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        file:
+          type: string
+          description: Relative path under selected DELTA write root. Use daily/YYYY-MM-DD.md for delta_history or active_operations.md for delta_operations.
+        content:
+          type: string
+          description: Full markdown content to create or replace.
+        message:
+          type: string
+        sha:
+          type: string
+        branch:
+          type: string
+      required:
+        - file
+        - content
 
 paths:
   /api/repo-resource:
@@ -145,19 +142,16 @@ paths:
           required: false
           schema:
             type: string
-          description: Relative path under systems/delta/, e.g. operations/active_operations.md.
         - name: files
           in: query
           required: false
           schema:
             type: string
-          description: Comma or newline separated relative paths under systems/delta/.
         - name: branch
           in: query
           required: false
           schema:
             type: string
-          description: Optional Git branch selector.
       responses:
         "200":
           description: Success
@@ -185,9 +179,9 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
     post:
-      operationId: deltaHistoryWrite
-      summary: Create or update DELTA history markdown files
-      description: Create or update markdown files under systems/delta/history/. Always set resource=delta_history. File paths are relative to systems/delta/history/.
+      operationId: deltaResourceWrite
+      summary: Write DELTA daily history or active operations
+      description: Use resource=delta_history with action=create/update for history files, or resource=delta_operations with action=update for operations/active_operations.md. Do not store actual performance records in operations.
       security:
         - bearerAuth: []
       parameters:
@@ -198,6 +192,7 @@ paths:
             type: string
             enum:
               - delta_history
+              - delta_operations
         - name: action
           in: query
           required: true
@@ -211,31 +206,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: false
-              properties:
-                file:
-                  type: string
-                  description: Relative path under systems/delta/history/, e.g. daily/2026-05-02.md.
-                content:
-                  type: string
-                  description: Full markdown content to create or replace.
-                message:
-                  type: string
-                sha:
-                  type: string
-                branch:
-                  type: string
-              required:
-                - file
-                - content
+              $ref: "#/components/schemas/DeltaWriteRequest"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DeltaHistoryWriteResponse"
+                $ref: "#/components/schemas/DeltaWriteResponse"
         "400":
           description: Invalid request
           content:
