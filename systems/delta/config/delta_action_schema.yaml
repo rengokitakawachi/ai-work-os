@@ -55,7 +55,7 @@ components:
         - ok
         - data
 
-    DeltaHistoryWriteResponse:
+    DeltaWriteResponse:
       type: object
       additionalProperties: true
       properties:
@@ -70,6 +70,7 @@ components:
               type: string
               enum:
                 - delta_history
+                - delta_operations
             root:
               type: string
             path:
@@ -91,50 +92,13 @@ components:
         - ok
         - data
 
-    DeltaOperationsWriteResponse:
-      type: object
-      additionalProperties: true
-      properties:
-        ok:
-          type: boolean
-          const: true
-        data:
-          type: object
-          additionalProperties: true
-          properties:
-            resource:
-              type: string
-              enum:
-                - delta_operations
-            root:
-              type: string
-              enum:
-                - systems/delta/operations/
-            path:
-              type: string
-            sha:
-              type: string
-            branch:
-              type: string
-            status:
-              type: string
-              enum:
-                - UPDATED
-            write_scope:
-              type: string
-        request_id:
-          type: string
-      required:
-        - ok
-        - data
-
     DeltaWriteRequest:
       type: object
       additionalProperties: false
       properties:
         file:
           type: string
-          description: Relative path under the selected DELTA write root.
+          description: Relative path under selected DELTA write root. Use daily/YYYY-MM-DD.md for delta_history or active_operations.md for delta_operations.
         content:
           type: string
           description: Full markdown content to create or replace.
@@ -215,9 +179,9 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
 
     post:
-      operationId: deltaHistoryWrite
-      summary: Create or update DELTA history markdown files
-      description: Create/update markdown files under systems/delta/history/. Use resource=delta_history. File paths are relative to systems/delta/history/.
+      operationId: deltaResourceWrite
+      summary: Write DELTA daily history or active operations
+      description: Use resource=delta_history with action=create/update for history files, or resource=delta_operations with action=update for operations/active_operations.md. Do not store actual performance records in operations.
       security:
         - bearerAuth: []
       parameters:
@@ -228,6 +192,7 @@ paths:
             type: string
             enum:
               - delta_history
+              - delta_operations
         - name: action
           in: query
           required: true
@@ -248,7 +213,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DeltaHistoryWriteResponse"
+                $ref: "#/components/schemas/DeltaWriteResponse"
         "400":
           description: Invalid request
           content:
@@ -261,35 +226,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
-  /api/repo-resource?resource=delta_operations&action=update:
-    post:
-      operationId: deltaOperationsWrite
-      summary: Update DELTA active operations
-      description: Update systems/delta/operations/active_operations.md after daily review. Use file=active_operations.md. Do not store actual performance records in operations.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/DeltaWriteRequest"
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DeltaOperationsWriteResponse"
-        "400":
-          description: Invalid request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "401":
-          description: Unauthorized
+        "405":
+          description: Method not allowed
           content:
             application/json:
               schema:
