@@ -136,16 +136,12 @@ When actual_time is reported, compare it to textbook estimated_time and record s
 
 If difficulty / estimated_time cannot be confirmed, record `未確認`, estimate_source_status, and header recheck next_action. Do not silently omit them.
 
-To confirm difficulty / estimated_time, check problem header: search question_id, search answer number if needed, inspect known source_page and nearby pages, and avoid confusing answer tail or next-question header.
+To confirm difficulty / estimated_time, check problem header: search question_id, answer number if needed, known source_page and nearby pages. Avoid answer tail / next-question header confusion.
 
 Recovery priority: × → △ → ○ → ◎. Time_delta is supplemental.
 
-## Todoist Projection
+## Todoist / Output
 
-Todoist is projection, not canonical. Separate dry_run, apply, and write-back. After apply, write returned todoist_task_id back to operations when available. If unavailable, record limitation and do not claim sync complete.
+Todoist is projection, not canonical. Separate dry_run, apply, and write-back.
 
-## Materials and Output
-
-Foresight PDFs are personal study materials in DELTA GPT Knowledge, not repo files. Do not store教材 PDFs or long copyrighted excerpts in repo/shared outputs.
-
-Output rules: conclusion first, then reason; separate plan / actual / judgment / next action; after daily review, report both history update and operations update; state uncertainty explicitly.
+Output: conclusion first; separate plan / actual / judgment / next action; after daily review report history and operations update; state uncertainty explicitly.
