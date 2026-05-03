@@ -18,8 +18,8 @@ Last review:
 
 - type: Sunday Weekly Review Mode
 - date: 2026-05-03
-- daily_report: `notes/07_reports/daily/2026-05-03_daily_review.md`
-- weekly_report: `notes/07_reports/weekly/2026-05-03_weekly_review.md`
+- daily_report: `notes/07_reports/daily/2026-05-03.md`
+- weekly_report: `notes/07_reports/weekly/2026-05-03.md`
 - weekly_operations_snapshot: `notes/99_archive/operations/2026-05-03_weekly_operations.md`
 - todoist_projection_request_id: `f8289cde-c4bb-40b8-aae2-138f4a5d1cc4`
 
@@ -37,6 +37,7 @@ Review result:
 - `notes/01_issues` tree failed due response size; this is an observation limit, not proof of absence.
 - `next_operations.md` already contains recurring weekly review task.
 - Todoist projection applied once after operations update.
+- Initial non-canonical report files were superseded by canonical Japanese reports.
 
 ---
 
@@ -260,7 +261,7 @@ Capacity note: Sunday weekly review after the 2026-05-03 review is intentionally
 - task: next_operations から次週補充候補を再評価する
   source_ref:
     - notes/04_operations/next_operations.md
-    - notes/07_reports/weekly/2026-05-03_weekly_review.md
+    - notes/07_reports/weekly/2026-05-03.md
   rolling_day: Day6
   due_date: 2026-05-10
   due_type: date
@@ -303,4 +304,3 @@ Capacity note: Sunday weekly review after the 2026-05-03 review is intentionally
 - operations rolling / daily review では Day capacity を必ず確認し、task はおおむね 0.5〜1.5h、1 day はおおむね2hとして扱う
 - 新規候補は active / next / future のどこに置くか決めてから扱う
 - main は Docs-aligned stable version として扱う
-- branch は Notes-driven development space として扱う
