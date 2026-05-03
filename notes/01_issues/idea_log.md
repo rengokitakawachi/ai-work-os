@@ -22,15 +22,6 @@
 - status: open
 - created_at: 2026-03-27
 
-### 20260327-002
-- title: AI instructions・schema の配置を code/config/ai/ に統一する必要がある
-- category: architecture
-- description: ADAM と EVE の instructions / schema を code resource から直接参照できる場所へ移し、repo 上の現物確認と差分確認を可能にする必要があった。配置先は `code/config/ai/` とし、instruction / schema を code resource の read 経路に乗せる方針を採用した。
-- context: 当初はリポジトリ直下の AI/ フォルダに保存されていたが、そこは現行 access path に含まれていなかった。そのため、repo に現物が存在していても運用上は読みに行きにくかった。現在は `config/ai/adam_instruction.md`、`config/ai/adam_schema.yaml`、`config/ai/eve_instruction.md`、`config/ai/eve_schema.yaml` が code resource 上に存在することを確認済みであり、配置移行そのものは完了している。未着手なのは、ADAM instruction と repo 正本をどう分担・同期するかというハイブリッド運用の整理である。
-- impact: high
-- status: closed
-- created_at: 2026-03-27
-
 ### 20260327-003
 - title: 課題発見から実装までの標準開発フローと判断を自動化する必要がある
 - category: ops
@@ -390,26 +381,6 @@
 - status: open
 - created_at: 2026-04-21
 
-### 20260421-026
-- title: open 以外の issue を future へ送る判定が運用上も自然か確認する必要がある
-- category: operations
-- description: issue routing の第二バッチで、status が open ではない issue が `route_to: future` へ送られるかを確認したい。future は「今やる対象ではないが保持すべき論点」の受け皿として自然に機能する必要があるため、keep との違いが実運用でも説明できる必要がある。
-- context: 現行 rules では `status !== open` の issue は future に送られる。第一バッチでは open issue しか扱っておらず、future route は未観測である。第二バッチでは blocked / pending / deferred のような非 open status を持つ issue を入れて、future 送付が自然に機能するか確認したい。
-- impact: medium
-- urgency: low
-- status: deferred
-- created_at: 2026-04-21
-
-### 20260421-027
-- title: 役目終了した issue を archive へ送る判定が keep / future と混線しないか確認する必要がある
-- category: operations
-- description: issue routing の第二バッチで、役目終了が明確な closed issue が `route_to: archive` へ送られるかを確認したい。archive は終了済み論点の明確な受け皿である必要があり、keep や future と混線しないことを観測したい。
-- context: 現行 rules では `status === closed` の issue は archive に送られるが、第一バッチでは closed issue を扱っていないため archive route は未観測である。第二バッチでは終了済みの比較用 issue を1件入れて、archive 判定が自然に機能するかを確認する必要がある。
-- impact: low
-- urgency: low
-- status: closed
-- created_at: 2026-04-21
-
 ## 2026-04-23
 
 ### 20260423-028
@@ -433,22 +404,6 @@
 - urgency: medium
 - status: open
 - created_at: 2026-04-25
-
-### 20260425-030
-- title: repoResourceGet bulk の files パラメータが改行区切りを複数ファイルとして扱わず 1 パス扱いになる
-- category: api
-- description: 当初は改行区切り未対応に見えたが、再確認で newline separator 自体は成功していた。実害は、tree が返す `docs/...` / `notes/...` / `systems/delta/...` の resource-prefixed path を read / bulk にそのまま渡すと、resource root が二重付与または validation reject される path normalization gap だった。`src/services/repo-resource/common.js` と `src/services/delta-resource.js` を修正し、docs / notes / delta の tree path を read / bulk に直結できるようにした。
-- context: 2026-04-29 の確認で、relative path 形式の newline bulk は成功した。一方 `notes/...` / `docs/...` / `systems/delta/...` prefix 付き path は修正前に失敗した。修正後、ADAM runtime で docs / notes / delta の prefix 付き bulk と relative path bulk の両方が成功し、DELTA GPT runtime-visible でも `branch=feature/atlas-pre-delta-foundation` の `roadmap / plan / operations / history` bulk が成功した。
-- impact: medium
-- urgency: medium
-- status: closed
-- created_at: 2026-04-25
-- closed_at: 2026-04-29
-- resolution:
-  - `src/services/repo-resource/common.js` で docs / notes prefix を正規化
-  - `src/services/delta-resource.js` で `systems/delta/` prefix を正規化
-  - ADAM runtime で docs / notes / delta bulk 成功を確認
-  - DELTA GPT runtime-visible で delta bulk 成功を確認
 
 ## 2026-04-30
 
