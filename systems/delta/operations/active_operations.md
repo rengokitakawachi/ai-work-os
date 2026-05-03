@@ -6,6 +6,10 @@ version: delta_v0.6_operations_shape
 updated_at: 2026-05-03
 branch: feature/atlas-pre-delta-foundation
 
+validation_markers:
+  - Delta operations are learning execution order, not calendar schedule.
+  - Daily review updates learning history and next operations.
+
 source_of_truth:
   operations_role: next_action_source
   actual_primary_source: systems/delta/history/daily/YYYY-MM-DD.md
