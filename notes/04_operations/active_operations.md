@@ -214,14 +214,21 @@ Capacity note: DELTA read / recall / write minimum readiness は pass。5/3 学�
     - notes/01_issues/idea_log.md
     - docs/15_notes_system.md
     - notes/99_archive/issues/2026-05-03_closed_and_fixture_issue_routing_archive.md
+    - notes/99_archive/issues/2026-05-03_idea_log_before_source_cleanup.md
   resolved_evidence:
     - `status: closed` issue 3件を archive destination として保存
     - `status: deferred` issue 1件は fixture 用 issue と判断し archive destination として保存
     - archive sha: ab8c48b697b1686590c107fa1e159f18d07b3171
     - future destination: none
+    - source cleanup 前 snapshot sha: da3e53bfda7f94dcac027147657469f7cc31a6c4
+    - `idea_log.md` source cleanup completed
+    - `idea_log.md` cleanup sha: 61314c1b60549ad699b3d75770315228275bf905
+    - removed issue IDs grep count in `idea_log.md`: 0 each
+    - `status: closed` grep count in `idea_log.md`: 0
+    - `status: deferred` grep count in `idea_log.md`: 0
   notes:
-    - `idea_log.md` source cleanup は未実行
-    - source cleanup は大きな全文更新になるため、archive destination 保存後に分離判断する
+    - Full original content is recoverable from Git history at sha `b83f8b96743496c71834244b0a69131ae9c89065`
+    - This fixture confirms routing + archive can reduce current `idea_log.md` without changing the one-file issue operating model
 
 ## Day1（05/04 月）
 
