@@ -66,6 +66,17 @@
 - execution-time judgment は再計画ではなく逸脱検知に限定する
 - ADAM は active_operations の機械的消化ではなく、仕様整合と実装品質を最大化する開発コントローラーとして判断する
 
+## Daily Issue Touch During Rolling Guard
+
+- daily review の operations rolling で issue を candidate source として読む場合、参照した issue に status touch を行う
+- status touch は issue routing ではない
+- daily review では全 issue をゼロから精査しない
+- daily review では active task / rolling candidate / updated design / new conversation issue / blocked issue に限定して touch する
+- touch では `last_touched_at` / `progress_note` / `routing_hint` / `close_candidate` / `status` を必要に応じて更新する
+- 明らかに完了した issue は daily review で `closed` または `close_candidate` にできる
+- design / operations / future / archive への本格 disposition は weekly review または明示 issue routing で行う
+- weekly review は daily issue touch の結果を使って issue routing を実行する
+
 ## Issue Routing Closure Guard
 
 - issue routing は `route_to` を付けるだけでは完了しない
@@ -87,6 +98,16 @@
 - next_operations に入れる task も、可能な限り design ref を持たせる
 - issue routing 後に source_ref が削除済み issue file を指していないか確認する
 
+## Sunday Weekly Review Auto Trigger Guard
+
+- Asia/Tokyo で日曜の daily review request は Sunday Weekly Review Mode に自動昇格する
+- Sunday Weekly Review Mode では daily close を先に行い、weekly review を後に行う
+- 日曜は daily review と weekly review で operations reroll / Todoist projection を二重実行しない
+- daily close は当日の実績確認、完了認識、必要な issue status touch、daily report 保存に限定する
+- active / next の再設計、archive_operations snapshot、issue routing check、Todoist projection は weekly review 側で一度だけ行う
+- 日曜に weekly review が未実行の場合、daily review を完了扱いしない
+- 日曜に weekly review を実行できなかった場合、次回 daily review で overdue weekly review を Immediate Gate として扱う
+
 ## Weekly Review and Routing Cadence Guard
 
 - weekly review は手動気分で任意実行するものではなく、定期的に実行されるべき review usecase として扱う
@@ -94,7 +115,7 @@
 - weekly review では inbox / issue / design / future / operations の滞留を確認する
 - weekly review は report 作成だけでは完了しない
 - weekly review の完了条件には、operations rolling、issue routing check、future / archive / design の滞留確認、Todoist projection 必要性判断を含める
-- weekly review 自体が active_operations / next_operations に存在しない場合、daily review または operations rolling 時に recurring review task として追加するか判断する
+- weekly review task が active_operations / next_operations に存在しない場合、daily review または operations rolling 時に recurring review task を追加する
 - weekly review で issue routing を実行した場合、Issue Routing Closure Guard と Issue Routing Reference Chain Guard を満たすまで完了扱いしない
 
 ## Todoist Projection Integrity Guard
