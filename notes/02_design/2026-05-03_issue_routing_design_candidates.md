@@ -1,5 +1,13 @@
 # issue routing design candidates
 
+## status
+
+superseded_by_disposition
+
+## superseded_by
+
+`notes/02_design/2026-05-03_issue_routing_design_candidate_disposition.md`
+
 ## date
 
 2026-05-03
@@ -11,11 +19,25 @@
 
 ## purpose
 
-issue routing により、issue として保持するより design / docs / instruction / operating model の整理へ送る方が自然な論点を集約する。
+This file was a temporary holding area for design candidates produced by issue routing.
 
-This file is a design candidate holding area. It is not execution SSOT.
+It is no longer an active holding queue. Final disposition is recorded in:
 
-## candidates
+```text
+notes/02_design/2026-05-03_issue_routing_design_candidate_disposition.md
+```
+
+## final disposition summary
+
+| disposition | count |
+|---|---:|
+| absorbed_by_existing_design | 12 |
+| connected_to_active_or_next_review | 4 |
+| retained_as_consolidated_design_topic | 3 |
+| new_individual_design_needed_now | 0 |
+| total | 19 |
+
+## original candidates
 
 ### 20260326-003
 - title: notesフォルダ構造の責務ベース整理の必要性
@@ -93,8 +115,6 @@ This file is a design candidate holding area. It is not execution SSOT.
 - title: routing と document writing を分離し action plan で引き渡す構造へ改める必要がある
 - route_reason: routing / writer boundary design。
 
-## next handling
+## note
 
-- design review で個別 design file 化するか、既存 design に統合するかを判断する
-- docs 更新候補は docs update proposal に送る
-- immediate execution はしない
+Use the disposition file for current interpretation. This file is retained as source snapshot only.
