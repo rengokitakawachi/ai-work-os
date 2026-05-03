@@ -61,7 +61,7 @@ completed_condition:
 
 source_ref:
 
-- notes/01_issues/2026-05-01_inbox_cleanup_once_issue.md
+- notes/99_archive/issues/2026-05-03_individual_issue_files_routing_archive.md
 - notes/02_design/2026-05-01_routing_type_destination_constraints.md
 - notes/08_analysis/2026-04-30_routing_session_checklist.md
 
@@ -229,7 +229,8 @@ completed_condition:
 
 source_ref:
 
-- notes/01_issues/2026-05-03_handover_index_structure_issue.md
+- notes/02_design/2026-05-03_handover_restart_flow_design.md
+- notes/99_archive/issues/2026-05-03_individual_issue_files_routing_archive.md
 - notes/06_handover/handover_template.md
 - notes/06_handover/2026-05-03_delta_v0_6_readiness_handover.md
 - notes/04_operations/active_operations.md
