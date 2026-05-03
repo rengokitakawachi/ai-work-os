@@ -77,6 +77,26 @@
 - `idea_log.md` には keep issue のみを残す
 - issue routing 完了時は routing result / disposition evidence / active_operations closure evidence を保存する
 
+## Issue Routing Reference Chain Guard
+
+- design 化が必要な issue は、原則として `issue → design → operations → archive` の参照 chain にする
+- operations task は未整理の original issue ではなく、整理済み design file を source_ref する
+- design file は archived original issue または routing archive を source_ref する
+- original issue は source_ref / routed_to / archive_reason 付きで archive へ送る
+- design 不要な one-shot cleanup のみ、operations task が archived issue を直接 source_ref してよい
+- next_operations に入れる task も、可能な限り design ref を持たせる
+- issue routing 後に source_ref が削除済み issue file を指していないか確認する
+
+## Weekly Review and Routing Cadence Guard
+
+- weekly review は手動気分で任意実行するものではなく、定期的に実行されるべき review usecase として扱う
+- weekly review では必ず issue routing の要否を確認し、未routed issue がある場合は issue routing を実行または active / next に明示的に組み込む
+- weekly review では inbox / issue / design / future / operations の滞留を確認する
+- weekly review は report 作成だけでは完了しない
+- weekly review の完了条件には、operations rolling、issue routing check、future / archive / design の滞留確認、Todoist projection 必要性判断を含める
+- weekly review 自体が active_operations / next_operations に存在しない場合、daily review または operations rolling 時に recurring review task として追加するか判断する
+- weekly review で issue routing を実行した場合、Issue Routing Closure Guard と Issue Routing Reference Chain Guard を満たすまで完了扱いしない
+
 ## Todoist Projection Integrity Guard
 
 - daily review / operations rolling で Todoist projection を更新する場合、ADAM は `previous_active_tasks` と `current_active_tasks` の両方を必ず用意する
