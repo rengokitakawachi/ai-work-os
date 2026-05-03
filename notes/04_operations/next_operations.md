@@ -12,13 +12,16 @@ active_operations に入らなかった上位候補を保持する。
 
 Phase 0 plan に明記されている routing maturity gap を ADAM が自律的に operations candidate 化できていなかった問題を受け、`Phase 0 routing maturity matrix を作る` task を next の最上位候補へ追加した。
 
+ADAM の不具合・回帰・修正履歴を集約する `adam_bug_fix_log` を作成したため、その運用方法を notes に固定する task も上位候補へ追加した。
+
 Reason:
 
 - roadmap / plan と現状を比較し、課題を issue / operations へ落とすことは ADAM の中核責務である
 - issue routing は運用段階に入った一方、intake routing / design routing は未成熟である
 - この差分は Phase 0 plan に明記された重点テーマから自律的に抽出されるべきだった
 - 再発防止には、plan-driven discovery を review / rolling の明示 gate として扱う必要がある
-- ただし current active head の Action schema 正規ファイル名固定を止める Immediate Gate ではないため、active 横入りではなく next 最上位候補とする
+- ADAM instruction 圧縮後の回帰や手順漏れは、単発 issue ではなく bug / fix log として集約観測する必要がある
+- ただし current active head の Action schema 正規ファイル名固定を止める Immediate Gate ではないため、active 横入りではなく next 上位候補とする
 
 ---
 
@@ -80,6 +83,37 @@ completed_condition:
 - 必要な後続 task を active / next / future / absorbed に disposition する
 - 必要なら Phase 0 plan / docs / knowledge / operations への反映候補を分離する
 - report / analysis / operations のどこに evidence を残すか判断し、read-back sha を記録する
+
+---
+
+### 0.1. ADAM bug fix log の運用方法を notes に固定する
+
+source_ref:
+
+- notes/10_logs/adam_bug_fix_log.md
+- notes/10_logs/README.md
+- docs/15_notes_system.md
+- notes/01_issues/2026-05-03_review_report_template_gate_issue.md
+- notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
+- notes/04_operations/next_operations.md
+
+why_next:
+
+- ADAM の不具合・回帰・修正履歴を集約する `adam_bug_fix_log` を作成した
+- ただしログは issue / operations / design / docs の代替ではないため、運用方法を明文化しないと記録止まりになる
+- instruction 圧縮後の regression、report template 無視、plan-driven discovery gap など、再発観測が必要な不具合が出ている
+- `notes/10_logs/README.md` は簡易定義に留まっており、ADAM bug fix log の扱いを追加する余地がある
+- active を止める blocker ではないが、次回 rolling で早めに active 化を判断すべき定着 task である
+
+completed_condition:
+
+- `adam_bug_fix_log` の役割を `notes/10_logs/README.md` または専用 log 冒頭に明文化する
+- bug / regression / fix entry の追加条件を定義する
+- issue / operations / design / docs へ送る条件を定義する
+- 修正済み / 未修正 / 再発観測中 / instruction反映候補などの status を固定する
+- daily / weekly review で bug fix log を確認する条件を定義する
+- ADAM instruction 圧縮後の regression inventory task へ接続するか判断する
+- 更新後に read-back し sha を記録する
 
 ---
 
