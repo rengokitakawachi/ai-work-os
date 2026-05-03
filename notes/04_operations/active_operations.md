@@ -12,6 +12,32 @@ Immediate Gate は7日枠に数えない。
 
 ---
 
+## Review state
+
+Last review:
+
+- type: Sunday Weekly Review Mode
+- date: 2026-05-03
+- daily_report: `notes/07_reports/daily/2026-05-03_daily_review.md`
+- weekly_report: `notes/07_reports/weekly/2026-05-03_weekly_review.md`
+- weekly_operations_snapshot: `notes/99_archive/operations/2026-05-03_weekly_operations.md`
+
+Last known source sha before rolling:
+
+- `notes/04_operations/active_operations.md`: `782066292723964e2afb27abb8fb9132522137c2`
+- `notes/04_operations/next_operations.md`: `5e3c3a0db6ce237e4c566b084720a82cce6901eb`
+- `notes/04_operations/archive_operations.md`: `c976764f292ff11874d858d767a3450ea9579b8c`
+
+Review result:
+
+- Completed 2026-05-03 DELTA readiness tasks were archived through weekly snapshot.
+- Immediate Gates remain none.
+- `idea_log.md` contains keep_issue only.
+- `notes/01_issues` tree failed due response size; this is an observation limit, not proof of absence.
+- `next_operations.md` already contains recurring weekly review task.
+
+---
+
 ## Recently resolved gates
 
 - gate: DELTA v0.6 learning operations readiness を 2026-05-03 中に確保する
@@ -27,238 +53,23 @@ Immediate Gate は7日枠に数えない。
     - notes/02_design/2026-05-02_delta_operation_generation_judgment_regression_guard.md
   resolved_evidence:
     - DELTA GPT instruction/action schema updated by user
-    - DELTA Knowledge: none because GPT Knowledge file limit 20 reached
-    - delta_schema.yaml treated as repo-side internal schema source, not configured Knowledge
     - deltaResourceGet visible
     - deltaResourceWrite visible
     - bulk success request_id: 36f08d65-a5b8-45d0-bfc8-8de8e9828262
     - tree success request_id: 0caa6dc4-45e7-41ee-a3cf-8854481de4d7
     - systems/delta/operations/active_operations.md updated to v0.6 operations shape
     - operations shape sha: 7b3728ed80cd3be349752249cb32ec08e538e13f
-    - saved recommended_lines recall pass request_id: f5d7b8bf-09ba-47d1-b064-a0380781bf0e
-    - must_line / standard_line / stretch_line recalled without recompute
-    - next_resume_question_id confirmed: Q7-1
-    - recovery_targets recalled
-    - Q4-10 next confirmed: Q7
-    - Q7 next confirmed: Q9
-    - Q5 / Q6 absent and Q8 no-exercise handling confirmed
-    - first deltaResourceWrite failed due validation markers missing
-    - failed write request_id: 3b7d63e9-2454-4977-9a51-9cbf0d73fefd
-    - validation markers added repo-side to systems/delta/operations/active_operations.md
-    - marker fix sha: 61158a505b905d222bcf4f747ed1f13dcc311da2
-    - deltaResourceWrite actual behavior pass
-    - pre-read request_id: 42135757-ec69-4fa2-9eb7-bed886f73fc7
-    - write request_id: f25894a8-3b78-4526-b949-394ca9f412ca
-    - write returned sha: d994fc2ad07ce228aa1276dcfa1662b4887c752f
-    - read-back request_id: 1cc3777c-1e9a-4646-8ad4-a3f9aa4794f0
-    - read-back sha: d994fc2ad07ce228aa1276dcfa1662b4887c752f
-    - runtime_write_check line present: yes
-    - validation markers still present: yes
+    - validation marker fix sha: 61158a505b905d222bcf4f747ed1f13dcc311da2
+    - runtime write check sha: d994fc2ad07ce228aa1276dcfa1662b4887c752f
   notes:
-    - DELTA read / recall / delta_operations write minimum readiness is pass
-    - This does not prove every future write scenario; sustained behavior remains to be monitored through daily review
-
-- gate: DELTA configured GPT Action の deltaResourceGet read failure を解消する
-  status: resolved
-  completed: true
-  resolved_evidence:
-    - DELTA GPT 側で Bearer API key 設定後、最小 read test が成功
-    - request_id: de8dc8c7-200e-4529-a09b-637873a9d0c7
-    - resource: delta
-    - action: read
-    - branch: feature/atlas-pre-delta-foundation
-    - file: operations/active_operations.md
-    - returned_path: systems/delta/operations/active_operations.md
-    - returned_sha: 7ead0b9d2626810869a8b93f96aca1c4ac95c351
-    - read_only: true
-
-- gate: DELTA L3 difficulty / estimated time recording rule を config に反映する
-  status: resolved_repo_config_only
-  completed: true
-  notes:
-    - repo config reflected
-    - runtime behavior will be covered by later chapter / write fixtures if needed
-
-- gate: DELTA daily review 後の active_operations 自動更新を repo 実装・schema に反映する
-  status: resolved_runtime_minimum_pass
-  completed: true
-  notes:
-    - repo code/config state reflected
-    - runtime-visible schema for deltaResourceWrite confirmed
-    - actual delta_operations update behavior confirmed by minimal safe write
-
-- gate: DELTA operation生成・判定ミス再発防止 guard を repo config に反映する
-  status: resolved_repo_config_only
-  completed: true
-  notes:
-    - repo config reflected
-    - runtime reasoning behavior remains to be monitored during daily operation generation
+    - DELTA read / recall / delta_operations write minimum readiness is pass.
+    - Sustained behavior remains to be monitored through daily review.
 
 ---
 
-## Day0（05/03 日）
+## Day0（05/04 月）
 
-Capacity note: DELTA read / recall / write minimum readiness は pass。5/3 学習運用に必要な最低限の DELTA 不具合解消は完了。
-
-- task: DELTA v0.6 operations shape を feature branch に反映する
-  rolling_day: Day0
-  due_date: 2026-05-03
-  due_type: deadline
-  status: completed
-  completed: true
-  source_ref:
-    - systems/delta/operations/active_operations.md
-    - systems/delta/history/daily/2026-05-02.md
-    - systems/delta/plan/2026_sharoushi_exam_plan.md
-    - systems/delta/roadmap/delta_roadmap.md
-  resolved_evidence:
-    - systems/delta/operations/active_operations.md updated
-    - sha: 7b3728ed80cd3be349752249cb32ec08e538e13f
-    - validation marker fix sha: 61158a505b905d222bcf4f747ed1f13dcc311da2
-    - runtime write check sha: d994fc2ad07ce228aa1276dcfa1662b4887c752f
-    - saved recommended_lines present
-    - next_resume_question_id: Q7-1
-    - recovery_targets present
-  external:
-    todoist_task_id: 6gWVwmw97XPvj43q
-
-- task: DELTA configured GPT に最新 instruction / action schema を反映して runtime-visible schema を確認する
-  rolling_day: Day0
-  due_date: 2026-05-03
-  due_type: deadline
-  status: completed
-  completed: true
-  source_ref:
-    - systems/delta/config/delta_instruction.md
-    - systems/delta/config/delta_action_schema.yaml
-    - systems/delta/config/delta_action_schema_v0.6.yaml
-  resolved_evidence:
-    - DELTA GPT instruction/action schema updated by user
-    - Knowledge: none due 20-file limit
-    - delta_schema.yaml treated as repo-side internal schema source, not configured Knowledge
-    - deltaResourceGet visible
-    - deltaResourceWrite visible
-    - bulk success request_id: 36f08d65-a5b8-45d0-bfc8-8de8e9828262
-    - tree success request_id: 0caa6dc4-45e7-41ee-a3cf-8854481de4d7
-  external:
-    todoist_task_id: 6gWW3JhF8fWQh5Wq
-
-- task: DELTA configured GPT で bulk / tree / recommended_lines recall を確認する
-  rolling_day: Day0
-  due_date: 2026-05-03
-  due_type: deadline
-  status: completed
-  completed: true
-  source_ref:
-    - systems/delta/config/delta_action_schema.yaml
-    - systems/delta/operations/active_operations.md
-    - systems/delta/history/daily/2026-05-02.md
-    - systems/delta/plan/2026_sharoushi_exam_plan.md
-  resolved_evidence:
-    - active_operations read success request_id: f5d7b8bf-09ba-47d1-b064-a0380781bf0e
-    - sha: 7b3728ed80cd3be349752249cb32ec08e538e13f
-    - recomputed: no
-    - must_line recalled
-    - standard_line recalled
-    - stretch_line recalled
-    - next_resume_question_id: Q7-1
-    - recovery_targets recalled
-    - Day0 validation pass
-  notes:
-    - write was not executed in recall test
-  external:
-    todoist_task_id: 6gWVwpmPfc975CCq
-
-- task: DELTA daily review write + operations update fixture を最小確認する
-  rolling_day: Day0
-  due_date: 2026-05-03
-  due_type: deadline
-  status: completed
-  completed: true
-  source_ref:
-    - notes/02_design/2026-05-02_delta_daily_review_active_operations_auto_update.md
-    - notes/02_design/2026-05-02_delta_l3_difficulty_estimated_time_recording_rule.md
-    - notes/02_design/2026-05-02_delta_operation_generation_judgment_regression_guard.md
-    - systems/delta/config/delta_action_schema.yaml
-    - systems/delta/config/delta_instruction.md
-    - systems/delta/config/delta_schema.yaml
-    - systems/delta/history/daily/2026-05-02.md
-    - systems/delta/operations/active_operations.md
-  resolved_evidence:
-    - deltaResourceWrite visible
-    - first write failed safely due missing validation markers
-    - failed write request_id: 3b7d63e9-2454-4977-9a51-9cbf0d73fefd
-    - validation markers added
-    - pre-read request_id: 42135757-ec69-4fa2-9eb7-bed886f73fc7
-    - pre-read sha: 61158a505b905d222bcf4f747ed1f13dcc311da2
-    - write status: UPDATED
-    - write request_id: f25894a8-3b78-4526-b949-394ca9f412ca
-    - returned sha: d994fc2ad07ce228aa1276dcfa1662b4887c752f
-    - read-back request_id: 1cc3777c-1e9a-4646-8ad4-a3f9aa4794f0
-    - read-back sha: d994fc2ad07ce228aa1276dcfa1662b4887c752f
-    - runtime_write_check line present: yes
-    - validation markers still present: yes
-  notes:
-    - daily history / monthly summary / Todoist were not touched in the write test
-    - learning plan / recommended_lines / recovery_targets were not changed
-  external:
-    todoist_task_id: 6gWVwpq86mRC7Pcq
-
-- task: closed / deferred issue routing + archive fixture を実行する
-  rolling_day: Day0
-  due_date: 2026-05-03
-  due_type: date
-  status: completed
-  completed: true
-  source_ref:
-    - notes/01_issues/idea_log.md
-    - docs/15_notes_system.md
-    - notes/99_archive/issues/2026-05-03_closed_and_fixture_issue_routing_archive.md
-    - notes/99_archive/issues/2026-05-03_idea_log_before_source_cleanup.md
-    - notes/99_archive/issues/2026-05-03_idea_log_before_full_routing_cleanup.md
-    - notes/08_analysis/2026-05-03_issue_routing_working_split_overview.md
-    - notes/08_analysis/2026-05-03_issue_routing_result.md
-    - notes/02_design/2026-05-03_issue_routing_design_candidates.md
-    - notes/02_design/2026-05-03_issue_routing_design_candidate_disposition.md
-    - notes/02_design/2026-05-03_repo_resource_access_convergence_design.md
-    - notes/02_design/2026-05-03_decision_extraction_operating_model_design.md
-    - notes/02_design/2026-05-03_notes_docs_reflection_design.md
-    - notes/02_design/2026-05-03_handover_restart_flow_design.md
-    - notes/80_future/issue/2026-05-03_issue_routing_future_candidates.md
-    - notes/08_analysis/2026-05-03_operations_candidate_disposition.md
-    - notes/04_operations/next_operations.md
-  resolved_evidence:
-    - `status: closed` issue 3件を archive destination として保存
-    - `status: deferred` issue 1件は fixture 用 issue と判断し archive destination として保存
-    - archive sha: ab8c48b697b1686590c107fa1e159f18d07b3171
-    - first source cleanup 前 snapshot sha: da3e53bfda7f94dcac027147657469f7cc31a6c4
-    - first `idea_log.md` cleanup sha: 61314c1b60549ad699b3d75770315228275bf905
-    - full routing cleanup 前 snapshot sha: 63c3f5bcbfb9a18e6f638977777642624f32a160
-    - routing_result sha: cf3a98cb4dee3558d8fb3415c46fe9bf8aec7950
-    - design candidates snapshot sha: 505145e3587683a13922f4554a63b78891bbc971
-    - design candidate disposition sha: 0a378a6e71644641337d8efb6bdf92118e49dd90
-    - per-theme design repo_resource_access_convergence sha: 67af857f667495558189756f3ca75e7214de8ec9
-    - per-theme design decision_extraction_operating_model sha: 3441fda3052faffcbd7770eeb3ef9ccdcccf4e4c
-    - per-theme design notes_docs_reflection sha: c23910d441e2cc4cc80da1ad743c6e1f1ed34089
-    - per-theme design handover_restart_flow sha: ffcc37dc01d55baef668887f198dbd3c48fdb69a
-    - future candidates sha: 1423066164aa183cc1fe324f1d7c631004008930
-    - operations candidate disposition sha: 53709a6566d3c7f536c4269022802e83fc81004b
-    - `idea_log.md` final cleanup sha: 0869cb2012e49d3340531d6f9c4f917c92f67ad1
-    - `next_operations.md` updated with four operations candidates sha: d700b060ce5a01b93263c6aeda923af403130b6b
-    - issue routing final route summary: keep_issue 5, design_candidate 19, future_issue 8, operations_candidate 12, archive 0 after prior fixture
-    - design_candidate disposition: absorbed_by_existing_design 10, connected_to_per_theme_design_file 9, new_individual_issue_design_needed_now 0
-    - operations_candidate disposition: absorbed_by_active 4, absorbed_by_existing_next 3, add_to_next 4, absorbed_by_existing_system 1
-    - `idea_log.md` now contains keep_issue only
-  notes:
-    - Full original content is recoverable from Git history at sha `b83f8b96743496c71834244b0a69131ae9c89065`
-    - Full routing start content is recoverable from Git history at sha `61314c1b60549ad699b3d75770315228275bf905`
-    - This fixture confirms `idea_log.md` one-file operation can be preserved if periodic routing moves items to archive / design / future / operations disposition
-    - The temporary design candidate file is superseded by the design candidate disposition file and is retained only as a source snapshot
-    - Design candidates are not left as one consolidated design; unresolved themes are split into per-theme design files
-
-## Day1（05/04 月）
-
-Capacity note: DELTA readiness gate が解消したため、次は Action schema 正規ファイル名固定と normalization fixture に進む。合計おおむね2h想定。
+Capacity note: Cross-agent schema naming rule and DELTA chapter-only normalization fixture. 合計おおむね2h想定。
 
 - task: ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する
   source_ref:
@@ -270,7 +81,7 @@ Capacity note: DELTA readiness gate が解消したため、次は Action schema
     - config/ai/eve_instruction.md
     - systems/delta/config/delta_action_schema.yaml
     - systems/delta/config/delta_schema.yaml
-  rolling_day: Day1
+  rolling_day: Day0
   due_date: 2026-05-04
   due_type: date
   completed_condition:
@@ -289,7 +100,7 @@ Capacity note: DELTA readiness gate が解消したため、次は Action schema
     - systems/delta/config/delta_schema.yaml
     - systems/delta/operations/active_operations.md
     - systems/delta/history/daily/2026-05-02.md
-  rolling_day: Day1
+  rolling_day: Day0
   due_date: 2026-05-04
   due_type: date
   completed_condition:
@@ -300,9 +111,9 @@ Capacity note: DELTA readiness gate が解消したため、次は Action schema
   external:
     todoist_task_id: 6gWVwmxWFcf9Wp4H
 
-## Day2（05/05 火）
+## Day1（05/05 火）
 
-Capacity note: D2 は write resource reflection 整理と projection profile。合計おおむね2h想定。
+Capacity note: DELTA write resource reflection 整理と projection profile。合計おおむね2h想定。
 
 - task: DELTA write resource schema reflection gate を整理する
   source_ref:
@@ -311,7 +122,7 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
     - systems/delta/config/delta_schema.yaml
     - api/repo-resource.js
     - src/services/delta-operations.js
-  rolling_day: Day2
+  rolling_day: Day1
   due_date: 2026-05-05
   due_type: date
   completed_condition:
@@ -328,7 +139,7 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
     - src/services/tasks/projection.js
     - systems/delta/operations/active_operations.md
     - config/ai/adam_action_schema.yaml
-  rolling_day: Day2
+  rolling_day: Day1
   due_date: 2026-05-05
   due_type: date
   completed_condition:
@@ -339,14 +150,14 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
   external:
     todoist_task_id: 6gWVwpw43m9q8Cfq
 
-## Day3（05/06 水）
+## Day2（05/06 水）
 
 - task: DELTA Todoist dry_run / apply / write-back fixture を実行する
   source_ref:
     - systems/delta/operations/active_operations.md
     - src/services/tasks/projection.js
     - systems/delta/config/delta_schema.yaml
-  rolling_day: Day3
+  rolling_day: Day2
   due_date: 2026-05-06
   due_type: date
   blocked_by:
@@ -364,7 +175,7 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
     - config/ai/eve_instruction.md
     - config/ai/eve_knowledge.md
     - config/ai/eve_action_schema.yaml
-  rolling_day: Day3
+  rolling_day: Day2
   due_date: 2026-05-06
   due_type: date
   completed_condition:
@@ -374,7 +185,7 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
   external:
     todoist_task_id: 6gW4H8WC38gVjjCH
 
-## Day4（05/07 木）
+## Day3（05/07 木）
 
 - task: Phase 1 re-entry criteria を Phase 0 hardening 結果から整理する
   source_ref:
@@ -382,7 +193,7 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
     - notes/08_analysis/2026-04-30_phase0_hardening_weekly_readiness_review_draft.md
     - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
-  rolling_day: Day4
+  rolling_day: Day3
   due_date: 2026-05-07
   due_type: date
   external:
@@ -395,20 +206,20 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
     - notes/08_analysis/2026-04-30_routing_session_checklist.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
-  rolling_day: Day4
+  rolling_day: Day3
   due_date: 2026-05-07
   due_type: date
   external:
     todoist_task_id: 6gWG92HjPG42mh4q
 
-## Day5（05/08 金）
+## Day4（05/08 金）
 
 - task: Phase 1 Outlook Calendar API の読取設計を整理する
   source_ref:
     - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
     - docs/05_roadmap.md
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
-  rolling_day: Day5
+  rolling_day: Day4
   due_date: 2026-05-08
   due_type: date
   external:
@@ -419,26 +230,43 @@ Capacity note: D2 は write resource reflection 整理と projection profile。�
     - docs/10_repo_resource_api.md
     - config/ai/adam_action_schema.yaml
     - notes/08_analysis/2026-04-30_phase0_hardening_followup_candidate_routing.md
-  rolling_day: Day5
+  rolling_day: Day4
   due_date: 2026-05-08
   due_type: date
   external:
     todoist_task_id: 6gW4H8h3P22gwPvq
 
-## Day6（05/09 土）
+## Day5（05/09 土）
 
 - task: ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する
   source_ref:
     - notes/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md
     - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
     - notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
-  rolling_day: Day6
+  rolling_day: Day5
   due_date: 2026-05-09
   due_type: date
   notes:
     - 最新 OpenAI 情報を扱う場合は web / official source 確認が必要
   external:
     todoist_task_id: 6gWG92RX28p37gfq
+
+## Day6（05/10 日）
+
+Capacity note: Sunday weekly review after the 2026-05-03 review is intentionally left for next reroll confirmation. Do not create a light filler task without dependency / blocker review.
+
+- task: next_operations から次週補充候補を再評価する
+  source_ref:
+    - notes/04_operations/next_operations.md
+    - notes/07_reports/weekly/2026-05-03_weekly_review.md
+  rolling_day: Day6
+  due_date: 2026-05-10
+  due_type: date
+  completed_condition:
+    - next_operations の候補を dependency / blocker / phase priority で再評価する
+    - recurring weekly review task の active 反映要否を確認する
+    - Day capacity を確認し、軽すぎる場合は理由を明示する
+    - Todoist projection の必要性を判断する
 
 ---
 
