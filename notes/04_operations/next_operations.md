@@ -117,7 +117,7 @@ source_ref:
 - systems/delta/history/2026-04.md
 - systems/delta/config/delta_action_schema_v0.5.yaml
 - notes/02_design/2026-04-30_delta_v0_6_operations_todoist_projection.md
-- notes/01_issues/idea_log.md#20260430-033
+- notes/08_analysis/2026-05-03_operations_candidate_disposition.md
 
 why_next:
 
@@ -142,7 +142,7 @@ source_ref:
 - docs/05_roadmap.md
 - docs/17_operations_system.md
 - docs/15_notes_system.md
-- notes/01_issues/idea_log.md#20260430-034
+- notes/08_analysis/2026-05-03_operations_candidate_disposition.md
 
 why_next:
 
@@ -250,6 +250,101 @@ completed_condition:
 - handover 作成 procedure に latest 更新を組み込むか判断する
 - 移動 / 作成 / 更新を行う場合は Write Gate 後に実行する
 - 更新後に read-back し、latest pointer と actual file path の整合を確認する
+
+---
+
+### 10. tasks API 全体を execution projection 前提で再設計する
+
+source_ref:
+
+- notes/08_analysis/2026-05-03_operations_candidate_disposition.md
+- notes/02_design/2026-03-25_strategy_api_and_tasks_boundary.md
+- notes/02_design/2026-03-25_tasks_api_alignment_design.md
+- src/services/tasks/service.js
+- src/services/tasks/projection.js
+- src/services/todoist/client.js
+
+why_next:
+
+- Issue routing で operations_candidate と判定したが、current active には独立 task として存在しない
+- DELTA projection profile / Todoist fixture 後に、Tasks API を execution projection 前提で再評価する必要がある
+
+completed_condition:
+
+- current tasks API / service / projection / Todoist client の責務境界を確認する
+- create / update / close / delete / projection apply の意味を整理する
+- operations 正本と Todoist projection の関係を docs / design に接続する
+- 実装が必要な場合は別 task として分解する
+
+---
+
+### 11. code resource の repo root allowlist 拡張を設計・確認する
+
+source_ref:
+
+- notes/08_analysis/2026-05-03_operations_candidate_disposition.md
+- config/ai/adam_action_schema.yaml
+- docs/10_repo_resource_api.md
+- api/repo-resource.js
+
+why_next:
+
+- `package.json`, `vitest.config.js`, `jest.config.js` 等を code resource 経由で読めないと、実装・test 確認の精度が落ちる
+- repo root 全開放ではなく allowlist 方式で整理する必要がある
+
+completed_condition:
+
+- 現在の code resource allowlist を確認する
+- repo root で read 可能にすべきファイルを列挙する
+- security / scope の観点で許可範囲を判断する
+- schema / docs / runtime-visible behavior を混同せず反映方針を決める
+
+---
+
+### 12. Todoist projection due_date / due_type 伝播を regression 確認する
+
+source_ref:
+
+- notes/08_analysis/2026-05-03_operations_candidate_disposition.md
+- src/services/tasks/projection.js
+- config/ai/adam_action_schema.yaml
+- notes/04_operations/active_operations.md
+
+why_next:
+
+- 過去に Todoist projection で新規 task に due が入らない事象があった
+- 現 runtime-visible projectTasks schema には due_date / due_type が見えているが、actual create/update behavior は fixture で確認が必要
+- DELTA projection profile / Todoist fixture 後に、ADAM projection regression として確認するのが自然
+
+completed_condition:
+
+- previous/current active snapshots に due_date / due_type を含めた dry_run を確認する
+- apply が必要な場合は previous_active_tasks と current_active_tasks を必ず用意する
+- new create / existing update の due propagation を確認する
+- dry_run 成功を apply 成功と混同しない
+
+---
+
+### 13. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
+
+source_ref:
+
+- notes/08_analysis/2026-05-03_operations_candidate_disposition.md
+- config/ai/adam_instruction.md
+- config/ai/adam_knowledge.md
+- config/ai/adam_action_schema.yaml
+
+why_next:
+
+- Action schema 正規ファイル名ルール固定後に、instruction / procedure / schema の層分離を見直すのが自然
+- ただし即 active ではなく、Rule Placement Guard と schema reflection の整理後に進める
+
+completed_condition:
+
+- current ADAM instruction / knowledge / action schema を読む
+- always-on guard / procedure / background knowledge / API schema constraints を分離する
+- instruction に残すべき拘束ルールと knowledge に置くべき procedure を判定する
+- 更新が必要なら Write Gate 後に最小差分で反映し、read-back sha を記録する
 
 ---
 
