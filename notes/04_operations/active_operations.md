@@ -220,6 +220,10 @@ Capacity note: DELTA read / recall / write minimum readiness は pass。5/3 学�
     - notes/08_analysis/2026-05-03_issue_routing_result.md
     - notes/02_design/2026-05-03_issue_routing_design_candidates.md
     - notes/02_design/2026-05-03_issue_routing_design_candidate_disposition.md
+    - notes/02_design/2026-05-03_repo_resource_access_convergence_design.md
+    - notes/02_design/2026-05-03_decision_extraction_operating_model_design.md
+    - notes/02_design/2026-05-03_notes_docs_reflection_design.md
+    - notes/02_design/2026-05-03_handover_restart_flow_design.md
     - notes/80_future/issue/2026-05-03_issue_routing_future_candidates.md
     - notes/08_analysis/2026-05-03_operations_candidate_disposition.md
     - notes/04_operations/next_operations.md
@@ -232,13 +236,17 @@ Capacity note: DELTA read / recall / write minimum readiness は pass。5/3 学�
     - full routing cleanup 前 snapshot sha: 63c3f5bcbfb9a18e6f638977777642624f32a160
     - routing_result sha: cf3a98cb4dee3558d8fb3415c46fe9bf8aec7950
     - design candidates snapshot sha: 505145e3587683a13922f4554a63b78891bbc971
-    - design candidate disposition sha: bd2c3fe6b78df740fb28064e2fba3bbc19b7b5c8
+    - design candidate disposition sha: 0a378a6e71644641337d8efb6bdf92118e49dd90
+    - per-theme design repo_resource_access_convergence sha: 67af857f667495558189756f3ca75e7214de8ec9
+    - per-theme design decision_extraction_operating_model sha: 3441fda3052faffcbd7770eeb3ef9ccdcccf4e4c
+    - per-theme design notes_docs_reflection sha: c23910d441e2cc4cc80da1ad743c6e1f1ed34089
+    - per-theme design handover_restart_flow sha: ffcc37dc01d55baef668887f198dbd3c48fdb69a
     - future candidates sha: 1423066164aa183cc1fe324f1d7c631004008930
     - operations candidate disposition sha: 53709a6566d3c7f536c4269022802e83fc81004b
     - `idea_log.md` final cleanup sha: 0869cb2012e49d3340531d6f9c4f917c92f67ad1
     - `next_operations.md` updated with four operations candidates sha: d700b060ce5a01b93263c6aeda923af403130b6b
     - issue routing final route summary: keep_issue 5, design_candidate 19, future_issue 8, operations_candidate 12, archive 0 after prior fixture
-    - design_candidate disposition: absorbed_by_existing_design 12, connected_to_active_or_next_review 4, retained_as_consolidated_design_topic 3, new_individual_design_needed_now 0
+    - design_candidate disposition: absorbed_by_existing_design 10, connected_to_per_theme_design_file 9, new_individual_issue_design_needed_now 0
     - operations_candidate disposition: absorbed_by_active 4, absorbed_by_existing_next 3, add_to_next 4, absorbed_by_existing_system 1
     - `idea_log.md` now contains keep_issue only
   notes:
@@ -246,6 +254,7 @@ Capacity note: DELTA read / recall / write minimum readiness は pass。5/3 学�
     - Full routing start content is recoverable from Git history at sha `61314c1b60549ad699b3d75770315228275bf905`
     - This fixture confirms `idea_log.md` one-file operation can be preserved if periodic routing moves items to archive / design / future / operations disposition
     - The temporary design candidate file is superseded by the design candidate disposition file and is retained only as a source snapshot
+    - Design candidates are not left as one consolidated design; unresolved themes are split into per-theme design files
 
 ## Day1（05/04 月）
 
