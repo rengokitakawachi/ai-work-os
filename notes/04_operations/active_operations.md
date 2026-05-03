@@ -21,6 +21,7 @@ Last review:
 - daily_report: `notes/07_reports/daily/2026-05-03_daily_review.md`
 - weekly_report: `notes/07_reports/weekly/2026-05-03_weekly_review.md`
 - weekly_operations_snapshot: `notes/99_archive/operations/2026-05-03_weekly_operations.md`
+- todoist_projection_request_id: `f8289cde-c4bb-40b8-aae2-138f4a5d1cc4`
 
 Last known source sha before rolling:
 
@@ -35,6 +36,7 @@ Review result:
 - `idea_log.md` contains keep_issue only.
 - `notes/01_issues` tree failed due response size; this is an observation limit, not proof of absence.
 - `next_operations.md` already contains recurring weekly review task.
+- Todoist projection applied once after operations update.
 
 ---
 
@@ -267,6 +269,8 @@ Capacity note: Sunday weekly review after the 2026-05-03 review is intentionally
     - recurring weekly review task の active 反映要否を確認する
     - Day capacity を確認し、軽すぎる場合は理由を明示する
     - Todoist projection の必要性を判断する
+  external:
+    todoist_task_id: 6gWjr8pQXPfC9fjH
 
 ---
 
