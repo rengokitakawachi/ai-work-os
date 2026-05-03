@@ -215,20 +215,33 @@ Capacity note: DELTA read / recall / write minimum readiness は pass。5/3 学�
     - docs/15_notes_system.md
     - notes/99_archive/issues/2026-05-03_closed_and_fixture_issue_routing_archive.md
     - notes/99_archive/issues/2026-05-03_idea_log_before_source_cleanup.md
+    - notes/99_archive/issues/2026-05-03_idea_log_before_full_routing_cleanup.md
+    - notes/08_analysis/2026-05-03_issue_routing_working_split_overview.md
+    - notes/08_analysis/2026-05-03_issue_routing_result.md
+    - notes/02_design/2026-05-03_issue_routing_design_candidates.md
+    - notes/80_future/issue/2026-05-03_issue_routing_future_candidates.md
+    - notes/08_analysis/2026-05-03_operations_candidate_disposition.md
+    - notes/04_operations/next_operations.md
   resolved_evidence:
     - `status: closed` issue 3件を archive destination として保存
     - `status: deferred` issue 1件は fixture 用 issue と判断し archive destination として保存
     - archive sha: ab8c48b697b1686590c107fa1e159f18d07b3171
-    - future destination: none
-    - source cleanup 前 snapshot sha: da3e53bfda7f94dcac027147657469f7cc31a6c4
-    - `idea_log.md` source cleanup completed
-    - `idea_log.md` cleanup sha: 61314c1b60549ad699b3d75770315228275bf905
-    - removed issue IDs grep count in `idea_log.md`: 0 each
-    - `status: closed` grep count in `idea_log.md`: 0
-    - `status: deferred` grep count in `idea_log.md`: 0
+    - first source cleanup 前 snapshot sha: da3e53bfda7f94dcac027147657469f7cc31a6c4
+    - first `idea_log.md` cleanup sha: 61314c1b60549ad699b3d75770315228275bf905
+    - full routing cleanup 前 snapshot sha: 63c3f5bcbfb9a18e6f638977777642624f32a160
+    - routing_result sha: cf3a98cb4dee3558d8fb3415c46fe9bf8aec7950
+    - design candidates sha: e479052a3aabae8e72eccb6f6841fcf58841da24
+    - future candidates sha: 1423066164aa183cc1fe324f1d7c631004008930
+    - operations candidate disposition sha: 53709a6566d3c7f536c4269022802e83fc81004b
+    - `idea_log.md` final cleanup sha: 0869cb2012e49d3340531d6f9c4f917c92f67ad1
+    - `next_operations.md` updated with four operations candidates sha: d700b060ce5a01b93263c6aeda923af403130b6b
+    - issue routing final route summary: keep_issue 5, design_candidate 19, future_issue 8, operations_candidate 12, archive 0 after prior fixture
+    - operations_candidate disposition: absorbed_by_active 4, absorbed_by_existing_next 3, add_to_next 4, absorbed_by_existing_system 1
+    - `idea_log.md` now contains keep_issue only
   notes:
     - Full original content is recoverable from Git history at sha `b83f8b96743496c71834244b0a69131ae9c89065`
-    - This fixture confirms routing + archive can reduce current `idea_log.md` without changing the one-file issue operating model
+    - Full routing start content is recoverable from Git history at sha `61314c1b60549ad699b3d75770315228275bf905`
+    - This fixture confirms `idea_log.md` one-file operation can be preserved if periodic routing moves items to archive / design / future / operations disposition
 
 ## Day1（05/04 月）
 
