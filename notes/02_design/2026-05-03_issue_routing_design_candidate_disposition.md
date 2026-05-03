@@ -4,11 +4,15 @@
 
 2026-05-03
 
+## status
+
+closed_with_per_theme_design_files
+
 ## purpose
 
-`notes/02_design/2026-05-03_issue_routing_design_candidates.md` に一時保持した 19 件の design candidate を、正式な吸収先または後続扱いへ disposition する。
+`notes/02_design/2026-05-03_issue_routing_design_candidates.md` に一時保持した 19 件の design candidate を、1テーマ単位で実用可能な design file または既存 design へ disposition する。
 
-This file is the final disposition for the 2026-05-03 issue routing design candidates. The original candidate file is no longer a holding queue after this disposition.
+This file is the disposition index. It is not itself a consolidated design document.
 
 ## source
 
@@ -16,15 +20,83 @@ This file is the final disposition for the 2026-05-03 issue routing design candi
 - `notes/08_analysis/2026-05-03_issue_routing_result.md`
 - `notes/02_design/2026-05-03_issue_routing_design_candidates.md`
 
+## per-theme design files created
+
+- `notes/02_design/2026-05-03_repo_resource_access_convergence_design.md`
+- `notes/02_design/2026-05-03_decision_extraction_operating_model_design.md`
+- `notes/02_design/2026-05-03_notes_docs_reflection_design.md`
+- `notes/02_design/2026-05-03_handover_restart_flow_design.md`
+
 ## summary
 
 | disposition | count |
 |---|---:|
-| absorbed_by_existing_design | 12 |
-| connected_to_active_or_next_review | 4 |
-| retained_as_consolidated_design_topic | 3 |
-| new_individual_design_needed_now | 0 |
+| absorbed_by_existing_design | 10 |
+| connected_to_per_theme_design_file | 9 |
+| new_individual_issue_design_needed_now | 0 |
 | total | 19 |
+
+## connected_to_per_theme_design_file
+
+### notes / docs reflection design
+
+Design file:
+
+- `notes/02_design/2026-05-03_notes_docs_reflection_design.md`
+
+Source issues:
+
+- `20260326-003` notesフォルダ構造の責務ベース整理の必要性
+- `20260402-001` 新しいnotes構造と日報時のcontent抽出運用をinstructionとdocsへ反映する必要がある
+- `20260404-004` docs/15_notes_system.md と docs/16_operations_system.md の operations 定義差を解消する必要がある
+- `20260404-005` notes/design に残る intake review など旧用語を routing / review 分離モデルへ統一する必要がある
+
+Reason:
+
+notes 構造、docs 反映、reports / content extraction、routing / review terminology は1つの docs reflection theme として扱う方が実用的である。
+
+### repo resource access convergence design
+
+Design file:
+
+- `notes/02_design/2026-05-03_repo_resource_access_convergence_design.md`
+
+Source issues:
+
+- `20260403-001` legacy docs API と github-docs.js を repo-resource/docs.js に統一する必要がある
+- `20260403-002` repo-resource に code bulk 読取が必要
+
+Reason:
+
+legacy docs API、repo-resource docs、code bulk、root allowlist、schema/runtime reflection は repo resource access convergence theme として扱う。
+
+### decision extraction operating model design
+
+Design file:
+
+- `notes/02_design/2026-05-03_decision_extraction_operating_model_design.md`
+
+Source issue:
+
+- `20260408-011` EVE 前提の decision 抽出履歴モデルを ADAM で先行試験する必要がある
+
+Reason:
+
+decision layer は既存 design に完全吸収せず、ADAM / EVE 共通 operating model の独立 theme として扱う。
+
+### handover restart flow design
+
+Design file:
+
+- `notes/02_design/2026-05-03_handover_restart_flow_design.md`
+
+Source issue:
+
+- `20260408-012` latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する必要がある
+
+Reason:
+
+handover latest pointer、restart entry point、active_operations 先頭 task / closure action 解釈は、handover restart flow theme として扱う。
 
 ## absorbed_by_existing_design
 
@@ -62,15 +134,6 @@ This file is the final disposition for the 2026-05-03 issue routing design candi
   - `notes/02_design/2026-04-16_issue_routing_operations_candidate_queue.md`
   - `notes/02_design/2026-04-06_operations_rolling_generation_and_prioritization_spec.md`
 - reason: next_operations は rolling 後の出力、operations candidate queue は rolling 前の入力という分離が既存 design にある。
-
-### 20260404-005
-
-- title: notes/design に残る intake review など旧用語を routing / review 分離モデルへ統一する必要がある
-- disposition: absorbed_by_existing_design
-- absorbed_by:
-  - `notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md`
-  - `notes/02_design/2026-04-12_review_system_and_operations_rolling_connection.md`
-- reason: routing / review 分離は既存 design で整理済み。残る作業は docs / stale design cleanup の候補であり、個別 design の新規作成ではない。
 
 ### 20260404-006
 
@@ -111,7 +174,7 @@ This file is the final disposition for the 2026-05-03 issue routing design candi
 - disposition: absorbed_by_existing_design
 - absorbed_by:
   - `notes/02_design/2026-04-12_review_system_and_operations_rolling_connection.md`
-- reason: daily review が rolling 確定地点であることは既存 design にある。content 抽出は reports/content 側の将来拡張候補として扱う。
+- reason: daily review が rolling 確定地点であることは既存 design にある。content 抽出は notes/docs reflection design 側の future handling として扱う。
 
 ### 20260412-016
 
@@ -130,77 +193,21 @@ This file is the final disposition for the 2026-05-03 issue routing design candi
   - `notes/02_design/2026-04-12_intake_and_issue_routing_minimum_roles.md`
 - reason: Flow Control と usecase、routing 後処理の分離に吸収できる。必要なら writer usecase は future design topic として分離する。
 
-## connected_to_active_or_next_review
-
-### 20260404-004
-
-- title: docs/15_notes_system.md と docs/16_operations_system.md の operations 定義差を解消する必要がある
-- disposition: connected_to_active_or_next_review
-- connected_to: active Day4 `docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する`
-- reason: docs 反映判断 task が active に存在するため、追加 design 作成ではなく active task の source context として扱う。
-
-### 20260408-012
-
-- title: latest handover 起点の次作業選定と active_operations 先頭の解釈ルールを整理する必要がある
-- disposition: connected_to_active_or_next_review
-- connected_to:
-  - `notes/01_issues/2026-05-03_handover_index_structure_issue.md`
-  - `notes/04_operations/next_operations.md` task 9
-- reason: handover latest index / restart entry point 整備の next task に接続する。個別 design を今作らず、handover procedure 更新判断時に扱う。
-
-### 20260326-003
-
-- title: notesフォルダ構造の責務ベース整理の必要性
-- disposition: connected_to_active_or_next_review
-- connected_to: active Day4 `docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する`
-- reason: notes 構造は docs/15 の責務整理に接続する。今は追加 design ではなく docs update judgment に渡す。
-
-### 20260402-001
-
-- title: 新しいnotes構造と日報時のcontent抽出運用をinstructionとdocsへ反映する必要がある
-- disposition: connected_to_active_or_next_review
-- connected_to: active Day4 `docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する`
-- reason: notes / reports / content extraction の docs/instruction 反映判断に接続する。個別 design の重複作成はしない。
-
-## retained_as_consolidated_design_topic
-
-### 20260403-001
-
-- title: legacy docs API と github-docs.js を repo-resource/docs.js に統一する必要がある
-- disposition: retained_as_consolidated_design_topic
-- consolidated_topic: repo resource access convergence
-- reason: docs access の二系統整理は repo resource API design と implementation cleanup の境界論点。現時点では next_operations task 11 `code resource の repo root allowlist 拡張を設計・確認する` と近いが同一ではないため、統合設計候補として保持する。
-
-### 20260403-002
-
-- title: repo-resource に code bulk 読取が必要
-- disposition: retained_as_consolidated_design_topic
-- consolidated_topic: repo resource access convergence
-- reason: code bulk は repo resource capability design。runtime / schema / docs の reflection と関係するため、repo resource access convergence の一部として保持する。
-
-### 20260408-011
-
-- title: EVE 前提の decision 抽出履歴モデルを ADAM で先行試験する必要がある
-- disposition: retained_as_consolidated_design_topic
-- consolidated_topic: decision extraction operating model
-- reason: decision layer は既存 design に完全吸収されていない。今すぐ個別実装ではないが、ADAM / EVE 共通 operating model の design topic として保持する。
-
 ## final decision
 
-19 件の design candidate はすべて disposition 済み。
+19 件の design candidate はすべて 1テーマ単位で利用可能な design path に disposition 済み。
 
 - 既存 design に吸収できるものは重複作成しない
-- active / next review に接続するものは、その source context として扱う
-- 未吸収のものは consolidated design topic としてこの disposition に保持する
+- 未分割で残っていた theme は per-theme design file として作成した
 - `notes/02_design/2026-05-03_issue_routing_design_candidates.md` は holding queue ではなく、この disposition への source snapshot として扱う
 
 ## remaining work
 
 この disposition により issue routing closure は完了可能。
 
-ただし、以下は将来の review / operations rolling で扱う候補として残る。
+将来の review / operations rolling で扱う候補:
 
-- repo resource access convergence
-- decision extraction operating model
-- docs/15 / docs/17 反映判断
-- handover latest index / restart flow procedure 整理
+- `notes/02_design/2026-05-03_repo_resource_access_convergence_design.md`
+- `notes/02_design/2026-05-03_decision_extraction_operating_model_design.md`
+- `notes/02_design/2026-05-03_notes_docs_reflection_design.md`
+- `notes/02_design/2026-05-03_handover_restart_flow_design.md`
