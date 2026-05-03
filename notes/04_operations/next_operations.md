@@ -8,6 +8,20 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
+## 再評価結果（2026-05-03 conversation update）
+
+Phase 0 plan に明記されている routing maturity gap を ADAM が自律的に operations candidate 化できていなかった問題を受け、`Phase 0 routing maturity matrix を作る` task を next の最上位候補へ追加した。
+
+Reason:
+
+- roadmap / plan と現状を比較し、課題を issue / operations へ落とすことは ADAM の中核責務である
+- issue routing は運用段階に入った一方、intake routing / design routing は未成熟である
+- この差分は Phase 0 plan に明記された重点テーマから自律的に抽出されるべきだった
+- 再発防止には、plan-driven discovery を review / rolling の明示 gate として扱う必要がある
+- ただし current active head の Action schema 正規ファイル名固定を止める Immediate Gate ではないため、active 横入りではなく next 最上位候補とする
+
+---
+
 ## 再評価結果（2026-05-02 daily review）
 
 明日以降の再開性を優先し、ADAM / EVE / DELTA の Action schema 正規ファイル名固定 task を active Day0 に追加した。
@@ -34,6 +48,40 @@ Reason:
 ---
 
 ## タスク
+
+### 0. Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
+
+source_ref:
+
+- notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
+- notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+- notes/04_operations/active_operations.md
+- notes/04_operations/next_operations.md
+- docs/05_roadmap.md
+- docs/15_notes_system.md
+- docs/17_operations_system.md
+
+why_next:
+
+- Phase 0 plan に intake routing / issue routing / design routing / テストシステムが重点テーマとして明記されている
+- issue routing は運用段階に入りつつあるが、intake routing / design routing は maturity gap が残る
+- ADAM は roadmap / plan と現状を比較し、課題を issue / operations へ落とし込む controller である
+- plan に明記された未充足テーマを自律的に issue / operations candidate 化できていないことは governance gap である
+- ただし現在の active Day0 task を停止させる blocker ではないため、next 最上位候補として次回 rolling で active 化判断する
+
+completed_condition:
+
+- Phase 0 plan の重点テーマを列挙する
+- issue / intake / design / test system の maturity を同じ基準で比較する
+- 各テーマについて completed / partially completed / not yet operational を判定する
+- intake routing の未充足 completed condition を列挙する
+- design routing の未充足 completed condition を列挙する
+- plan-driven discovery gate として、roadmap / plan の未充足テーマを issue / operations candidate 化する手順を整理する
+- 必要な後続 task を active / next / future / absorbed に disposition する
+- 必要なら Phase 0 plan / docs / knowledge / operations への反映候補を分離する
+- report / analysis / operations のどこに evidence を残すか判断し、read-back sha を記録する
+
+---
 
 ### 1. notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
 
