@@ -34,9 +34,11 @@ execution source of truth ではない。
 - rolling の確定更新は review 地点で行う
 - 日中は active の順序と Day 構造を原則維持する
 - 完了判定と構造変更判定は分けて扱う
+- daily review の operations rolling では、参照した issue に daily issue status touch を行う
 - weekly review で archive_operations の snapshot を保存する
 - weekly review では issue routing の要否を必ず確認する
 - weekly review は report 作成だけでは完了しない
+- Asia/Tokyo で日曜の daily review request は Sunday Weekly Review Mode に自動昇格する
 
 ---
 
@@ -169,10 +171,82 @@ daily review では、少なくとも以下を扱う。
 - 新しい Day6 の補充
 - next_operations の再評価
 - active_operations の更新
+- operations rolling 時に参照した issue の daily issue status touch
 - Immediate Gate の解消状況確認
 - Todoist projection 更新要否の判断
 
 daily review は report 作成だけでは完了しない。
+
+#### daily issue status touch
+
+daily issue status touch は issue routing ではない。
+
+daily review の operations rolling で issue を candidate source として読む場合、
+参照した issue に status touch を行う。
+
+目的は、weekly review で全 issue をゼロから調査しないよう、
+日々の進捗に応じて issue 状態を軽く更新することである。
+
+対象は以下に限定する。
+
+- 今日実行した active task に関係する issue
+- operations rolling candidate として参照した issue
+- 今日作成・更新した design に紐づく issue
+- 今日会話で発生した新規 issue
+- blocked / needs_routing と明示された issue
+
+daily review では全 issue をゼロから精査しない。
+
+更新項目の例:
+
+- `status`: open / progressed / needs_routing / blocked / close_candidate / closed
+- `last_touched_at`
+- `touched_by`: daily_review
+- `progress_note`
+- `routing_hint`: design / operations / future / archive / keep
+- `source_ref`
+
+明らかに完了した issue は、daily review で `closed` または `close_candidate` にできる。
+
+ただし、design / operations / future / archive への本格 disposition は、
+weekly review または明示 issue routing で行う。
+
+weekly review は daily issue status touch の結果を使って issue routing を実行する。
+
+### Sunday Weekly Review Mode
+
+Asia/Tokyo で日曜の daily review request は、
+Sunday Weekly Review Mode に自動昇格する。
+
+Sunday Weekly Review Mode では、daily close を先に行い、weekly review を後に行う。
+
+日曜は daily review と weekly review で operations reroll / Todoist projection を二重実行しない。
+
+#### Sunday Weekly Review Mode の順序
+
+1. Daily Close
+   - 当日の実績確認
+   - 完了 task の確認
+   - 必要な daily issue status touch
+   - daily report 保存
+
+2. Weekly Review
+   - archive_operations snapshot
+   - issue routing check
+   - inbox / issue / design / future / operations の滞留確認
+   - active_operations / next_operations の再設計
+   - Todoist projection 更新要否判断
+
+3. Projection
+   - operations 更新後に Todoist projection を一度だけ実行する
+
+日曜の daily close では、active / next の再設計と Todoist projection を完了させない。
+
+active / next の再設計、archive_operations snapshot、issue routing check、Todoist projection は weekly review 側で一度だけ行う。
+
+日曜に weekly review が未実行の場合、daily review は完了扱いしない。
+
+日曜に weekly review を実行できなかった場合、次回 daily review で overdue weekly review を Immediate Gate として扱う。
 
 ### weekly review
 
@@ -188,6 +262,7 @@ weekly review では、少なくとも以下を扱う。
 - future の再活性化候補確認
 - design 未反映差分の確認
 - issue routing の要否確認
+- daily issue status touch の結果確認
 - inbox / issue / design / future / operations の滞留確認
 - Todoist projection 更新要否の判断
 - active_operations と next_operations の次週前提での再調整
@@ -205,6 +280,7 @@ issue routing の completed condition を満たすまで weekly review は完了
 
 weekly review では、以下を確認する。
 
+- daily issue status touch の `closed` / `close_candidate` / `needs_routing` / `blocked` を確認したか
 - `notes/01_issues/idea_log.md` に keep issue 以外が滞留していないか
 - `notes/01_issues/` に個別 issue file が残っていないか
 - design 化すべき issue が holding file で止まっていないか
@@ -220,10 +296,10 @@ weekly review は任意実行ではなく、
 定期的に active_operations / next_operations へ組み込むべき review usecase とする。
 
 weekly review task が active_operations / next_operations に存在しない場合、
-daily review または operations rolling 時に追加要否を判断する。
+daily review または operations rolling 時に recurring review task を追加する。
 
 weekly review task の completed condition には、
-issue routing check を含める。
+issue routing check と daily issue status touch 結果確認を含める。
 
 ### 例外 reroll
 
@@ -240,6 +316,7 @@ issue routing check を含める。
 - 誤混入 task を除去しないと次へ進めない
 - Immediate Gate が後続 task を blocking している
 - active_operations が stale で、先頭 task を実行すると不整合が拡大する
+- overdue weekly review が Immediate Gate として残っている
 
 この場合のみ、
 例外的に reroll を行ってよい。
@@ -264,6 +341,7 @@ roadmap / plan を前進させるために、
 - ranking
 - placement
 - Day capacity check
+- referenced issue status touch
 
 candidate source の例
 
@@ -359,7 +437,11 @@ operations はスケジュールではない。
 - next_operations は近未来候補と補充候補を保持する
 - archive_operations により週次履歴を軽量に保存する
 - daily review は rolling の主要確定地点とする
+- daily review の operations rolling では参照した issue に daily issue status touch を行う
 - weekly review は rolling の再設計地点とする
+- 日曜の daily review request は Sunday Weekly Review Mode に自動昇格する
+- Sunday Weekly Review Mode では daily close を先に行い、weekly review を後に行う
+- 日曜は operations reroll / Todoist projection を二重実行しない
 - weekly review では issue routing check を必須とする
 - weekly review は report 作成だけでは完了しない
 - operations rolling は next の繰り上げではなく、候補収集・評価・配置の一体処理とする
