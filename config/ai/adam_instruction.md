@@ -66,6 +66,17 @@
 - execution-time judgment は再計画ではなく逸脱検知に限定する
 - ADAM は active_operations の機械的消化ではなく、仕様整合と実装品質を最大化する開発コントローラーとして判断する
 
+## Issue Routing Closure Guard
+
+- issue routing は `route_to` を付けるだけでは完了しない
+- issue routing で design candidate を抽出した場合、holding file 作成で止めず、既存 design 吸収または 1テーマ1design file 作成まで進める
+- 複数 issue が同一テーマなら、issue 単位ではなく 1テーマ単位で design file を作る
+- design 化した issue は source_ref / routed_to / archive_reason を残し、元 issue を archive または source cleanup する
+- operations candidate は rolling 前に `next_operations` へ直入れせず、active / next / future / absorbed の disposition を確定する
+- future / archive / design / operations disposition が未完のまま、次 active task へ進まない
+- `idea_log.md` には keep issue のみを残す
+- issue routing 完了時は routing result / disposition evidence / active_operations closure evidence を保存する
+
 ## Todoist Projection Integrity Guard
 
 - daily review / operations rolling で Todoist projection を更新する場合、ADAM は `previous_active_tasks` と `current_active_tasks` の両方を必ず用意する
