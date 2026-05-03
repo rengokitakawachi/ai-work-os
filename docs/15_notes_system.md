@@ -134,6 +134,11 @@ issue routing では、
 issue を `operations / design / future / archive / issue`
 のどこへ送るかを判定する。
 
+`01_issues` は恒久 backlog ではない。
+
+routing により `design / future / operations / archive` へ流せる issue は、
+issue layer に残し続けない。
+
 ---
 
 ### 02_design
@@ -143,6 +148,10 @@ issue を `operations / design / future / archive / issue`
 docs 直前の構造整理レイヤー。
 
 実装より先に構造整理が必要な論点を保持する。
+
+issue routing から design へ送られたものは、
+単なる holding list で止めず、
+1テーマ1design file または既存 design への吸収として扱う。
 
 ---
 
@@ -228,6 +237,10 @@ report は review の結果物であり、
 
 横断的な整合確認や分析を行うレイヤー。
 
+routing の作業分割、fixture result、disposition evidence は 08_analysis に置ける。
+
+ただし 08_analysis は routing destination の代替ではない。
+
 ---
 
 ### 09_content
@@ -288,6 +301,9 @@ future/
 
 役目を終えた情報の退避先。
 
+routing により役目を終えた issue / input / design は、
+source_ref、routed_to、archive_reason を付けて archive へ送る。
+
 operations の週次履歴は以下に保存する。
 
 notes/99_archive/operations/
@@ -313,6 +329,8 @@ routing 後は、
 元入力や元 issue が役目を終えた場合は archive に移し、
 判断に迷う場合は先送りして残す。
 
+---
+
 ### issue routing
 
 issue を評価し、
@@ -328,6 +346,112 @@ issue を評価し、
 重要 issue は、
 issue に残すだけで終わらせず、
 operations candidate 化の要否と再評価地点を明示する。
+
+issue routing は、送付先をラベル付けして終わる処理ではない。
+
+routing 後は、送付先ごとの初期処理、元 issue の source cleanup、必要な archive まで行う。
+
+#### issue routing の標準手順
+
+1. issue source を読む
+2. issue の粒度を確認する
+3. 必要なら 1論点1issue に分解 / 統合する
+4. 各 issue に `route_to` を付ける
+5. `route_to` ごとに後処理を行う
+6. 元 issue を archive / keep / cleanup のどれにするか確定する
+7. routing result / disposition evidence を保存する
+8. `idea_log.md` には keep issue だけを残す
+9. active_operations に closure evidence を戻す
+
+#### route_to ごとの後処理
+
+##### archive
+
+役目終了の issue は archive へ送る。
+
+archive には以下を残す。
+
+- original issue id
+- title
+- source_ref
+- routed_to
+- archive_reason
+- archived_at
+
+archive 保存後、元 issue は source cleanup 対象とする。
+
+##### future
+
+今は扱わないが保持価値がある issue は `80_future/issue` へ送る。
+
+future には以下を残す。
+
+- original issue id
+- title
+- reason_for_future
+- reactivation_condition
+- source_ref
+
+future 保存後、元 issue は source cleanup 対象とする。
+
+##### operations
+
+実行候補は operations candidate として扱う。
+
+issue routing から `next_operations` へ直接入れない。
+
+まず operations candidate として disposition し、
+operations rolling により `active / next / future / absorbed` を決める。
+
+既存 active / next / system に吸収できるものは、
+吸収先を明示して元 issue を cleanup する。
+
+##### design
+
+設計化が必要な issue は design candidate として扱う。
+
+ただし design candidate holding file で止めてはならない。
+
+必ず次のいずれかに disposition する。
+
+- 既存 design へ吸収する
+- 1テーマ1design file を新規作成する
+- docs update candidate として既存 active / next task に接続する
+- future/design へ送る
+- 役目終了として archive へ送る
+
+新規 design を作る場合、issue 単位に機械的に分けるのではなく、
+今後 design として参照・更新できる 1テーマ単位に分ける。
+
+複数 issue が同じテーマなら、1つの design file に統合する。
+
+Design 化した issue は、
+作成・吸収先の design ref を付けて archive へ送るか、
+routing result / disposition に archive_reason を残して source cleanup する。
+
+##### issue
+
+まだ送付先が自然でない issue は `01_issues` に残す。
+
+残す場合は、keep reason を明示する。
+
+#### issue routing の完了条件
+
+issue routing は、以下が満たされるまで完了ではない。
+
+- 全 issue に `route_to` が付いている
+- archive 行きは archive 保存と source cleanup が済んでいる
+- future 行きは `80_future/issue` 保存と source cleanup が済んでいる
+- operations candidate は `active / next / future / absorbed` の disposition が確定している
+- design candidate は 1テーマ1design file、既存 design 吸収、docs candidate、future/design、archive のいずれかに disposition 済みである
+- design化した issue に source_ref / routed_to / archive_reason が残っている
+- `idea_log.md` には keep issue だけが残っている
+- routing result / disposition evidence が保存されている
+- active_operations に closure evidence が戻っている
+
+この完了条件を満たす前に、次の active task へ進まない。
+
+---
 
 ### design routing
 
@@ -352,6 +476,8 @@ docs 昇格条件を満たす design は docs 候補とし、
 
 実行候補として落とす価値がある design は、
 operations candidate 化を検討する。
+
+---
 
 ### operations rolling
 
@@ -407,5 +533,7 @@ notes → docs
 - handover は再開入口
 - reports は review の結果物
 - routing 後は処理を行い、役目終了なら archive、迷うなら残す
+- issue routing は holding file 作成では完了しない
+- design candidate は 1テーマ1design file または既存 design 吸収まで進める
 - review と routing は分けて扱う
 - operations rolling は candidate source の比較と配置を含む
