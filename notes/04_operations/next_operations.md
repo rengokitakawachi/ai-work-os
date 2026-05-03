@@ -349,6 +349,35 @@ completed_condition:
 
 ---
 
+### 14. weekly review を定期実行 task として operations に組み込む
+
+source_ref:
+
+- config/ai/adam_instruction.md
+- notes/08_analysis/2026-05-03_docs15_issue_routing_completion_update_proposal.md
+- notes/02_design/2026-04-12_review_system_and_operations_rolling_connection.md
+- notes/04_operations/2026-04-12_weekly_review_prep.md
+- notes/04_operations/active_operations.md
+- notes/04_operations/next_operations.md
+
+why_next:
+
+- weekly review は report 作成ではなく、operations rolling / issue routing check / future・archive・design 滞留確認を含む定期 usecase である
+- issue routing が定期的に実行されないと `idea_log.md` が再び肥大化し、design / operations への流れが止まる
+- 現在の operations には weekly review preparation や archive 記録はあるが、recurring weekly review execution task が active / next に明示されていない
+
+completed_condition:
+
+- weekly review の standard completed condition を確認する
+- weekly review に issue routing check を必須項目として組み込む
+- weekly review で未routed issue がある場合、issue routing を実行するか active / next に明示的に入れる rule を固定する
+- weekly review task を active_operations の7日 rolling に定期的に入れる方法を決める
+- Todoist projection へ weekly review task をどう投影するか判断する
+- docs/17 または docs/15 への反映要否を判断する
+- read-back で active / next / docs proposal / instruction の整合を確認する
+
+---
+
 ## ルール
 
 - active に入らなかった上位候補を置く
