@@ -324,3 +324,74 @@ next_disposition:
 
 - active_operations の evidence を修正する。
 - duplicate file cleanup は delete support または manual repo cleanup が可能になった時点で実行する。
+
+---
+
+### 2026-05-04-005 DELTA recovery line calibration guard missing
+
+status: fixed_repo_config_runtime_pending
+severity: high
+category: delta_operations_generation_regression
+observed_at: 2026-05-04
+reported_by: DELTA via user
+
+symptom:
+
+- 2026-05-04 daily review 後の DELTA operations rolling で、2026-05-05 Day0 の国民年金法 L3 選択問題ラインが plan より甘く生成された。
+- 初回生成では `standard_line` が Q15-1〜Q15-7 となり、plan 上の当日達成目標である Q15-1〜Q15-13完了が `stretch_line` に逃げた。
+
+impact:
+
+- `delayed_but_recovering` / `recovery_forward` 状態なのに、standard_line が plan achievement line ではなく安全側の中間ラインになった。
+- roadmap / plan の回復圧力が operations に反映されにくくなった。
+- DELTA が「実行可能そうな軽い計画」を出し、計画整合の標準ラインを弱めるリスクが出た。
+
+root_cause:
+
+- recovery 系 status / mode の時に `standard_line` を `plan_anchor.expected_position` へ一致させる制約が instruction / schema に明示されていなかった。
+- `must_line` と `survival_line` の役割が曖昧で、must_line がゼロ回避寄りに落ちた。
+- operations write 前に、plan target が stretch_line へ逃げていないか検証する pre-write guard が不足していた。
+
+fix_applied:
+
+- DELTA repo config level で修正した。
+  - `systems/delta/config/delta_instruction.md`
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `6f19c48dca47d51e70da099aa9936ee11452d273`
+- DELTA internal schema に構造化した。
+  - `systems/delta/config/delta_schema.yaml`
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `d902f67ac188bcdba6c3a1b38a3c1dd49faac3ad`
+- evidence note を作成した。
+  - `notes/08_analysis/2026-05-04_delta_recovery_line_calibration_fix.md`
+  - sha: `1586b7c3ab6ce534b6eec3678046d8e147198851`
+- DELTA active operations の即時修正は DELTA 側で反映済みであることを read-back した。
+  - `systems/delta/operations/active_operations.md`
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `635ac0b6b8b73c6a4a187a3ee60cf0114d0f5b3d`
+
+remaining_risk:
+
+- repo config / instruction / schema level の修正であり、configured GPT reflection / runtime-visible behavior は未確認。
+- 次の DELTA runtime fixture で、同種 recovery case が正しく生成されるか確認が必要。
+
+recurrence_prevention:
+
+- recovery 系 status / mode では `standard_line` を plan_anchor expected_position に一致させる。
+- plan expected_position を stretch_line のみに置かない。
+- must_line は survival_line ではなく plan_minimum_line として扱う。
+- survival_line が必要な場合は must_line と分離する。
+- operations write 前に line calibration validation を実施し、不一致なら incomplete として再生成する。
+
+linked_refs:
+
+- `notes/08_analysis/2026-05-04_delta_recovery_line_calibration_fix.md`
+- `notes/04_operations/active_operations.md`
+- `systems/delta/config/delta_instruction.md`
+- `systems/delta/config/delta_schema.yaml`
+- `systems/delta/operations/active_operations.md`
+
+next_disposition:
+
+- `notes/04_operations/active_operations.md` の `DELTA write resource schema reflection gate を整理する` に runtime fixture condition として接続する。
+- DELTA configured GPT reflection / runtime-visible schema / actual behavior を確認するまで runtime completed とは扱わない。
