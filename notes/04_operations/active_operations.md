@@ -41,6 +41,7 @@ Execution update:
 - Todoist projection task closed.
 - DELTA canonical was corrected after branch-aware observation: canonical is `systems/delta/config/delta_action_schema.yaml` on `feature/atlas-pre-delta-foundation`.
 - Duplicate DELTA `delta_action_schema_v0.6.yaml` remains because delete action is not supported by the current tool route.
+- DELTA recovery line calibration fix was applied at repo config level and logged; runtime confirmation is attached to DELTA schema reflection task.
 
 ---
 
@@ -195,6 +196,10 @@ Capacity note: DELTA write resource reflection 整理と projection profile。�
   source_ref:
     - systems/delta/config/delta_action_schema.yaml
     - systems/delta/config/delta_schema.yaml
+    - systems/delta/config/delta_instruction.md
+    - systems/delta/operations/active_operations.md
+    - notes/08_analysis/2026-05-04_delta_recovery_line_calibration_fix.md
+    - notes/10_logs/adam_bug_fix_log.md
     - api/repo-resource.js
     - src/services/delta-operations.js
   rolling_day: Day2
@@ -206,6 +211,11 @@ Capacity note: DELTA write resource reflection 整理と projection profile。�
     - runtime未確認を完了扱いしない
     - runtime backend validation markers と feature branch service code の差分有無を整理する
     - duplicate `systems/delta/config/delta_action_schema_v0.6.yaml` の削除可否を確認する
+    - DELTA recovery line calibration fix の configured GPT reflection を確認する
+    - DELTA runtime で recovery case fixture を実行し、standard_line が plan_anchor.expected_position と一致することを確認する
+    - fixture では delayed_but_recovering + recovery_forward のケースで、plan target が stretch_line のみに逃げないことを確認する
+    - fixture では must_line が survival_line ではなく plan_minimum_line になっていることを確認する
+    - runtime-visible behavior を観測するまで、`completed_repo_config_level` を runtime completed と混同しない
   external:
     todoist_task_id: 6gWVwp3j8jW25jPH
 
