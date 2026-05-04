@@ -35,6 +35,12 @@ Rolling result:
 - DELTA fixture / projection line was preserved but shifted later to keep Day capacity.
 - Todoist projection applied and returned new task ids.
 
+Execution update:
+
+- `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する` completed at repo-instruction guard level on 2026-05-04.
+- Todoist projection task closed.
+- DELTA unversioned canonical schema missing remains as follow-up risk for DELTA schema reflection task.
+
 ---
 
 ## Recently resolved gates
@@ -80,9 +86,12 @@ Capacity note: Cross-agent schema naming rule and bug fix log operation method. 
     - config/ai/eve_instruction.md
     - systems/delta/config/delta_action_schema.yaml
     - systems/delta/config/delta_schema.yaml
+    - notes/08_analysis/2026-05-04_action_schema_canonical_filename_rule.md
   rolling_day: Day0
   due_date: 2026-05-04
   due_type: date
+  completed: true
+  completed_at: 2026-05-04
   completed_condition:
     - ADAM / EVE / DELTA の Action schema canonical file を確認する
     - `*_action_schema.yaml` は GPT Actions 用 OpenAPI schema、`*_schema.yaml` は内部 schema または legacy互換であると明文化する
@@ -90,6 +99,17 @@ Capacity note: Cross-agent schema naming rule and bug fix log operation method. 
     - 必要なら config/ai/adam_instruction.md / config/ai/eve_instruction.md に最小差分で反映する
     - 更新後に read-back し sha を記録する
     - repo config state と configured GPT reflection / runtime-visible schema を混同しない
+  completed_evidence:
+    - ADAM canonical Action schema confirmed: `config/ai/adam_action_schema.yaml` sha `ef97d3c2ebcc0afe18a3dbbab6e9f4a02983f0f0`
+    - EVE canonical Action schema confirmed: `config/ai/eve_action_schema.yaml` sha `8bbead866bd682f8a996a93e7d4a5dc7d0053de2`
+    - DELTA latest readable Action schema confirmed: `systems/delta/config/delta_action_schema_v0.5.yaml` sha `7395b678a270f3b37eacc2b2ff1729c9ba198d87`
+    - ADAM instruction updated and read back: sha `ccd50476b175c37adf3a71834c150fd244ca2a2b`
+    - EVE instruction updated and read back: sha `bb8f1e4721212dd6f46e432acb37c1e797f22f42`
+    - Evidence note created: `notes/08_analysis/2026-05-04_action_schema_canonical_filename_rule.md` sha `8b512e7ae60af9810764f3f6337f9422338d82de`
+    - Todoist task closed: `6gWVwpfQPfxGpv7H`
+  remaining_risk:
+    - DELTA unversioned canonical files `delta_action_schema.yaml` / `delta_schema.yaml` were not found in current repo observation.
+    - Treat DELTA source_ref cleanup / v0.6 reflection as a follow-up under DELTA schema reflection task.
   external:
     todoist_task_id: 6gWVwpfQPfxGpv7H
 
