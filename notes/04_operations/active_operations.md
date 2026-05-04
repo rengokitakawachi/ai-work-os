@@ -50,7 +50,7 @@ Last review:
 - daily_report: `notes/07_reports/daily/2026-05-04.md`
 - previous_active_sha: `4ded611230fa853cb0c3c9d413a8c46ee1ccc64a`
 - archive_operations_sha: `439a6dc663b6333bc32acce0d12e0e60fe8287f7`
-- todoist_projection_request_id: pending
+- todoist_projection_request_id: `19b8ff67-576f-4d0b-81a0-ad0ca909f3a9`
 
 Daily close result:
 
@@ -58,6 +58,7 @@ Daily close result:
 - Immediate Gate remains open: `DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する`
 - DELTA runtime-dependent tasks remain blocked until Immediate Gate is resolved
 - Active rerolled to 2026-05-05 start
+- Todoist projection applied; all existing active projection tasks were updated, no new tasks were created
 
 ---
 
