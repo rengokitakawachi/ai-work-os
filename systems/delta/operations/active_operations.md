@@ -3,7 +3,7 @@
 ## Metadata
 
 version: delta_v0.6_operations_shape
-updated_at: 2026-05-03
+updated_at: 2026-05-04
 branch: feature/atlas-pre-delta-foundation
 last_daily_review: systems/delta/history/daily/2026-05-03.md
 
@@ -22,7 +22,7 @@ source_of_truth:
 ## Current plan gap
 
 plan_gap:
-  fixed_at: 2026-05-03
+  fixed_at: 2026-05-04
   source_review: systems/delta/history/daily/2026-05-03.md
   plan_anchor:
     source_ref: systems/delta/plan/2026_sharoushi_exam_plan.md
@@ -39,9 +39,9 @@ plan_gap:
     judgment: delayed_but_recovering
     L1:
       subject: 国民年金法
-      actual_scope: 10章 P200まで完了
-      page_range: P199〜P200
-      next_start_page: P201
+      actual_scope: P181〜P212 完了
+      page_range: P181〜P212
+      next_start_page: P213
     L3:
       subject: 健康保険法
       actual_scope: Q7-1〜Q7-2、Q9-1〜Q9-5、Q10-1、Q11-1
@@ -58,6 +58,7 @@ plan_gap:
   recovery_required: true
   reason:
     - 2026-05-03 は健康保険法L3をQ11-1まで前進し、秒トレ42問も完了
+    - L1国民年金法はP212まで完了、次はP213
     - 1巡目完了優先へ切り替えたため、Q4等の×・△回収は1巡後へ defer
     - ただしGW最低ラインの健康保険法L3完了は未達で、国民年金法L3選択問題にも未着手
     - 2026-05-04 は健康保険法L3 Q11-2以降を完了し、国民年金法L3選択問題へ接続する
@@ -65,10 +66,10 @@ plan_gap:
 ## Recommended lines
 
 recommended_lines:
-  fixed_at: 2026-05-03
+  fixed_at: 2026-05-04
   source_review: systems/delta/history/daily/2026-05-03.md
   plan_anchor: 2026-04-29〜2026-05-06 GW L3集中期間
-  current_position: 健康保険法 L3 Q11-1完了、次 Q11-2。秒トレ42問完了。L1国民年金法P200まで完了
+  current_position: 健康保険法 L3 Q11-1完了、次 Q11-2。秒トレ42問完了。L1国民年金法P212まで完了、次P213
   expected_position: 2026-05-04時点で国民年金法L3選択問題を進める
   gap_status: delayed_but_recovering
   operation_mode: recovery_forward
