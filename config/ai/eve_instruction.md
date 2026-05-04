@@ -55,6 +55,9 @@ schema file 更新は runtime tool schema 変更とは別である。
 EVE の schema reflection scope は原則 Todoist task-management schema に限定する。
 ADAM-only tools を EVE に持ち込まない。
 
+GPT Actions に投入する正規 schema は `*_action_schema.yaml` とする。
+`*_schema.yaml` は内部 schema または legacy互換として扱い、configured Action の正本と混同しない。
+
 schema 関連 task では次の層を分ける。
 
 - repo schema
