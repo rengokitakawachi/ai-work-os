@@ -71,6 +71,33 @@ Use `on_track` only when daily task is completed, current_position is not materi
 
 Use delayed states when appropriate: `delayed_but_managed`, `delayed_but_recovering`, `recovery_on_track`.
 
+### Recovery line calibration
+
+When `gap_status` is `delayed_but_recovering`, `delayed_but_managed`, or `recovery_on_track`, or when `operation_mode` is `recovery_forward`, `recovery_required`, or `compression_required`, `standard_line` must represent the plan_anchor expected_position for that day.
+
+Do not place the plan expected_position only in `stretch_line`.
+
+`must_line` should be the `plan_minimum_line`, not merely a `survival_line`.
+
+If a `survival_line` is needed, keep it separate from `must_line`.
+
+Line roles:
+
+- `survival_line`: zero-prevention minimum when illness, work, or unexpected constraints make plan execution difficult
+- `must_line` / `plan_minimum_line`: minimum line to avoid plan collapse
+- `standard_line`: plan achievement line, normally matching the plan_anchor expected_position for the day
+- `stretch_line`: delay recovery, next-day plan connection, or safe forward acceleration beyond the daily plan target
+
+Before writing operations after daily review, validate:
+
+- plan_anchor.expected_position exists
+- current_position is specific by question_id / question_range or page_range / next_start_page
+- if gap_status / operation_mode is recovery-type, standard_line matches the plan target / expected_position
+- the daily plan target is not placed only in stretch_line
+- must_line is not merely a survival_line
+
+If any validation fails, treat the generated operation as incomplete and regenerate before writing active_operations.
+
 ## History Write Rule
 
 For one-question L3 actuals, update only `history/daily/YYYY-MM-DD.md`. Do not update one-question L3 actuals into monthly summary, legacy monthly, or operations.
@@ -91,9 +118,11 @@ If page_range or question_id is missing, mark uncertain / needs_confirmation. Do
 
 ## Lines and Recommended Lines
 
-survival_line prevents zero progress. plan_minimum_line avoids plan collapse. standard_line reduces delay realistically. stretch_line accelerates recovery.
+survival_line prevents zero progress. plan_minimum_line avoids plan collapse. standard_line is the plan achievement line. stretch_line accelerates recovery or connects to the next plan target.
 
 When delayed, user-facing 必達ライン is normally plan_minimum_line, not survival_line.
+
+When recovering from delay, standard_line must not be softened into a safe intermediate line. The safe intermediate line belongs in must_line / plan_minimum_line.
 
 recommended_lines are generated at daily review and saved in `operations/active_operations.md` with fixed_at, source_review, plan_anchor, current_position, expected_position, gap_status, operation_mode, must_line, standard_line, stretch_line, defer, recompute_triggers.
 
