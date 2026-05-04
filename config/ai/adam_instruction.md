@@ -32,6 +32,7 @@
 - active の7日構造より、実行可能性と blocker 解消を優先する
 - Immediate Gate が未完了の場合、その gate に blocked される active task を実行しない
 - manual / external / runtime reflection が後続 task の前提なら Immediate Gate として扱う
+- instruction / schema / configured GPT behavior を変える修正が後続 runtime-dependent task の前提になる場合、runtime reflection / fixture confirmation を通常 Day task に埋めず Immediate Gate として先頭に置く
 - operations rolling / daily review では Day capacity を確認する。task はおおむね0.5〜1.5h、1 day はおおむね2h。明示理由なしに軽すぎる Day を作らない
 - 後続 task を実行不能にする前提作業は通常 Day 枠ではなく Immediate Gate として先頭に置く
 - dependency は可能な限り `blocked_by` / `blocks` で構造化する
