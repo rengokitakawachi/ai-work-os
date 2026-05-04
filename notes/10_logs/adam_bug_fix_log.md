@@ -37,6 +37,7 @@ ADAM の運用中に発生した不具合、回帰、修正、再発防止策を
 - tool call の失敗解釈ミス
 - SSOT / projection / view の混同
 - report / docs / operations の保存先・形式ミス
+- branch / canonical / runtime の混同
 - 修正済みだが再発観測が必要なもの
 
 ### 記録しないもの
@@ -255,3 +256,71 @@ next_disposition:
 
 - issue 化または existing issue への吸収を判断する。
 - `ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する` task と接続する可能性が高い。
+
+---
+
+### 2026-05-04-004 DELTA action schema canonical misidentified from main-only observation
+
+status: corrected_with_cleanup_blocked
+severity: high
+category: branch_canonical_confusion
+observed_at: 2026-05-04
+reported_by: user
+
+symptom:
+
+- DELTA の Action schema canonical を確認する際、main branch の `delta` resource tree だけを見て、`systems/delta/config/delta_action_schema.yaml` が存在しないと判断した。
+- 実際には `feature/atlas-pre-delta-foundation` branch に `systems/delta/config/delta_action_schema.yaml` が存在した。
+- 同 branch には duplicate として `systems/delta/config/delta_action_schema_v0.6.yaml` も存在し、sha は canonical と同一だった。
+
+impact:
+
+- DELTA canonical schema の認識を誤った。
+- active_operations と analysis note に、DELTA unversioned canonical missing という不正確な evidence を残した。
+- branch / canonical / runtime を分けるべき task で、branch state を十分に確認できていなかった。
+
+root_cause:
+
+- main branch observation と active DELTA feature branch observation を混同した。
+- DELTA が feature branch 上で進んでいることを、schema canonical 判断時の required branch check として扱わなかった。
+- user が示した file name を再確認する前に、main-only observation を強く結論化した。
+
+fix_applied:
+
+- `feature/atlas-pre-delta-foundation` の DELTA config tree を確認した。
+- canonical DELTA schema を修正確認した。
+  - `systems/delta/config/delta_action_schema.yaml`
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `1c332448ef03065150a088d9b2bcfc4bc30f4e50`
+- duplicate versioned file を確認した。
+  - `systems/delta/config/delta_action_schema_v0.6.yaml`
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `1c332448ef03065150a088d9b2bcfc4bc30f4e50`
+- analysis note を修正した。
+  - `notes/08_analysis/2026-05-04_action_schema_canonical_filename_rule.md`
+  - sha: `257f8ff04f69c8f8cd13db55ee7049f9a633fdd2`
+
+remaining_risk:
+
+- `systems/delta/config/delta_action_schema_v0.6.yaml` は duplicate だが、tool route が delete を support せず未削除。
+- active_operations の completed evidence も DELTA branch observation に合わせて修正が必要。
+- configured GPT reflection / runtime-visible schema / actual behavior は別途確認が必要。
+
+recurrence_prevention:
+
+- schema canonical 判断では branch を必ず明示する。
+- main / feature branch / configured GPT / runtime-visible schema を同一視しない。
+- user が具体 file 名を提示した場合、branch search / tree / direct read を先に行う。
+- cleanup delete が tool 非対応の場合、削除済みとして扱わず、manual cleanup または follow-up task に送る。
+
+linked_refs:
+
+- `notes/08_analysis/2026-05-04_action_schema_canonical_filename_rule.md`
+- `notes/04_operations/active_operations.md`
+- `systems/delta/config/delta_action_schema.yaml`
+- `systems/delta/config/delta_action_schema_v0.6.yaml`
+
+next_disposition:
+
+- active_operations の evidence を修正する。
+- duplicate file cleanup は delete support または manual repo cleanup が可能になった時点で実行する。
