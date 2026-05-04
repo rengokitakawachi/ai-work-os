@@ -15,6 +15,7 @@ version_scope:
     - operation_generation_judgment_regression_guard
     - todoist_projection
     - l3_difficulty_estimated_time_recording
+    - recovery_line_calibration_guard
 resources:
   docs: systems/delta/docs
   roadmap: systems/delta/roadmap
@@ -90,6 +91,8 @@ models:
       - gap_status
       - operation_mode
       - recovery_required
+      - survival_line
+      - plan_minimum_line
       - must_line
       - standard_line
       - stretch_line
@@ -109,6 +112,9 @@ models:
       - L3_operations_must_use_real_question_ids
       - vague_L3_targets_are_warning_or_invalid
       - health_insurance_exceptions_must_be_applied
+      - recovery_standard_line_must_match_plan_expected_position
+      - plan_expected_position_must_not_be_only_in_stretch_line
+      - must_line_must_not_be_survival_line_only
 
   OperationGenerationGuard:
     required_daily_operation_fields:
@@ -137,6 +143,35 @@ models:
       - delayed_but_managed
       - delayed_but_recovering
       - recovery_on_track
+    recovery_line_calibration:
+      trigger_gap_status:
+        - delayed_but_recovering
+        - delayed_but_managed
+        - recovery_on_track
+      trigger_operation_mode:
+        - recovery_forward
+        - recovery_required
+        - compression_required
+      rule: standard_line_must_represent_plan_anchor_expected_position_for_that_day
+      constraints:
+        - do_not_place_plan_expected_position_only_in_stretch_line
+        - must_line_should_be_plan_minimum_line_not_survival_line
+        - survival_line_must_be_separate_when_needed
+        - intermediate_safe_line_belongs_to_must_line_or_plan_minimum_line
+        - stretch_line_is_for_delay_recovery_next_day_connection_or_forward_acceleration
+      line_roles:
+        survival_line: zero_prevention_minimum_for_illness_work_or_unexpected_constraints
+        must_line: plan_minimum_line_to_avoid_plan_collapse
+        plan_minimum_line: minimum_required_to_avoid_plan_collapse
+        standard_line: plan_achievement_line_matching_plan_anchor_expected_position
+        stretch_line: delay_recovery_or_next_plan_connection_beyond_daily_target
+      pre_write_validation:
+        - plan_anchor_expected_position_exists
+        - current_position_specific_by_question_id_question_range_or_page_range_next_start_page
+        - recovery_status_standard_line_matches_expected_position
+        - daily_plan_target_not_only_in_stretch_line
+        - must_line_not_merely_survival_line
+      failure_policy: generated_operation_is_incomplete_and_must_be_regenerated_before_write
     L3_operation_target_fields:
       - start_question_id
       - must_end_question_id
@@ -179,6 +214,7 @@ models:
       - confirm_study_time_L1_L2_L3_sokutore
       - confirm_two_layer_judgment_and_next_action_candidates
       - compare_expected_position_and_current_position
+      - validate_recovery_line_calibration_before_operations_write
       - update_active_operations
       - report_history_sha_and_operations_sha
     output_fields:
@@ -188,6 +224,8 @@ models:
       - expected_position
       - gap_status
       - operation_mode
+      - survival_line
+      - plan_minimum_line
       - must_line
       - standard_line
       - stretch_line
@@ -205,6 +243,10 @@ models:
       - tomorrow_questions_read_saved_operations_not_recomputed_by_default
       - actual_performance_records_remain_in_daily_history
       - on_track_requires_plan_alignment_not_only_daily_execution
+      - recovery_standard_line_must_match_plan_anchor_expected_position
+      - plan_expected_position_must_not_be_only_in_stretch_line
+      - must_line_must_not_be_survival_line_only
+      - invalid_recovery_line_calibration_blocks_operations_write
 
   ProgressPosition:
     fields:
@@ -253,8 +295,9 @@ models:
     line_definitions:
       survival_line: zero_prevention_minimum
       plan_minimum_line: minimum_required_to_avoid_plan_collapse
-      standard_line: realistic_delay_reduction_line
-      stretch_line: optional_recovery_acceleration_line
+      must_line: plan_minimum_line_for_user_facing_must_when_delayed
+      standard_line: plan_achievement_line_matching_expected_position_when_recovering
+      stretch_line: optional_recovery_acceleration_or_next_plan_connection
 
   RecommendedLines:
     storage:
@@ -268,6 +311,8 @@ models:
       - expected_position
       - gap_status
       - operation_mode
+      - survival_line
+      - plan_minimum_line
       - must_line
       - standard_line
       - stretch_line
@@ -277,6 +322,10 @@ models:
     daytime_rule:
       default_behavior: recall_saved_lines_without_recompute
       recompute_only_with_trigger: true
+    validation_rules:
+      - recovery_standard_line_matches_plan_anchor_expected_position
+      - plan_target_not_escaped_to_stretch_line
+      - must_line_is_plan_minimum_not_survival_line
 
   LearningHistory:
     storage:
@@ -542,6 +591,7 @@ rules:
     - operations_update_phase_runs_on_day_closure
     - report_both_history_sha_and_operations_sha
     - tomorrow_questions_read_saved_operations
+    - recovery_line_calibration_required_before_operations_write
   judgment:
     - separate_daily_execution_status_and_plan_alignment_status
     - on_track_requires_daily_completion_and_plan_alignment
@@ -552,6 +602,9 @@ rules:
     - compare_precise_units_not_chapter_only
     - mark_uncertain_when_precise_position_missing
     - survival_line_and_plan_minimum_line_are_separate
+    - recovery_standard_line_matches_plan_anchor_expected_position
+    - plan_expected_position_not_placed_only_in_stretch_line
+    - must_line_is_plan_minimum_not_survival_line
   progress_granularity:
     - L1_L2_use_page_range_and_next_start_page
     - L3_uses_question_id_questions_and_next_question
@@ -562,6 +615,9 @@ rules:
     - stored_in_active_operations
     - daytime_recall_does_not_recompute_by_default
     - recompute_requires_trigger
+    - recovery_standard_line_matches_plan_anchor_expected_position
+    - plan_target_not_escaped_to_stretch_line
+    - must_line_is_plan_minimum_not_survival_line
   l3:
     - L3_is_question_number_based
     - L3_operations_must_use_real_question_ids
