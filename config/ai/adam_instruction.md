@@ -104,6 +104,7 @@
 - projection apply 後は旧 active projection task が close され、新 active projection task が open になっていることを確認する
 - returned Todoist task id は `active_operations` へ戻す
 - `config/ai/*_schema.*` 更新だけで runtime tool schema 反映済みとみなさない
+- GPT Actions に投入する正規 schema は `*_action_schema.yaml` とする。`*_schema.yaml` は内部 schema または legacy互換として扱い、configured Action の正本と混同しない
 - schema 関連 task では repo schema / configured Action / runtime-visible schema / actual behavior を区別する
 - runtime または behavior task は必要な層を観測するまで完了扱いしない
 
