@@ -31,6 +31,10 @@ plan_gap:
       study_type: L3
       subject: 国民年金法
       expected_position: 国民年金法 選択問題を完了目標
+    expected_by_2026-05-06:
+      study_type: L3
+      subject: 国民年金法
+      expected_position: 国民年金法 択一 Q1章〜Q2章へ着手
   current_position:
     source_ref: systems/delta/history/daily/2026-05-04.md
     as_of: 2026-05-04
@@ -66,7 +70,7 @@ plan_gap:
     - 秒トレ40問、勉強時間5時間13分を完了
     - GW最低ラインの健康保険法L3完了は達成
     - ただし2026-05-04時点の期待位置である国民年金法L3選択問題の実問題演習には未着手のため、GW標準ラインには遅れが残る
-    - 2026-05-05 は国民年金法L3選択問題 Q15-1 から前進し、選択問題完了へ圧縮する
+    - 2026-05-05 は国民年金法L3選択問題 Q15-1 から前進し、標準ラインでQ15完了まで圧縮する
 
 ## Recommended lines
 
@@ -75,20 +79,20 @@ recommended_lines:
   source_review: systems/delta/history/daily/2026-05-04.md
   plan_anchor: 2026-04-29〜2026-05-06 GW L3集中期間
   current_position: 健康保険法L3新規演習完了。次は国民年金法L3選択問題 Q15-1。秒トレ40問完了。L1国民年金法P212まで、L2国民年金法P158以降未完了
-  expected_position: 2026-05-05時点で国民年金法L3選択問題を完了目標
+  expected_position: 2026-05-05時点で国民年金法L3選択問題を完了目標。2026-05-06時点で国民年金法L3択一Q1章〜Q2章へ着手
   gap_status: delayed_but_recovering
   operation_mode: recovery_forward
   must_line:
     - 秒トレ40問
     - 国民年金法 L3 選択問題 Q15-1から着手
-    - 国民年金法 L3 選択問題を最低3問進める
+    - 国民年金法 L3 選択問題 Q15-1〜Q15-7まで進める
   standard_line:
     - 秒トレ40問
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-7まで進める
-    - 各問について正答数、正誤、理解度評価、実測時間を daily history に記録する
-  stretch_line:
     - 国民年金法 L3 選択問題 Q15-1〜Q15-13完了
-    - 余力があれば国民年金法 L3 択一 Q1-1へ着手
+    - 各問について空欄正答数、正誤、理解度評価、実測時間を daily history に記録する
+  stretch_line:
+    - 国民年金法 L3 択一 Q1-1へ着手
+    - 可能なら国民年金法 L3 択一 Q1章を進める
   next_resume_question_id: Q15-1
   recovery_targets:
     health_insurance_deferred_until_after_first_pass:
@@ -159,13 +163,30 @@ recommended_lines:
     - illness_or_urgent_work_changes_available_time
     - 国民年金法_選択問題_Q15範囲がPDF確認と異なる
     - 国民年金法_選択問題に着手不能
-    - must_line_becomes_impossible
+    - Q15-7到達が困難
+    - Q15-13完了が困難
     - plan_changes
   next_review_checkpoint:
     - 2026-05-05 end-of-day daily review
     - 国民年金法 L3 選択問題 Q15進捗
     - 秒トレ40問完了状況
     - 2026-05-06に択一へ入れるか
+
+## Plan calibration note
+
+calibration_issue:
+  detected_at: 2026-05-04
+  issue: 初回ローリングで、2026-05-05のstandard_lineをQ15-7に置いたため、planの「国民年金法 選択問題を完了目標」と弱く整合していた
+  cause:
+    - must_lineをゼロ回避ラインとして設定した後、standard_lineをplan達成ラインまで引き上げなかった
+    - Day0単体の実行可能性を優先しすぎ、GW全体の標準ライン「国民年金法選択問題完了、国民年金法択一Q2章まで」から逆算する圧力が不足した
+    - delayed_but_recovering状態なのに、standard_lineを回復用ラインではなく安全側ラインとして置いた
+  countermeasure:
+    - delayed_but_recovering / recovery_forward の日は、standard_lineを原則としてplan_anchorの当日期待位置に一致させる
+    - must_lineはゼロ回避ではなくplan_minimum_lineとして置き、survival_lineが必要な場合は別扱いにする
+    - stretch_lineは翌日以降のplan接続、または遅れ回復を明示する
+    - operations更新前に、plan_anchorのexpected_positionとstandard_lineが一致しているか確認する
+  status: corrected_in_this_operations
 
 ---
 
@@ -191,21 +212,21 @@ recommended_lines:
   current_position: 健康保険法L3新規演習完了、国民年金法L3選択問題はQ15-1から未着手
   gap_status: delayed_but_recovering
   start_question_id: Q15-1
-  must_end_question_id: Q15-3
-  standard_end_question_id: Q15-7
-  stretch_end_question_id: Q15-13
+  must_end_question_id: Q15-7
+  standard_end_question_id: Q15-13
+  stretch_end_question_id: Q1章進行
   next_resume_question_id: Q15-1
   must_line:
     - 秒トレ40問
     - 国民年金法 L3 選択問題 Q15-1から着手
-    - Q15-3まで進める
+    - Q15-7まで進める
   standard_line:
     - 秒トレ40問
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-7まで進める
-    - 各問の正答数、理解度評価、実測時間を daily history に記録する
-  stretch_line:
     - 国民年金法 L3 選択問題 Q15-1〜Q15-13完了
-    - 余力があれば国民年金法 L3 択一 Q1-1へ着手
+    - 各問の空欄正答数、理解度評価、実測時間を daily history に記録する
+  stretch_line:
+    - 国民年金法 L3 択一 Q1-1へ着手
+    - 可能なら国民年金法 L3 択一 Q1章を進める
   recovery_targets:
     health_insurance_deferred_until_after_first_pass_complete:
       priority_1_cross:
@@ -251,7 +272,8 @@ recommended_lines:
     - illness_or_urgent_work_changes_available_time
     - 国民年金法_選択問題_Q15範囲がPDF確認と異なる
     - 国民年金法_選択問題に着手不能
-    - must_line_becomes_impossible
+    - Q15-7到達が困難
+    - Q15-13完了が困難
     - plan_changes
   completed_condition:
     - 実施した question_id を daily history 2026-05-05 に記録する
@@ -261,6 +283,7 @@ recommended_lines:
   notes:
     - 健康保険法には戻らず、国民年金法L3選択問題へ進む
     - 国民年金法PDF上、選択式問題はQ15-1から開始する
+    - Q15-7は最低ラインであり、plan適合の標準はQ15-13完了
     - 実績は operations に書かず daily history に書く
 
 - task: 秒トレ40問
@@ -399,6 +422,8 @@ recommended_lines:
 - L3 review priority SSOT is understanding-based review_mark: × → △ → ○ → ◎.
 - Score, correctness, actual_time, and time_delta are supplemental.
 - 1巡目では完璧主義にならず、全範囲を通す。
+- delayed_but_recovering / recovery_forward の standard_line は、原則として plan_anchor の当日 expected_position と一致させる。
+- must_line は plan_minimum_line として置き、ゼロ回避だけの survival_line と混同しない。
 - 健康保険法の×・△回収は国民年金法L3の前進後へ defer する。
 - 健康保険法 Q5 / Q6 は存在しない。
 - 健康保険法 Q8 は演習対象なし。
