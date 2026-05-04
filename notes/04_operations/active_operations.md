@@ -34,6 +34,8 @@ Immediate Gate は7日枠に数えない。
     - この gate は ADAM / EVE runtime behavior の前提 gate
     - DELTA recovery line calibration gate とは別 gate
     - 2026-05-04 daily review 後に user 指摘で追加した post-review correction
+  external:
+    todoist_task_id: 6gX2rrfXcWXCR24q
 
 - gate: DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する
   status: open
@@ -77,7 +79,7 @@ Last review:
 - daily_report: `notes/07_reports/daily/2026-05-04.md`
 - previous_active_sha: `78d5bb1c4aad4cb7c20f90baa88e456fcb57187e`
 - archive_operations_sha: `439a6dc663b6333bc32acce0d12e0e60fe8287f7`
-- todoist_projection_request_id: pending_after_post_review_correction
+- todoist_projection_request_id: `e3689b7c-ae6c-46e5-a77c-761212dc0065`
 
 Daily close result:
 
@@ -87,6 +89,7 @@ Daily close result:
 - DELTA runtime-dependent tasks remain blocked until DELTA Immediate Gate is resolved
 - ADAM / EVE runtime-dependent tasks remain blocked until ADAM / EVE instruction reflection gate is resolved
 - Active rerolled to 2026-05-05 start
+- Todoist projection applied for ADAM / EVE instruction reflection gate
 
 ---
 
