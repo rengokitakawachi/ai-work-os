@@ -8,6 +8,33 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- gate: ADAM / EVE instruction configured GPT reflection を確認する
+  status: open
+  source_ref:
+    - config/ai/adam_instruction.md
+    - config/ai/eve_instruction.md
+    - notes/10_logs/2026-05-04_adam_immediate_gate_judgment_miss.md
+    - notes/07_reports/daily/2026-05-04.md
+  reason:
+    - ADAM instruction repo update は完了したが、configured GPT / runtime reflection は未確認
+    - EVE instruction repo update も完了しているが、configured GPT / runtime reflection は未確認
+    - ADAM / EVE の instruction 変更は以後の controller / task management runtime behavior の前提になる
+    - repo更新だけで configured GPT へ反映済みとは扱えない
+  blocks:
+    - ADAM bug fix log の運用方法を notes に固定する
+    - Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
+    - EVE runtime reflection の最小確認プロンプトと完了条件を整理する
+  completed_condition:
+    - ADAM configured GPT に `config/ai/adam_instruction.md` の最新内容が反映されたことを確認する
+    - ADAM runtime で Immediate Gate 判定 guard が効いていることを最小プロンプトで確認する
+    - EVE configured GPT に `config/ai/eve_instruction.md` の最新内容が反映されたことを確認する
+    - EVE runtime で schema reflection / Todoist task-management scope guard が効いていることを最小プロンプトで確認する
+    - repo instruction 更新を runtime reflection 完了と混同しない
+  notes:
+    - この gate は ADAM / EVE runtime behavior の前提 gate
+    - DELTA recovery line calibration gate とは別 gate
+    - 2026-05-04 daily review 後に user 指摘で追加した post-review correction
+
 - gate: DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する
   status: open
   source_ref:
@@ -45,20 +72,21 @@ Immediate Gate は7日枠に数えない。
 
 Last review:
 
-- type: daily review
+- type: daily review with post-review corrections
 - date: 2026-05-04
 - daily_report: `notes/07_reports/daily/2026-05-04.md`
-- previous_active_sha: `4ded611230fa853cb0c3c9d413a8c46ee1ccc64a`
+- previous_active_sha: `78d5bb1c4aad4cb7c20f90baa88e456fcb57187e`
 - archive_operations_sha: `439a6dc663b6333bc32acce0d12e0e60fe8287f7`
-- todoist_projection_request_id: `19b8ff67-576f-4d0b-81a0-ad0ca909f3a9`
+- todoist_projection_request_id: pending_after_post_review_correction
 
 Daily close result:
 
 - Completed task archived: `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
 - Immediate Gate remains open: `DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する`
-- DELTA runtime-dependent tasks remain blocked until Immediate Gate is resolved
+- New Immediate Gate added after user correction: `ADAM / EVE instruction configured GPT reflection を確認する`
+- DELTA runtime-dependent tasks remain blocked until DELTA Immediate Gate is resolved
+- ADAM / EVE runtime-dependent tasks remain blocked until ADAM / EVE instruction reflection gate is resolved
 - Active rerolled to 2026-05-05 start
-- Todoist projection applied; all existing active projection tasks were updated, no new tasks were created
 
 ---
 
@@ -88,7 +116,7 @@ Daily close result:
 
 ## Day0（05/05 火）
 
-Capacity note: ADAM governance定着2件。合計おおむね2h想定。DELTA runtime-dependent work is blocked by Immediate Gate.
+Capacity note: First resolve Immediate Gates. After ADAM / EVE reflection gate is resolved, continue ADAM governance定着2件。DELTA runtime-dependent work is blocked by DELTA Immediate Gate.
 
 - task: ADAM bug fix log の運用方法を notes に固定する
   source_ref:
@@ -102,6 +130,8 @@ Capacity note: ADAM governance定着2件。合計おおむね2h想定。DELTA ru
   rolling_day: Day0
   due_date: 2026-05-05
   due_type: date
+  blocked_by:
+    - ADAM / EVE instruction configured GPT reflection を確認する
   completed_condition:
     - `adam_bug_fix_log` の役割を `notes/10_logs/README.md` または専用 log 冒頭に明文化する
     - bug / regression / fix entry の追加条件を定義する
@@ -126,6 +156,8 @@ Capacity note: ADAM governance定着2件。合計おおむね2h想定。DELTA ru
   rolling_day: Day0
   due_date: 2026-05-05
   due_type: date
+  blocked_by:
+    - ADAM / EVE instruction configured GPT reflection を確認する
   completed_condition:
     - Phase 0 plan の重点テーマを列挙する
     - issue / intake / design / test system の maturity を同じ基準で比較する
@@ -141,7 +173,7 @@ Capacity note: ADAM governance定着2件。合計おおむね2h想定。DELTA ru
 
 ## Day1（05/06 水）
 
-Capacity note: DELTA runtime-dependent task is blocked until Immediate Gate is resolved. If gate remains open, use this slot for non-DELTA task via next reroll.
+Capacity note: DELTA runtime-dependent task is blocked until DELTA Immediate Gate is resolved. EVE runtime task is blocked until ADAM / EVE instruction reflection gate is resolved. If gates remain open, use this slot for non-runtime-dependent task via next reroll.
 
 - task: DELTA chapter-only normalization fixture を実行する
   source_ref:
@@ -170,6 +202,8 @@ Capacity note: DELTA runtime-dependent task is blocked until Immediate Gate is r
   rolling_day: Day1
   due_date: 2026-05-06
   due_type: date
+  blocked_by:
+    - ADAM / EVE instruction configured GPT reflection を確認する
   completed_condition:
     - EVE runtime で確認すべき instruction / knowledge / schema scope を列挙する
     - 最小確認プロンプトを作る
@@ -179,7 +213,7 @@ Capacity note: DELTA runtime-dependent task is blocked until Immediate Gate is r
 
 ## Day2（05/07 木）
 
-Capacity note: DELTA write resource reflection and Todoist projection profile. Both DELTA tasks are blocked until Immediate Gate is resolved.
+Capacity note: DELTA write resource reflection and Todoist projection profile. Both DELTA tasks are blocked until DELTA Immediate Gate is resolved.
 
 - task: DELTA write resource schema reflection gate を整理する
   source_ref:
