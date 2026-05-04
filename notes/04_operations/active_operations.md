@@ -36,7 +36,8 @@ Immediate Gate は7日枠に数えない。
     - runtime-visible behavior を観測するまで `completed_repo_config_level` を runtime completed と扱わない
   notes:
     - ADAM bug fix log 運用固定や Phase 0 routing maturity matrix は DELTA runtime に依存しないため、この gate では止めない
-    - Todoist projection should be updated after this gate is written back if projection consistency is required
+  external:
+    todoist_task_id: 6gX2mXQwgvhVv79q
 
 ---
 
@@ -52,7 +53,7 @@ Last review:
 - daily_report: `notes/07_reports/daily/2026-05-03.md`
 - weekly_report: `notes/07_reports/weekly/2026-05-03.md`
 - weekly_operations_snapshot: `notes/99_archive/operations/2026-05-03_weekly_operations.md`
-- todoist_projection_request_id: `f3d7959e-eb87-47cd-874c-952f3dc08402`
+- todoist_projection_request_id: `f2490a03-66d7-4053-b8fa-b7901711a3b3`
 
 Rolling result:
 
@@ -61,7 +62,7 @@ Rolling result:
 - `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` を Day1 に昇格した。
 - Current active head remains `ADAM bug fix log の運用方法を notes に固定する` because the preceding Action schema naming task is completed.
 - DELTA runtime-dependent tasks are blocked until the Immediate Gate is resolved.
-- Todoist projection update for the new Immediate Gate is pending.
+- Todoist projection updated for the new Immediate Gate.
 
 Execution update:
 
