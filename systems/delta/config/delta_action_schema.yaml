@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: DELTA Resource API
-  version: "0.6.2"
-  description: Read DELTA resources, write DELTA daily history, and update DELTA active operations via /api/repo-resource.
+  version: "0.6.3"
+  description: Read DELTA resources, write daily history, and update active operations.
 
 servers:
   - url: https://ai-work-os.vercel.app
@@ -121,7 +121,7 @@ components:
       properties:
         file:
           type: string
-          description: Relative path under selected DELTA write root. Use daily/YYYY-MM-DD.md for delta_history or active_operations.md for delta_operations.
+          description: Relative path under the selected DELTA write root.
         content:
           type: string
           description: Full markdown content to create or replace.
@@ -133,7 +133,7 @@ components:
           type: string
         read_evidence:
           type: array
-          description: Required for delta_operations update. Evidence of source files read before generating operations.
+          description: Required for delta_operations update. Include roadmap, plan, active_operations, latest_daily_history, completed_subjects, special_days, and user_capacity evidence.
           items:
             $ref: "#/components/schemas/DeltaReadEvidenceItem"
       required:
@@ -145,7 +145,7 @@ paths:
     get:
       operationId: deltaResourceGet
       summary: Read DELTA files under systems/delta
-      description: Read-only access to DELTA resources. Always set resource=delta. File paths are relative to systems/delta/.
+      description: Read DELTA resources. Use resource=delta. Paths are relative to systems/delta/.
       security:
         - bearerAuth: []
       parameters:
@@ -208,8 +208,8 @@ paths:
 
     post:
       operationId: deltaResourceWrite
-      summary: Write DELTA daily history or active operations
-      description: Use resource=delta_history with action=create/update for history files, or resource=delta_operations with action=update for operations/active_operations.md. For delta_operations update, include read_evidence proving roadmap, plan, active_operations, latest daily history, completed_subjects, special_days, and user_capacity were read.
+      summary: Write DELTA history or operations
+      description: Write daily history or update active_operations.md. Operations updates require read_evidence.
       security:
         - bearerAuth: []
       parameters:
