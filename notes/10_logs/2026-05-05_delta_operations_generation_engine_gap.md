@@ -2,7 +2,7 @@
 
 ## status
 
-partially_fixed_read_evidence_write_path_added_action_schema_import_fixed_backend_runtime_mismatch
+runtime_write_safety_failed_backend_actual_behavior_not_aligned
 
 ## category
 
@@ -40,6 +40,7 @@ Post-fix regressions:
 - DELTA memo identified pre-generation SSOT read / preflight insufficiency as the core failure.
 - DELTA Action schema import failed because `deltaResourceWrite` operation description length was 334, exceeding the 300-character configured GPT limit.
 - Runtime fixture after Action schema update rejected writes, but not via expected `DELTA_OPERATIONS_PREFLIGHT_FAILED`; it returned legacy / alternate content marker validation with `INVALID_REQUEST` and `missing_markers`.
+- Feature-branch fixture with `branch=feature/atlas-pre-delta-foundation` accepted invalid content that reintroduced completed 健康保険法 L3 as D7+ new first-pass work.
 
 ## DELTA request memo findings
 
@@ -72,11 +73,12 @@ DELTA lacked deterministic generation / preflight layers for:
 
 ADAM also failed to keep Action schema operation descriptions within configured GPT import limits during the first read_evidence schema update.
 
-Runtime behavior now shows another root cause:
+Runtime behavior now shows a stronger root cause:
 
 - configured Action schema update alone is insufficient
-- backend actual behavior appears to be running an older / different delta_operations validation path than `feature/atlas-pre-delta-foundation`
-- repo feature branch implementation and deployed runtime behavior are not aligned
+- `branch=feature/atlas-pre-delta-foundation` appears to select the GitHub content target branch, not the deployed backend code branch
+- deployed `/api/repo-resource` actual behavior is not aligned with `feature/atlas-pre-delta-foundation` service implementation
+- feature-branch repo code contains `DELTA_OPERATIONS_PREFLIGHT_FAILED` and completed_scope validators, but runtime write accepted invalid content
 
 ## fix_applied
 
@@ -118,20 +120,9 @@ Action schema updated for read_evidence, then fixed for import limit:
 - version: `0.6.3`
 - user reported configured GPT Action schema updated successfully
 
-## runtime fixture result
+## runtime fixture results
 
-Fixture 1: `delta_operations` update without `read_evidence`
-
-Input:
-
-```json
-{
-  "resource": "delta_operations",
-  "action": "update",
-  "file": "active_operations.md",
-  "content": "# fixture invalid content\n\nThis is an intentionally invalid runtime fixture for preflight rejection.\n"
-}
-```
+### Fixture 1A: `delta_operations` update without `read_evidence` on main/default runtime
 
 Observed:
 
@@ -165,11 +156,58 @@ details.errors:
 Judgment:
 
 ```yaml
-fixture_1:
+fixture_1A:
   write_rejection: pass
   expected_error_code: fail
   read_evidence_validator_observed: fail
   overall: partial_pass_backend_runtime_mismatch
+```
+
+### Fixture 1B: feature branch invalid completed_scope fixture
+
+Condition:
+
+```yaml
+branch: feature/atlas-pre-delta-foundation
+read_evidence: present
+invalid_content: 健康保険法L3を2026-05-04完了後にD7以降の新規first-passとして再投入
+```
+
+Expected:
+
+```yaml
+write: rejected
+error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+details.errors:
+  - completed_health_insurance_L3_reintroduced_as_new_work
+```
+
+Observed:
+
+```yaml
+write: accepted
+status: UPDATED
+sha_after_invalid_write: 017a2248bcd914216e55c9b0929fbec54200596e
+request_id: 1370040c-a18c-4821-a61e-a79c0b2711a7
+```
+
+Recovery:
+
+```yaml
+restored: true
+restored_sha: af62696214acfcf8817728ee9f97ae24e39c0011
+request_id: f7e83759-2798-4894-bcb7-23acb652693b
+read_back_confirmed: true
+```
+
+Judgment:
+
+```yaml
+fixture_1B:
+  expected_reject: fail
+  invalid_write_accepted: true
+  restoration_completed: true
+  overall: fail_write_safety_regression
 ```
 
 ## implemented preflight checks in feature branch
@@ -203,10 +241,12 @@ write_allowed: false
 ## remaining_risk
 
 - deterministic generator service is not implemented yet
-- configured GPT reflection for Action schema appears updated, but backend runtime actual behavior is not aligned with feature branch implementation
+- configured GPT Action schema appears updated, but backend actual behavior is not aligned with feature branch implementation
+- `branch` parameter does not prove backend code branch; it appears to select content target branch only
 - supplemental schema has not been merged into canonical `delta_schema.yaml`
 - read_evidence is supported in repo/API/schema code on feature branch, but actual runtime path has not observed it
-- service preflight can prove submitted metadata only after runtime backend deploy / branch alignment
+- service preflight can prove submitted metadata only after runtime backend deploy / route alignment
+- write safety is currently not guaranteed for semantically invalid but structurally marker-compatible operations content
 
 ## recurrence_prevention
 
@@ -219,6 +259,7 @@ write_allowed: false
 - detailed rules belong in supplemental schema / design note; instruction stays under 8000 characters
 - Action schema operation descriptions must stay under configured GPT import limits, currently observed as 300 characters for operation description
 - Runtime fixture must distinguish configured Action schema reflection from deployed backend actual behavior
+- Never use branch parameter success as evidence that backend service code is running that branch
 
 ## linked_refs
 
@@ -234,9 +275,15 @@ write_allowed: false
 
 ## next_disposition
 
-- Confirm which branch / deployment currently serves `/api/repo-resource`
-- Align deployed backend with `feature/atlas-pre-delta-foundation` or merge/deploy required delta_operations changes
-- Re-run Fixture 1 after backend alignment and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
-- Run runtime fixture with invalid completed health insurance reintroduction and expect reject
-- Add deterministic generator service implementation as follow-up active task
-- Merge supplemental schema into canonical `delta_schema.yaml` when safe
+Immediate blocker:
+
+- confirm deployed `/api/repo-resource` source / branch / deployment version
+- deploy or merge `feature/atlas-pre-delta-foundation` backend changes so actual runtime includes read_evidence and completed_scope validators
+- add a lightweight backend version / validator marker endpoint or response marker so runtime can prove validator version
+
+After backend alignment:
+
+- re-run Fixture 1A and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED` for missing read_evidence
+- re-run Fixture 1B and expect `completed_health_insurance_L3_reintroduced_as_new_work`
+- run L1/L2 continuity fixture and L3 order fixture
+- only then continue deterministic generator service implementation
