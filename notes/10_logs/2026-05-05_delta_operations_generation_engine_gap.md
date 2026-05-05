@@ -2,7 +2,7 @@
 
 ## status
 
-partially_fixed_repo_level_service_preflight_done_generator_pending
+partially_fixed_repo_level_service_preflight_done_generator_pending_instruction_compressed
 
 ## category
 
@@ -33,11 +33,17 @@ Observed failures:
 - D0-D6 did not connect to D7-target Next operations
 - user_capacity, special_days, annual leave, and L3 unavailable days were not automatically reflected
 
+Post-fix regression:
+
+- ADAM initially expanded `systems/delta/config/delta_instruction.md` to content_length 12747, exceeding the configured GPT instruction limit of 8000 characters.
+
 ## impact
 
 DELTA could output a locally plausible short plan while leaving impossible load later.
 
 Daily review could appear complete while operations generation remained structurally incomplete.
+
+The oversized instruction could not be reflected into configured GPT, blocking runtime adoption of the fix.
 
 ## root_cause
 
@@ -52,18 +58,14 @@ DELTA had rules for daily operations shape and recovery line calibration, but la
 - user_capacity_profile
 - operations_write_preflight_check
 
+ADAM also failed to apply instruction-size discipline during the first fix. Detailed implementation rules were placed into instruction instead of being split between core instruction and supplemental schema / design note.
+
 ## fix_applied
 
 Created design note:
 
 - `notes/02_design/2026-05-05_delta_operations_generation_engine.md`
 - sha: `a1704bd0cbdedac10f11f55fd6e0a493291452b8`
-
-Updated DELTA instruction:
-
-- `systems/delta/config/delta_instruction.md`
-- branch: `feature/atlas-pre-delta-foundation`
-- sha: `09e7c2af7499688ed0b2bff5a82ab7bd5cb87e0f`
 
 Created supplemental schema:
 
@@ -86,6 +88,13 @@ Preflight now checks:
 - forbidden vague target terms are rejected in task / line targets
 - high load is returned as warning
 
+Compressed DELTA instruction under the 8000-character limit:
+
+- `systems/delta/config/delta_instruction.md`
+- branch: `feature/atlas-pre-delta-foundation`
+- sha: `66635dffaa60f56090380043da8b9d8dc1e4d95d`
+- content_length: `6535`
+
 ## remaining_risk
 
 The deterministic generator service is not fully implemented yet.
@@ -94,6 +103,8 @@ Current code prevents incomplete operations write, but it does not yet autonomou
 
 Configured GPT reflection and runtime fixture are still pending.
 
+Supplemental schema has not yet been safely merged into canonical `delta_schema.yaml`.
+
 ## recurrence_prevention
 
 - Do not treat prompt guidance as sufficient when deterministic structure can be validated.
@@ -101,6 +112,8 @@ Configured GPT reflection and runtime fixture are still pending.
 - D7-target next operations must exist when a medium target exists.
 - Vague targets must be rejected before write.
 - Overload must be redistributed or marked compression_required / critical_delay.
+- Keep configured GPT instruction under 8000 characters.
+- Put detailed generation rules into supplemental schema / design note, and keep instruction to core always-on guards.
 
 ## linked_refs
 
