@@ -32,39 +32,52 @@ Immediate Gate は7日枠に数えない。
     - repo instruction 更新を runtime reflection 完了と混同しない
   notes:
     - この gate は ADAM / EVE runtime behavior の前提 gate
-    - DELTA recovery line calibration gate とは別 gate
+    - DELTA operations generation gate とは別 gate
     - 2026-05-04 daily review 後に user 指摘で追加した post-review correction
   external:
     todoist_task_id: 6gX2rrfXcWXCR24q
 
-- gate: DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する
+- gate: DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
   status: open
   source_ref:
     - systems/delta/config/delta_instruction.md
     - systems/delta/config/delta_schema.yaml
+    - systems/delta/config/delta_operations_generation_schema.yaml
     - systems/delta/operations/active_operations.md
-    - notes/08_analysis/2026-05-04_delta_recovery_line_calibration_fix.md
-    - notes/10_logs/adam_bug_fix_log.md
+    - systems/delta/history/daily/2026-05-04.md
+    - notes/02_design/2026-05-05_delta_operations_generation_engine.md
+    - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
+    - src/services/delta-operations.js
   reason:
     - DELTA recovery line calibration fix は repo config / instruction / schema level では完了した
+    - DELTA operations generation engine の detailed rules は supplemental schema へ追加済み
     - configured GPT reflection / runtime-visible behavior は未確認
+    - 直近 fixture は形式上は整っていたが、健康保険法L3完了済み scope を新規計画に戻したため plan-fit FAIL
     - DELTA の daily review / operations generation / runtime-dependent fixture の前提になる
-    - Day2 の通常 task に置くと、Day1 の DELTA chapter-only normalization fixture や以降の DELTA runtime task が未反映 instruction のまま進むリスクがある
   blocks:
     - DELTA chapter-only normalization fixture を実行する
     - DELTA write resource schema reflection gate を整理する
     - DELTA Todoist projection profile を設計・実装する
     - DELTA Todoist dry_run / apply / write-back fixture を実行する
   completed_condition:
-    - DELTA configured GPT に `delta_instruction.md` / `delta_schema.yaml` の recovery line calibration fix が反映されたことを確認する
-    - DELTA runtime で recovery case fixture を実行する
-    - fixture で `gap_status: delayed_but_recovering` かつ `operation_mode: recovery_forward` を使う
-    - standard_line が plan_anchor.expected_position / 当日 plan target と一致することを確認する
-    - plan target が stretch_line のみに逃げていないことを確認する
-    - must_line が survival_line ではなく plan_minimum_line になっていることを確認する
+    - DELTA configured GPT に `delta_instruction.md` / `delta_schema.yaml` / `delta_operations_generation_schema.yaml` の最新内容が反映されたことを確認する
+    - DELTA runtime で operations generation fixture を再実行する
+    - fixture で D0〜D6 がすべて存在することを確認する
+    - fixture で D7〜target_date の Next operations が存在することを確認する
+    - fixture で L1/L2 がページ範囲とページ数を持つことを確認する
+    - fixture で L3 が問題番号範囲と問題数を持つことを確認する
+    - fixture で曖昧語が task / must_line / standard_line / stretch_line に出ないことを確認する
+    - fixture で `gap_status: delayed_but_recovering` かつ `operation_mode: recovery_forward` の standard_line が plan expected_position と一致することを確認する
+    - fixture で plan target が stretch_line のみに逃げないことを確認する
+    - fixture で must_line が survival_line ではなく plan_minimum_line になっていることを確認する
+    - fixture で completed_scope exclusion を確認する
+    - 具体的には、2026-05-04 時点で新規演習完了扱いの 健康保険法L3 が新規 first-pass operations として再登場しないことを確認する
+    - 健康保険法が出る場合は recovery_targets / deferred review / second-pass として明示されることを確認する
+    - 6/26 L3不可、6/30 L3可、user_capacity、load_realism_guard が反映されることを確認する
     - runtime-visible behavior を観測するまで `completed_repo_config_level` を runtime completed と扱わない
   notes:
-    - ADAM bug fix log 運用固定や Phase 0 routing maturity matrix は DELTA runtime に依存しないため、この gate では止めない
+    - 旧名: DELTA recovery line calibration configured GPT reflection / runtime fixture
+    - controller fixture の形式PASSだけでは完了しない。plan-fit / completed_scope exclusion まで見る
   external:
     todoist_task_id: 6gX2mXQwgvhVv79q
 
@@ -84,12 +97,12 @@ Last review:
 Daily close result:
 
 - Completed task archived: `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
-- Immediate Gate remains open: `DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する`
-- New Immediate Gate added after user correction: `ADAM / EVE instruction configured GPT reflection を確認する`
+- Immediate Gate remains open: `ADAM / EVE instruction configured GPT reflection を確認する`
+- DELTA Immediate Gate broadened to operations generation engine reflection / runtime fixture
 - DELTA runtime-dependent tasks remain blocked until DELTA Immediate Gate is resolved
 - ADAM / EVE runtime-dependent tasks remain blocked until ADAM / EVE instruction reflection gate is resolved
 - Active rerolled to 2026-05-05 start
-- Todoist projection applied for ADAM / EVE instruction reflection gate
+- Todoist projection needs update after gate rename / completed_condition expansion
 
 ---
 
@@ -188,7 +201,7 @@ Capacity note: DELTA runtime-dependent task is blocked until DELTA Immediate Gat
   due_date: 2026-05-06
   due_type: date
   blocked_by:
-    - DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する
+    - DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
   completed_condition:
     - `健康保険法の3章が終わった` ケースで、L3なら question_id への正規化または uncertainty が必要と判断する
     - `国民年金法7章が終わった` ケースで、L1/L2なら page_range / next_start_page が必要と判断する
@@ -223,26 +236,25 @@ Capacity note: DELTA write resource reflection and Todoist projection profile. B
     - systems/delta/config/delta_action_schema.yaml
     - systems/delta/config/delta_schema.yaml
     - systems/delta/config/delta_instruction.md
+    - systems/delta/config/delta_operations_generation_schema.yaml
     - systems/delta/operations/active_operations.md
-    - notes/08_analysis/2026-05-04_delta_recovery_line_calibration_fix.md
-    - notes/10_logs/adam_bug_fix_log.md
+    - notes/02_design/2026-05-05_delta_operations_generation_engine.md
+    - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
     - api/repo-resource.js
     - src/services/delta-operations.js
   rolling_day: Day2
   due_date: 2026-05-07
   due_type: date
   blocked_by:
-    - DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する
+    - DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
   completed_condition:
     - delta_history / delta_operations の repo実装、Action schema、runtime-visible schema、actual behavior を層別に整理する
     - deltaResourceWrite の configured Action reflection を確認する
     - runtime未確認を完了扱いしない
     - runtime backend validation markers と feature branch service code の差分有無を整理する
     - duplicate `systems/delta/config/delta_action_schema_v0.6.yaml` の削除可否を確認する
-    - DELTA recovery line calibration fix の configured GPT reflection を確認する
-    - DELTA runtime で recovery case fixture を実行し、standard_line が plan_anchor.expected_position と一致することを確認する
-    - fixture では delayed_but_recovering + recovery_forward のケースで、plan target が stretch_line のみに逃げないことを確認する
-    - fixture では must_line が survival_line ではなく plan_minimum_line になっていることを確認する
+    - operations generation engine の configured GPT reflection を確認する
+    - completed_scope_exclusion_validator を canonical schema / supplemental schema / runtime fixture のどこで担保するか整理する
     - runtime-visible behavior を観測するまで、`completed_repo_config_level` を runtime completed と混同しない
   external:
     todoist_task_id: 6gWVwp3j8jW25jPH
@@ -257,7 +269,7 @@ Capacity note: DELTA write resource reflection and Todoist projection profile. B
   due_date: 2026-05-07
   due_type: date
   blocked_by:
-    - DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する
+    - DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
   completed_condition:
     - projection profile `delta` の設計を固める
     - ADAM projection を壊さない形で service / schema 反映方針を決める
@@ -278,7 +290,7 @@ Capacity note: DELTA write resource reflection and Todoist projection profile. B
   due_type: date
   blocked_by:
     - DELTA Todoist projection profile を設計・実装する
-    - DELTA recovery line calibration configured GPT reflection / runtime fixture を確認する
+    - DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
   completed_condition:
     - DELTA operations → Todoist dry_run が DELTA ref / recommended_lines を含む payload を返す
     - apply が必要な場合は previous/current を必ず用意する
@@ -393,7 +405,7 @@ Capacity note: Sunday is kept for light routing / next reroll confirmation and r
 - 実行は上から順に行う
 - Immediate Gate が未完了の場合、その gate に blocked される active task を実行しない
 - Immediate Gate は通常 Day 枠に数えない
-- active の7日構造より、実行可能性と blocker 解消を優先する
+- active の7日構造より、実行可能性と blocker解消を優先する
 - 後続 task を実行不能にする前提作業は通常 Day枠ではなく Immediate Gate として先頭に置く
 - Day は仮配置であり固定日付ではない
 - active_operations の各 task は task / source_ref / rolling_day を必須で持つ
