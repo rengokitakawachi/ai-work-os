@@ -2,7 +2,7 @@
 
 ## status
 
-partially_fixed_read_evidence_write_path_added_action_schema_import_fixed_generator_pending_runtime_pending
+partially_fixed_read_evidence_write_path_added_action_schema_import_fixed_backend_runtime_mismatch
 
 ## category
 
@@ -39,6 +39,7 @@ Post-fix regressions:
 - A later controller fixture looked structurally valid but reintroduced completed 健康保険法 L3.
 - DELTA memo identified pre-generation SSOT read / preflight insufficiency as the core failure.
 - DELTA Action schema import failed because `deltaResourceWrite` operation description length was 334, exceeding the 300-character configured GPT limit.
+- Runtime fixture after Action schema update rejected writes, but not via expected `DELTA_OPERATIONS_PREFLIGHT_FAILED`; it returned legacy / alternate content marker validation with `INVALID_REQUEST` and `missing_markers`.
 
 ## DELTA request memo findings
 
@@ -71,6 +72,12 @@ DELTA lacked deterministic generation / preflight layers for:
 
 ADAM also failed to keep Action schema operation descriptions within configured GPT import limits during the first read_evidence schema update.
 
+Runtime behavior now shows another root cause:
+
+- configured Action schema update alone is insufficient
+- backend actual behavior appears to be running an older / different delta_operations validation path than `feature/atlas-pre-delta-foundation`
+- repo feature branch implementation and deployed runtime behavior are not aligned
+
 ## fix_applied
 
 Design note:
@@ -91,13 +98,13 @@ DELTA instruction compressed:
 - sha: `66635dffaa60f56090380043da8b9d8dc1e4d95d`
 - content_length: `6535`
 
-Service preflight strengthened:
+Service preflight strengthened in feature branch:
 
 - `src/services/delta-operations.js`
 - branch: `feature/atlas-pre-delta-foundation`
 - sha: `3c12c808dc0b6856f53c5284f8e19606af5a0a76`
 
-API write path updated:
+API write path updated in feature branch:
 
 - `api/repo-resource.js`
 - branch: `feature/atlas-pre-delta-foundation`
@@ -109,9 +116,63 @@ Action schema updated for read_evidence, then fixed for import limit:
 - branch: `feature/atlas-pre-delta-foundation`
 - latest sha: `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
 - version: `0.6.3`
-- `deltaResourceWrite` description shortened to: `Write daily history or update active_operations.md. Operations updates require read_evidence.`
+- user reported configured GPT Action schema updated successfully
 
-## implemented preflight checks
+## runtime fixture result
+
+Fixture 1: `delta_operations` update without `read_evidence`
+
+Input:
+
+```json
+{
+  "resource": "delta_operations",
+  "action": "update",
+  "file": "active_operations.md",
+  "content": "# fixture invalid content\n\nThis is an intentionally invalid runtime fixture for preflight rejection.\n"
+}
+```
+
+Observed:
+
+```yaml
+write: rejected
+error.code: INVALID_REQUEST
+error.message: delta_operations content failed validation
+details.missing_markers:
+  - "# delta active_operations"
+  - "## Day0"
+  - "## Rules"
+  - "Delta operations are learning execution order, not calendar schedule."
+  - "Daily review updates learning history and next operations."
+```
+
+Expected:
+
+```yaml
+write: rejected
+error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+details.errors:
+  - missing_read_evidence_role:roadmap
+  - missing_read_evidence_role:plan
+  - missing_read_evidence_role:active_operations
+  - missing_read_evidence_role:latest_daily_history
+  - missing_read_evidence_role:completed_subjects
+  - missing_read_evidence_role:special_days
+  - missing_read_evidence_role:user_capacity
+```
+
+Judgment:
+
+```yaml
+fixture_1:
+  write_rejection: pass
+  expected_error_code: fail
+  read_evidence_validator_observed: fail
+  overall: partial_pass_backend_runtime_mismatch
+```
+
+## implemented preflight checks in feature branch
 
 - D0-D6 exist
 - required day fields exist
@@ -142,10 +203,10 @@ write_allowed: false
 ## remaining_risk
 
 - deterministic generator service is not implemented yet
-- configured GPT reflection and runtime-visible schema are pending
+- configured GPT reflection for Action schema appears updated, but backend runtime actual behavior is not aligned with feature branch implementation
 - supplemental schema has not been merged into canonical `delta_schema.yaml`
-- read_evidence is now supported in repo/API/schema code, but actual runtime Action reflection must be confirmed
-- service preflight can prove submitted metadata; it still cannot prove source contents were semantically used correctly without a generator service or richer source snapshots
+- read_evidence is supported in repo/API/schema code on feature branch, but actual runtime path has not observed it
+- service preflight can prove submitted metadata only after runtime backend deploy / branch alignment
 
 ## recurrence_prevention
 
@@ -157,6 +218,7 @@ write_allowed: false
 - write path should carry read_evidence, not rely only on content inference
 - detailed rules belong in supplemental schema / design note; instruction stays under 8000 characters
 - Action schema operation descriptions must stay under configured GPT import limits, currently observed as 300 characters for operation description
+- Runtime fixture must distinguish configured Action schema reflection from deployed backend actual behavior
 
 ## linked_refs
 
@@ -172,9 +234,9 @@ write_allowed: false
 
 ## next_disposition
 
-- Re-import configured GPT Action schema with `delta_action_schema.yaml` sha `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
-- Confirm configured GPT Action reflection for `read_evidence`
-- Run runtime fixture with missing read_evidence and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
+- Confirm which branch / deployment currently serves `/api/repo-resource`
+- Align deployed backend with `feature/atlas-pre-delta-foundation` or merge/deploy required delta_operations changes
+- Re-run Fixture 1 after backend alignment and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
 - Run runtime fixture with invalid completed health insurance reintroduction and expect reject
 - Add deterministic generator service implementation as follow-up active task
 - Merge supplemental schema into canonical `delta_schema.yaml` when safe
