@@ -132,6 +132,20 @@ function requireContent(value, context) {
   return value;
 }
 
+function normalizeReadEvidence(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item) => item && typeof item === 'object')
+    .map((item) => ({
+      file: ensureString(item.file),
+      path: ensureString(item.path),
+      sha: ensureString(item.sha),
+      role: ensureString(item.role),
+      source: ensureString(item.source),
+    }))
+    .filter((item) => item.file || item.path || item.role || item.source);
+}
+
 function validateGet(resource, action, query) {
   normalizeBranch(query.branch, {
     step: 'validateGet',
@@ -207,6 +221,7 @@ function validatePost(resource, action, body) {
     }
     requireFile(body?.file, { step: 'validatePost', resource, action });
     requireContent(body?.content, { step: 'validatePost', resource, action });
+    normalizeReadEvidence(body?.read_evidence);
     return;
   }
 
@@ -252,7 +267,10 @@ async function dispatchPost(resource, action, body) {
 
   const file = requireFile(body?.file, { step: 'dispatchPost', resource, action });
   const sha = ensureString(body?.sha);
-  const options = { branch: ensureString(body?.branch) };
+  const options = {
+    branch: ensureString(body?.branch),
+    read_evidence: normalizeReadEvidence(body?.read_evidence),
+  };
 
   if (resource === 'notes') {
     if (action === 'create') return createNote(file, requireContent(body?.content, { step: 'dispatchPost', resource, action }), message, options);
@@ -288,7 +306,7 @@ function normalizeError(error, context = {}) {
         category: error?.category || 'internal',
         step: error?.step || 'unknown',
         resource: error?.resource || context.resource || '',
-        action: error?.action || context.action || '',
+        action: error?.action || '',
         status: error?.status || 500,
         retryable: Boolean(error?.retryable),
         details: error?.details || {},
