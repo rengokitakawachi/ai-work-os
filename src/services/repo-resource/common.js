@@ -322,6 +322,15 @@ export function isAllowedCodePath(path) {
     return false;
   }
 
+  if (
+    safe.includes('..') ||
+    safe.startsWith('/') ||
+    safe.startsWith('\\') ||
+    safe.includes('\\')
+  ) {
+    return false;
+  }
+
   if (safe.startsWith('docs/') || safe.startsWith('notes/')) {
     return false;
   }
