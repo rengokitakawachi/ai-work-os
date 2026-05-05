@@ -8,6 +8,24 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
+## 再評価結果（2026-05-05 handover latest detection failure）
+
+Thread restart revealed an actual handover discovery failure.
+
+ADAM could not reliably identify the latest handover from `notes/06_handover/` and required the user to provide the exact path:
+
+```text
+notes/06_handover/2026-05-05_delta_generator_test_and_runtime_reflection_handover.md
+```
+
+This confirms `handover latest index と月別フォルダ構成を導入する` is not only cleanup. It is a restart reliability bug fix.
+
+Bug log:
+
+- `notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md`
+
+---
+
 ## 再評価結果（2026-05-05 DELTA reverse-planning correction）
 
 User clarification confirmed that DELTA's original defect is not merely test failure or unsafe write behavior.
@@ -280,21 +298,26 @@ completed_condition:
 source_ref:
 
 - notes/02_design/2026-05-03_handover_restart_flow_design.md
+- notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md
 - notes/99_archive/issues/2026-05-03_individual_issue_files_routing_archive.md
 - notes/06_handover/handover_template.md
 - notes/06_handover/2026-05-03_delta_v0_6_readiness_handover.md
+- notes/06_handover/2026-05-05_delta_generator_test_and_runtime_reflection_handover.md
 - notes/04_operations/active_operations.md
 
 why_next:
 
 - `notes/06_handover/` 直下の一覧取得がレスポンス過大で失敗した
 - latest handover の特定を history / search / direct guess に依存すると再開手順が不安定になる
+- 2026-05-05 restart で ADAM は latest handover を自力特定できず、user が exact path を提示する必要があった
 - handover は restart entry point であり、latest pointer により小さい read で再開起点へ到達できるようにする必要がある
 - ただし current active task ではないため、active に横入りさせず next に置く
 
 completed_condition:
 
 - `notes/06_handover/latest.md` の形式を決める
+- `notes/06_handover/latest.md` を作成する
+- latest pointer が `notes/06_handover/2026-05-05_delta_generator_test_and_runtime_reflection_handover.md` または最新 handover を指すことを確認する
 - `notes/06_handover/YYYY/MM/` 構成を採用するか判断する
 - 既存 handover の移動方針を決める
 - `handover_index.md` が必要か判断する
