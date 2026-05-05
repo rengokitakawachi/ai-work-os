@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_1C_L3_order_pass_positive_fixture_pending
+runtime_preflight_fixtures_pass_generator_service_pending
 
 ## category
 
@@ -28,15 +28,16 @@ Confirmed PASS:
 - Fixture 1B: completed 健康保険法 L3 first-pass reintroduction is rejected
 - Fixture 1C: incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 skip is rejected
 - L3 order fixture: 国民年金法 L3 択一 before 選択 completion is rejected
+- Positive valid-write fixture: valid / safe operations content is accepted
 
-Current basis operations SHA:
+Current operations SHA after positive fixture:
 
-- `ff588298afd147452493902b05a9670aa7224233`
-- This replaces old basis SHA `b5514dedebc187c51d36e7d6609e5c2416d2eb3f` because the old basis content is invalid under the current L3 order guard.
+- `ef4bc3ab2ba482a6b6ca056684fc9d298689ef5b`
+- Previous safe basis SHA was `ff588298afd147452493902b05a9670aa7224233`.
+- Positive fixture content was valid and accepted, so this SHA is not treated as contaminated.
 
 Pending:
 
-- positive valid-write fixture
 - deterministic generator service implementation
 
 ## root_cause
@@ -212,11 +213,40 @@ sha_after: ff588298afd147452493902b05a9670aa7224233
 judgment: pass
 ```
 
+### Positive valid-write fixture
+
+```yaml
+write: accepted
+status: UPDATED
+request_id: 34af66cd-5160-401b-a1e0-0d80be6d681f
+sha_before: ff588298afd147452493902b05a9670aa7224233
+sha_after: ef4bc3ab2ba482a6b6ca056684fc9d298689ef5b
+preflight:
+  ok: true
+  errors: []
+  warnings: []
+  validator_version: delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix
+judgment: pass
+```
+
+## final preflight fixture judgment
+
+```yaml
+negative_fixtures:
+  fixture_1A_missing_read_evidence: pass
+  fixture_1B_completed_scope_reintroduction: pass
+  fixture_1C_L1_L2_continuity: pass
+  L3_order_takuitsu_before_selected: pass
+positive_fixture:
+  valid_safe_operations_write: pass
+overall_runtime_preflight: pass
+```
+
 ## remaining_risk
 
-- positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
-- original basis SHA `b5514...` is invalid under current L3 order guard; current basis SHA is `ff588...`
+- preflight validates submitted operations content; it does not yet deterministically generate D0-D6 / Next operations from roadmap / plan / current_position
+- original basis SHA `b5514...` is invalid under current L3 order guard; current operations SHA is `ef4bc3...`
 
 ## recurrence_prevention
 
@@ -248,11 +278,6 @@ judgment: pass
 
 Immediate:
 
-- run positive valid-write fixture using safe operations content
-- confirm validator_version `delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix`
-- confirm write success only for valid, plan-consistent content
-- restore to basis SHA/content if the positive fixture writes a disposable test change
-
-After positive fixture PASS:
-
-- add deterministic generator service implementation as follow-up active task
+- add deterministic generator service implementation as follow-up active / next task through operations rolling
+- generator must create D0-D6 Active operations and D7-target Next operations from roadmap / plan / current_position / completed_subjects / special_days / user_capacity
+- generator output must pass the now-confirmed runtime preflight
