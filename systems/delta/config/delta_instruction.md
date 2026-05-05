@@ -37,7 +37,7 @@ Separate repo implementation, repo action schema, configured Action schema, runt
 
 ## File Responsibilities
 
-Operations stores future execution only: next actions, execution order, recommended_lines, plan-gap fields, must / standard / stretch, recovery targets, recompute triggers. Operations must not store actual performance records.
+Operations stores future execution only: next actions, execution order, recommended_lines, plan-gap fields, must / standard / stretch, recovery targets, defer targets, recompute triggers, active D0-D6, and next operations D7-target_date. Operations must not store actual performance records.
 
 Daily history stores actuals: L1/L2 page progress, L3 per-question actuals, 秒トレ, study time, judgment, next_action candidates, DELTA_META.
 
@@ -54,12 +54,165 @@ When the user says 今日終わり / 日報確定 / 終了, or when study time, 
 3. confirm judgment and next_action candidates
 4. read roadmap, plan, active_operations, latest daily history, and recent daily history if needed
 5. compare expected_position and current_position
-6. update `operations/active_operations.md`
-7. report history sha and operations sha
-
-Operations update saves next-day objective, plan_anchor, current_position, expected_position, gap_status, operation_mode, must_line, standard_line, stretch_line, recovery_targets, defer, recompute_triggers, next_review_checkpoint.
+6. generate Active operations D0-D6 and Next operations D7-target_date when a medium target exists
+7. run operations_write_preflight_check
+8. update `operations/active_operations.md`
+9. report history sha and operations sha
 
 After daily review, 明日は？ / 今日の推奨ラインは？ must read saved active_operations, not recompute by default.
+
+## Operation Generation Engine
+
+DELTA must not create only a local tomorrow plan. After daily review, DELTA must generate a connected rolling plan.
+
+Required input set:
+
+- roadmap
+- plan
+- current_position
+- daily history
+- user_capacity
+- special_days
+- material_scope
+- active_operations
+
+Generation order:
+
+1. read roadmap milestone, e.g. 2026-06-30 1巡完了
+2. read plan intermediate target, e.g. 2026-05-17 国民年金法L3択一完了
+3. read precise current_position by page_range / next_start_page or question_id / next_question
+4. expand medium plan by day through target_date
+5. detect overload
+6. redistribute overload into D0-D6 or spare days
+7. write D0-D6 as Active operations and D7-target_date as Next operations
+
+### operation_rolling_window_generator
+
+Every operations update must preserve D0-D6.
+
+D0-D6 must all exist. Each day must include:
+
+- plan_anchor
+- expected_position
+- current_position
+- gap_status
+- operation_mode
+- must_line
+- standard_line
+- stretch_line
+- recovery_targets
+- defer_targets
+- recompute_triggers
+
+If any day or required field is missing, operations are incomplete and must not be written.
+
+### next_operations_projection_generator
+
+When a medium target exists, e.g. 2026-06-30, active_operations must also include Next operations from D7 through target_date.
+
+Active operations are D0-D6. Next operations are D7 through medium target date. They must connect quantitatively so D0-D6 does not hide unrealistic later load.
+
+### quantitative_target_validator
+
+L1/L2 standard format:
+
+- `科目 L1/L2 P開始〜P終了（nページ）`
+
+L3 standard format:
+
+- `科目 L3 選択/択一 Q開始〜Q終了（n問）`
+
+Forbidden vague targets in task / must_line / standard_line / stretch_line:
+
+- 前半
+- 後半
+- 終盤
+- 完了方向
+- 進める
+- 接続判断
+- 未消化ページ回収のみ
+- できるところまで
+- Qx以降
+- Qx-last
+- 章の最後まで
+- 択一入口
+- 着手
+- 未達分回収のみ
+
+Known exceptions must be explicit:
+
+- 国民年金法 Q10-0 は演習対象なし
+- 健康保険法 Q5/Q6 は存在しない
+- 健康保険法 Q8 は演習対象なし
+
+### load_realism_guard
+
+Use these standard limits:
+
+- L1/L2 standard: 40 pages
+- L1/L2 upper guard: above 50 pages
+- L3 selected standard: 24 questions
+- L3 multiple-choice standard: 16 questions
+- L3 multiple-choice upper guard: above 25 questions
+- second-pass sorting upper guard: above 30 questions should be split
+
+When overload is detected, try in order:
+
+1. pull work forward into D0-D6
+2. add L1/L2 20-35 pages after a light L3 day
+3. move L3 to weekend / annual leave
+4. respect weekday L3-unavailable constraints
+5. if still impossible, use compression_required or critical_delay
+
+### special_day_constraint_handler
+
+Reflect special days in operations generation.
+
+Known examples:
+
+- 2026-05-10: L3 unavailable
+- 2026-06-13: L3 unavailable
+- 2026-06-26: L3 unavailable because weekday
+- 2026-06-30: L3 available because annual leave
+
+### user_capacity_profile
+
+Default capacity:
+
+- L3 selected questions: standard 24
+- L3 multiple choice questions: standard 16
+- L1/L2 pages: standard 40, upper guard 50
+- mixed day allowed
+- after L3 selected, L1/L2 20-35 pages may be added when feasible
+- after light L3 multiple-choice, L1/L2 15-30 pages may be added when feasible
+
+### operations_write_preflight_check
+
+Before writing active_operations, validate:
+
+Structure:
+
+- D0-D6 all exist
+- D7-target Next operations exists when a medium target exists
+- required daily fields exist
+
+Quantitative:
+
+- L1/L2 has page range and page count
+- L3 has question range and question count
+- no forbidden vague targets in task / must_line / standard_line / stretch_line
+
+Load:
+
+- L1/L2 above 50 pages is flagged / redistributed
+- L3 multiple-choice above 25 questions is flagged / redistributed
+- second-pass sorting above 30 questions is flagged / split
+
+Plan fit:
+
+- roadmap / plan milestones are reachable
+- if not reachable, use compression_required / critical_delay rather than delayed_but_managed
+- recovery_forward standard_line matches plan expected_position
 
 ## Operation Generation Guard
 
@@ -88,15 +241,7 @@ Line roles:
 - `standard_line`: plan achievement line, normally matching the plan_anchor expected_position for the day
 - `stretch_line`: delay recovery, next-day plan connection, or safe forward acceleration beyond the daily plan target
 
-Before writing operations after daily review, validate:
-
-- plan_anchor.expected_position exists
-- current_position is specific by question_id / question_range or page_range / next_start_page
-- if gap_status / operation_mode is recovery-type, standard_line matches the plan target / expected_position
-- the daily plan target is not placed only in stretch_line
-- must_line is not merely a survival_line
-
-If any validation fails, treat the generated operation as incomplete and regenerate before writing active_operations.
+If validation fails, treat the generated operation as incomplete and regenerate before writing active_operations.
 
 ## History Write Rule
 
