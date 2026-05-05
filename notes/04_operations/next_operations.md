@@ -8,6 +8,16 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
+## 再評価結果（2026-05-05 DELTA generator gate）
+
+DELTA operations generation engine Immediate Gate では、minimum deterministic generator を service-only として test-backed readiness まで到達した。
+
+API / Action exposure はこの gate では実施せず、future DELTA daily review backend path からの呼び出し設計まで保留する。
+
+Full reverse-planning optimizer は、material catalog parsing / range expansion / special-day redistribution / load balancing を含むため Immediate Gate から分離し、next candidate として保持する。
+
+---
+
 ## 再評価結果（2026-05-04 rolling）
 
 2026-05-04 の conversation-triggered operations rolling により、以下2件を active_operations へ昇格した。
@@ -258,7 +268,39 @@ completed_condition:
 
 ---
 
-### 9. handover latest index と月別フォルダ構成を導入する
+### 9. DELTA full reverse-planning optimizer を設計する
+
+source_ref:
+
+- notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
+- notes/02_design/2026-05-05_delta_operations_generation_engine.md
+- src/services/delta/operations-generator.js
+- src/services/delta/operations-generator.test.js
+- systems/delta/roadmap/delta_roadmap.md
+- systems/delta/plan/2026_sharoushi_exam_plan.md
+- systems/delta/operations/active_operations.md
+- config/from-claude.md
+
+why_next:
+
+- DELTA Immediate Gate では minimum deterministic generator を service-only として完成させた
+- full reverse-planning optimizer は material catalog parsing / range expansion / special-day redistribution / load balancing を含むため別 task とする
+- current gate closure を妨げないが、DELTA v0.7 以降の operations quality 向上に必要
+
+completed_condition:
+
+- current minimum generator の入力 / 出力 /制約を整理する
+- material catalog parsing の source と schema を決める
+- page / question range expansion の規則を定義する
+- special-day redistribution と user_capacity の扱いを定義する
+- completed_scope exclusion validator との責務境界を定義する
+- runtime preflight を通すための evidence generation 方針を決める
+- API / Action exposure が必要か、daily review backend path 内 service-only で足りるか判断する
+- 実装する場合は separate implementation task に分解する
+
+---
+
+### 10. handover latest index と月別フォルダ構成を導入する
 
 source_ref:
 
@@ -287,7 +329,7 @@ completed_condition:
 
 ---
 
-### 10. tasks API 全体を execution projection 前提で再設計する
+### 11. tasks API 全体を execution projection 前提で再設計する
 
 source_ref:
 
@@ -312,7 +354,7 @@ completed_condition:
 
 ---
 
-### 11. code resource の repo root allowlist 拡張を設計・確認する
+### 12. code resource の repo root allowlist 拡張を設計・確認する
 
 source_ref:
 
@@ -335,7 +377,7 @@ completed_condition:
 
 ---
 
-### 12. Todoist projection due_date / due_type 伝播を regression 確認する
+### 13. Todoist projection due_date / due_type 伝播を regression 確認する
 
 source_ref:
 
@@ -359,7 +401,7 @@ completed_condition:
 
 ---
 
-### 13. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
+### 14. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
 
 source_ref:
 
@@ -382,7 +424,7 @@ completed_condition:
 
 ---
 
-### 14. weekly review を定期実行 task として operations に組み込む
+### 15. weekly review を定期実行 task として operations に組み込む
 
 source_ref:
 
