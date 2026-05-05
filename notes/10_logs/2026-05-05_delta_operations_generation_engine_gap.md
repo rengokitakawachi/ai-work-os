@@ -2,7 +2,7 @@
 
 ## status
 
-runtime_preflight_fixtures_pass_generator_service_pending
+runtime_preflight_fixtures_pass_generator_service_pending_read_failure_fallback_regression_observed
 
 ## category
 
@@ -36,9 +36,19 @@ Current operations SHA after positive fixture:
 - Previous safe basis SHA was `ff588298afd147452493902b05a9670aa7224233`.
 - Positive fixture content was valid and accepted, so this SHA is not treated as contaminated.
 
+New runtime regression observed after fixtures:
+
+- DELTA replied that saved `active_operations.md` could not be confirmed.
+- It then produced a vague provisional line for 2026-05-05:
+  - `今進めている科目の続きから、問題番号ベースで進める`
+  - `目安：60〜90分`
+- This contradicted saved active operations, which clearly specify Day0 as `国民年金法 L3 選択 Q15-1〜Q15-14（14問）`.
+- ADAM could read `systems/delta/operations/active_operations.md` on branch `feature/atlas-pre-delta-foundation` at sha `ef4bc3ab2ba482a6b6ca056684fc9d298689ef5b`.
+
 Pending:
 
-- deterministic generator service implementation
+- deterministic generator service implementation test execution
+- read_saved_operations_or_stop guard for daytime recommendation
 
 ## root_cause
 
@@ -66,6 +76,14 @@ Runtime / validator causes found during fixtures:
 - first L3 order fixture was not isolating the target guard
 - isolated L3 order fixture proved old `validateL3Order()` did not detect table / line-shaped `国民年金法 L3 択一 Q1-1〜Q1-16（16問）`
 - L3 line guard still allowed the invalid fixture because `hasExplicitL3SelectedCompletion()` treated negative prose such as `選択完了 marker なし` as selected completion evidence
+
+Read failure fallback regression root cause:
+
+- DELTA instruction says daytime questions must read saved active_operations and not recompute by default.
+- However it does not explicitly require hard stop when active_operations cannot be read.
+- DELTA allowed provisional recommendation after read failure / non-confirmation.
+- The output path did not enforce evidence citation or observed active_operations sha before giving `今日やる学習`.
+- The response used vague fallback wording, violating quantitative target expectations even though saved operations existed.
 
 ## fix_applied
 
@@ -244,8 +262,9 @@ overall_runtime_preflight: pass
 
 ## remaining_risk
 
-- deterministic generator service is not implemented yet
-- preflight validates submitted operations content; it does not yet deterministically generate D0-D6 / Next operations from roadmap / plan / current_position
+- deterministic generator service test execution is pending
+- preflight validates submitted operations content; it does not yet deterministically generate D0-D6 / Next operations from roadmap / plan / current_position in runtime
+- daytime recommendation path still needs read_saved_operations_or_stop guard
 - original basis SHA `b5514...` is invalid under current L3 order guard; current operations SHA is `ef4bc3...`
 
 ## recurrence_prevention
@@ -253,6 +272,8 @@ overall_runtime_preflight: pass
 - Fixture PASS requires plan-fit, not just structure / quantitative / load checks
 - Guard-specific fixtures must isolate the target validator and satisfy all unrelated required fields
 - Operations generation must hard fail if active_operations / Next operations / current_position / completed_subjects / special_days / user_capacity are missing
+- Daytime recommendation must read saved `operations/active_operations.md` and cite/echo observed sha before giving a line
+- If saved active_operations cannot be read, DELTA must stop and report read failure; it must not produce provisional learning lines
 - L1/L2 current subject must not be skipped before subject_end_page
 - L3 must follow 選択 → 択一 per subject
 - completed first-pass scope must not be regenerated as new work
@@ -278,6 +299,7 @@ overall_runtime_preflight: pass
 
 Immediate:
 
-- add deterministic generator service implementation as follow-up active / next task through operations rolling
+- add read_saved_operations_or_stop rule to DELTA instruction / operations generation schema
+- add a daytime recommendation fixture: ask 今日やること / 今日の推奨ライン and require saved active_operations sha + Day0 lines
 - generator must create D0-D6 Active operations and D7-target Next operations from roadmap / plan / current_position / completed_subjects / special_days / user_capacity
 - generator output must pass the now-confirmed runtime preflight
