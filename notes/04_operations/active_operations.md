@@ -48,15 +48,23 @@ Immediate Gate は7日枠に数えない。
     - systems/delta/history/daily/2026-05-04.md
     - notes/02_design/2026-05-05_delta_operations_generation_engine.md
     - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
+    - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
     - src/services/delta-operations.js
+    - src/services/delta/operations-generator.js
+    - src/services/delta/operations-generator.test.js
     - api/repo-resource.js
   reason:
     - DELTA recovery line calibration fix は repo config / instruction / schema level では完了した
     - DELTA operations generation engine の detailed rules は supplemental schema へ追加済み
     - `delta_action_schema.yaml` v0.6.3 は user により configured GPT Actions へ再インポート済み
-    - ただし `read_evidence` の runtime-visible schema / actual behavior は未確認
-    - 直近 fixture は形式上は整っていたが、健康保険法L3完了済み scope を新規計画に戻したため plan-fit FAIL
-    - DELTA の daily review / operations generation / runtime-dependent fixture の前提になる
+    - `read_evidence` pass-through と runtime preflight actual behavior は fixture で確認済み
+    - negative runtime fixtures は 1A / 1B / 1C / L3 order まで PASS
+    - positive valid-write fixture も PASS
+    - current DELTA operations SHA は `ef4bc3ab2ba482a6b6ca056684fc9d298689ef5b`
+    - deterministic generator service は `src/services/delta/operations-generator.js` に最小実装済み
+    - generator test は `src/services/delta/operations-generator.test.js` に作成済み
+    - ただし `npm test` は未実行で、API/action exposure と full reverse-planning optimizer の disposition は未完了
+    - DELTA の daily review / operations generation / runtime-dependent fixture の前提になるため、test 実行確認までは gate を open のまま扱う
   blocks:
     - DELTA chapter-only normalization fixture を実行する
     - DELTA write resource schema reflection gate を整理する
@@ -67,26 +75,23 @@ Immediate Gate は7日枠に数えない。
     - DELTA configured GPT Actions に `delta_action_schema.yaml` v0.6.3 / sha `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8` が反映されたことを確認する
     - DELTA runtime-visible schema で `deltaResourceWrite` request body に `read_evidence` が見えることを確認する
     - DELTA runtime で `read_evidence` なしの `delta_operations` update が `DELTA_OPERATIONS_PREFLIGHT_FAILED` で拒否されることを確認する
-    - DELTA runtime で operations generation fixture を再実行する
-    - fixture で D0〜D6 がすべて存在することを確認する
-    - fixture で D7〜target_date の Next operations が存在することを確認する
-    - fixture で L1/L2 がページ範囲とページ数を持つことを確認する
-    - fixture で L3 が問題番号範囲と問題数を持つことを確認する
-    - fixture で曖昧語が task / must_line / standard_line / stretch_line に出ないことを確認する
-    - fixture で `gap_status: delayed_but_recovering` かつ `operation_mode: recovery_forward` の standard_line が plan expected_position と一致することを確認する
-    - fixture で plan target が stretch_line のみに逃げないことを確認する
-    - fixture で must_line が survival_line ではなく plan_minimum_line になっていることを確認する
-    - fixture で completed_scope exclusion を確認する
-    - 具体的には、2026-05-04 時点で新規演習完了扱いの 健康保険法L3 が新規 first-pass operations として再登場しないことを確認する
-    - 健康保険法が出る場合は recovery_targets / deferred review / second-pass として明示されることを確認する
-    - fixture で国民年金法 L1/L2 未完了のまま厚生年金保険法 L1/L2 へ飛ばないことを確認する
-    - fixture で L3 が科目ごとに 選択 → 択一 の順序を守ることを確認する
-    - 6/26 L3不可、6/30 L3可、user_capacity、load_realism_guard が反映されることを確認する
+    - DELTA runtime で completed 健康保険法L3 の新規 first-pass 再投入が `completed_health_insurance_L3_reintroduced_as_new_work` で拒否されることを確認する
+    - DELTA runtime で国民年金法 L1/L2 未完了のまま厚生年金保険法 L1/L2 へ飛ぶ operations が `current_L1_L2_subject_skipped_before_completion` で拒否されることを確認する
+    - DELTA runtime で国民年金法 L3 選択未完了のまま択一へ進む operations が `L3_order_violation_国民年金法_takuitsu_before_selected` で拒否されることを確認する
+    - DELTA runtime で valid / safe operations content が preflight PASS で write できることを確認する
+    - deterministic generator service が D0〜D6 Active operations と D7以降 Next operations を生成することを確認する
+    - generator output が runtime preflight を通ることを test で確認する
+    - `npm test` を実行し、既存 test と `operations-generator.test.js` が通ることを確認する
+    - generator を API/action に出すか、service-only として daily review backend path から呼ぶかを判断する
+    - full reverse-planning optimizer / material catalog parsing / load redistribution は別 task へ分離するか判断する
     - runtime-visible behavior を観測するまで `completed_repo_config_level` を runtime completed と扱わない
   notes:
     - 旧名: DELTA recovery line calibration configured GPT reflection / runtime fixture
     - controller fixture の形式PASSだけでは完了しない。plan-fit / completed_scope exclusion / read_evidence actual behavior まで見る
     - 2026-05-05 user reported configured GPT Action schema updated after v0.6.3 import fix
+    - 2026-05-05 runtime preflight fixture set は negative / positive とも PASS
+    - 2026-05-05 generator service minimum implementation created on main and feature branch
+    - `npm test` 未実行のため、gate はまだ open
   external:
     todoist_task_id: 6gX2mXQwgvhVv79q
 
@@ -107,9 +112,10 @@ Daily close result:
 
 - Completed task archived: `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
 - Immediate Gate remains open: `ADAM / EVE instruction configured GPT reflection を確認する`
-- DELTA Immediate Gate broadened to operations generation engine reflection / runtime fixture
-- DELTA Action schema v0.6.3 import was reported updated by user, but runtime behavior remains pending
-- DELTA runtime-dependent tasks remain blocked until DELTA Immediate Gate is resolved
+- DELTA Immediate Gate remains open: runtime preflight fixtures PASS, deterministic generator service created, `npm test` pending
+- DELTA Action schema v0.6.3 import was reported updated by user and runtime behavior was later fixture-confirmed
+- DELTA runtime preflight fixtures PASS: missing read_evidence, completed_scope reintroduction, L1/L2 continuity, L3 order, positive valid-write
+- DELTA runtime-dependent tasks remain blocked until DELTA Immediate Gate is fully resolved
 - ADAM / EVE runtime-dependent tasks remain blocked until ADAM / EVE instruction reflection gate is resolved
 - Active rerolled to 2026-05-05 start
 - Todoist projection needs update after gate rename / completed_condition expansion
