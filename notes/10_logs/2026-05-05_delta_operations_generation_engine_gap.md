@@ -2,7 +2,7 @@
 
 ## status
 
-main_delta_operations_service_aligned_api_read_evidence_passthrough_pending
+main_backend_aligned_runtime_refixture_required
 
 ## category
 
@@ -64,6 +64,7 @@ Runtime root cause:
 - `branch=feature/atlas-pre-delta-foundation` selects the GitHub content target branch, not deployed backend code branch
 - deployed `/api/repo-resource` was executing main backend code
 - main `src/services/delta-operations.js` still had old marker-only validation at the time of failed fixture
+- main `api/repo-resource.js` did not pass `read_evidence` into `updateDeltaOperations`
 
 ## fix_applied
 
@@ -102,20 +103,20 @@ Feature branch service/API changes:
 - branch: `feature/atlas-pre-delta-foundation`
 - sha: `44e3d14af162694d06f0c15e0561db5ad37662ab`
 
-Main runtime alignment now applied:
+Main runtime alignment applied:
 
 - `src/services/delta-operations.js`
 - branch: `main`
 - sha: `3c12c808dc0b6856f53c5284f8e19606af5a0a76`
 - old marker-only validator replaced with read_evidence / plan-fit preflight
 
-Main API pass-through still pending:
+Main API pass-through applied:
 
 - `api/repo-resource.js`
 - branch: `main`
-- current sha before pass-through patch: `9681c04cf5b312b81031f5c24d780ece6d0ef4c7`
-- main API currently preserves repo history/show/grep features and should not be overwritten by older feature API
-- `read_evidence` still needs minimal pass-through from request body to `updateDeltaOperations`
+- sha: `ebe2be2254a64b0792e9d150513b9341c803dde2`
+- preserves repo history/show/grep features
+- passes `read_evidence` from request body into `updateDeltaOperations`
 
 ## runtime fixture results
 
@@ -135,7 +136,7 @@ details.missing_markers:
   - "Daily review updates learning history and next operations."
 ```
 
-Expected after main service alignment:
+Expected after main backend alignment:
 
 ```yaml
 write: rejected
@@ -160,7 +161,7 @@ read_evidence: present
 invalid_content: 健康保険法L3を2026-05-04完了後にD7以降の新規first-passとして再投入
 ```
 
-Observed before main service alignment:
+Observed before main backend alignment:
 
 ```yaml
 write: accepted
@@ -178,7 +179,7 @@ request_id: f7e83759-2798-4894-bcb7-23acb652693b
 read_back_confirmed: true
 ```
 
-## implemented preflight checks now in main service
+## implemented preflight checks now in main backend
 
 - D0-D6 exist
 - required day fields exist
@@ -195,10 +196,10 @@ read_back_confirmed: true
 ## remaining_risk
 
 - deterministic generator service is not implemented yet
-- main `api/repo-resource.js` still needs read_evidence pass-through
-- until API pass-through is added, runtime should fail-safe for operations updates because service receives empty read_evidence
+- runtime re-fixture after main backend alignment is pending
+- Vercel/runtime deployment lag may exist after repo main update
 - supplemental schema has not been merged into canonical `delta_schema.yaml`
-- service preflight can prove submitted metadata only after runtime API passes `read_evidence`
+- service preflight can prove submitted metadata, but deterministic semantic use of sources still needs generator implementation
 
 ## recurrence_prevention
 
@@ -229,11 +230,10 @@ read_back_confirmed: true
 
 Immediate:
 
-- re-run Fixture 1A after main service alignment and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
-- add minimal read_evidence pass-through to main `api/repo-resource.js` without regressing repo history/show/grep
+- re-run Fixture 1A after main backend alignment and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
+- re-run Fixture 1B after main backend alignment and expect `completed_health_insurance_L3_reintroduced_as_new_work`
 
-After API pass-through:
+After runtime PASS:
 
-- re-run Fixture 1B and expect `completed_health_insurance_L3_reintroduced_as_new_work`
 - run L1/L2 continuity fixture and L3 order fixture
 - add deterministic generator service implementation as follow-up active task
