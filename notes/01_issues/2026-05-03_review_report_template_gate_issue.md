@@ -2,7 +2,7 @@
 
 ## status
 
-open
+progressed
 
 ## category
 
@@ -15,6 +15,22 @@ high
 ## created_at
 
 2026-05-03
+
+## last_touched_at
+
+2026-05-05
+
+## touched_by
+
+daily_review
+
+## progress_note
+
+2026-05-05 daily review read `notes/07_reports/README.md` before report creation and used canonical daily report path `notes/07_reports/daily/2026-05-05.md`. The report format gate was observed in this review, but the underlying procedure/template fixation task remains open.
+
+## routing_hint
+
+operations_candidate / docs_or_readme_update_candidate
 
 ## title
 
@@ -84,5 +100,6 @@ Write Gate では保存対象と内容を示したが、report layer の README 
 - `notes/07_reports/daily/2026-05-03.md`
 - `notes/07_reports/weekly/2026-05-03.md`
 - `notes/04_operations/active_operations.md`
+- `notes/07_reports/daily/2026-05-05.md`
 - `docs/15_notes_system.md`
 - `docs/17_operations_system.md`
