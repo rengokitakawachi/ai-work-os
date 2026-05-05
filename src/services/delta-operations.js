@@ -43,6 +43,7 @@ const FORBIDDEN_VAGUE_TARGETS = [
 
 const L1_L2_PAGE_PATTERN = /P\d+〜P\d+（\d+ページ）/;
 const L3_QUESTION_PATTERN = /Q\d+-\d+〜Q\d+-\d+（\d+問(?:、[^）]+)?）/;
+const REST_OR_UNAVAILABLE_PATTERN = /新規L1\/L2\/L3なし|L3不可|休養|rest_or_light_review/;
 const NEXT_OPERATIONS_PATTERN = /#\s*Next operations:/;
 
 function buildDeltaOperationsPath(file, context = {}) {
@@ -112,8 +113,36 @@ function extractDayBlock(content, day) {
   return content.slice(start, start + match[0].length + endOffset);
 }
 
+function extractTargetLines(block) {
+  return block
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => (
+      line.startsWith('- task:') ||
+      line.startsWith('- ') ||
+      line.startsWith('must_line:') ||
+      line.startsWith('standard_line:') ||
+      line.startsWith('stretch_line:')
+    ));
+}
+
 function hasQuantitativeLine(block) {
   return L1_L2_PAGE_PATTERN.test(block) || L3_QUESTION_PATTERN.test(block);
+}
+
+function isRestOrUnavailableDay(block) {
+  return REST_OR_UNAVAILABLE_PATTERN.test(block);
+}
+
+function validateForbiddenVagueTargetsInDay(day, block, errors) {
+  const targetLines = extractTargetLines(block);
+  for (const line of targetLines) {
+    for (const vague of FORBIDDEN_VAGUE_TARGETS) {
+      if (line.includes(vague)) {
+        errors.push(`forbidden_${day}_vague_target:${vague}`);
+      }
+    }
+  }
 }
 
 export function validateDeltaOperationsContent(content) {
@@ -139,19 +168,15 @@ export function validateDeltaOperationsContent(content) {
       }
     }
 
-    if (!hasQuantitativeLine(block)) {
+    if (!hasQuantitativeLine(block) && !isRestOrUnavailableDay(block)) {
       errors.push(`missing_${day}_quantitative_target`);
     }
+
+    validateForbiddenVagueTargetsInDay(day, block, errors);
   }
 
   if (!NEXT_OPERATIONS_PATTERN.test(content)) {
     errors.push('missing_next_operations_section');
-  }
-
-  for (const vague of FORBIDDEN_VAGUE_TARGETS) {
-    if (content.includes(vague)) {
-      errors.push(`forbidden_vague_target:${vague}`);
-    }
   }
 
   const highPageMatches = [...content.matchAll(/（(\d+)ページ）/g)]
