@@ -2,49 +2,58 @@
 
 ## Metadata
 
-version: positive_valid_write_fixture_after_L3_order_completion_marker_fix
+version: delay_rebalanced_after_2026_05_05_L3_stop
 updated_at: 2026-05-05
 branch: feature/atlas-pre-delta-foundation
-operation_status: safe_restored_no_takuitsu_before_selected_completion_valid_write_fixture
-last_daily_review: systems/delta/history/daily/2026-05-04.md
+operation_status: updated_after_user_delay_recognition
+last_daily_review: systems/delta/history/daily/2026-05-05.md
 latest_in_day_history: systems/delta/history/daily/2026-05-05.md
 
 validation_markers:
   - Delta operations are learning execution order, not calendar schedule.
   - Daily review updates learning history and next operations.
+  - User recognized operations were more advanced than actual current position; plan was compressed and redistributed.
 
 source_of_truth:
   operations_role: next_action_source
   actual_primary_source: systems/delta/history/daily/YYYY-MM-DD.md
   current_position_primary_source:
-    - systems/delta/history/daily/2026-05-04.md
     - systems/delta/history/daily/2026-05-05.md
+    - systems/delta/history/daily/2026-05-04.md
   todoist_role: projection_only
 
 roadmap_anchor:
   roadmap: systems/delta/roadmap/delta_roadmap.md
   roadmap_phase: 2026-04-27〜2026-06-30 1巡目完了フェーズ
   target: 2026-06-30までに主要科目の1巡目を通過
+
 existing_next_operations_read:
   source: systems/delta/operations/active_operations.md
-  sha: ff588298afd147452493902b05a9670aa7224233
+  sha: ef4bc3ab2ba482a6b6ca056684fc9d298689ef5b
 existing_next_operations_was_read: true
 
 ## Completed scope evidence
 
 completed_scope_evidence:
-  source: systems/delta/history/daily/2026-05-04.md
+  source:
+    - systems/delta/history/daily/2026-05-04.md
+    - systems/delta/history/daily/2026-05-05.md
   completed_subjects:
     健康保険法:
       L3_new_exercises: completed
       selected_questions: completed
-      completed_through: Q11-21
+      multiple_choice_questions: completed_through_Q11-21
       allowed_future_use: recovery_or_second_pass_only
+    国民年金法:
+      L3_selected_questions: completed
+      selected_completion_marker: completed_Q15-1_to_Q15-14
+      allowed_next_use: multiple_choice_after_question_range_confirmation
   current_new_L3_subject:
     subject: 国民年金法
-    selected_completion_status: incomplete
-    selected_completion_marker: missing
-    next_question: Q15-1
+    selected_completion_status: completed
+    selected_completion_marker: completed_Q15-1_to_Q15-14
+    multiple_choice_status: range_confirmation_required
+    next_question: unknown_until_material_confirmation
 
 ## Planning assumptions
 
@@ -56,9 +65,12 @@ capacity_assumptions:
     standard_capacity: 24問程度
   L3_multiple_choice_questions:
     standard_capacity: 16問程度
+  special_days:
+    2026-05-10: L3不可
 
 current_position:
   as_of: 2026-05-05
+  study_time_excluding_sekotore: 3時間57分
   L1:
     subject: 国民年金法
     current_position: P219完了
@@ -66,18 +78,16 @@ current_position:
     completion_status: incomplete
   L2:
     subject: 国民年金法
-    current_position: P158以降未完了
+    current_position: P157完了
     next_start_page: P158
     completion_status: incomplete
   L3:
     subject: 国民年金法
-    current_subject: 国民年金法
-    selected_completion_status: incomplete
-    selected_completion_marker: missing
-    selected_next_question: Q15-1
-    multiple_choice_status: blocked_until_selected_completed
-    next_resume_question_id: Q15-1
-  gap_status: delayed_but_recovering
+    selected_completion_status: completed
+    selected_completion_marker: completed_Q15-1_to_Q15-14
+    multiple_choice_status: range_confirmation_required
+    next_resume_question_id: unconfirmed
+  gap_status: delayed_but_managed
   operation_mode: recovery_forward
 
 ## Recommended lines
@@ -85,268 +95,313 @@ current_position:
 recommended_lines:
   fixed_at: 2026-05-05
   source_review:
-    - systems/delta/history/daily/2026-05-04.md
     - systems/delta/history/daily/2026-05-05.md
+    - systems/delta/history/daily/2026-05-04.md
   plan_anchor: 2026-06-30 1巡目完了必達
-  current_position: L1国民年金法P219完了、L2国民年金法P158以降未完了、L3国民年金法選択Q15-1開始前
-  expected_position: 国民年金法 L3 選択 Q15-1〜Q15-14を先に完了し、択一は選択完了 marker 確定後に再計算
-  gap_status: delayed_but_recovering
+  current_position: L1国民年金法P219完了、L2国民年金法P157完了、L3国民年金法選択Q15-14完了、択一範囲未確認
+  expected_position: GW標準ラインでは国民年金法択一Q2章まで着手済み想定だったが未着手。5/6以降はL2遅れ回収を優先し、5/9にL3択一へ接続する。
+  gap_status: delayed_but_managed
   operation_mode: recovery_forward
   must_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-7（7問）
+    - 国民年金法 L2 P158〜P180（23ページ）
   standard_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）
+    - 国民年金法 L2 P158〜P195（38ページ）
   stretch_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）確認
+    - 国民年金法 L2 P158〜P205（48ページ）
   recovery_targets:
-    - 国民年金法 L3 選択完了 marker を確定する
-    - 健康保険法×・△は後日回収
+    - 国民年金法 L2 P158〜P219を5/7までに回収する
+    - 国民年金法 L1 P220以降はL2回収後に再開する
+    - 国民年金法 L3 択一の開始問題番号を5/8までに確認し、5/9に投入する
   defer_targets:
-    - 国民年金法 L3 択一は選択完了 marker 確定後
-    - 健康保険法×・△回収
+    - 厚生年金保険法 L1/L2開始は国民年金法L1/L2完了確認後
+    - 健康保険法×・△回収は1巡目後または明示回収日に回す
   recompute_triggers:
-    - 国民年金法L3選択Q15-14完了
-    - selected_completion_marker_confirmed
-    - Q15-14未達
+    - P195未達
+    - P219未達
+    - 国民年金法L3択一の開始問題番号確認
+    - 2026-05-09 L3実績確定
+    - 秒トレ未実施が確定
     - user_explicitly_requests_recompute
 
 ---
 
 # Active operations: D0〜D6
 
-## Day0（2026-05-05）
+## Day0（2026-05-06）
 
-- task: 国民年金法 L3 選択 Q15-1〜Q15-14（14問）
+- task: 国民年金法 L2 P158〜P195（38ページ）
   rolling_day: Day0
-  due_date: 2026-05-05
-  subject: 国民年金法
-  study_type: L3
-  material: 過去問講座テキスト
-  operation_mode: recovery_forward
-  plan_anchor: 2026-05-05 国民年金法選択問題完了目標
-  expected_position: 国民年金法 L3 選択 Q15-14完了
-  current_position: 国民年金法 L3 選択 Q15-1開始前
-  gap_status: delayed_but_recovering
-  start_question_id: Q15-1
-  must_end_question_id: Q15-7
-  standard_end_question_id: Q15-14
-  stretch_end_question_id: Q15-14
-  next_resume_question_id: Q15-1
-  must_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-7（7問）
-  standard_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）
-  stretch_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）確認
-  recovery_targets:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）
-  defer_targets:
-    - 国民年金法 L3 択一は選択完了 marker 確定後
-    - 健康保険法×・△回収
-  recompute_triggers:
-    - Q15-14未達
-    - selected_completion_marker_confirmed
-
-## Day1（2026-05-06）
-
-- task: 国民年金法 L3 選択 Q15-1〜Q15-14（14問）確認
-  rolling_day: Day1
   due_date: 2026-05-06
   subject: 国民年金法
-  study_type: L3
-  material: 過去問講座テキスト
+  study_type: L2
+  material: 基礎講座テキスト
+  estimated_minutes: 120
   operation_mode: recovery_forward
-  plan_anchor: 2026-05-06 国民年金法選択完了確認
-  expected_position: 国民年金法 L3 選択 Q15-14完了確認
-  current_position: Day0後に更新
-  gap_status: needs_confirmation
-  start_question_id: Q15-1
-  must_end_question_id: Q15-14
-  standard_end_question_id: Q15-14
-  stretch_end_question_id: Q15-14
-  next_resume_question_id: Q15-1
+  plan_anchor: 2026-05-06 GW最終日 L2遅れ回収
+  expected_position: 国民年金法 L2 P195完了
+  current_position: 国民年金法 L2 P157完了、次回P158
+  gap_status: delayed_but_managed
+  start_page: P158
+  must_end_page: P180
+  standard_end_page: P195
+  stretch_end_page: P205
+  page_range: P158〜P195
+  next_start_page: P158
   must_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）確認
+    - 国民年金法 L2 P158〜P180（23ページ）
   standard_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）確認
+    - 国民年金法 L2 P158〜P195（38ページ）
   stretch_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）評価記号整理
+    - 国民年金法 L2 P158〜P205（48ページ）
   recovery_targets:
-    - 国民年金法 L3 選択完了 marker を確定する
+    - 国民年金法 L2 P158〜P195（38ページ）
   defer_targets:
-    - 国民年金法 L3 択一は選択完了 marker 確定後
+    - 国民年金法 L1 P220以降
+    - 国民年金法 L3 択一演習本体
+    - 厚生年金保険法 L1/L2開始
   recompute_triggers:
-    - selected_completion_marker_confirmed
-    - Q15-14未達
+    - P180未達
+    - P195未達
+    - 体力低下で60分未満
 
-## Day2（2026-05-07）
+## Day1（2026-05-07）
 
-- task: 国民年金法 L2 P158〜P190（33ページ）
-  rolling_day: Day2
+- task: 国民年金法 L2 P196〜P219（24ページ）
+  rolling_day: Day1
   due_date: 2026-05-07
   subject: 国民年金法
   study_type: L2
   material: 基礎講座テキスト
+  estimated_minutes: 90
   operation_mode: recovery_forward
-  plan_anchor: 2026-05-07 平日L1/L2 国民年金法
-  expected_position: 国民年金法 L2 P190完了
-  current_position: 国民年金法 L2 P158以降未完了
-  gap_status: delayed_but_recovering
-  start_page: P158
-  must_end_page: P175
-  standard_end_page: P190
-  stretch_end_page: P200
-  next_start_page: P158
-  must_line:
-    - 国民年金法 L2 P158〜P175（18ページ）
-  standard_line:
-    - 国民年金法 L2 P158〜P190（33ページ）
-  stretch_line:
-    - 国民年金法 L2 P158〜P200（43ページ）
-  recovery_targets:
-    - 国民年金法 L2 P158〜P190（33ページ）
-  defer_targets:
-    - 厚生年金保険法 L1/L2開始
-  recompute_triggers:
-    - P190未達
-
-## Day3（2026-05-08）
-
-- task: 国民年金法 L2 P191〜P219（29ページ）
-  rolling_day: Day3
-  due_date: 2026-05-08
-  subject: 国民年金法
-  study_type: L2
-  material: 基礎講座テキスト
-  operation_mode: recovery_forward
-  plan_anchor: 2026-05-08 平日L1/L2 国民年金法
+  plan_anchor: 2026-05-07 平日L2をL1位置へ追いつかせる
   expected_position: 国民年金法 L2 P219完了
-  current_position: Day2後にP191開始
-  gap_status: delayed_but_recovering
-  start_page: P191
+  current_position: Day0標準達成後はP196開始。Day0未達ならP181または到達ページの次から再計算
+  gap_status: delayed_but_managed
+  start_page: P196
   must_end_page: P205
   standard_end_page: P219
   stretch_end_page: P219
-  next_start_page: P191
+  page_range: P196〜P219
+  next_start_page: P196
   must_line:
-    - 国民年金法 L2 P191〜P205（15ページ）
+    - 国民年金法 L2 P196〜P205（10ページ）
   standard_line:
-    - 国民年金法 L2 P191〜P219（29ページ）
+    - 国民年金法 L2 P196〜P219（24ページ）
   stretch_line:
-    - 国民年金法 L2 P191〜P219（29ページ）
+    - 国民年金法 L2 P196〜P219（24ページ）＋P158〜P219のチェック不足箇所確認
   recovery_targets:
-    - 国民年金法 L2 P191〜P219（29ページ）
+    - 国民年金法 L2 P158〜P219回収完了
   defer_targets:
     - 厚生年金保険法 L1/L2開始
+    - 健康保険法×・△回収
   recompute_triggers:
+    - Day0がP195未達
     - P219未達
+    - 国民年金法L2完了範囲に不確定ページが出た
 
-## Day4（2026-05-09）
+## Day2（2026-05-08）
 
-- task: 国民年金法 L3 選択 Q15-1〜Q15-14（14問）再確認
-  rolling_day: Day4
-  due_date: 2026-05-09
-  subject: 国民年金法
-  study_type: L3
-  material: 過去問講座テキスト
-  operation_mode: recovery_forward
-  plan_anchor: 2026-05-09 L3国民年金法選択確認
-  expected_position: 国民年金法 L3 選択完了 marker 確定
-  current_position: Day1後に更新
-  gap_status: needs_confirmation
-  start_question_id: Q15-1
-  must_end_question_id: Q15-14
-  standard_end_question_id: Q15-14
-  stretch_end_question_id: Q15-14
-  next_resume_question_id: Q15-1
-  must_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）再確認
-  standard_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）再確認
-  stretch_line:
-    - 国民年金法 L3 選択 Q15-1〜Q15-14（14問）評価記号整理
-  recovery_targets:
-    - 国民年金法 L3 選択完了 marker を確定する
-  defer_targets:
-    - 国民年金法 L3 択一は選択完了 marker 確定後
-  recompute_triggers:
-    - selected_completion_marker_confirmed
-    - Q15-14未達
-
-## Day5（2026-05-10）
-
-- task: L3不可日。新規L1/L2/L3なし
-  rolling_day: Day5
-  due_date: 2026-05-10
-  subject: 共通
-  study_type: rest_or_light_review
-  material: none
-  operation_mode: normal
-  plan_anchor: 2026-05-10 L3不可
-  expected_position: 新規L1/L2/L3なし
-  current_position: Day4後に更新
-  gap_status: on_track
-  must_line:
-    - 新規L1/L2/L3なし
-  standard_line:
-    - 新規L1/L2/L3なし
-  stretch_line:
-    - 秒トレ40問
-  recovery_targets:
-    - 新規L3は実施しない
-  defer_targets:
-    - 国民年金法 L3 択一は2026-05-11以降に再計算
-  recompute_triggers:
-    - user_explicitly_requests_recompute
-
-## Day6（2026-05-11）
-
-- task: 国民年金法 L1 P220〜P255（36ページ）
-  rolling_day: Day6
-  due_date: 2026-05-11
+- task: 国民年金法 L1 P220〜P245（26ページ）
+  rolling_day: Day2
+  due_date: 2026-05-08
   subject: 国民年金法
   study_type: L1
   material: 動画講義
+  estimated_minutes: 90
   operation_mode: recovery_forward
-  plan_anchor: 2026-05-11 国民年金法L1前進
-  expected_position: 国民年金法 L1 P255完了
-  current_position: 国民年金法 L1 P219完了
-  gap_status: delayed_but_recovering
+  plan_anchor: 2026-05-08 L2追いつき後にL1再開
+  expected_position: 国民年金法 L1 P245完了、国民年金法L3択一開始問題番号確認済み
+  current_position: 国民年金法 L1 P219完了、L3択一開始問題番号未確認
+  gap_status: delayed_but_managed
   start_page: P220
   must_end_page: P235
-  standard_end_page: P255
-  stretch_end_page: P260
+  standard_end_page: P245
+  stretch_end_page: P255
+  page_range: P220〜P245
   next_start_page: P220
   must_line:
     - 国民年金法 L1 P220〜P235（16ページ）
   standard_line:
-    - 国民年金法 L1 P220〜P255（36ページ）
+    - 国民年金法 L1 P220〜P245（26ページ）
   stretch_line:
-    - 国民年金法 L1 P220〜P260（41ページ）
-  recovery_targets:
     - 国民年金法 L1 P220〜P255（36ページ）
+  recovery_targets:
+    - 国民年金法 L1 P220〜P245（26ページ）
+    - 国民年金法 L3 択一の開始問題番号を教材で確認する
   defer_targets:
     - 厚生年金保険法 L1/L2開始
+    - 健康保険法×・△回収
   recompute_triggers:
-    - P255未達
+    - P235未達
+    - P245未達
+    - 国民年金法L3択一開始問題番号が確認できない
+
+## Day3（2026-05-09）
+
+- task: 国民年金法 L3 択一 開始問題番号確認済み範囲から16問
+  rolling_day: Day3
+  due_date: 2026-05-09
+  subject: 国民年金法
+  study_type: L3_scope_bound
+  material: 過去問講座テキスト
+  estimated_minutes: 80
+  operation_mode: recovery_required
+  plan_anchor: 2026-05-09 国民年金法択一へ接続
+  expected_position: 国民年金法 L3 択一 16問完了
+  current_position: 国民年金法 L3 選択Q15-14完了、択一開始問題番号未確認
+  gap_status: needs_confirmation
+  start_question_id: range_confirmation_required
+  must_end_question_id: confirmed_start_plus_7_questions
+  standard_end_question_id: confirmed_start_plus_15_questions
+  stretch_end_question_id: confirmed_start_plus_19_questions
+  next_resume_question_id: confirmed_start_question_id
+  questions: 16
+  question_range: confirmed_start〜confirmed_start+15
+  must_line:
+    - 国民年金法 L3 択一 開始問題番号確認後に8問
+  standard_line:
+    - 国民年金法 L3 択一 開始問題番号確認後に16問
+  stretch_line:
+    - 国民年金法 L3 択一 開始問題番号確認後に20問
+  recovery_targets:
+    - GW標準ライン未達の国民年金法択一へ接続する
+    - 開始問題番号を日報へ保存する
+  defer_targets:
+    - 国民年金法 選択Q15-1〜Q15-14の△回収
+    - 健康保険法×・△回収
+  recompute_triggers:
+    - 開始問題番号が確認できない
+    - 8問未達
+    - 16問未達
+    - 2026-05-10はL3不可のため翌日へ押し出し不可
+
+## Day4（2026-05-10）
+
+- task: L3不可日。国民年金法 L1/L2軽量確認 P220〜P245の未消化確認
+  rolling_day: Day4
+  due_date: 2026-05-10
+  subject: 国民年金法
+  study_type: rest_or_light_review
+  material: 基礎講座テキスト
+  estimated_minutes: 30
+  operation_mode: normal
+  plan_anchor: 2026-05-10 L3不可日
+  expected_position: 新規L3なし。L1/L2未消化ページを確認
+  current_position: Day3後に更新
+  gap_status: delayed_but_managed
+  page_range: P220〜P245確認
+  next_start_page: Day3後に更新
+  must_line:
+    - 新規L3なし。秒トレ40問
+  standard_line:
+    - 新規L3なし。秒トレ40問＋国民年金法 L1/L2未消化ページ確認30分
+  stretch_line:
+    - 国民年金法 L1/L2未消化ページ確認60分
+  recovery_targets:
+    - L3不可日を休養・軽量確認に充て、翌日以降のL1/L2を崩さない
+  defer_targets:
+    - 国民年金法 L3 択一の追加演習
+    - 健康保険法×・△回収
+  recompute_triggers:
+    - 5/9の国民年金法L3択一が8問未達
+    - 秒トレ未実施
+
+## Day5（2026-05-11）
+
+- task: 国民年金法 L1 P246〜P280（35ページ）
+  rolling_day: Day5
+  due_date: 2026-05-11
+  subject: 国民年金法
+  study_type: L1
+  material: 動画講義
+  estimated_minutes: 120
+  operation_mode: recovery_forward
+  plan_anchor: 2026-05-11 国民年金法L1完了方向へ前進
+  expected_position: 国民年金法 L1 P280完了
+  current_position: Day2標準達成後はP246開始。未達時は到達ページの次から再計算
+  gap_status: delayed_but_managed
+  start_page: P246
+  must_end_page: P260
+  standard_end_page: P280
+  stretch_end_page: P280
+  page_range: P246〜P280
+  next_start_page: P246
+  must_line:
+    - 国民年金法 L1 P246〜P260（15ページ）
+  standard_line:
+    - 国民年金法 L1 P246〜P280（35ページ）
+  stretch_line:
+    - 国民年金法 L1 P246〜P280（35ページ）＋L2 P220〜P230（11ページ）
+  recovery_targets:
+    - 国民年金法 L1 P246〜P280（35ページ）
+  defer_targets:
+    - 厚生年金保険法 L1/L2開始
+    - 国民年金法L3△回収
+  recompute_triggers:
+    - P260未達
+    - P280未達
+
+## Day6（2026-05-12）
+
+- task: 国民年金法 L2 P220〜P245（26ページ）
+  rolling_day: Day6
+  due_date: 2026-05-12
+  subject: 国民年金法
+  study_type: L2
+  material: 基礎講座テキスト
+  estimated_minutes: 90
+  operation_mode: recovery_forward
+  plan_anchor: 2026-05-12 L1進行範囲へL2追随
+  expected_position: 国民年金法 L2 P245完了
+  current_position: 国民年金法 L2 P219完了想定。未達時は到達ページの次から再計算
+  gap_status: delayed_but_managed
+  start_page: P220
+  must_end_page: P235
+  standard_end_page: P245
+  stretch_end_page: P255
+  page_range: P220〜P245
+  next_start_page: P220
+  must_line:
+    - 国民年金法 L2 P220〜P235（16ページ）
+  standard_line:
+    - 国民年金法 L2 P220〜P245（26ページ）
+  stretch_line:
+    - 国民年金法 L2 P220〜P255（36ページ）
+  recovery_targets:
+    - 国民年金法 L2 P220〜P245（26ページ）
+  defer_targets:
+    - 厚生年金保険法 L1/L2開始
+    - 健康保険法×・△回収
+  recompute_triggers:
+    - P235未達
+    - P245未達
+    - 5/11 L1 P280未達
 
 ---
 
-# Next operations: 2026-05-12〜2026-06-30
+# Next operations: 2026-05-13〜2026-06-30
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-12 | L2 | 国民年金法 L2 P220〜P245（26ページ） |
 | 2026-05-13 | L2 | 国民年金法 L2 P246〜P280（35ページ） |
-| 2026-05-14 | L1/L2 | 国民年金法 L1/L2 完了確認日。厚生年金保険法L1/L2開始可否を再判定 |
+| 2026-05-14 | L1/L2 | 国民年金法 L1/L2 完了確認日。未完了ページがあれば国民年金法内で回収 |
+| 2026-05-15 | L1/L2 | 厚生年金保険法開始可否を判定。国民年金法未完なら国民年金法を優先 |
+| 2026-05-16 | L3 | 国民年金法 L3 択一 16問。5/9未達分があれば先に回収 |
+| 2026-05-17 | L3 | 国民年金法 L3 択一 16問。国民年金法択一の残量を再計算 |
+| 2026-05-18〜2026-05-22 | L1/L2 | 国民年金法完了後、厚生年金保険法 L1/L2 前半へ移行 |
+| 2026-05-23〜2026-05-24 | L3 | 国民年金法択一継続または厚生年金保険法選択へ接続。5/17時点で再計算 |
+| 2026-05-25〜2026-05-31 | L1/L2・L3 | 厚生年金保険法L1/L2後半とL3選択へ接続。国民年金法残があれば圧縮回収 |
+| 2026-06-01〜2026-06-30 | L1/L2・L3 | 労一・社一、厚生年金保険法L3、未完了回収。6/30一巡目完了目標を維持するが、国民年金法択一残量によりcompression_requiredへ移行する可能性あり |
 
 ## Next operation guardrails
 
 - L1/L2はページ範囲とページ数で管理する。
 - L3は問題番号範囲と問題数で管理する。
-- 国民年金法 L3 択一は、国民年金法 L3 選択完了 marker が daily history に保存されてから再計算する。
-- 健康保険法L3は再投入しない。
+- 国民年金法 L3 択一は、開始問題番号が日報に保存され次第、問題番号範囲へ置換する。
+- 健康保険法L3は新規1巡目として再投入しない。扱いは回収または2巡目確認のみ。
 - 厚生年金保険法L1/L2は国民年金法L1/L2完了確認後に再判定する。
+- 2026-05-10はL3不可日として固定する。
 
 ## Operations completeness guard
 
@@ -363,6 +418,24 @@ required_fields_per_day:
   - recovery_targets
   - defer_targets
   - recompute_triggers
+
+preflight_check_result:
+  active_operations_was_read: true
+  existing_next_operations_was_read_when_present: true
+  L1_L2_current_position_confirmed: true
+  L3_current_position_confirmed: partial
+  current_subject_not_skipped: true
+  completed_subject_not_reintroduced: true
+  L3_order_selection_before_takuitsu: true
+  D0_D6_all_exist: true
+  D7_target_next_operations_exists_when_medium_target_exists: true
+  L1_L2_page_range_format_valid: true
+  L3_question_range_format_valid: needs_confirmation_for_takuitsu_exact_ids
+  forbidden_vague_terms_absent: partial_exception_for_takuitsu_range_confirmation
+  special_days_reflected: true
+  overload_detected: true
+  overload_resolution: redistributed_L2_before_L1_and_flagged_L3_range_confirmation
+  roadmap_plan_milestone_reachable: conditional_reachable_with_compression
 
 ## Rules
 
