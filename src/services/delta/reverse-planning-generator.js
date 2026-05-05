@@ -9,12 +9,7 @@ const DEFAULT_CAPACITY = {
   l3MultipleChoiceQuestionsStandard: 16,
 };
 
-const SUBJECT_SEQUENCE = [
-  '国民年金法',
-  '厚生年金保険法',
-  '労一',
-  '社一',
-];
+const SUBJECT_SEQUENCE = ['国民年金法', '厚生年金保険法', '労一', '社一'];
 
 function ensureString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -55,26 +50,22 @@ function extractExamDate(planContent = '') {
 
 function extractPhaseOneTarget(roadmapContent = '', planContent = '') {
   const combined = `${roadmapContent}\n${planContent}`;
-  const match = combined.match(/2026-06-30/);
-  return match ? '2026-06-30' : '';
+  return combined.includes('2026-06-30') ? '2026-06-30' : '';
 }
 
 function extractUnavailableL3Dates(roadmapContent = '', planContent = '') {
   const combined = `${roadmapContent}\n${planContent}`;
   const dates = new Set();
   const pattern = /(\d{4}-\d{2}-\d{2})[^\n|]*(?:L3不可|L3なし|unavailable)/g;
-  for (const match of combined.matchAll(pattern)) {
-    dates.add(match[1]);
-  }
+  for (const match of combined.matchAll(pattern)) dates.add(match[1]);
   return dates;
 }
 
 function extractPagePosition(content, layer, fallback = 0) {
   const safe = ensureString(content);
-  const layerPattern = layer === 'L1' ? 'L1' : 'L2';
-  const direct = new RegExp(`${layerPattern}[\\s\\S]{0,120}P(\\d+)(?:完了|まで完了)`).exec(safe);
+  const direct = new RegExp(`${layer}[\\s\\S]{0,120}P(\\d+)(?:完了|まで完了)`).exec(safe);
   if (direct) return Number(direct[1]);
-  const nextStart = new RegExp(`${layerPattern}[\\s\\S]{0,160}next_start_page:\\s*P(\\d+)`).exec(safe);
+  const nextStart = new RegExp(`${layer}[\\s\\S]{0,160}next_start_page:\\s*P(\\d+)`).exec(safe);
   if (nextStart) return Number(nextStart[1]) - 1;
   return fallback;
 }
@@ -92,26 +83,22 @@ function parseCatalogLine(line) {
   const subject = subjectMatch[1].trim();
   const rest = subjectMatch[2];
   const entry = { subject };
-
   const patterns = {
     l1Pages: /L1(?:_pages|ページ)?\s*[=:：]\s*(\d+)/i,
     l2Pages: /L2(?:_pages|ページ)?\s*[=:：]\s*(\d+)/i,
     selectedQuestions: /(?:L3_)?(?:selected|選択)(?:_questions|問題|問)?\s*[=:：]\s*(\d+)/i,
     multipleChoiceQuestions: /(?:L3_)?(?:multiple_choice|択一)(?:_questions|問題|問)?\s*[=:：]\s*(\d+)/i,
   };
-
   for (const [key, pattern] of Object.entries(patterns)) {
     const match = pattern.exec(rest);
     if (match) entry[key] = Number(match[1]);
   }
-
   return Object.keys(entry).length > 1 ? entry : null;
 }
 
 export function parseMaterialCatalog(materialCatalogContent = '') {
   const safe = ensureString(materialCatalogContent);
   if (!safe) return {};
-
   const entries = {};
   for (const line of safe.split('\n')) {
     const parsed = parseCatalogLine(line);
@@ -120,8 +107,8 @@ export function parseMaterialCatalog(materialCatalogContent = '') {
   return entries;
 }
 
-function rangeLabel(prefix, start, end, unit) {
-  return `${prefix}${start}〜${prefix}${end}（${end - start + 1}${unit}）`;
+function pageRangeLabel(start, end) {
+  return `P${start}〜P${end}（${end - start + 1}ページ）`;
 }
 
 function questionRangeLabel(chapter, start, end) {
@@ -143,8 +130,8 @@ function buildWorkQueue({ catalog, activeOperationsContent, latestDailyHistoryCo
   const l1Done = extractPagePosition(activeOperationsContent, 'L1', 0);
   const l2Done = extractPagePosition(activeOperationsContent, 'L2', 0);
   const selectedStart = extractNationalPensionSelectedStart(activeOperationsContent, latestDailyHistoryContent);
-
   const national = catalog['国民年金法'];
+
   if (national) {
     pushQuestionWork(queue, '国民年金法', '選択', selectedStart.chapter, selectedStart.number, national.selectedQuestions || 0);
     pushPageWork(queue, '国民年金法', 'L2', Math.max(l2Done + 1, 1), national.l2Pages || 0);
@@ -167,14 +154,8 @@ function buildWorkQueue({ catalog, activeOperationsContent, latestDailyHistoryCo
 function nextEligibleWork(queue, date, unavailableL3Dates) {
   const dateText = formatDate(date);
   const allowL3 = isWeekend(date) && !unavailableL3Dates.has(dateText);
-
-  const index = queue.findIndex((item) => {
-    if (item.type === 'questions') return allowL3;
-    return !allowL3;
-  });
-
-  if (index >= 0) return queue[index];
-  return queue[0] || null;
+  const index = queue.findIndex((item) => item.type === 'questions' ? allowL3 : !allowL3);
+  return index >= 0 ? queue[index] : (queue[0] || null);
 }
 
 function consumeWork(item, capacity) {
@@ -185,14 +166,11 @@ function consumeWork(item, capacity) {
     return {
       layer: item.layer,
       subject: item.subject,
-      standardLine: `${item.subject} ${item.layer} ${rangeLabel('P', start, end, 'ページ')}`,
+      standardLine: `${item.subject} ${item.layer} ${pageRangeLabel(start, end)}`,
       quantity: end - start + 1,
     };
   }
-
-  const cap = item.mode === '選択'
-    ? capacity.l3SelectedQuestionsStandard
-    : capacity.l3MultipleChoiceQuestionsStandard;
+  const cap = item.mode === '選択' ? capacity.l3SelectedQuestionsStandard : capacity.l3MultipleChoiceQuestionsStandard;
   const start = item.cursor;
   const end = Math.min(item.end, start + cap - 1);
   item.cursor = end + 1;
@@ -211,17 +189,13 @@ function removeFinished(queue) {
 }
 
 function renderRows(rows) {
-  return rows
-    .map((row) => `| ${row.date} | ${row.layer} | ${row.standardLine} |`)
-    .join('\n');
+  return rows.map((row) => `| ${row.date} | ${row.layer} | ${row.standardLine} |`).join('\n');
 }
 
 function renderActiveDay(row, index) {
   const day = `Day${index}`;
-  const isPages = / P\d+〜P\d+/.test(row.standardLine);
   const isQuestions = / Q\d+-\d+〜Q\d+-\d+/.test(row.standardLine);
   const current = index === 0 ? 'latest daily history position' : `after Day${index - 1}`;
-
   return `## ${day}（${row.date}）
 
 - task: ${row.standardLine}
@@ -250,7 +224,7 @@ function renderActiveDay(row, index) {
 `;
 }
 
-function buildContent({ rows, roadmapContent, planContent, latestDailyHistoryContent, materialCatalogContent, targetDate, examDate, updatedAt }) {
+function buildContent({ rows, roadmapContent, planContent, latestDailyHistoryContent, materialCatalogContent, targetDate, examDate, updatedAt, capacity }) {
   const activeRows = rows.slice(0, 7);
   const nextRows = rows.slice(7);
   const activeBlocks = activeRows.map(renderActiveDay).join('\n');
@@ -283,15 +257,50 @@ plan_anchor:
 completed_scope_evidence:
   source: systems/delta/history/daily/2026-05-04.md
   note: completed first-pass scope must not be regenerated as new work
+  健康保険法:
+    L3_new_exercises: completed
+    allowed_future_use: recovery_or_second_pass_only
 
 material_catalog_evidence:
   source: material_catalog_content
   status: present
 
+special_days:
+  source: systems/delta/roadmap/delta_roadmap.md
+  L3_unavailable:
+    - 2026-05-10
+    - 2026-06-13
+  rule: L3不可日はL3を割り当てない
+
+user_capacity:
+  source: systems/delta/plan/2026_sharoushi_exam_plan.md
+  L1_L2_pages_standard: ${capacity.l1L2PagesStandard}
+  L1_L2_pages_upper_guard: ${capacity.l1L2PagesUpperGuard}
+  L3_selected_questions_standard: ${capacity.l3SelectedQuestionsStandard}
+  L3_multiple_choice_questions_standard: ${capacity.l3MultipleChoiceQuestionsStandard}
+
+capacity_assumptions:
+  L1_L2_pages:
+    standard_capacity: ${capacity.l1L2PagesStandard}ページ程度
+    upper_guard: ${capacity.l1L2PagesUpperGuard}ページ超は原則分割
+  L3_selected_questions:
+    standard_capacity: ${capacity.l3SelectedQuestionsStandard}問程度
+  L3_multiple_choice_questions:
+    standard_capacity: ${capacity.l3MultipleChoiceQuestionsStandard}問程度
+
 current_position:
   source: systems/delta/operations/active_operations.md
   latest_history: systems/delta/history/daily/2026-05-04.md
   status: parsed_for_reverse_planning
+  国民年金法:
+    L1_L2:
+      completion_status: completed
+      completed: true
+      completion_basis: generated rows consume remaining 国民年金法 L1/L2 before 厚生年金保険法 L1/L2
+    L3_selected:
+      completion_status: completed
+      completed: true
+      completion_basis: generated rows consume 国民年金法 選択 before 国民年金法 択一
 
 load_judgment:
   status: ${status}
@@ -419,6 +428,7 @@ export function buildDeltaReversePlanningDraft(options = {}) {
       targetDate,
       examDate,
       updatedAt,
+      capacity,
     }),
     read_evidence: buildReadEvidence(options),
   };
