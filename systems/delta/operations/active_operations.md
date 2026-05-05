@@ -2,10 +2,10 @@
 
 ## Metadata
 
-version: delta_safe_restore_after_L3_order_fixture
+version: positive_valid_write_fixture_after_L3_order_completion_marker_fix
 updated_at: 2026-05-05
 branch: feature/atlas-pre-delta-foundation
-operation_status: safe_restored_no_takuitsu_before_selected_completion
+operation_status: safe_restored_no_takuitsu_before_selected_completion_valid_write_fixture
 last_daily_review: systems/delta/history/daily/2026-05-04.md
 latest_in_day_history: systems/delta/history/daily/2026-05-05.md
 
@@ -27,7 +27,7 @@ roadmap_anchor:
   target: 2026-06-30までに主要科目の1巡目を通過
 existing_next_operations_read:
   source: systems/delta/operations/active_operations.md
-  sha: 50a14cd2c7607a1e3f0f20e9be177f6265b26b42
+  sha: ff588298afd147452493902b05a9670aa7224233
 existing_next_operations_was_read: true
 
 ## Completed scope evidence
