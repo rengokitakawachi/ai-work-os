@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_pass_1C_completion_override_fix_retest_pending
+fixture_1A_1B_1C_pass_l3_order_fixture_pending
 
 ## category
 
@@ -28,10 +28,10 @@ Confirmed PASS:
 
 - Fixture 1A: missing `read_evidence` is rejected
 - Fixture 1B: completed 健康保険法 L3 first-pass reintroduction is rejected
+- Fixture 1C: incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 skip is rejected
 
 Still pending:
 
-- Fixture 1C retest after completion override fix
 - L3 order fixture
 - positive valid-write fixture
 - deterministic generator service implementation
@@ -169,7 +169,7 @@ next_operations:
   - 2026-05-13 | L2 | 厚生年金保険法 L2 P1〜P35（35ページ）
 ```
 
-Failures observed:
+Failures observed before final fix:
 
 ```yaml
 first_fail:
@@ -191,27 +191,21 @@ fourth_fail:
   validator_version: delta_operations_preflight_2026_05_05_1C_table_guard
 ```
 
-Recovery:
+Final PASS after completion override fix:
 
 ```yaml
-current_restored_sha: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
-restored_to_basis_sha: true
-```
-
-Current status:
-
-```yaml
-fixture_1C:
-  judgment: fail_four_times
-  latest_guard: completion_override_fix_added
-  retest_required: true
-  expected_error: current_L1_L2_subject_skipped_before_completion
-  expected_validator_version: delta_operations_preflight_2026_05_05_1C_completion_override_fix
+write: rejected
+error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+required_error_observed: current_L1_L2_subject_skipped_before_completion
+validator_version: delta_operations_preflight_2026_05_05_1C_completion_override_fix
+request_id: 8adcbfdd-f836-4f8f-b9eb-f63a82541e1b
+basis_sha: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
+sha_after: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
+judgment: pass
 ```
 
 ## remaining_risk
 
-- Fixture 1C retest is pending after completion override fix
 - L3 order fixture is pending
 - positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
@@ -245,8 +239,6 @@ fixture_1C:
 
 Immediate:
 
-- rerun Fixture 1C and expect `current_L1_L2_subject_skipped_before_completion`
-- confirm preflight response includes `validator_version: delta_operations_preflight_2026_05_05_1C_completion_override_fix`
 - run L3 order fixture and expect `L3_order_violation_*_takuitsu_before_selected`
 
 After negative fixtures PASS:
