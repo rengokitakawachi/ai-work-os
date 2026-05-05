@@ -83,7 +83,8 @@ Last review:
 - daily_report: `notes/07_reports/daily/2026-05-05.md`
 - previous_active_sha: `995772a83cfffc0094a9a938b28743646e3f6f8f`
 - archive_operations_sha: `f72cdb524ecf0d2d51d9ec2904abc52010dace16`
-- todoist_projection: pending_after_report_creation
+- todoist_projection_request_id: `ad1a9d68-3fba-46c6-8913-ad23ebf84cf5`
+- todoist_projection_status: applied
 
 Daily close result:
 
@@ -95,6 +96,7 @@ Daily close result:
 - report template gate issue touched
 - routing maturity issue touched
 - Active rerolled to 2026-05-06 start
+- Todoist projection applied; 13 tasks updated
 
 ---
 
