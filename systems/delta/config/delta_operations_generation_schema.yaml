@@ -1,0 +1,177 @@
+system_id: delta
+schema_extension: operations_generation_engine
+status: supplemental_schema_pending_canonical_merge
+
+purpose:
+  - daily_review後にroadmap/plan/current_positionからActive operations D0-D6を自律生成する
+  - D7から中期目標日までのNext operationsを自律生成する
+  - 定量目標、負荷現実性、特殊日、user_capacity、plan fitをwrite前に検証する
+
+input_sources:
+  required:
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - systems/delta/operations/active_operations.md
+    - systems/delta/history/daily/YYYY-MM-DD.md
+  optional:
+    - systems/delta/history/monthly/YYYY-MM.md
+    - systems/delta/resources/materials.md
+
+components:
+  operation_rolling_window_generator:
+    output: Active operations D0-D6
+    required_days:
+      - Day0
+      - Day1
+      - Day2
+      - Day3
+      - Day4
+      - Day5
+      - Day6
+    required_fields_per_day:
+      - plan_anchor
+      - expected_position
+      - current_position
+      - gap_status
+      - operation_mode
+      - must_line
+      - standard_line
+      - stretch_line
+      - recovery_targets
+      - defer_targets
+      - recompute_triggers
+    failure_policy: operations_incomplete_do_not_write
+
+  next_operations_projection_generator:
+    output: Next operations D7-target_date
+    required_when:
+      - roadmap_or_plan_has_medium_target_date
+      - target_date_is_beyond_D6
+    example_target_date: 2026-06-30
+    failure_policy: missing_next_operations_do_not_write_when_medium_target_exists
+
+  reverse_planning_engine:
+    generation_order:
+      - read_roadmap_milestone
+      - read_plan_intermediate_target
+      - read_current_position
+      - expand_medium_plan_by_day
+      - detect_overload
+      - redistribute_overload
+      - write_D0_D6_and_D7_target
+    gap_status_outputs:
+      - on_track
+      - delayed_but_managed
+      - delayed_but_recovering
+      - recovery_on_track
+      - compression_required
+      - critical_delay
+      - needs_confirmation
+
+  quantitative_target_validator:
+    L1_L2_required_format: "科目 L1/L2 P開始〜P終了（nページ）"
+    L3_required_format: "科目 L3 選択/択一 Q開始〜Q終了（n問）"
+    forbidden_terms:
+      - 前半
+      - 後半
+      - 終盤
+      - 完了方向
+      - 進める
+      - 接続判断
+      - 未消化ページ回収のみ
+      - できるところまで
+      - Qx以降
+      - Qx-last
+      - 章の最後まで
+      - 択一入口
+      - 着手
+      - 未達分回収のみ
+    explicit_exceptions:
+      - 国民年金法 Q10-0 は演習対象なし
+      - 健康保険法 Q5/Q6 は存在しない
+      - 健康保険法 Q8 は演習対象なし
+
+  load_realism_guard:
+    thresholds:
+      L1_L2_pages:
+        standard: 40
+        upper_guard: 50
+      L3_selected_questions:
+        standard: 24
+      L3_multiple_choice_questions:
+        standard: 16
+        upper_guard: 25
+      second_pass_sorting_questions:
+        upper_guard: 30
+    overload_resolution_order:
+      - pull_forward_into_D0_D6
+      - mix_L1_L2_after_light_L3_day
+      - move_L3_to_weekend_or_annual_leave
+      - respect_weekday_L3_unavailable_constraints
+      - mark_compression_required_or_critical_delay
+
+  special_day_constraint_handler:
+    special_days:
+      '2026-05-10':
+        L3: unavailable
+      '2026-06-13':
+        L3: unavailable
+      '2026-06-26':
+        L3: unavailable
+        reason: weekday
+      '2026-06-30':
+        L3: available
+        reason: annual_leave
+
+  user_capacity_profile:
+    L3_selected_questions:
+      standard: 24
+    L3_multiple_choice_questions:
+      standard: 16
+    L1_L2_pages:
+      standard: 40
+      upper_guard: 50
+    mixed_day:
+      allowed: true
+      rules:
+        - L3選択後はL1/L2を20〜35ページ追加可能
+        - L3択一が軽い日はL1/L2を15〜30ページ追加可能
+
+  operations_write_preflight_check:
+    structure_check:
+      - D0_D6_exist
+      - next_operations_exist_when_medium_target_exists
+      - required_fields_per_day_exist
+    quantitative_check:
+      - L1_L2_has_page_range_and_count
+      - L3_has_question_range_and_count
+      - forbidden_terms_absent_from_task_and_lines
+    load_check:
+      - L1_L2_above_50_pages_flagged_or_redistributed
+      - L3_multiple_choice_above_25_questions_flagged_or_redistributed
+      - second_pass_above_30_questions_split
+    plan_fit_check:
+      - roadmap_plan_milestone_reachable
+      - unreachable_plan_uses_compression_required_or_critical_delay
+      - recovery_forward_standard_line_matches_expected_position
+    failure_policy: reject_write
+
+acceptance_criteria:
+  - D0_D6_never_missing_after_daily_review
+  - D7_target_next_operations_generated_when_medium_target_exists
+  - L1_L2_page_range_and_page_count_required
+  - L3_question_range_and_question_count_required
+  - vague_targets_rejected
+  - load_guards_detect_overload
+  - overload_redistributed_or_marked_compression_required
+  - special_days_reflected
+  - user_capacity_reflected
+  - roadmap_plan_fit_judged
+
+implementation_status:
+  repo_config_instruction: updated
+  supplemental_schema: created
+  service_preflight_validator: implemented_in_src/services/delta-operations.js
+  deterministic_generator_service: not_yet_implemented
+  runtime_reflection: pending
+  fixture: pending
