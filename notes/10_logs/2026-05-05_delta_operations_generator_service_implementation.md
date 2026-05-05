@@ -2,13 +2,13 @@
 
 ## status
 
-tested_pass_service_only_disposition
+tested_pass_minimum_generator_reverse_planning_gap_open
 
 ## purpose
 
-Record the implementation step after runtime preflight fixtures passed.
+Record the implementation step after runtime preflight fixtures passed, and correct the scope judgment after user clarification.
 
-The preflight validator now rejects unsafe operations content, but DELTA still needed a deterministic generator service that can build a preflight-compatible operations draft from read sources.
+DELTA's purpose is to support learning toward passing the 社労士 exam on 2026-08-23. Therefore, operations generation must reverse-plan from roadmap / plan / current position / remaining scope / capacity. A generator that merely produces a safe 7-day draft is insufficient for the original bug.
 
 ## implemented
 
@@ -46,7 +46,7 @@ ADAM applied the remaining fixes on `feature/atlas-pre-delta-foundation`:
 delta_operations_generator_2026_05_05_minimum_plan_fit
 ```
 
-## current scope
+## current implemented scope
 
 Implemented as service-layer minimum deterministic generator.
 
@@ -100,62 +100,81 @@ status: resolved
 result: 106 PASS / 0 FAIL
 ```
 
-## disposition
+## corrected disposition after user clarification
+
+### Original bug
+
+The original DELTA bug was not merely test failure or unsafe write behavior.
+
+Original symptom:
+
+```text
+operationsを生成する際にロードマップやPlanからの逆算をせずに、安易に7日間の計画を立ててしまう
+```
+
+Given DELTA's mission, this is a critical blocker. The plan must be derived from:
+
+- 2026-08-23 社労士試験合格 target
+- roadmap milestones
+- plan intermediate targets
+- current position
+- remaining page / question scope
+- completed scope
+- daily capacity
+- special days / L3 unavailable days
+- overload / compression judgment
+
+### Corrected judgment
+
+```yaml
+test_failures: resolved
+runtime_preflight_regressions: resolved
+minimum_generator_readiness: resolved
+original_reverse_planning_gap: open_critical_blocker
+gate_status: must_be_reopened_as_reverse_planning_gate
+```
 
 ### API / Action exposure
 
-Decision: do not expose the generator through API / GPT Action in this gate.
+Decision: still not the main issue.
 
-Reason:
-
-- The completed implementation is a minimum deterministic service-layer generator.
-- It is sufficient for test-backed service readiness and future backend integration.
-- Exposing it as an Action now would expand runtime surface before the daily review backend path and projection flow are settled.
-- Action exposure should be designed as a separate task only if daily review execution requires direct runtime invocation.
-
-Current disposition:
-
-```yaml
-generator_exposure: service_only_for_now
-future_call_path: future_DELTA_daily_review_backend_path
-api_action_exposure: deferred
-```
+Whether generator is exposed through API / Action is secondary. The primary blocker is that the generator must actually reverse-plan from roadmap / plan and remaining scope.
 
 ### Full reverse-planning optimizer
 
-Decision: split full reverse-planning optimizer out of the Immediate Gate.
+Corrected decision: this is not optional future scope for DELTA's mission. It is the core fix for the original defect and must be handled as an Immediate Gate / active blocker.
 
-Reason:
+Required capabilities:
 
-- Current generator is intentionally minimum deterministic and plan-fit.
-- Full optimizer requires material catalog parsing, range expansion, load redistribution, special-day handling, and balancing logic.
-- Those features are larger than the runtime fixture / test-readiness gate and should not block the current gate closure.
+- parse or otherwise reliably consume roadmap / plan milestones
+- parse current position and completed scope
+- compute remaining scope to target dates
+- expand page / question ranges quantitatively
+- distribute load across D0-D6 and D7-target
+- apply user capacity and special-day constraints
+- detect overload and produce compression_required / critical_delay when needed
+- produce preflight-compatible read_evidence and operations content
+- prove behavior with tests / fixtures
 
-Current disposition:
+## not done yet
 
-```yaml
-full_reverse_planning_optimizer: separate_next_candidate
-material_catalog_parsing: separate_next_candidate
-load_redistribution: separate_next_candidate
-```
-
-## not done in this gate
-
-- API/action exposure for generator is not implemented
-- generator is still a minimum deterministic draft builder, not a full reverse-planning optimizer
-- material-aware range expansion, actual page/question catalog parsing, special-day redistribution, and load balancing beyond the fixed safe draft remain future implementation work
+- Full reverse-planning from roadmap / plan to 2026-08-23 exam target
+- Material-aware range expansion
+- Remaining scope calculation
+- Special-day redistribution
+- Load balancing / overload judgment
+- Reverse-planning fixture proving that generated operations are derived from roadmap / plan rather than a safe fixed draft
 
 ## gate impact
 
-The DELTA operations generation engine Immediate Gate can be resolved from the test perspective because:
+The prior gate closure was too broad.
 
-- runtime preflight fixtures already passed
-- daytime recommendation fixture already passed
-- deterministic generator service exists
-- generator service test passed
-- full repository `npm test` reached 106 PASS / 0 FAIL
-- API/action exposure has been explicitly deferred
-- full reverse-planning optimizer has been split out as a separate next candidate
+The correct gate split is:
+
+```yaml
+minimum_generator_and_test_readiness: resolved
+reverse_planning_from_roadmap_and_plan: open_critical_blocker
+```
 
 ## linked refs
 
@@ -167,4 +186,6 @@ The DELTA operations generation engine Immediate Gate can be resolved from the t
 - `src/services/delta/operations-generator.test.js`
 - `src/services/delta-resource.js`
 - `src/services/repo-resource/common.js`
+- `systems/delta/roadmap/delta_roadmap.md`
+- `systems/delta/plan/2026_sharoushi_exam_plan.md`
 - `systems/delta/operations/active_operations.md`
