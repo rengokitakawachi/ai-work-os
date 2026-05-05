@@ -38,11 +38,11 @@ export function buildDeltaPath(file, context = {}) {
     });
   }
 
-  if (safe.startsWith('systems/') && !safe.startsWith(DELTA_ROOT)) {
+  if (safe.startsWith('systems/')) {
     throw createError({
       status: 400,
       code: 'INVALID_REQUEST',
-      message: 'delta file must be under systems/delta',
+      message: 'delta file must be relative to systems/delta',
       category: 'validation',
       step: context.step || 'buildDeltaPath',
       resource: 'delta',
@@ -55,11 +55,7 @@ export function buildDeltaPath(file, context = {}) {
     });
   }
 
-  const relative = safe.startsWith(DELTA_ROOT)
-    ? safe.slice(DELTA_ROOT.length)
-    : safe;
-
-  return `${DELTA_ROOT}${relative}`;
+  return `${DELTA_ROOT}${safe}`;
 }
 
 export async function treeDelta(options = {}) {
