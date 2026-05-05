@@ -7,7 +7,7 @@ import {
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
 export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_1C_completion_override_fix';
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_L3_order_line_guard';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
 
@@ -34,6 +34,8 @@ const REQUIRED_READ_ROLES = [
   'special_days',
   'user_capacity',
 ];
+
+const L3_ORDER_SUBJECTS = ['健康保険法', '国民年金法', '厚生年金保険法', '労一', '社一'];
 
 const FORBIDDEN_VAGUE_TARGETS = [
   '前半',
@@ -254,24 +256,37 @@ function validateL1L2Continuity(content, errors) {
   }
 }
 
+function hasExplicitL3SelectedCompletion(content, subject) {
+  const escaped = subject.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const explicitStatus = new RegExp(`${escaped}[\\s\\S]{0,500}(?:selected_completion_status\\s*[:：]\\s*completed|selected_questions\\s*[:：]\\s*completed|L3_selected\\s*[:：]\\s*completed|completed_selected\\s*[:：]\\s*true|L3選択完了|選択完了)`).test(content);
+  const explicitSelectedLine = new RegExp(`${escaped}[^\\n]*(?:L3)?[^\\n]*選択[^\\n]*(?:completion_status\\s*[:：]\\s*completed|completed\\s*[:：]\\s*true|完了済み)`).test(content);
+  return explicitStatus || explicitSelectedLine;
+}
+
+function lineHasSubjectL3Type(line, subject, type) {
+  return (
+    line.includes(subject) &&
+    line.includes('L3') &&
+    line.includes(type) &&
+    L3_QUESTION_PATTERN.test(line)
+  );
+}
+
 function validateL3Order(content, errors) {
   const nextOperations = extractNextOperations(content);
-  const subjectMatches = [...nextOperations.matchAll(/([^|\n]*?)(健康保険法|国民年金法|厚生年金保険法|労一|社一)[^|\n]*?L3[^|\n]*?(選択|択一)/g)];
-  const seen = new Map();
+  const lines = nextOperations.split('\n').map((line) => line.trim()).filter(Boolean);
 
-  for (const match of subjectMatches) {
-    const subject = match[2];
-    const type = match[3];
-    const state = seen.get(subject) || { selected: false, takuitsuBeforeSelected: false };
-    if (type === '選択') state.selected = true;
-    if (type === '択一' && !state.selected) state.takuitsuBeforeSelected = true;
-    seen.set(subject, state);
-  }
+  for (const subject of L3_ORDER_SUBJECTS) {
+    let selectedSeen = hasExplicitL3SelectedCompletion(content, subject);
 
-  for (const [subject, state] of seen) {
-    const explicitlyCompletedSelected = new RegExp(`${subject}[\\s\\S]{0,120}(?:選択[^\\n]*(?:completed|完了)|selected_questions:\\s*completed)`).test(content);
-    if (state.takuitsuBeforeSelected && !explicitlyCompletedSelected) {
-      errors.push(`L3_order_violation_${subject}_takuitsu_before_selected`);
+    for (const line of lines) {
+      if (lineHasSubjectL3Type(line, subject, '選択')) {
+        selectedSeen = true;
+      }
+      if (lineHasSubjectL3Type(line, subject, '択一') && !selectedSeen) {
+        errors.push(`L3_order_violation_${subject}_takuitsu_before_selected`);
+        break;
+      }
     }
   }
 }
