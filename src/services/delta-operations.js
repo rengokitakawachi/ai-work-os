@@ -7,7 +7,7 @@ import {
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
 export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_1C_table_guard';
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_1C_completion_override_fix';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
 
@@ -241,7 +241,7 @@ function hasEmployeePensionL1L2InNextOperations(content) {
 }
 
 function hasExplicitNationalPensionCompletionBeforeEmployeePension(content) {
-  return /国民年金法[\s\S]{0,500}(?:completion_status\s*[:：]\s*completed|completed|完了)[\s\S]{0,500}厚生年金保険法/.test(content);
+  return /国民年金法[\s\S]{0,500}(?:completion_status\s*[:：]\s*completed|status\s*[:：]\s*completed|completed\s*[:：]\s*true)[\s\S]{0,500}厚生年金保険法/.test(content);
 }
 
 function validateL1L2Continuity(content, errors) {
