@@ -45,6 +45,12 @@ const L1_L2_PAGE_PATTERN = /P\d+〜P\d+（\d+ページ）/;
 const L3_QUESTION_PATTERN = /Q\d+-\d+〜Q\d+-\d+（\d+問(?:、[^）]+)?）/;
 const REST_OR_UNAVAILABLE_PATTERN = /新規L1\/L2\/L3なし|L3不可|休養|rest_or_light_review/;
 const NEXT_OPERATIONS_PATTERN = /#\s*Next operations:/;
+const EXISTING_NEXT_OPS_READ_PATTERN = /existing_next_operations_read|existing_next_operations_was_read|source_of_truth:[\s\S]*operations_role|current_position_primary_source/;
+const COMPLETED_SCOPE_PATTERN = /completed_scope|completed_subject|健康保険法L3の新規演習は完了扱い|健康保険法[\s\S]{0,80}completed/;
+const HEALTH_INSURANCE_NEW_L3_PATTERN = /健康保険法\s*L3\s*(?:1巡目\s*)?(?:選択|択一|選択問題|択一問題)\s*Q/;
+const HEALTH_INSURANCE_ALLOWED_CONTEXT_PATTERN = /recovery_targets|defer_targets|deferred|review|2巡目|弱点回収|誤答再演習|参考/;
+const NATIONAL_PENSION_INCOMPLETE_PATTERN = /国民年金法[\s\S]{0,120}(?:L1|L2)[\s\S]{0,120}(?:incomplete|未完了|next_start_page:\s*P(?:158|220)|P158以降未完了)/;
+const EMPLOYEE_PENSION_L1_L2_PATTERN = /厚生年金保険法\s*L[12]\s*P\d+〜P\d+（\d+ページ）/;
 
 function buildDeltaOperationsPath(file, context = {}) {
   const safe = assertSafeRelativePath(file, {
@@ -145,6 +151,84 @@ function validateForbiddenVagueTargetsInDay(day, block, errors) {
   }
 }
 
+function extractNextOperations(content) {
+  const match = NEXT_OPERATIONS_PATTERN.exec(content);
+  if (!match) return '';
+  return content.slice(match.index);
+}
+
+function validatePreGenerationEvidence(content, errors) {
+  if (!/roadmap|roadmap_anchor|roadmap_phase/.test(content)) {
+    errors.push('missing_roadmap_read_evidence');
+  }
+  if (!/plan_anchor|plan\//.test(content)) {
+    errors.push('missing_plan_read_evidence');
+  }
+  if (!EXISTING_NEXT_OPS_READ_PATTERN.test(content)) {
+    errors.push('missing_existing_active_or_next_operations_read_evidence');
+  }
+  if (!/current_position/.test(content)) {
+    errors.push('missing_current_position');
+  }
+  if (!/special_days|L3不可|年休/.test(content)) {
+    errors.push('missing_special_days_evidence');
+  }
+  if (!/user_capacity|capacity_assumptions|standard_capacity/.test(content)) {
+    errors.push('missing_user_capacity_evidence');
+  }
+}
+
+function validateCompletedScope(content, errors) {
+  if (!COMPLETED_SCOPE_PATTERN.test(content)) {
+    errors.push('missing_completed_scope_evidence');
+    return;
+  }
+
+  const nextOperations = extractNextOperations(content);
+  const healthInsuranceNew = HEALTH_INSURANCE_NEW_L3_PATTERN.exec(nextOperations);
+  if (healthInsuranceNew) {
+    const lineStart = nextOperations.lastIndexOf('\n', healthInsuranceNew.index);
+    const lineEnd = nextOperations.indexOf('\n', healthInsuranceNew.index);
+    const line = nextOperations.slice(lineStart + 1, lineEnd === -1 ? undefined : lineEnd);
+    if (!HEALTH_INSURANCE_ALLOWED_CONTEXT_PATTERN.test(line)) {
+      errors.push('completed_health_insurance_L3_reintroduced_as_new_work');
+    }
+  }
+}
+
+function validateL1L2Continuity(content, errors) {
+  const nationalPensionIncomplete = NATIONAL_PENSION_INCOMPLETE_PATTERN.test(content);
+  const nextOperations = extractNextOperations(content);
+  const employeePensionL1L2 = EMPLOYEE_PENSION_L1_L2_PATTERN.test(nextOperations);
+  const explicitContinuityOverride = /国民年金法[\s\S]{0,120}(?:completed|完了)[\s\S]{0,120}厚生年金保険法/.test(content);
+
+  if (nationalPensionIncomplete && employeePensionL1L2 && !explicitContinuityOverride) {
+    errors.push('current_L1_L2_subject_skipped_before_completion');
+  }
+}
+
+function validateL3Order(content, errors) {
+  const nextOperations = extractNextOperations(content);
+  const subjectMatches = [...nextOperations.matchAll(/([^|\n]*?)(健康保険法|国民年金法|厚生年金保険法|労一|社一)[^|\n]*?L3[^|\n]*?(選択|択一)/g)];
+  const seen = new Map();
+
+  for (const match of subjectMatches) {
+    const subject = match[2];
+    const type = match[3];
+    const state = seen.get(subject) || { selected: false, takuitsuBeforeSelected: false };
+    if (type === '選択') state.selected = true;
+    if (type === '択一' && !state.selected) state.takuitsuBeforeSelected = true;
+    seen.set(subject, state);
+  }
+
+  for (const [subject, state] of seen) {
+    const explicitlyCompletedSelected = new RegExp(`${subject}[\\s\\S]{0,120}(?:選択[^\\n]*(?:completed|完了)|selected_questions:\\s*completed)`).test(content);
+    if (state.takuitsuBeforeSelected && !explicitlyCompletedSelected) {
+      errors.push(`L3_order_violation_${subject}_takuitsu_before_selected`);
+    }
+  }
+}
+
 export function validateDeltaOperationsContent(content) {
   const errors = [];
   const warnings = [];
@@ -153,6 +237,11 @@ export function validateDeltaOperationsContent(content) {
     errors.push('content_empty');
     return { ok: false, errors, warnings };
   }
+
+  validatePreGenerationEvidence(content, errors);
+  validateCompletedScope(content, errors);
+  validateL1L2Continuity(content, errors);
+  validateL3Order(content, errors);
 
   for (const day of REQUIRED_ACTIVE_DAYS) {
     const block = extractDayBlock(content, day);
