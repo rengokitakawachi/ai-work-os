@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_1C_pass_L3_order_guard_fixed_retest_pending
+fixture_1A_1B_1C_pass_L3_order_guard_runtime_reflected_fixture_evidence_markers_missing
 
 ## category
 
@@ -28,9 +28,13 @@ Confirmed PASS:
 - Fixture 1B: completed 健康保険法 L3 first-pass reintroduction is rejected
 - Fixture 1C: incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 skip is rejected
 
+Confirmed runtime reflection:
+
+- L3 line-based validator version is runtime-visible: `delta_operations_preflight_2026_05_05_L3_order_line_guard`
+
 Pending:
 
-- L3 order fixture retest after line-based hard guard
+- L3 order fixture retest with required content evidence markers
 - positive valid-write fixture
 - deterministic generator service implementation
 
@@ -58,7 +62,8 @@ Runtime / validator causes found during fixtures:
 - L1/L2 continuity validator was too narrow and repeatedly missed actual fixture shape
 - `hasExplicitNationalPensionCompletionBeforeEmployeePension()` treated `完了` inside `未完了` as an explicit completion override
 - first L3 order fixture was not isolating the target guard
-- isolated L3 order fixture proved `validateL3Order()` did not detect table / line-shaped `国民年金法 L3 択一 Q1-1〜Q1-16（16問）`
+- isolated L3 order fixture proved old `validateL3Order()` did not detect table / line-shaped `国民年金法 L3 択一 Q1-1〜Q1-16（16問）`
+- latest L3 order retest still did not isolate target guard because content evidence markers for roadmap and existing operations read were missing
 
 ## fix_applied
 
@@ -167,14 +172,33 @@ restored_sha: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
 judgment: fail_guard_not_effective
 ```
 
+Attempt 3 after line-based guard:
+
+```yaml
+write: rejected
+error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+request_id: 456364ab-af9c-41cd-a649-0c34acf05515
+validator_version: delta_operations_preflight_2026_05_05_L3_order_line_guard
+errors:
+  - missing_roadmap_read_evidence_in_content
+  - missing_existing_active_or_next_operations_read_evidence_in_content
+sha_before: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
+sha_after: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
+judgment: inconclusive_fixture_defect_runtime_reflection_confirmed
+```
+
 Current status:
 
 ```yaml
 l3_order_fixture:
   latest_guard: line_based_L3_order_guard_added
+  runtime_version_observed: true
   retest_required: true
   expected_validator_version: delta_operations_preflight_2026_05_05_L3_order_line_guard
   expected_error: L3_order_violation_国民年金法_takuitsu_before_selected
+  required_content_markers:
+    - roadmap or roadmap_anchor or roadmap_phase
+    - existing_next_operations_read or existing_next_operations_was_read or source_of_truth.operations_role or current_position_primary_source
 ```
 
 ## remaining_risk
@@ -193,6 +217,7 @@ l3_order_fixture:
 - L3 must follow 選択 → 択一 per subject
 - completed first-pass scope must not be regenerated as new work
 - write path must carry read_evidence
+- content must also include required evidence markers, not only read_evidence payload
 - validator fixtures must include prose, YAML block, subject-first YAML, table form, separated column form, reordered YAML forms, and Japanese negative words such as `未完了`
 - preflight response should include validator_version so runtime code version can be verified
 - Never use branch parameter success as evidence that backend service code is running that branch
@@ -213,7 +238,7 @@ l3_order_fixture:
 
 Immediate:
 
-- rerun L3 order fixture
+- rerun L3 order fixture with content markers `roadmap_anchor` and `existing_next_operations_read`
 - expect `L3_order_violation_国民年金法_takuitsu_before_selected`
 - confirm validator_version `delta_operations_preflight_2026_05_05_L3_order_line_guard`
 
