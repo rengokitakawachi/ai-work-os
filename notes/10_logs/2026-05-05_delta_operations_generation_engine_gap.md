@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_pass_fixture_1B_pending
+fixture_1A_1B_pass_continuity_and_order_fixtures_pending
 
 ## category
 
@@ -122,20 +122,6 @@ Main API pass-through applied:
 
 ### Fixture 1A: `delta_operations` update without `read_evidence`
 
-Observed before main backend alignment:
-
-```yaml
-write: rejected
-error.code: INVALID_REQUEST
-error.message: delta_operations content failed validation
-details.missing_markers:
-  - "# delta active_operations"
-  - "## Day0"
-  - "## Rules"
-  - "Delta operations are learning execution order, not calendar schedule."
-  - "Daily review updates learning history and next operations."
-```
-
 Observed after main backend alignment:
 
 ```yaml
@@ -179,39 +165,32 @@ read_evidence: present
 invalid_content: 健康保険法L3を2026-05-04完了後にD7以降の新規first-passとして再投入
 ```
 
-Observed before main backend alignment:
-
-```yaml
-write: accepted
-status: UPDATED
-sha_after_invalid_write: 017a2248bcd914216e55c9b0929fbec54200596e
-request_id: 1370040c-a18c-4821-a61e-a79c0b2711a7
-```
-
-Recovery before main backend alignment:
-
-```yaml
-restored: true
-restored_sha: af62696214acfcf8817728ee9f97ae24e39c0011
-request_id: f7e83759-2798-4894-bcb7-23acb652693b
-read_back_confirmed: true
-```
-
-Expected after main backend alignment:
+Observed after main backend alignment:
 
 ```yaml
 write: rejected
 error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+request_id: 0e7ba49f-1435-4b75-900e-892541e382b6
 details.errors:
   - completed_health_insurance_L3_reintroduced_as_new_work
-sha_unchanged: true
+  - forbidden_Day6_vague_target:完了方向
+details.warnings:
+  - l3_multiple_choice_count_above_guard:47
+sha_before: af62696214acfcf8817728ee9f97ae24e39c0011
+sha_after: af62696214acfcf8817728ee9f97ae24e39c0011
 ```
 
 Judgment:
 
 ```yaml
 fixture_1B:
-  status: pending_retest_after_main_backend_alignment
+  write_rejection: pass
+  expected_error_code: pass
+  completed_scope_validator_observed: pass
+  sha_unchanged: pass
+  additional_vague_target_guard_observed: pass
+  load_warning_observed: pass
+  overall: pass
 ```
 
 ## implemented preflight checks now in main backend
@@ -230,9 +209,9 @@ fixture_1B:
 
 ## remaining_risk
 
-- Fixture 1B completed_scope reject is pending after main backend alignment
 - L1/L2 continuity fixture is pending
 - L3 order fixture is pending
+- positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
 - supplemental schema has not been merged into canonical `delta_schema.yaml`
 - service preflight can prove submitted metadata, but deterministic semantic use of sources still needs generator implementation
@@ -266,9 +245,10 @@ fixture_1B:
 
 Immediate:
 
-- re-run Fixture 1B after main backend alignment and expect `completed_health_insurance_L3_reintroduced_as_new_work`
+- run L1/L2 continuity fixture and expect `current_L1_L2_subject_skipped_before_completion`
+- run L3 order fixture and expect `L3_order_violation_*_takuitsu_before_selected`
 
-After Fixture 1B PASS:
+After negative fixtures PASS:
 
-- run L1/L2 continuity fixture and L3 order fixture
+- run positive valid-write fixture or dry validation path
 - add deterministic generator service implementation as follow-up active task
