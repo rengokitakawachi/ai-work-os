@@ -8,13 +8,37 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
+## 再評価結果（2026-05-05 DELTA reverse-planning correction）
+
+User clarification confirmed that DELTA's original defect is not merely test failure or unsafe write behavior.
+
+Original defect:
+
+```text
+operationsを生成する際にロードマップやPlanからの逆算をせずに、安易に7日間の計画を立ててしまう
+```
+
+Because DELTA's mission is to support passing the 社労士 exam on 2026-08-23, full reverse-planning from roadmap / plan / current position / remaining scope is not optional future scope.
+
+Disposition:
+
+- `DELTA full reverse-planning optimizer を設計する` is promoted out of next_operations.
+- It must be handled as an active Immediate Gate / blocker.
+- The prior `minimum deterministic generator` remains useful but is not sufficient to close the original issue.
+
+---
+
 ## 再評価結果（2026-05-05 DELTA generator gate）
 
 DELTA operations generation engine Immediate Gate では、minimum deterministic generator を service-only として test-backed readiness まで到達した。
 
 API / Action exposure はこの gate では実施せず、future DELTA daily review backend path からの呼び出し設計まで保留する。
 
-Full reverse-planning optimizer は、material catalog parsing / range expansion / special-day redistribution / load balancing を含むため Immediate Gate から分離し、next candidate として保持する。
+Correction:
+
+- Full reverse-planning optimizer was initially separated to next candidate.
+- This was a blocker underestimation.
+- It has now been promoted to active Immediate Gate because it is the core fix for the original DELTA defect.
 
 ---
 
@@ -56,23 +80,6 @@ Result:
 明日以降の再開性を優先し、ADAM / EVE / DELTA の Action schema 正規ファイル名固定 task を active Day0 に追加した。
 
 DELTA v0.6 は引き続き active 主線として維持する。
-
-### active_operations に残した / 追加した主な task
-
-- `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
-- `DELTA v0.6 operations shape を feature branch に反映する`
-- `DELTA configured GPT で bulk / tree / recommended_lines recall を確認する`
-- `DELTA chapter-only normalization fixture を実行する`
-- `DELTA daily review write + operations update fixture を実行する`
-- `DELTA write resource schema reflection gate を整理する`
-- `DELTA Todoist projection profile を設計・実装する`
-- `DELTA Todoist dry_run / apply / write-back fixture を実行する`
-
-Reason:
-
-- Action schema 命名規約の未固定は configured GPT 反映ミスを再発させる
-- DELTA v0.6 は config / operations / runtime write / projection の一連の完成が必要
-- operations shape が固定されないと runtime fixture / Todoist projection の確認が進まない
 
 ---
 
@@ -268,39 +275,7 @@ completed_condition:
 
 ---
 
-### 9. DELTA full reverse-planning optimizer を設計する
-
-source_ref:
-
-- notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
-- notes/02_design/2026-05-05_delta_operations_generation_engine.md
-- src/services/delta/operations-generator.js
-- src/services/delta/operations-generator.test.js
-- systems/delta/roadmap/delta_roadmap.md
-- systems/delta/plan/2026_sharoushi_exam_plan.md
-- systems/delta/operations/active_operations.md
-- config/from-claude.md
-
-why_next:
-
-- DELTA Immediate Gate では minimum deterministic generator を service-only として完成させた
-- full reverse-planning optimizer は material catalog parsing / range expansion / special-day redistribution / load balancing を含むため別 task とする
-- current gate closure を妨げないが、DELTA v0.7 以降の operations quality 向上に必要
-
-completed_condition:
-
-- current minimum generator の入力 / 出力 /制約を整理する
-- material catalog parsing の source と schema を決める
-- page / question range expansion の規則を定義する
-- special-day redistribution と user_capacity の扱いを定義する
-- completed_scope exclusion validator との責務境界を定義する
-- runtime preflight を通すための evidence generation 方針を決める
-- API / Action exposure が必要か、daily review backend path 内 service-only で足りるか判断する
-- 実装する場合は separate implementation task に分解する
-
----
-
-### 10. handover latest index と月別フォルダ構成を導入する
+### 9. handover latest index と月別フォルダ構成を導入する
 
 source_ref:
 
@@ -329,7 +304,7 @@ completed_condition:
 
 ---
 
-### 11. tasks API 全体を execution projection 前提で再設計する
+### 10. tasks API 全体を execution projection 前提で再設計する
 
 source_ref:
 
@@ -354,7 +329,7 @@ completed_condition:
 
 ---
 
-### 12. code resource の repo root allowlist 拡張を設計・確認する
+### 11. code resource の repo root allowlist 拡張を設計・確認する
 
 source_ref:
 
@@ -377,7 +352,7 @@ completed_condition:
 
 ---
 
-### 13. Todoist projection due_date / due_type 伝播を regression 確認する
+### 12. Todoist projection due_date / due_type 伝播を regression 確認する
 
 source_ref:
 
@@ -401,7 +376,7 @@ completed_condition:
 
 ---
 
-### 14. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
+### 13. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
 
 source_ref:
 
@@ -424,7 +399,7 @@ completed_condition:
 
 ---
 
-### 15. weekly review を定期実行 task として operations に組み込む
+### 14. weekly review を定期実行 task として operations に組み込む
 
 source_ref:
 
