@@ -7,7 +7,7 @@ import {
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
 export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_L3_order_line_guard';
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
 
@@ -258,9 +258,9 @@ function validateL1L2Continuity(content, errors) {
 
 function hasExplicitL3SelectedCompletion(content, subject) {
   const escaped = subject.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const explicitStatus = new RegExp(`${escaped}[\\s\\S]{0,500}(?:selected_completion_status\\s*[:：]\\s*completed|selected_questions\\s*[:：]\\s*completed|L3_selected\\s*[:：]\\s*completed|completed_selected\\s*[:：]\\s*true|L3選択完了|選択完了)`).test(content);
-  const explicitSelectedLine = new RegExp(`${escaped}[^\\n]*(?:L3)?[^\\n]*選択[^\\n]*(?:completion_status\\s*[:：]\\s*completed|completed\\s*[:：]\\s*true|完了済み)`).test(content);
-  return explicitStatus || explicitSelectedLine;
+  const explicitStructuredStatus = new RegExp(`${escaped}[\\s\\S]{0,500}(?:selected_completion_status\\s*[:：]\\s*completed|selected_questions\\s*[:：]\\s*completed|L3_selected\\s*[:：]\\s*completed|completed_selected\\s*[:：]\\s*true)`).test(content);
+  const explicitSelectedLine = new RegExp(`${escaped}[^\\n]*(?:L3)?[^\\n]*選択[^\\n]*(?:completion_status\\s*[:：]\\s*completed|completed\\s*[:：]\\s*true)`).test(content);
+  return explicitStructuredStatus || explicitSelectedLine;
 }
 
 function lineHasSubjectL3Type(line, subject, type) {
