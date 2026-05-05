@@ -2,7 +2,7 @@
 
 ## status
 
-partially_fixed_repo_level_service_preflight_strengthened_generator_pending_instruction_compressed_plan_fit_failed
+partially_fixed_read_evidence_write_path_added_generator_pending_runtime_pending
 
 ## category
 
@@ -35,119 +35,92 @@ Observed failures:
 
 Post-fix regressions:
 
-- ADAM initially expanded `systems/delta/config/delta_instruction.md` to content_length 12747, exceeding the configured GPT instruction limit of 8000 characters.
-- A later controller fixture looked structurally valid but incorrectly reintroduced 健康保険法 L3 into future operations even though 2026-05-04 daily history marks 健康保険法 L3 new exercises as completed.
-- DELTA request memo identified that the core failure was pre-generation SSOT read / preflight insufficiency, not merely planning arithmetic.
+- DELTA instruction was once expanded to 12747 characters, above the 8000-character configured GPT limit.
+- A later controller fixture looked structurally valid but reintroduced completed 健康保険法 L3.
+- DELTA memo identified pre-generation SSOT read / preflight insufficiency as the core failure.
 
 ## DELTA request memo findings
 
-The DELTA memo requires the following corrections:
+Required corrections:
 
-- hard fail when `operations/active_operations.md`, existing D0-D6, or existing Next operations are not read before generation
-- hard fail when L1/L2 current_position or L3 current_position is missing
+- hard fail when active_operations, existing D0-D6, or existing Next operations are not read before generation
+- hard fail when L1/L2 or L3 current_position is missing
 - hard fail when completed_subjects, special_days, or user_capacity are missing
-- prevent moving to the next L1/L2 subject before the current subject has reached subject_end_page
-- specifically prevent 厚生年金保険法 L1/L2 while 国民年金法 L1/L2 remains incomplete
+- prevent moving to next L1/L2 subject before current subject reaches subject_end_page
+- prevent 厚生年金保険法 L1/L2 while 国民年金法 L1/L2 remains incomplete
 - prevent 健康保険法 L3 first-round 選択/択一 from being regenerated after completion
 - require L3 order per subject: 選択 → 択一
-- treat the previous generation as invalid with `write_allowed: false`
-
-## impact
-
-DELTA could output a locally plausible short plan while leaving impossible load later.
-
-Daily review could appear complete while operations generation remained structurally incomplete.
-
-The oversized instruction could not be reflected into configured GPT, blocking runtime adoption of the fix.
-
-A fixture can pass structure / quantitative checks while still failing plan-fit if it ignores completed_scope, current_position continuity, existing operations continuity, or L3 order.
+- treat previous generation as invalid with `write_allowed: false`
 
 ## root_cause
 
-DELTA had rules for daily operations shape and recovery line calibration, but lacked an explicit operations generation engine:
+DELTA lacked deterministic generation / preflight layers for:
 
+- pre_generation_required_reads
 - operation_rolling_window_generator
 - next_operations_projection_generator
 - quantitative_target_validator
 - load_realism_guard
 - reverse_planning_engine
-- special_day_constraint_handler
-- user_capacity_profile
-- operations_write_preflight_check
 - completed_scope_exclusion_validator
-- pre_generation_required_reads
 - L1_L2_subject_continuity_guard
 - completed_subject_guard
 - L3_order_guard
-
-ADAM also failed to apply instruction-size discipline during the first fix. Detailed implementation rules were placed into instruction instead of being split between core instruction and supplemental schema / design note.
-
-The fixture judged only formal completeness and load realism, not whether planned subjects had already completed their first-pass new exercise scope or whether current subject continuity and L3 order were preserved.
+- read_evidence validation
 
 ## fix_applied
 
-Created design note:
+Design note:
 
 - `notes/02_design/2026-05-05_delta_operations_generation_engine.md`
-- latest sha: `9b4ea2cf90315abd57f464303086722f70bfeb69`
+- sha: `9b4ea2cf90315abd57f464303086722f70bfeb69`
 
-Created / updated supplemental schema:
+Supplemental schema:
 
 - `systems/delta/config/delta_operations_generation_schema.yaml`
 - branch: `feature/atlas-pre-delta-foundation`
-- latest sha: `1b906f2afe663d30b38fb6add66c75d0ea662b29`
+- sha: `1b906f2afe663d30b38fb6add66c75d0ea662b29`
 
-Supplemental schema now includes:
-
-- `pre_generation_required_reads`
-- `hard_fail_if_missing`
-- `L1_L2_subject_continuity_guard`
-- `completed_subject_guard`
-- `completed_scope_exclusion_validator`
-- `L3_order_guard`
-- `previous_generation_status: invalid`
-
-Compressed DELTA instruction under the 8000-character limit:
+DELTA instruction compressed:
 
 - `systems/delta/config/delta_instruction.md`
 - branch: `feature/atlas-pre-delta-foundation`
 - sha: `66635dffaa60f56090380043da8b9d8dc1e4d95d`
 - content_length: `6535`
 
-Implemented / strengthened service-level preflight validator:
+Service preflight strengthened:
 
 - `src/services/delta-operations.js`
 - branch: `feature/atlas-pre-delta-foundation`
-- latest sha: `b6ad49c6c822f6f75c0ceefaa53457c4a9e2935d`
+- sha: `3c12c808dc0b6856f53c5284f8e19606af5a0a76`
 
-Preflight now checks or approximates:
+API write path updated:
+
+- `api/repo-resource.js`
+- branch: `feature/atlas-pre-delta-foundation`
+- sha: `44e3d14af162694d06f0c15e0561db5ad37662ab`
+
+Action schema updated:
+
+- `systems/delta/config/delta_action_schema.yaml`
+- branch: `feature/atlas-pre-delta-foundation`
+- sha: `77015d8106d11353c0a2c71714025ae49127fbce`
+
+## implemented preflight checks
 
 - D0-D6 exist
 - required day fields exist
 - Next operations section exists
-- each day has quantitative target or explicit rest/unavailable marker
-- forbidden vague target terms are rejected in task / line targets
+- each day has quantitative target or explicit rest / unavailable marker
+- forbidden vague target terms are rejected in target lines
 - high load is returned as warning
-- read evidence for roadmap / plan / active / Next operations
-- current_position evidence
-- special_days evidence
-- user_capacity evidence
-- completed_scope evidence
-- completed 健康保険法 L3 not reintroduced as new work
-- 国民年金法 L1/L2 incomplete does not jump to 厚生年金保険法 L1/L2 without explicit completion override
-- L3 order 選択 → 択一 per subject
+- read_evidence roles and paths are required for roadmap, plan, active_operations, latest_daily_history, completed_subjects, special_days, user_capacity
+- content must still contain current_position, special_days, user_capacity, and completed_scope evidence
+- completed 健康保険法 L3 is rejected if reintroduced as new work
+- 国民年金法 L1/L2 incomplete cannot jump to 厚生年金保険法 L1/L2 without explicit completion override
+- L3 order 選択 → 択一 is checked per subject
 
-## plan-fit correction
-
-The controller fixture previously described as PASS相当 is corrected to plan-fit FAIL.
-
-Evidence: `systems/delta/history/daily/2026-05-04.md` states 健康保険法L3の新規演習は完了扱い and next scope is 国民年金法 L3 選択問題.
-
-Future operations must not re-add completed first-pass new exercise scope as new work.
-
-Completed subjects may appear only as deferred recovery / review / second-pass targets, not as new first-pass operations.
-
-The previous generation status is:
+## previous generation status
 
 ```yaml
 previous_generation_status: invalid
@@ -163,44 +136,38 @@ write_allowed: false
 
 ## remaining_risk
 
-The deterministic generator service is not fully implemented yet.
-
-Current code prevents many incomplete operations writes, but it does not yet autonomously compute all target ranges from roadmap / plan / current_position.
-
-Configured GPT reflection and runtime fixture are still pending.
-
-Supplemental schema has not yet been safely merged into canonical `delta_schema.yaml`.
-
-Service-level preflight can only inspect the submitted operations content and cannot truly prove all source files were read unless read evidence / metadata is passed into the write path or embedded in the generated operations.
+- deterministic generator service is not implemented yet
+- configured GPT reflection and runtime-visible schema are pending
+- supplemental schema has not been merged into canonical `delta_schema.yaml`
+- read_evidence is now supported in repo/API/schema code, but actual runtime Action reflection must be confirmed
+- service preflight can prove submitted metadata; it still cannot prove source contents were semantically used correctly without a generator service or richer source snapshots
 
 ## recurrence_prevention
 
-- Do not treat prompt guidance as sufficient when deterministic structure can be validated.
-- DELTA daily review is incomplete if active_operations lacks D0-D6 or required fields.
-- D7-target next operations must exist when a medium target exists.
-- Vague targets must be rejected before write.
-- Overload must be redistributed or marked compression_required / critical_delay.
-- Keep configured GPT instruction under 8000 characters.
-- Put detailed generation rules into supplemental schema / design note, and keep instruction to core always-on guards.
-- Fixture PASS requires plan-fit, not just structure / quantitative / load checks.
-- A completed first-pass scope must be excluded from new operations unless explicitly marked as recovery / review.
-- Operations generation must hard fail if existing active_operations / existing Next operations / current_position / completed_subjects / special_days / user_capacity are missing.
-- L1/L2 current subject must not be skipped before subject_end_page.
-- L3 must follow 選択 → 択一 per subject.
+- Fixture PASS requires plan-fit, not just structure / quantitative / load checks
+- Operations generation must hard fail if active_operations / Next operations / current_position / completed_subjects / special_days / user_capacity are missing
+- L1/L2 current subject must not be skipped before subject_end_page
+- L3 must follow 選択 → 択一 per subject
+- completed first-pass scope must not be regenerated as new work
+- write path should carry read_evidence, not rely only on content inference
+- detailed rules belong in supplemental schema / design note; instruction stays under 8000 characters
 
 ## linked_refs
 
 - `notes/02_design/2026-05-05_delta_operations_generation_engine.md`
 - `systems/delta/config/delta_instruction.md`
 - `systems/delta/config/delta_operations_generation_schema.yaml`
+- `systems/delta/config/delta_action_schema.yaml`
 - `src/services/delta-operations.js`
+- `api/repo-resource.js`
 - `systems/delta/operations/active_operations.md`
 - `systems/delta/history/daily/2026-05-04.md`
 - DELTA request memo from user upload 2026-05-05
 
 ## next_disposition
 
-- Expand the existing DELTA Immediate Gate acceptance criteria to include pre-generation required reads, L1/L2 subject continuity, completed_subject guard, and L3 order guard.
-- Add deterministic generator service implementation as a follow-up active task after current configured GPT reflection gates are resolved.
-- Merge supplemental schema into canonical `delta_schema.yaml` when safe.
-- Consider passing read-evidence metadata into `delta_operations` write path so service can prove required source reads, rather than inferring from content.
+- Confirm configured GPT Action reflection for `read_evidence`
+- Run runtime fixture with missing read_evidence and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
+- Run runtime fixture with invalid completed health insurance reintroduction and expect reject
+- Add deterministic generator service implementation as follow-up active task
+- Merge supplemental schema into canonical `delta_schema.yaml` when safe
