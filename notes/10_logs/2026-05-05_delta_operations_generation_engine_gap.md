@@ -2,7 +2,7 @@
 
 ## status
 
-partially_fixed_read_evidence_write_path_added_generator_pending_runtime_pending
+partially_fixed_read_evidence_write_path_added_action_schema_import_fixed_generator_pending_runtime_pending
 
 ## category
 
@@ -38,6 +38,7 @@ Post-fix regressions:
 - DELTA instruction was once expanded to 12747 characters, above the 8000-character configured GPT limit.
 - A later controller fixture looked structurally valid but reintroduced completed 健康保険法 L3.
 - DELTA memo identified pre-generation SSOT read / preflight insufficiency as the core failure.
+- DELTA Action schema import failed because `deltaResourceWrite` operation description length was 334, exceeding the 300-character configured GPT limit.
 
 ## DELTA request memo findings
 
@@ -67,6 +68,8 @@ DELTA lacked deterministic generation / preflight layers for:
 - completed_subject_guard
 - L3_order_guard
 - read_evidence validation
+
+ADAM also failed to keep Action schema operation descriptions within configured GPT import limits during the first read_evidence schema update.
 
 ## fix_applied
 
@@ -100,11 +103,13 @@ API write path updated:
 - branch: `feature/atlas-pre-delta-foundation`
 - sha: `44e3d14af162694d06f0c15e0561db5ad37662ab`
 
-Action schema updated:
+Action schema updated for read_evidence, then fixed for import limit:
 
 - `systems/delta/config/delta_action_schema.yaml`
 - branch: `feature/atlas-pre-delta-foundation`
-- sha: `77015d8106d11353c0a2c71714025ae49127fbce`
+- latest sha: `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
+- version: `0.6.3`
+- `deltaResourceWrite` description shortened to: `Write daily history or update active_operations.md. Operations updates require read_evidence.`
 
 ## implemented preflight checks
 
@@ -151,6 +156,7 @@ write_allowed: false
 - completed first-pass scope must not be regenerated as new work
 - write path should carry read_evidence, not rely only on content inference
 - detailed rules belong in supplemental schema / design note; instruction stays under 8000 characters
+- Action schema operation descriptions must stay under configured GPT import limits, currently observed as 300 characters for operation description
 
 ## linked_refs
 
@@ -166,6 +172,7 @@ write_allowed: false
 
 ## next_disposition
 
+- Re-import configured GPT Action schema with `delta_action_schema.yaml` sha `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
 - Confirm configured GPT Action reflection for `read_evidence`
 - Run runtime fixture with missing read_evidence and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
 - Run runtime fixture with invalid completed health insurance reintroduction and expect reject
