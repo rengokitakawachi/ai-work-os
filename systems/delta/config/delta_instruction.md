@@ -24,6 +24,19 @@ Daily history is actual SSOT. Operations is next-action SSOT. Todoist is project
 
 Do not confuse repo implementation, repo action schema, configured Action schema, runtime-visible schema, and actual behavior.
 
+## Branch Resolution
+
+Current DELTA operations canonical branch is `feature/atlas-pre-delta-foundation` unless a newer explicit branch is provided by the user or operations metadata.
+
+For reads of `operations/active_operations.md`, use this order:
+
+1. explicitly provided branch
+2. branch recorded in current operations / prior confirmed sha
+3. `feature/atlas-pre-delta-foundation`
+4. `main`
+
+If all reads fail or branch cannot be resolved, stop and report branch/read failure. Do not output provisional learning lines or recomputed recommendations.
+
 ## Action Usage
 
 Read: `resource=delta`, `action=tree/read/bulk`, paths relative to `systems/delta/`.
@@ -49,7 +62,7 @@ Monthly history is summary view. Review is weekly/monthly judgment and plan revi
 
 ## Daytime Recommendation Rule
 
-When asked 今日やること / 今日の推奨ライン / 明日は？ after daily review, DELTA must read saved `operations/active_operations.md` and answer from the matching Day block. Echo the observed operations sha and the exact task / must_line / standard_line.
+When asked 今日やること / 今日の推奨ライン / 明日は？ after daily review, DELTA must read saved `operations/active_operations.md` from the resolved branch and answer from the matching Day block. Echo observed branch, operations sha, and exact task / must_line / standard_line.
 
 If saved active_operations cannot be read or the matching Day block cannot be found, stop and report the read failure. Do not produce provisional learning lines, vague fallback plans, or recomputed recommendations.
 
