@@ -8,6 +8,57 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 
 Immediate Gate は7日枠に数えない。
 
+- gate: DELTA reverse-planning operations generator を実装・確認する
+  status: open
+  severity: critical
+  source_ref:
+    - notes/02_design/2026-05-05_delta_operations_generation_engine.md
+    - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
+    - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - systems/delta/operations/active_operations.md
+    - systems/delta/history/daily/2026-05-04.md
+    - systems/delta/config/delta_instruction.md
+    - systems/delta/config/delta_schema.yaml
+    - systems/delta/config/delta_operations_generation_schema.yaml
+    - src/services/delta/operations-generator.js
+    - src/services/delta/operations-generator.test.js
+    - config/from-claude.md
+  reason:
+    - DELTA の役割は 2026-08-23 社労士試験合格に向けた学習支援である
+    - 元々の不具合は、operations 生成時に roadmap / plan / current_position / remaining_scope から逆算せず、安易に7日間の計画を立ててしまうこと
+    - 106 PASS / 0 FAIL は test failure と minimum deterministic generator readiness の解消であり、本来の reverse-planning gap の完了証拠ではない
+    - minimum generator は roadmap / plan の read_evidence を要求し、unsafe draft を防ぐが、remaining scope / target date / capacity / special days から日別負荷を逆算・再配分する optimizer ではない
+    - 2026-08-23 合格 target に対し、逆算計画が立てられない状態は DELTA mission critical blocker であり放置できない
+    - 先に resolved とした DELTA operations generation gate は scope 判断が過小で、ADAM の blocker 判定ミスとして補正する
+  blocks:
+    - DELTA chapter-only normalization fixture を実行する
+    - DELTA write resource schema reflection gate を整理する
+    - DELTA Todoist projection profile を設計・実装する
+    - DELTA Todoist dry_run / apply / write-back fixture を実行する
+    - DELTA foundation を main に統合する準備をする
+  completed_condition:
+    - roadmap milestone と 2026-08-23 exam target を generator input として読む
+    - plan intermediate target を generator input として読む
+    - current_position と latest daily history を読む
+    - completed_scope を読み、first-pass 完了範囲を new work から除外する
+    - remaining L1/L2 page scope と L3 question scope を算出する
+    - user_capacity と special_days / L3 unavailable days を反映する
+    - D0-D6 Active operations と D7-target Next operations を roadmap / plan から逆算して生成する
+    - 各 day の L1/L2 は page range + page count を持つ
+    - 各 day の L3 は question range + question count を持つ
+    - overload を検知し、redistribute / compression_required / critical_delay のいずれかを出す
+    - generated operations が preflight を通る read_evidence を持つ
+    - fixture で「roadmap / plan を読まない安易な7日計画」を拒否または失敗扱いにできることを確認する
+    - fixture で「2026-08-23 target / plan / remaining scope / capacity から逆算した計画」を生成できることを確認する
+    - ATLAS または local test で reverse-planning generator tests が PASS する
+    - runtime-visible behavior を観測するまで repo config / test pass のみで completed と扱わない
+  notes:
+    - prior minimum generator gate is not enough for original issue closure
+    - `DELTA full reverse-planning optimizer を設計する` was promoted from next_operations to this Immediate Gate
+    - API / Action exposure is secondary; core issue is reverse-planning behavior
+
 - gate: ADAM / EVE instruction configured GPT reflection を確認する
   status: resolved
   completed: true
@@ -24,9 +75,8 @@ Immediate Gate は7日枠に数えない。
     todoist_task_id: 6gX2rrfXcWXCR24q
 
 - gate: DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
-  status: resolved
-  completed: true
-  completed_at: 2026-05-05
+  status: partially_resolved_superseded_by_reverse_planning_gate
+  completed: false
   source_ref:
     - systems/delta/config/delta_instruction.md
     - systems/delta/config/delta_schema.yaml
@@ -41,46 +91,20 @@ Immediate Gate は7日枠に数えない。
     - src/services/delta-operations.js
     - src/services/delta/operations-generator.js
     - src/services/delta/operations-generator.test.js
-    - src/services/delta-resource.js
-    - src/services/repo-resource/common.js
-    - api/repo-resource.js
-  reason:
-    - DELTA configured GPT Action schema v0.6.3 は user により反映済み
-    - `read_evidence` pass-through と runtime preflight actual behavior は fixture で確認済み
-    - negative runtime fixtures は 1A / 1B / 1C / L3 order まで PASS
-    - positive valid-write fixture も PASS
-    - DELTA daytime recommendation fixture も PASS
-    - deterministic generator service は最小実装済み
-    - ATLAS により `operations-generator.test.js` PASS を確認済み
-    - ADAM / ATLAS 連携で repository full `npm test` は最終 106 PASS / 0 FAIL
-    - generator はこの gate では API / Action に出さず、service-only として future DELTA daily review backend path へ接続する判断にした
-    - full reverse-planning optimizer / material catalog parsing / load redistribution は `next_operations` の別 task へ分離済み
-    - repo更新だけで runtime completed と扱わず、runtime fixture / test observation / disposition で閉じた
-  completed_condition:
-    - DELTA configured GPT に `delta_instruction.md` / `delta_schema.yaml` / `delta_operations_generation_schema.yaml` の最新内容が反映されたことを確認する
-    - DELTA configured GPT Actions に `delta_action_schema.yaml` v0.6.3 / sha `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8` が反映されたことを確認する
-    - DELTA runtime-visible schema で `deltaResourceWrite` request body に `read_evidence` が見えることを確認する
-    - DELTA runtime で `read_evidence` なしの `delta_operations` update が `DELTA_OPERATIONS_PREFLIGHT_FAILED` で拒否されることを確認する
-    - DELTA runtime で completed 健康保険法L3 の新規 first-pass 再投入が拒否されることを確認する
-    - DELTA runtime で L1/L2 continuity violation が拒否されることを確認する
-    - DELTA runtime で L3 order violation が拒否されることを確認する
-    - DELTA runtime で valid / safe operations content が preflight PASS で write できることを確認する
-    - deterministic generator service が D0〜D6 Active operations と D7以降 Next operations を生成することを確認する
-    - generator output が runtime preflight を通ることを test で確認する
-    - `npm test` を実行し、既存 test と `operations-generator.test.js` が通ることを確認する
-    - generator を API/action に出すか、service-only として daily review backend path から呼ぶかを判断する
-    - full reverse-planning optimizer / material catalog parsing / load redistribution は別 task へ分離するか判断する
-    - runtime-visible behavior を観測するまで repo config level を runtime completed と扱わない
+  resolved_scope:
+    - runtime preflight negative fixtures PASS
+    - runtime preflight positive valid-write fixture PASS
+    - daytime recommendation fixture PASS
+    - minimum deterministic generator service test PASS
+    - repository npm test 106 PASS / 0 FAIL
+  unresolved_scope:
+    - original reverse-planning gap remains open
+    - roadmap / plan / remaining scope / capacity based load calculation is not proven
+    - full reverse-planning optimizer is now tracked by Immediate Gate above
   evidence:
-    - runtime_preflight_negative_fixtures: PASS
-    - runtime_preflight_positive_fixture: PASS
-    - daytime_recommendation_fixture: PASS
-    - generator_service_test: PASS
-    - repository_npm_test: 106 PASS / 0 FAIL
     - ATLAS_final_result_commit: 72c920e
     - from_claude_blob_sha: a420d5c76f2cd562003d3701a3ac51ee7eb6b7d4
-    - implementation_log_sha: 8d4fa9819409fad1524e9ed99a219f980626df8f
-    - next_operations_sha_after_optimizer_split: 2399f28ddc4a8cb9ca013e6e80afbb7700c198a1
+    - implementation_log_sha: a5317308ad6ead68923ca1be9e651507e743848d
   external:
     todoist_task_id: 6gX2mXQwgvhVv79q
 
@@ -101,23 +125,21 @@ Daily close result:
 
 - Completed task archived: `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
 - Immediate Gate resolved: `ADAM / EVE instruction configured GPT reflection を確認する`
-- Immediate Gate resolved: `DELTA operations generation engine configured GPT reflection / runtime fixture を確認する`
-- DELTA runtime-dependent active tasks are unblocked as of 2026-05-05 gate closure
-- Active rerolled to 2026-05-05 start
-- Todoist projection needs update after gate resolution
+- DELTA minimum generator / test readiness reached 106 PASS / 0 FAIL
+- Correction: DELTA original reverse-planning gap remains open and is now an Immediate Gate
+- DELTA runtime-dependent tasks remain blocked until reverse-planning gate is resolved
+- Todoist projection needs update after gate correction
 
 ---
 
 ## Recently resolved gates / completed tasks
 
-- gate: DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
-  status: resolved
-  completed: true
+- task: DELTA minimum generator test readiness
+  status: completed_scope_only
   completed_at: 2026-05-05
   evidence_ref:
     - config/from-claude.md
     - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
-    - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
 
 - gate: ADAM / EVE instruction configured GPT reflection を確認する
   status: resolved
@@ -150,7 +172,7 @@ Daily close result:
 
 ## Day0（05/05 火）
 
-Capacity note: ADAM / EVE reflection gate and DELTA operations generation gate are resolved. Continue ADAM governance定着2件, then DELTA runtime-dependent follow-up tasks in active order.
+Capacity note: First resolve Immediate Gate `DELTA reverse-planning operations generator を実装・確認する`. ADAM governance定着2件 remain active but should not displace mission-critical DELTA blocker.
 
 - task: ADAM bug fix log の運用方法を notes に固定する
   source_ref:
@@ -212,6 +234,8 @@ Capacity note: ADAM / EVE reflection gate and DELTA operations generation gate a
   rolling_day: Day1
   due_date: 2026-05-06
   due_type: date
+  blocked_by:
+    - DELTA reverse-planning operations generator を実装・確認する
   completed_condition:
     - `健康保険法の3章が終わった` ケースで、L3なら question_id への正規化または uncertainty が必要と判断する
     - `国民年金法7章が終わった` ケースで、L1/L2なら page_range / next_start_page が必要と判断する
@@ -219,22 +243,6 @@ Capacity note: ADAM / EVE reflection gate and DELTA operations generation gate a
     - 実データを読んだ上で、推測で precise progress を作らない
   external:
     todoist_task_id: 6gWVwmxWFcf9Wp4H
-
-- task: EVE runtime reflection の最小確認プロンプトと完了条件を整理する
-  source_ref:
-    - config/eve_instruction.md
-    - config/eve_action_schema.yaml
-    - notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md
-  rolling_day: Day1
-  due_date: 2026-05-06
-  due_type: date
-  status: absorbed_by_gate_resolution
-  completed: true
-  completed_at: 2026-05-05
-  notes:
-    - EVE runtime fixture was executed as part of the ADAM / EVE Immediate Gate closure.
-  external:
-    todoist_task_id: 6gW4H8WC38gVjjCH
 
 ## Day2（05/07 木）
 
@@ -251,6 +259,8 @@ Capacity note: ADAM / EVE reflection gate and DELTA operations generation gate a
     - src/services/delta-operations.js
   rolling_day: Day2
   due_date: 2026-05-07
+  blocked_by:
+    - DELTA reverse-planning operations generator を実装・確認する
   completed_condition:
     - delta_history / delta_operations の repo実装、Action schema、runtime-visible schema、actual behavior を層別に整理する
     - deltaResourceWrite の configured Action reflection を確認する
@@ -272,6 +282,8 @@ Capacity note: ADAM / EVE reflection gate and DELTA operations generation gate a
   rolling_day: Day2
   due_date: 2026-05-07
   due_type: date
+  blocked_by:
+    - DELTA reverse-planning operations generator を実装・確認する
   completed_condition:
     - projection profile `delta` の設計を固める
     - ADAM projection を壊さない形で service / schema 反映方針を決める
@@ -292,6 +304,7 @@ Capacity note: ADAM / EVE reflection gate and DELTA operations generation gate a
   due_type: date
   blocked_by:
     - DELTA Todoist projection profile を設計・実装する
+    - DELTA reverse-planning operations generator を実装・確認する
   completed_condition:
     - DELTA operations → Todoist dry_run が DELTA ref / recommended_lines を含む payload を返す
     - apply が必要な場合は previous/current を必ず用意する
@@ -396,7 +409,6 @@ Capacity note: Sunday is kept for light routing / next reroll confirmation and r
 - ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
 - DELTA monthly summary rebuild automation を設計する
 - DELTA dedicated append_daily_event action を検討する
-- DELTA full reverse-planning optimizer を設計する
 
 ---
 
