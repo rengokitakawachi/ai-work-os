@@ -43,15 +43,18 @@ Immediate Gate は7日枠に数えない。
     - systems/delta/config/delta_instruction.md
     - systems/delta/config/delta_schema.yaml
     - systems/delta/config/delta_operations_generation_schema.yaml
+    - systems/delta/config/delta_action_schema.yaml
     - systems/delta/operations/active_operations.md
     - systems/delta/history/daily/2026-05-04.md
     - notes/02_design/2026-05-05_delta_operations_generation_engine.md
     - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
     - src/services/delta-operations.js
+    - api/repo-resource.js
   reason:
     - DELTA recovery line calibration fix は repo config / instruction / schema level では完了した
     - DELTA operations generation engine の detailed rules は supplemental schema へ追加済み
-    - configured GPT reflection / runtime-visible behavior は未確認
+    - `delta_action_schema.yaml` v0.6.3 は user により configured GPT Actions へ再インポート済み
+    - ただし `read_evidence` の runtime-visible schema / actual behavior は未確認
     - 直近 fixture は形式上は整っていたが、健康保険法L3完了済み scope を新規計画に戻したため plan-fit FAIL
     - DELTA の daily review / operations generation / runtime-dependent fixture の前提になる
   blocks:
@@ -61,6 +64,9 @@ Immediate Gate は7日枠に数えない。
     - DELTA Todoist dry_run / apply / write-back fixture を実行する
   completed_condition:
     - DELTA configured GPT に `delta_instruction.md` / `delta_schema.yaml` / `delta_operations_generation_schema.yaml` の最新内容が反映されたことを確認する
+    - DELTA configured GPT Actions に `delta_action_schema.yaml` v0.6.3 / sha `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8` が反映されたことを確認する
+    - DELTA runtime-visible schema で `deltaResourceWrite` request body に `read_evidence` が見えることを確認する
+    - DELTA runtime で `read_evidence` なしの `delta_operations` update が `DELTA_OPERATIONS_PREFLIGHT_FAILED` で拒否されることを確認する
     - DELTA runtime で operations generation fixture を再実行する
     - fixture で D0〜D6 がすべて存在することを確認する
     - fixture で D7〜target_date の Next operations が存在することを確認する
@@ -73,11 +79,14 @@ Immediate Gate は7日枠に数えない。
     - fixture で completed_scope exclusion を確認する
     - 具体的には、2026-05-04 時点で新規演習完了扱いの 健康保険法L3 が新規 first-pass operations として再登場しないことを確認する
     - 健康保険法が出る場合は recovery_targets / deferred review / second-pass として明示されることを確認する
+    - fixture で国民年金法 L1/L2 未完了のまま厚生年金保険法 L1/L2 へ飛ばないことを確認する
+    - fixture で L3 が科目ごとに 選択 → 択一 の順序を守ることを確認する
     - 6/26 L3不可、6/30 L3可、user_capacity、load_realism_guard が反映されることを確認する
     - runtime-visible behavior を観測するまで `completed_repo_config_level` を runtime completed と扱わない
   notes:
     - 旧名: DELTA recovery line calibration configured GPT reflection / runtime fixture
-    - controller fixture の形式PASSだけでは完了しない。plan-fit / completed_scope exclusion まで見る
+    - controller fixture の形式PASSだけでは完了しない。plan-fit / completed_scope exclusion / read_evidence actual behavior まで見る
+    - 2026-05-05 user reported configured GPT Action schema updated after v0.6.3 import fix
   external:
     todoist_task_id: 6gX2mXQwgvhVv79q
 
@@ -99,6 +108,7 @@ Daily close result:
 - Completed task archived: `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
 - Immediate Gate remains open: `ADAM / EVE instruction configured GPT reflection を確認する`
 - DELTA Immediate Gate broadened to operations generation engine reflection / runtime fixture
+- DELTA Action schema v0.6.3 import was reported updated by user, but runtime behavior remains pending
 - DELTA runtime-dependent tasks remain blocked until DELTA Immediate Gate is resolved
 - ADAM / EVE runtime-dependent tasks remain blocked until ADAM / EVE instruction reflection gate is resolved
 - Active rerolled to 2026-05-05 start
@@ -395,7 +405,6 @@ Capacity note: Sunday is kept for light routing / next reroll confirmation and r
 - ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
 - DELTA monthly summary rebuild automation を設計する
 - DELTA dedicated append_daily_event action を検討する
-- DELTA review automation / analytics を v0.7 候補として整理する
 
 ---
 
