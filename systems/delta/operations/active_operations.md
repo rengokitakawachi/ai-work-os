@@ -5,9 +5,9 @@
 version: delta_v0.6_operations_shape
 updated_at: 2026-05-05
 branch: feature/atlas-pre-delta-foundation
+operation_status: active_d0_d6_next_through_2026_06_30
 last_daily_review: systems/delta/history/daily/2026-05-04.md
 latest_in_day_history: systems/delta/history/daily/2026-05-05.md
-operation_status: quantitative_d0_d6_rebuilt_with_corrected_l3_capacity
 
 validation_markers:
   - Delta operations are learning execution order, not calendar schedule.
@@ -23,73 +23,45 @@ source_of_truth:
   legacy_monthly_role: migration_fallback_only
   todoist_role: projection_only
 
-## Capacity assumptions
+## Planning assumptions
 
 capacity_assumptions:
+  L1_L2_pages:
+    standard_capacity: 40ページ程度
+    upper_guard: 50ページ超は原則分割
   L3_selected_questions:
     standard_capacity: 24問程度
-    reason: 選択問題は早く解けるため、択一式より多く処理可能
   L3_multiple_choice_questions:
     standard_capacity: 16問程度
-    reason: 択一問題は記録・評価込みで16問程度を標準処理量とする
-  L1_L2_pages:
-    standard_capacity: 20〜40ページ程度
-    upper_guard: 50ページ超は原則分割
-  load_realism_guard:
-    - L1/L2 standard_line が50ページを超える場合は原則分割する
-    - L3択一 standard_line が25問を超える場合は原則分割する
-    - L3選択 standard_line は24問程度まで許容する
-    - 2巡目仕分けが30問を超える場合は原則分割する
-    - 超過する場合はD0〜D6内で前倒し・分散を検討する
-    - それでも無理なら plan_alignment_status を compression_required または critical_delay とする
+  mixed_day:
+    allowed: true
+    rule: L3日でも余力がある場合はL1/L2を20〜35ページだけ前倒し可
 
-## Current plan gap
+plan_anchor:
+  roadmap_phase: 2026-04-27〜2026-06-30 1巡目完了フェーズ
+  target: 2026-06-30までに健康保険法・国民年金法・厚生年金保険法・労一・社一の1巡目を通過
+  special_days:
+    - 2026-05-10: L3不可
+    - 2026-06-13: L3不可
+    - 2026-06-30: 年休。L3可
 
-plan_gap:
-  fixed_at: 2026-05-05
-  source_review:
-    - systems/delta/history/daily/2026-05-04.md
-    - systems/delta/history/daily/2026-05-05.md
-  plan_anchor:
-    roadmap_phase: 2026-04-27〜2026-06-30 1巡目完了フェーズ
-    near_term_plan:
-      - 2026-05-05 国民年金法 L3 選択問題完了
-      - 2026-05-06 国民年金法 L3 択一 Q1章〜Q2章へ着手
-      - 2026-05-17 国民年金法 L3 択一完了目標
-      - 2026-05-18〜05-31 厚生年金保険法へ接続
-      - 2026-06-30 主要科目L1/L2/L3 1巡完了状態
-  current_position:
-    as_of: 2026-05-05
-    daily_execution_status: in_progress
-    plan_alignment_status: delayed_but_recovering
-    judgment: delayed_but_recovering
-    L1:
-      subject: 国民年金法
-      current_position: P219完了
-      next_start_page: P220
-    L2:
-      subject: 国民年金法
-      current_position: P158以降未完了
-      next_start_page: P158
-    L3:
-      completed_subject: 健康保険法
-      completed_scope: 選択式完了済み、択一Q11-21まで完了
-      current_subject: 国民年金法
-      current_position: 選択問題Q15-1未着手
-      next_resume_question_id: Q15-1
-  expected_position:
-    2026-05-05: 国民年金法 L3 選択Q15-14完了 + 択一Q2-5まで前倒し
-    2026-05-06: 国民年金法 L3 択一 Q3-1〜Q7-2
-    2026-05-08: 国民年金法 L2 P219まで回収
-    2026-05-09: 国民年金法 L3 択一 Q8-1〜Q11-3
+current_position:
+  as_of: 2026-05-05
+  L1:
+    subject: 国民年金法
+    current_position: P219完了
+    next_start_page: P220
+  L2:
+    subject: 国民年金法
+    current_position: P158以降未完了
+    next_start_page: P158
+  L3:
+    completed_subject: 健康保険法
+    completed_scope: 選択式完了済み、択一Q11-21まで完了
+    current_subject: 国民年金法
+    next_resume_question_id: Q15-1
   gap_status: delayed_but_recovering
   operation_mode: recovery_forward
-  recovery_required: true
-  reason:
-    - 選択問題は早く解けるため、5/5を選択14問だけで止めるのは過小計画
-    - 択一は16問程度処理可能なため、5/16に6問だけ置くのは過小計画
-    - D0〜D6で国民年金法L3を前倒しし、5/16以降の負荷を平準化する
-    - L1/L2はページ範囲＋ページ数、L3は問題番号範囲＋問題数で管理する
 
 ## Recommended lines
 
@@ -98,9 +70,9 @@ recommended_lines:
   source_review:
     - systems/delta/history/daily/2026-05-04.md
     - systems/delta/history/daily/2026-05-05.md
-  plan_anchor: roadmap 6月末1巡完了 / plan 5月17日 国民年金法L3択一完了目標
+  plan_anchor: 2026-06-30 1巡目完了必達
   current_position: L1国民年金法P219完了、L2国民年金法P158以降未完了、L3国民年金法Q15-1未着手
-  expected_position: D0で選択Q15-14完了 + 択一Q2-5、D1でQ3-1〜Q7-2、D4でQ8-1〜Q11-3
+  expected_position: D0で国民年金法選択Q15-14完了 + 択一Q2-5、D1でQ3-1〜Q7-2、D4でQ8-1〜Q11-3
   gap_status: delayed_but_recovering
   operation_mode: recovery_forward
   must_line:
@@ -116,21 +88,14 @@ recommended_lines:
       status: 保持のみ。国民年金法L3前進を優先
       priority_1_cross: [Q1-2, Q2-2, Q2-6, Q2-7, Q3-2, Q4-2, Q4-5, Q4-6, Q9-3, Q10-1, Q11-13]
       priority_2_triangle: [Q1-3, Q2-1, Q2-5, Q3-1, Q3-3, Q4-3, Q4-4, Q4-7, Q4-8, Q4-9, Q9-1, Q11-1, Q11-4, Q11-7, Q11-8, Q11-9, Q11-10, Q11-17, Q11-18, Q11-20, Q11-21]
-    national_pension_L2_gap:
-      current_L1: P219
-      current_L2: P158以降未完了
-      recovery_window: 2026-05-07〜2026-05-08
-      target: L2 P219まで回収
   defer:
     - 健康保険法の×・△回収
-    - 厚生年金保険法への本格接続は国民年金法L1/L2/L3現在地確認後
     - monthly summary rebuild
   recompute_triggers:
     - user_explicitly_requests_recompute
     - illness_or_urgent_work_changes_available_time
     - Q15-14未達
     - Q2-5未達
-    - 国民年金法_択一_Q番号がPDF確認と異なる
     - D1_Q7-2未達
     - D4_Q11-3未達
     - L2_P219未達
@@ -141,14 +106,15 @@ recommended_lines:
     - Q2-5到達可否
     - D1をQ3-1開始で確定できるか
 
-## Quantitative D0-D6 rolling plan
+---
 
-### Day0（2026-05-05）
+# Active operations: D0〜D6
+
+## Day0（2026-05-05）
 
 - task: 国民年金法 L3 選択Q15-1〜Q15-14（14問） + 択一Q1-1〜Q2-5（7問）
   rolling_day: Day0
   due_date: 2026-05-05
-  due_type: date
   subject: 国民年金法
   study_type: L3
   material: 過去問講座テキスト
@@ -180,18 +146,12 @@ recommended_lines:
     - Q2-5未達
     - Q15範囲がQ15-14で終わらない
     - user_explicitly_requests_recompute
-  completed_condition:
-    - Q15-1〜実施済みquestion_idをdaily historyへ記録
-    - 選択式は各問の空欄正答数、正誤、理解度評価、実測時間を記録
-    - 択一は各問の正誤、理解度評価、実測時間を記録
-    - 次再開question_idを確定
 
-### Day1（2026-05-06）
+## Day1（2026-05-06）
 
 - task: 国民年金法 L3 択一 Q3-1〜Q7-2（14問）
   rolling_day: Day1
   due_date: 2026-05-06
-  due_type: date
   subject: 国民年金法
   study_type: L3
   material: 過去問講座テキスト
@@ -223,12 +183,11 @@ recommended_lines:
     - Q7-2未達
     - 国民年金法_択一_Q番号がPDF確認と異なる
 
-### Day2（2026-05-07）
+## Day2（2026-05-07）
 
 - task: 国民年金法 L2 P158〜P190（33ページ）
   rolling_day: Day2
   due_date: 2026-05-07
-  due_type: date
   subject: 国民年金法
   study_type: L2
   material: 基礎講座テキスト
@@ -261,12 +220,11 @@ recommended_lines:
     - D1で国民年金法L3択一が未着手
     - D2_P190未達
 
-### Day3（2026-05-08）
+## Day3（2026-05-08）
 
 - task: 国民年金法 L2 P191〜P219（29ページ）
   rolling_day: Day3
   due_date: 2026-05-08
-  due_type: date
   subject: 国民年金法
   study_type: L2
   material: 基礎講座テキスト
@@ -297,12 +255,11 @@ recommended_lines:
     - L1がP219から大きく前進
     - user_explicitly_requests_recompute
 
-### Day4（2026-05-09）
+## Day4（2026-05-09）
 
 - task: 国民年金法 L3 択一 Q8-1〜Q11-3（16問、Q10-0除外）
   rolling_day: Day4
   due_date: 2026-05-09
-  due_type: date
   subject: 国民年金法
   study_type: L3
   material: 過去問講座テキスト
@@ -333,12 +290,11 @@ recommended_lines:
     - Q8-1またはQ11-3のPDF確認差異
     - user_explicitly_requests_recompute
 
-### Day5（2026-05-10）
+## Day5（2026-05-10）
 
 - task: L3不可日。新規L1/L2/L3なし
   rolling_day: Day5
   due_date: 2026-05-10
-  due_type: date
   subject: 共通
   study_type: rest_or_light_review
   material: none
@@ -362,12 +318,11 @@ recommended_lines:
     - user_explicitly_requests_recompute
     - 2026-05-10に学習時間が十分確保できると明示された場合
 
-### Day6（2026-05-11）
+## Day6（2026-05-11）
 
 - task: 国民年金法 L1 P220〜P255（36ページ）
   rolling_day: Day6
   due_date: 2026-05-11
-  due_type: date
   subject: 国民年金法
   study_type: L1
   material: 動画講義
@@ -399,22 +354,73 @@ recommended_lines:
     - plan_changes
     - user_explicitly_requests_recompute
 
-## Post D6 projection for load-balanced plan
+---
 
-post_D6_projection:
-  purpose: D0〜D6で前倒しした前提の5/12以降負荷平準化メモ。daily rolling時にD0〜D6へ昇格させる
-  2026-05-12:
-    standard: 国民年金法 L1 P256〜P280（25ページ）
-  2026-05-13:
-    standard: 国民年金法 L2 P220〜P245（26ページ）
-  2026-05-14:
-    standard: 国民年金法 L2 P246〜P280（35ページ）
-  2026-05-15:
-    standard: 厚生年金保険法 L1 P1〜P35（35ページ）
-  2026-05-16:
-    standard: 国民年金法 L3 択一 Q12-1〜Q14-10（16問）
-  2026-05-17:
-    standard: 国民年金法 L3 択一 Q14-11〜Q14-17（7問） + 国民年金法L3未達分回収
+# Next operations: 2026-05-12〜2026-06-30
+
+| Date | Layer | Standard line |
+|---|---|---|
+| 2026-05-12 | L1 | 国民年金法 P256〜P280（25ページ） |
+| 2026-05-13 | L2 | 国民年金法 P220〜P245（26ページ） |
+| 2026-05-14 | L2 | 国民年金法 P246〜P280（35ページ） |
+| 2026-05-15 | L1 | 厚生年金保険法 P1〜P35（35ページ） |
+| 2026-05-16 | L3 | 国民年金法 択一 Q12-1〜Q14-10（16問） |
+| 2026-05-17 | L3 + L2 | 国民年金法 択一 Q14-11〜Q14-17（7問） + 厚生年金保険法 L2 P1〜P35（35ページ） |
+| 2026-05-18 | L1 | 厚生年金保険法 P36〜P70（35ページ） |
+| 2026-05-19 | L2 | 厚生年金保険法 P36〜P70（35ページ） |
+| 2026-05-20 | L1 | 厚生年金保険法 P71〜P110（40ページ） |
+| 2026-05-21 | L2 | 厚生年金保険法 P71〜P110（40ページ） |
+| 2026-05-22 | L1 | 厚生年金保険法 P111〜P150（40ページ） |
+| 2026-05-23 | L3 + L2 | 厚生年金保険法 選択 Q16-1〜Q16-12（12問） + 厚生年金保険法 L2 P111〜P135（25ページ） |
+| 2026-05-24 | L3 + L2 | 厚生年金保険法 択一 Q1-1〜Q4-1（9問） + 厚生年金保険法 L2 P136〜P150（15ページ） |
+| 2026-05-25 | L1 | 厚生年金保険法 P151〜P190（40ページ） |
+| 2026-05-26 | L2 | 厚生年金保険法 P151〜P190（40ページ） |
+| 2026-05-27 | L1 | 厚生年金保険法 P191〜P230（40ページ） |
+| 2026-05-28 | L2 | 厚生年金保険法 P191〜P230（40ページ） |
+| 2026-05-29 | L1 | 厚生年金保険法 P231〜P260（30ページ） |
+| 2026-05-30 | L3 + L2 | 厚生年金保険法 択一 Q5-1〜Q8-1（10問、Q7-0除外） + 厚生年金保険法 L2 P231〜P260（30ページ） |
+| 2026-05-31 | L3 + L1 | 厚生年金保険法 択一 Q8-2〜Q11-1（16問） + 厚生年金保険法 L1 P261〜P284（24ページ） |
+| 2026-06-01 | L2 | 厚生年金保険法 P261〜P284（24ページ） |
+| 2026-06-02 | L1 | 労一 P1〜P40（40ページ） |
+| 2026-06-03 | L2 | 労一 P1〜P40（40ページ） |
+| 2026-06-04 | L1 | 労一 P41〜P80（40ページ） |
+| 2026-06-05 | L2 | 労一 P41〜P80（40ページ） |
+| 2026-06-06 | L3 + L1 | 厚生年金保険法 択一 Q11-2〜Q14-12（16問、Q12-0除外） + 労一 L1 P81〜P100（20ページ） |
+| 2026-06-07 | L3 + L2 | 厚生年金保険法 択一 Q15-1〜Q15-12（12問） + 労一 L2 P81〜P100（20ページ） |
+| 2026-06-08 | L1 | 労一 P101〜P140（40ページ） |
+| 2026-06-09 | L2 | 労一 P101〜P140（40ページ） |
+| 2026-06-10 | L1 | 労一 P141〜P180（40ページ） |
+| 2026-06-11 | L2 | 労一 P141〜P180（40ページ） |
+| 2026-06-12 | L1 | 労一 P181〜P220（40ページ） |
+| 2026-06-13 | L2 | 労一 P181〜P220（40ページ）。L3不可日 |
+| 2026-06-14 | L1 | 労一 P221〜P260（40ページ） |
+| 2026-06-15 | L2 | 労一 P221〜P260（40ページ） |
+| 2026-06-16 | L1 | 労一 P261〜P314（54ページ）。高負荷注意。D6以降のローリングで前倒し再検討 |
+| 2026-06-17 | L2 | 労一 P261〜P300（40ページ） |
+| 2026-06-18 | L2 + L1 | 労一 L2 P301〜P314（14ページ） + 社一 L1 P1〜P25（25ページ） |
+| 2026-06-19 | L2 | 社一 P1〜P40（40ページ） |
+| 2026-06-20 | L3 + L1 | 労一 選択 Q7-1〜Q7-10（10問） + 労一 択一 Q1-1〜Q2-2（6問） + 社一 L1 P26〜P45（20ページ） |
+| 2026-06-21 | L3 + L2 | 労一 択一 Q2-3〜Q5-1（16問） + 社一 L2 P41〜P60（20ページ） |
+| 2026-06-22 | L1 | 社一 P46〜P85（40ページ） |
+| 2026-06-23 | L2 | 社一 P61〜P100（40ページ） |
+| 2026-06-24 | L1 | 社一 P86〜P125（40ページ） |
+| 2026-06-25 | L2 | 社一 P101〜P140（40ページ） |
+| 2026-06-26 | L1/L2 | 社一 L1 P126〜P165（40ページ） + 社一 L2 P141〜P160（20ページ）。平日のためL3不可 |
+| 2026-06-27 | L3 + L2 | 労一 択一 Q5-2〜Q6-9（9問） + 社一 選択 Q7-1〜Q7-16（16問） + 社一 L2 P161〜P180（20ページ） |
+| 2026-06-28 | L3 + L1 | 社一 択一 Q1-1〜Q3-2（16問） + 社一 L1 P166〜P190（25ページ） |
+| 2026-06-29 | L1/L2 | 社一 L1 P191〜P231（41ページ） + 社一 L2 P181〜P205（25ページ） |
+| 2026-06-30 | L3 + L2 | 年休。社一 択一 Q4-1〜Q6-2（17問） + 社一 L2 P206〜P231（26ページ） |
+
+## Next operation guardrails
+
+- L1/L2はページ範囲とページ数で管理する。
+- L3は問題番号範囲と問題数で管理する。
+- 2026-06-26は平日のためL3不可。
+- 2026-06-30は年休のためL3可。
+- L1/L2は40ページ程度を標準にし、50ページ超はD0〜D6ローリング時に前倒し再検討する。
+- L3択一は16問程度を標準にし、25問超は分割する。
+- L3選択は24問程度まで許容する。
+- future dayのstart_question_id/pageは前日レビューでずれた場合にrecomputeする。
 
 ## Operations completeness guard
 
@@ -435,15 +441,7 @@ quantitative_management_rules:
   - L1/L2はstart_page、must_end_page、standard_end_page、stretch_end_page、next_start_pageとページ数で管理する
   - L3はstart_question_id、must_end_question_id、standard_end_question_id、stretch_end_question_id、next_resume_question_idと問題数で管理する
   - 「着手」「進める」「できるところまで」「Qx-last」「章だけ」「前半」「後半」だけの標準ラインは禁止
-  - future dayのstart_question_id/pageは前日レビューでずれた場合にrecomputeする
   - operations更新時、D0〜D6の欠落があればwriteしない
-load_realism_guard:
-  - L1/L2 standard_line が50ページを超える場合は原則分割する
-  - L3択一 standard_line が25問を超える場合は原則分割する
-  - L3選択 standard_line は24問程度まで許容する
-  - 2巡目仕分けが30問を超える場合は原則分割する
-  - 超過する場合はD0〜D6内で前倒し・分散を検討する
-  - それでも無理なら plan_alignment_status を compression_required または critical_delay とする
 
 ## Rules
 
@@ -459,13 +457,9 @@ load_realism_guard:
 - During the day, questions about 今日の推奨ライン read saved recommended_lines and do not recompute unless a recompute_trigger exists or the user explicitly asks.
 - L1/L2 progress uses page_range / next_start_page.
 - L3 progress uses question_id / questions / next_question.
-- L3 operations must use real question IDs, not vague targets like Q3以降 / Q4の途中 / できるところまで / chapter-only.
-- L3 question records should include question_id, source_page, difficulty, estimated_time, actual_time, time_delta, result, review_mark, next_review_target, time_analysis, estimate_source_status when available.
 - L3 review priority SSOT is understanding-based review_mark: × → △ → ○ → ◎.
 - Score, correctness, actual_time, and time_delta are supplemental.
 - 1巡目では完璧主義にならず、全範囲を通す。
-- delayed_but_recovering / recovery_forward の standard_line は、原則として plan_anchor の当日 expected_position と一致させる。
-- must_line は plan_minimum_line として置き、ゼロ回避だけの survival_line と混同しない。
 - 健康保険法の×・△回収は国民年金法L3の前進後へ defer する。
 - 国民年金法 Q10-0 は演習対象なし。
 - 健康保険法 Q5 / Q6 は存在しない。
