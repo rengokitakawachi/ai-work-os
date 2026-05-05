@@ -169,6 +169,20 @@ function requireContent(value, context) {
   return value;
 }
 
+function normalizeReadEvidence(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item) => item && typeof item === 'object')
+    .map((item) => ({
+      file: ensureString(item.file),
+      path: ensureString(item.path),
+      sha: ensureString(item.sha),
+      role: ensureString(item.role),
+      source: ensureString(item.source),
+    }))
+    .filter((item) => item.file || item.path || item.sha || item.role || item.source);
+}
+
 function validateGet(resource, action, query) {
   normalizeBranch(query.branch, {
     step: 'validateGet',
@@ -496,6 +510,8 @@ function validatePost(resource, action, body) {
       action,
     });
 
+    normalizeReadEvidence(body?.read_evidence);
+
     return;
   }
 
@@ -737,6 +753,7 @@ async function dispatchPost(resource, action, body) {
   const sha = ensureString(body?.sha);
   const options = {
     branch: ensureString(body?.branch),
+    read_evidence: normalizeReadEvidence(body?.read_evidence),
   };
 
   if (resource === 'notes') {
