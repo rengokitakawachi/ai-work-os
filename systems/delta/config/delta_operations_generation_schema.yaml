@@ -8,6 +8,25 @@ purpose:
   - 定量目標、負荷現実性、特殊日、user_capacity、completed_scope、plan fitをwrite前に検証する
   - 既存active_operationsとNext operationsとの連続性を維持する
 
+branch_resolution:
+  canonical_branch_for_delta_runtime: feature/atlas-pre-delta-foundation
+  read_order:
+    - explicitly_provided_branch
+    - branch_recorded_in_current_operations_or_prior_confirmed_sha
+    - feature/atlas-pre-delta-foundation
+    - main
+  required_for:
+    - daytime_recommendation
+    - daily_review_operations_update
+    - operations_generation
+    - runtime_fixture
+  failure_policy:
+    - if_active_operations_cannot_be_read_from_any_candidate_branch_stop
+    - if_branch_cannot_be_resolved_stop
+    - do_not_generate_provisional_learning_lines
+    - do_not_recompute_recommendation_without_saved_operations
+    - report_branch_read_failure_and_required_next_action
+
 input_sources:
   required:
     - systems/delta/roadmap/delta_roadmap.md
@@ -74,8 +93,22 @@ components:
       - do_not_discard_existing_plan_without_recompute_reason
     failure_policy: missing_next_operations_do_not_write_when_medium_target_exists
 
+  daytime_recommendation_guard:
+    required_behavior:
+      - resolve_branch_before_reading_active_operations
+      - read_operations_active_operations_md_from_resolved_branch
+      - echo_observed_branch_and_sha
+      - answer_from_matching_Day_block
+      - output_exact_task_must_line_standard_line
+    prohibit:
+      - provisional_learning_line_when_read_failed
+      - vague_fallback_plan
+      - recomputed_recommendation_without_saved_operations
+    failure_policy: stop_and_report_read_failure
+
   reverse_planning_engine:
     generation_order:
+      - resolve_branch
       - read_roadmap_milestone
       - read_plan_intermediate_target
       - read_existing_active_operations
@@ -305,6 +338,8 @@ previous_generation_status:
   write_allowed: false
 
 acceptance_criteria:
+  - branch_resolved_before_operations_read
+  - branch_read_failure_stops_without_provisional_line
   - operations_active_operations_md_read_before_generation
   - existing_next_operations_read_before_generation
   - D0_D6_never_missing_after_daily_review
@@ -325,8 +360,8 @@ acceptance_criteria:
 
 implementation_status:
   repo_config_instruction: updated
-  supplemental_schema: updated_with_pre_generation_and_plan_fit_guards
+  supplemental_schema: updated_with_pre_generation_plan_fit_and_branch_resolution_guards
   service_preflight_validator: strengthened_in_src/services/delta-operations.js
-  deterministic_generator_service: not_yet_implemented
-  runtime_reflection: pending
-  fixture: invalid_needs_regeneration
+  deterministic_generator_service: minimum_service_created_tests_pending
+  runtime_reflection: preflight_fixture_pass_daytime_read_fixture_pending
+  fixture: read_saved_operations_or_stop_fixture_pending
