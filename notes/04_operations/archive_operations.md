@@ -12,6 +12,41 @@ weekly review までの短期履歴置き場であり、
 
 ## Current week completed tasks
 
+### 2026-05-05
+
+- task: ADAM / EVE instruction configured GPT reflection を確認する
+  completed_at: 2026-05-05
+  source_ref:
+    - config/adam_instruction.md
+    - config/eve_instruction.md
+    - config/eve_action_schema.yaml
+    - notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md
+    - notes/04_operations/active_operations.md
+  completed_evidence:
+    - ADAM runtime fixture PASS
+    - EVE runtime fixture PASS
+    - active_operations gate marked resolved
+    - Todoist projection task closed: `6gX2rrfXcWXCR24q`
+  remaining_risk:
+    - none for this gate
+
+- task: DELTA minimum generator / test readiness
+  completed_at: 2026-05-05
+  source_ref:
+    - config/from-claude.md
+    - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
+    - src/services/delta/operations-generator.js
+    - src/services/delta/operations-generator.test.js
+  completed_evidence:
+    - ATLAS final repository test result: 106 PASS / 0 FAIL
+    - operations-generator.test.js PASS
+    - minimum deterministic generator exists
+    - runtime preflight negative / positive fixtures PASS
+    - daytime recommendation fixture PASS
+  remaining_risk:
+    - original DELTA reverse-planning issue remains open and is tracked by Immediate Gate `DELTA reverse-planning operations generator を実装・確認する`
+    - this archive entry covers only minimum generator / test readiness, not original defect closure
+
 ### 2026-05-04
 
 - task: ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する
