@@ -2,7 +2,7 @@
 
 ## status
 
-main_backend_aligned_runtime_refixture_required
+fixture_1A_pass_fixture_1B_pending
 
 ## category
 
@@ -60,7 +60,7 @@ DELTA lacked deterministic generation / preflight layers for:
 
 Runtime root cause:
 
-- configured Action schema update alone is insufficient
+- configured Action schema update alone was insufficient
 - `branch=feature/atlas-pre-delta-foundation` selects the GitHub content target branch, not deployed backend code branch
 - deployed `/api/repo-resource` was executing main backend code
 - main `src/services/delta-operations.js` still had old marker-only validation at the time of failed fixture
@@ -120,9 +120,9 @@ Main API pass-through applied:
 
 ## runtime fixture results
 
-### Fixture 1A: `delta_operations` update without `read_evidence` on main/default runtime
+### Fixture 1A: `delta_operations` update without `read_evidence`
 
-Observed before main service alignment:
+Observed before main backend alignment:
 
 ```yaml
 write: rejected
@@ -136,11 +136,12 @@ details.missing_markers:
   - "Daily review updates learning history and next operations."
 ```
 
-Expected after main backend alignment:
+Observed after main backend alignment:
 
 ```yaml
 write: rejected
 error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+request_id: 05a58e50-a7ae-4409-b8bb-a0d5cd168cfe
 details.errors:
   - missing_read_evidence_role:roadmap
   - missing_read_evidence_role:plan
@@ -149,9 +150,26 @@ details.errors:
   - missing_read_evidence_role:completed_subjects
   - missing_read_evidence_role:special_days
   - missing_read_evidence_role:user_capacity
+  - missing_read_evidence_path:roadmap/delta_roadmap.md
+  - missing_read_evidence_path:plan/2026_sharoushi_exam_plan.md
+  - missing_read_evidence_path:operations/active_operations.md
+  - missing_read_evidence_path:latest_daily_history
+sha_before: af62696214acfcf8817728ee9f97ae24e39c0011
+sha_after: af62696214acfcf8817728ee9f97ae24e39c0011
 ```
 
-### Fixture 1B: feature branch invalid completed_scope fixture
+Judgment:
+
+```yaml
+fixture_1A:
+  write_rejection: pass
+  expected_error_code: pass
+  read_evidence_validator_observed: pass
+  sha_unchanged: pass
+  overall: pass
+```
+
+### Fixture 1B: completed_scope invalid fixture
 
 Condition:
 
@@ -170,13 +188,30 @@ sha_after_invalid_write: 017a2248bcd914216e55c9b0929fbec54200596e
 request_id: 1370040c-a18c-4821-a61e-a79c0b2711a7
 ```
 
-Recovery:
+Recovery before main backend alignment:
 
 ```yaml
 restored: true
 restored_sha: af62696214acfcf8817728ee9f97ae24e39c0011
 request_id: f7e83759-2798-4894-bcb7-23acb652693b
 read_back_confirmed: true
+```
+
+Expected after main backend alignment:
+
+```yaml
+write: rejected
+error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+details.errors:
+  - completed_health_insurance_L3_reintroduced_as_new_work
+sha_unchanged: true
+```
+
+Judgment:
+
+```yaml
+fixture_1B:
+  status: pending_retest_after_main_backend_alignment
 ```
 
 ## implemented preflight checks now in main backend
@@ -195,9 +230,10 @@ read_back_confirmed: true
 
 ## remaining_risk
 
+- Fixture 1B completed_scope reject is pending after main backend alignment
+- L1/L2 continuity fixture is pending
+- L3 order fixture is pending
 - deterministic generator service is not implemented yet
-- runtime re-fixture after main backend alignment is pending
-- Vercel/runtime deployment lag may exist after repo main update
 - supplemental schema has not been merged into canonical `delta_schema.yaml`
 - service preflight can prove submitted metadata, but deterministic semantic use of sources still needs generator implementation
 
@@ -230,10 +266,9 @@ read_back_confirmed: true
 
 Immediate:
 
-- re-run Fixture 1A after main backend alignment and expect `DELTA_OPERATIONS_PREFLIGHT_FAILED`
 - re-run Fixture 1B after main backend alignment and expect `completed_health_insurance_L3_reintroduced_as_new_work`
 
-After runtime PASS:
+After Fixture 1B PASS:
 
 - run L1/L2 continuity fixture and L3 order fixture
 - add deterministic generator service implementation as follow-up active task
