@@ -5,7 +5,7 @@ status: supplemental_schema_pending_canonical_merge
 purpose:
   - daily_review後にroadmap/plan/current_positionからActive operations D0-D6を自律生成する
   - D7から中期目標日までのNext operationsを自律生成する
-  - 定量目標、負荷現実性、特殊日、user_capacity、plan fitをwrite前に検証する
+  - 定量目標、負荷現実性、特殊日、user_capacity、completed_scope、plan fitをwrite前に検証する
 
 input_sources:
   required:
@@ -55,6 +55,8 @@ components:
       - read_roadmap_milestone
       - read_plan_intermediate_target
       - read_current_position
+      - read_completed_scope
+      - exclude_completed_first_pass_scope
       - expand_medium_plan_by_day
       - detect_overload
       - redistribute_overload
@@ -90,6 +92,34 @@ components:
       - 国民年金法 Q10-0 は演習対象なし
       - 健康保険法 Q5/Q6 は存在しない
       - 健康保険法 Q8 は演習対象なし
+
+  completed_scope_exclusion_validator:
+    purpose: completed first-pass scopes must not be regenerated as new work
+    required_sources:
+      - latest_daily_history
+      - active_operations_current_position
+      - active_operations_recovery_targets
+    rules:
+      - completed_first_pass_scope_is_excluded_from_new_operations
+      - completed_subject_may_appear_only_as_recovery_review_or_second_pass
+      - reference_tests_do_not_reopen_completed_L3_new_work
+      - completed_scope_must_be_checked_before_D0_D6_and_D7_target_generation
+    forbidden_after_completion:
+      - new_first_pass_L3_operations
+      - regenerated_operations_treating_completed_scope_as_unfinished
+      - D7_target_projection_using_completed_scope_to_fill_capacity
+    allowed_after_completion:
+      - recovery_targets
+      - defer_targets
+      - second_pass_review_explicitly_labeled
+      - reference_test_record
+    known_completed_scope:
+      as_of_2026_05_04:
+        健康保険法:
+          L3_new_exercises: completed
+          completed_through: Q11-21
+          selected_questions: completed
+          next_new_L3_scope: 国民年金法 L3 選択問題
 
   load_realism_guard:
     thresholds:
@@ -146,6 +176,10 @@ components:
       - L1_L2_has_page_range_and_count
       - L3_has_question_range_and_count
       - forbidden_terms_absent_from_task_and_lines
+    completed_scope_check:
+      - completed_first_pass_scope_not_in_new_operations
+      - completed_subject_only_in_recovery_review_or_second_pass
+      - health_insurance_L3_not_reopened_after_2026_05_04_completion
     load_check:
       - L1_L2_above_50_pages_flagged_or_redistributed
       - L3_multiple_choice_above_25_questions_flagged_or_redistributed
@@ -162,6 +196,8 @@ acceptance_criteria:
   - L1_L2_page_range_and_page_count_required
   - L3_question_range_and_question_count_required
   - vague_targets_rejected
+  - completed_first_pass_scope_excluded_from_new_operations
+  - health_insurance_L3_not_reintroduced_as_new_work_after_2026_05_04
   - load_guards_detect_overload
   - overload_redistributed_or_marked_compression_required
   - special_days_reflected
@@ -170,8 +206,8 @@ acceptance_criteria:
 
 implementation_status:
   repo_config_instruction: updated
-  supplemental_schema: created
+  supplemental_schema: updated_with_completed_scope_exclusion
   service_preflight_validator: implemented_in_src/services/delta-operations.js
   deterministic_generator_service: not_yet_implemented
   runtime_reflection: pending
-  fixture: pending
+  fixture: plan_fit_failed_needs_regeneration
