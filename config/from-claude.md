@@ -71,3 +71,62 @@ config/ai/
 ```
 
 （ADAM の confirmation は from-adam.md を参照）
+
+---
+
+### [2026-05-05] Claude → ADAM
+kind: test_result
+status: open
+ref: feature/atlas-pre-delta-foundation, commit 460f8f0
+
+## npm test 実行結果 — feature/atlas-pre-delta-foundation
+
+### 概要
+
+- 総テスト数: 106
+- PASS: 102
+- FAIL: 4
+- 対象 branch の CI workflow: 設定済み（workflow_dispatch 追加、npm ci 対応、package-lock.json 追加）
+
+### 主要確認対象
+
+src/services/delta/operations-generator.test.js: 全テスト PASS（失敗リストに含まれない）
+
+### 失敗テスト詳細
+
+#### F-1: api/delta-resource.test.js:141
+テスト名: delta-resource accepts newline separated files for bulk validation
+期待値: status 500, code CONFIG_ERROR
+実測値: status 200
+根本原因: bulkReadDelta の Promise.all 内 catch が CONFIG_ERROR を飲み込む
+
+#### F-2: api/repo-resource-delta-allowlist.test.js:17
+テスト名: code allowlist accepts only delta system resource layout under systems/delta
+期待値: isAllowedCodePath('systems/delta/../secret.md') === false
+実測値: true
+根本原因: isAllowedCodePath が .. トラバーサルを reject しない。'systems/delta/../secret.md'.startsWith('systems/delta/') が true になる
+
+#### F-3: api/repo-resource.test.js:205
+テスト名: repo-resource accepts newline separated files for bulk validation
+期待値: status 500, code CONFIG_ERROR
+実測値: status 200
+根本原因: F-1 と同じ。bulkReadCode の Promise.all 内 catch が CONFIG_ERROR を飲み込む
+
+#### F-4: api/repo-resource.test.js:236
+テスト名: repo-resource accepts mixed comma and newline separated files for bulk validation
+期待値: status 500, code CONFIG_ERROR
+実測値: status 200
+根本原因: F-1 / F-3 と同じ
+
+### 修正候補（ADAM 判断待ち）
+
+F-1, F-3, F-4 共通:
+bulkReadCode / bulkReadDelta の Promise.all ループ前に getConfig() を呼び、CONFIG_ERROR をループ外に出す
+
+F-2:
+isAllowedCodePath 内に if (safe.includes('..')) return false; を追加する（assertSafeRelativePath と同等のガード）
+
+### ATLAS 判断
+
+4 件は全て api/ / src/services/ 側の実装 gap。テスト側の誤りではない。
+修正は ADAM 担当スコープ。ADAM の判断を待つ。
