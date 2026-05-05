@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_1C_pass_L3_order_completion_marker_fix_retest_pending
+fixture_1A_1B_1C_L3_order_pass_positive_fixture_pending
 
 ## category
 
@@ -27,6 +27,7 @@ Confirmed PASS:
 - Fixture 1A: missing `read_evidence` is rejected
 - Fixture 1B: completed 健康保険法 L3 first-pass reintroduction is rejected
 - Fixture 1C: incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 skip is rejected
+- L3 order fixture: 国民年金法 L3 択一 before 選択 completion is rejected
 
 Current basis operations SHA:
 
@@ -35,7 +36,6 @@ Current basis operations SHA:
 
 Pending:
 
-- L3 order fixture retest after completion marker fix
 - positive valid-write fixture
 - deterministic generator service implementation
 
@@ -64,7 +64,7 @@ Runtime / validator causes found during fixtures:
 - `hasExplicitNationalPensionCompletionBeforeEmployeePension()` treated `完了` inside `未完了` as an explicit completion override
 - first L3 order fixture was not isolating the target guard
 - isolated L3 order fixture proved old `validateL3Order()` did not detect table / line-shaped `国民年金法 L3 択一 Q1-1〜Q1-16（16問）`
-- L3 line guard still allowed the invalid fixture, likely because `hasExplicitL3SelectedCompletion()` treated negative prose such as `選択完了 marker なし` as selected completion evidence
+- L3 line guard still allowed the invalid fixture because `hasExplicitL3SelectedCompletion()` treated negative prose such as `選択完了 marker なし` as selected completion evidence
 
 ## fix_applied
 
@@ -149,7 +149,7 @@ sha_after: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
 judgment: pass
 ```
 
-### L3 order fixture attempts
+### L3 order fixture
 
 Attempt 1:
 
@@ -199,20 +199,21 @@ basis_restore: rejected_by_current_guard
 safe_restore_sha: ff588298afd147452493902b05a9670aa7224233
 ```
 
-Current status:
+Final PASS after completion marker fix:
 
 ```yaml
-l3_order_fixture:
-  latest_guard: completion_marker_fix_added
-  retest_required: true
-  expected_validator_version: delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix
-  expected_error: L3_order_violation_国民年金法_takuitsu_before_selected
-  basis_sha: ff588298afd147452493902b05a9670aa7224233
+write: rejected
+error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+required_error_observed: L3_order_violation_国民年金法_takuitsu_before_selected
+validator_version: delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix
+request_id: d02dd2c6-a3d0-4df0-a807-d0a08c03b845
+basis_sha: ff588298afd147452493902b05a9670aa7224233
+sha_after: ff588298afd147452493902b05a9670aa7224233
+judgment: pass
 ```
 
 ## remaining_risk
 
-- L3 order fixture retest is pending
 - positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
 - original basis SHA `b5514...` is invalid under current L3 order guard; current basis SHA is `ff588...`
@@ -247,12 +248,11 @@ l3_order_fixture:
 
 Immediate:
 
-- rerun L3 order fixture
-- expect `L3_order_violation_国民年金法_takuitsu_before_selected`
+- run positive valid-write fixture using safe operations content
 - confirm validator_version `delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix`
-- use basis SHA `ff588298afd147452493902b05a9670aa7224233`
+- confirm write success only for valid, plan-consistent content
+- restore to basis SHA/content if the positive fixture writes a disposable test change
 
-After negative fixtures PASS:
+After positive fixture PASS:
 
-- run positive valid-write fixture or dry validation path
 - add deterministic generator service implementation as follow-up active task
