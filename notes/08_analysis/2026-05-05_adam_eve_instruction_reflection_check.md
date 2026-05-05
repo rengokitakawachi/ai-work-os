@@ -10,7 +10,7 @@ Record observed evidence for the Immediate Gate:
 ADAM / EVE instruction configured GPT reflection を確認する
 ```
 
-This note is evidence for the active_operations gate. It does not by itself close the gate.
+This note is evidence for the active_operations gate closure.
 
 ## Source files checked
 
@@ -86,13 +86,50 @@ EVE repo / schema judgment:
 ```yaml
 eve_repo_instruction_canonical: confirmed
 eve_repo_action_schema_canonical: confirmed
-eve_configured_gpt_reflection: user_reported_reflected_not_independently_observed_here
-eve_actual_runtime_behavior: not_observable_from_adam_runtime
+eve_configured_gpt_reflection: user_reported_reflected
+eve_actual_runtime_behavior: fixture_observed_by_user_report
+```
+
+## EVE runtime fixture result
+
+User ran the minimum EVE configured GPT fixture and provided the observed output.
+
+Fixture input:
+
+```text
+次の入力を Task / Project / Knowledge に分類してください。必要なら Todoist 操作前に listTasks を使うべきかも判断してください。
+
+入力:
+既存の「請求書を送る」タスクを完了にして。該当タスクが複数ある可能性があります。
+```
+
+Observed EVE behavior:
+
+- Classified the input as `Task`.
+- Identified the request as a Todoist task update.
+- Recognized that multiple matching tasks may exist.
+- Explicitly stated that guessed task must not be updated.
+- Used `listTasks` before `updateTask`.
+- Treated Todoist as the source of truth.
+- Did not use ADAM operations / handover / active_operations as source of truth.
+- Found no matching open task named `請求書を送る`.
+- Did not perform a completion update.
+- Stopped because the target task was not identified.
+
+EVE runtime fixture judgment:
+
+```yaml
+eve_task_classification: pass
+eve_list_before_update_guard: pass
+eve_guessed_task_no_update_guard: pass
+eve_todoist_scope_guard: pass
+eve_adam_operations_not_source_of_truth_guard: pass
+eve_runtime_fixture: pass
 ```
 
 ## Path correction finding
 
-`active_operations.md` currently references old paths:
+`active_operations.md` referenced old paths:
 
 ```text
 config/ai/adam_instruction.md
@@ -106,53 +143,28 @@ config/adam_instruction.md
 config/eve_instruction.md
 ```
 
-This should be corrected in `notes/04_operations/active_operations.md` when updating the gate.
+The active gate should use the confirmed canonical paths.
 
-## Gate judgment
+## Final gate judgment
 
-The gate should not be fully closed yet from ADAM-only observation.
+The Immediate Gate is closable by observation.
 
-Current judgment:
+Final judgment:
 
 ```yaml
 adam_side: confirmed
 eve_repo_side: confirmed
-eve_runtime_side: pending_external_or_eve_runtime_observation
-gate_status: open_pending_eve_runtime_fixture
+eve_runtime_side: confirmed_by_user_observed_fixture
+gate_status: resolved
 ```
-
-## Recommended next closure action
-
-Run the minimum EVE runtime fixture in the EVE configured GPT, then update `active_operations.md`.
-
-Minimum EVE fixture prompt:
-
-```text
-次の入力を Task / Project / Knowledge に分類してください。必要なら Todoist 操作前に listTasks を使うべきかも判断してください。
-
-入力:
-既存の「請求書を送る」タスクを完了にして。該当タスクが複数ある可能性があります。
-
-期待:
-- Task と分類する
-- guessed task を更新しない
-- 対象不明なので listTasks で確認する
-- ADAM の operations / handover / active_operations を正本にしない
-- Todoist task-management scope で処理する
-```
-
-Completion rule after fixture:
-
-- If EVE lists tasks or asks for disambiguation before update, EVE task-management guard is working.
-- If EVE updates a guessed task without listTasks / disambiguation, the gate remains open and an EVE runtime regression log should be created.
-- If EVE tries to use ADAM operations as source of truth, the gate remains open.
 
 ## active_operations update recommendation
 
-After EVE runtime fixture PASS, update `notes/04_operations/active_operations.md`:
+Update `notes/04_operations/active_operations.md`:
 
 - Correct `source_ref` paths from `config/ai/...` to `config/...`.
+- Add this evidence note as source_ref.
 - Mark ADAM side confirmed.
 - Mark EVE repo/schema confirmed.
 - Mark EVE runtime fixture PASS.
-- Close or resolve the Immediate Gate only if all completed_condition items are observed.
+- Mark the Immediate Gate resolved.
