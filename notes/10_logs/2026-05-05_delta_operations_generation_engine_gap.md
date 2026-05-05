@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_1C_pass_l3_order_fixture_pending
+fixture_1A_1B_1C_pass_l3_order_fixture_inconclusive_retest_pending
 
 ## category
 
@@ -22,32 +22,17 @@ user / DELTA
 
 ## summary
 
-DELTA operations generation / write preflight has been hardened after repeated runtime fixture failures.
-
 Confirmed PASS:
 
 - Fixture 1A: missing `read_evidence` is rejected
 - Fixture 1B: completed 健康保険法 L3 first-pass reintroduction is rejected
 - Fixture 1C: incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 skip is rejected
 
-Still pending:
+Pending:
 
-- L3 order fixture
+- L3 order fixture retest with isolated valid base content
 - positive valid-write fixture
 - deterministic generator service implementation
-
-## observed failures
-
-- D0-D6 seven-day rolling window was not preserved
-- L1/L2 targets used vague page-less wording
-- L3 targets used vague question-less wording
-- 2026-06-30 milestone was not reverse-planned into realistic daily load
-- D0-D6 did not connect to D7-target Next operations
-- user_capacity, special_days, annual leave, and L3 unavailable days were not automatically reflected
-- DELTA instruction exceeded configured GPT 8000-character limit during first fix
-- Action schema operation description exceeded configured GPT import limit
-- feature branch fixture once accepted completed 健康保険法 L3 as new first-pass work
-- Fixture 1C accepted incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 four times before completion override fix
 
 ## root_cause
 
@@ -65,7 +50,7 @@ DELTA lacked deterministic generation / preflight layers for:
 - L3_order_guard
 - read_evidence validation
 
-Runtime / validator root causes:
+Runtime / validator causes found during fixtures:
 
 - configured Action schema update alone was insufficient
 - `branch=feature/atlas-pre-delta-foundation` selects GitHub content target branch, not deployed backend code branch
@@ -73,58 +58,34 @@ Runtime / validator root causes:
 - L1/L2 continuity validator was too narrow and repeatedly missed actual fixture shape
 - employee pension L1/L2 detector missed table / separated forms in Next operations before table-aware guard
 - `hasExplicitNationalPensionCompletionBeforeEmployeePension()` treated the substring `完了` inside `未完了` as an explicit completion override
+- first L3 order fixture was not isolating the target guard because it failed earlier on missing completed_scope evidence and Day4 quantitative target
 
 ## fix_applied
 
-DELTA instruction compressed:
-
 - `systems/delta/config/delta_instruction.md`
-- branch: `feature/atlas-pre-delta-foundation`
-- sha: `66635dffaa60f56090380043da8b9d8dc1e4d95d`
-- content_length: `6535`
-
-Action schema updated:
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `66635dffaa60f56090380043da8b9d8dc1e4d95d`
+  - content_length: `6535`
 
 - `systems/delta/config/delta_action_schema.yaml`
-- branch: `feature/atlas-pre-delta-foundation`
-- sha: `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
-- version: `0.6.3`
-
-Supplemental schema:
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
+  - version: `0.6.3`
 
 - `systems/delta/config/delta_operations_generation_schema.yaml`
-- branch: `feature/atlas-pre-delta-foundation`
-- sha: `1b906f2afe663d30b38fb6add66c75d0ea662b29`
-
-Main API pass-through:
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `1b906f2afe663d30b38fb6add66c75d0ea662b29`
 
 - `api/repo-resource.js`
-- branch: `main`
-- sha: `ebe2be2254a64b0792e9d150513b9341c803dde2`
-
-Latest service validator:
+  - branch: `main`
+  - sha: `ebe2be2254a64b0792e9d150513b9341c803dde2`
 
 - `src/services/delta-operations.js`
-- branch: `main`
-- sha: `5c02b765179f9e3dde7e41546da75b285eff1618`
-- `src/services/delta-operations.js`
-- branch: `feature/atlas-pre-delta-foundation`
-- sha: `5c02b765179f9e3dde7e41546da75b285eff1618`
-- validator_version: `delta_operations_preflight_2026_05_05_1C_completion_override_fix`
-
-Latest continuity guard change:
-
-```yaml
-validator_change:
-  - removed bare `完了` from explicit completion override
-  - only explicit markers allow override:
-      - completion_status: completed
-      - status: completed
-      - completed: true
-  - keeps broad 国民年金法 incomplete + P158/P220 + L1/L2 detection
-  - keeps table-aware 厚生年金保険法 L1/L2 detection
-expected_error: current_L1_L2_subject_skipped_before_completion
-```
+  - branch: `main`
+  - sha: `5c02b765179f9e3dde7e41546da75b285eff1618`
+  - branch: `feature/atlas-pre-delta-foundation`
+  - sha: `5c02b765179f9e3dde7e41546da75b285eff1618`
+  - validator_version: `delta_operations_preflight_2026_05_05_1C_completion_override_fix`
 
 ## runtime fixture results
 
@@ -169,28 +130,6 @@ next_operations:
   - 2026-05-13 | L2 | 厚生年金保険法 L2 P1〜P35（35ページ）
 ```
 
-Failures observed before final fix:
-
-```yaml
-first_fail:
-  write: accepted
-  sha_after_invalid_write: 0132fda8c1d41d167dc0df749e926f0167b8942c
-  request_id: 0e1ee1e4-af63-458a-a31a-2866d1c0044f
-second_fail:
-  write: accepted
-  sha_after_invalid_write: 6c92c5b2ed0d1c34a7b7ca3827be0ac495ede164
-  request_id: 13f001a5-2202-4b53-8ace-6ae0763bcf23
-third_fail:
-  write: accepted
-  sha_after_invalid_write: 2b611ec7216e22f9aa9235f379897e02deac59cb
-  request_id: d27a77db-a073-421c-8094-be6c15b7a3d4
-fourth_fail:
-  write: accepted
-  sha_after_invalid_write: 7536693e9be1ff1133a4e7e612d9f2af6007dfe2
-  request_id: be708ca4-99ef-4a1e-ab87-cffce6069ec8
-  validator_version: delta_operations_preflight_2026_05_05_1C_table_guard
-```
-
 Final PASS after completion override fix:
 
 ```yaml
@@ -204,9 +143,41 @@ sha_after: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
 judgment: pass
 ```
 
+### L3 order fixture attempt 1
+
+Observed:
+
+```yaml
+write: rejected
+error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+request_id: f6825d69-6c99-4a0d-be06-e7a4dd7b3035
+errors:
+  - missing_completed_scope_evidence
+  - missing_Day4_quantitative_target
+sha_before: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
+sha_after: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
+judgment: inconclusive_fixture_defect
+```
+
+Expected but not observed:
+
+```yaml
+expected_error: L3_order_violation_国民年金法_takuitsu_before_selected
+```
+
+Required retest:
+
+```yaml
+fixture_requirements:
+  - include completed_scope evidence
+  - include quantitative or explicit rest/unavailable target for every Day0-Day6, including Day4
+  - avoid unrelated completed_scope, vague target, continuity, and quantitative failures
+  - include 国民年金法 L3 択一 before any 国民年金法 L3 選択 completion marker
+```
+
 ## remaining_risk
 
-- L3 order fixture is pending
+- L3 order fixture retest is pending
 - positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
 - restored operations SHA is no longer original `af626...`; current basis SHA is `b5514...`
@@ -214,6 +185,7 @@ judgment: pass
 ## recurrence_prevention
 
 - Fixture PASS requires plan-fit, not just structure / quantitative / load checks
+- Guard-specific fixtures must isolate the target validator and satisfy all unrelated required fields
 - Operations generation must hard fail if active_operations / Next operations / current_position / completed_subjects / special_days / user_capacity are missing
 - L1/L2 current subject must not be skipped before subject_end_page
 - L3 must follow 選択 → 択一 per subject
@@ -239,7 +211,8 @@ judgment: pass
 
 Immediate:
 
-- run L3 order fixture and expect `L3_order_violation_*_takuitsu_before_selected`
+- rerun L3 order fixture with completed_scope evidence and Day0-Day6 quantitative targets
+- expect `L3_order_violation_国民年金法_takuitsu_before_selected`
 
 After negative fixtures PASS:
 
