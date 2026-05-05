@@ -101,6 +101,8 @@ export function getConfig(options = {}) {
       message: 'GitHub config missing',
       category: 'config',
       step: 'getConfig',
+      resource: options.resource || '',
+      action: options.action || '',
       retryable: false,
       details: {
         has_token: Boolean(token),
