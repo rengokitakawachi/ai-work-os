@@ -2,6 +2,7 @@ import {
   createError,
   buildCodePath,
   isAllowedCodePath,
+  getConfig,
   getRepoTree,
   getContentFile,
   putContentFile,
@@ -85,6 +86,13 @@ export async function bulkReadCode(files, options = {}) {
       },
     });
   }
+
+  getConfig({
+    step: 'bulkReadCode',
+    resource: 'code',
+    action: 'bulk',
+    branch: options.branch,
+  });
 
   const results = await Promise.all(
     files.map(async (file) => {
