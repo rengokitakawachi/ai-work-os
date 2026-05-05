@@ -7,7 +7,7 @@ updated_at: 2026-05-05
 branch: feature/atlas-pre-delta-foundation
 last_daily_review: systems/delta/history/daily/2026-05-04.md
 latest_in_day_history: systems/delta/history/daily/2026-05-05.md
-operation_status: rebuilt_quantitative_d0_d6
+operation_status: quantitative_d0_d6_no_vague_targets
 
 validation_markers:
   - Delta operations are learning execution order, not calendar schedule.
@@ -57,19 +57,14 @@ plan_gap:
       current_subject: 国民年金法
       current_position: 選択問題Q15-1未着手
       next_resume_question_id: Q15-1
-  expected_position:
-    2026-05-05: 国民年金法 L3 選択問題 Q15-14完了
-    2026-05-06: 国民年金法 L3 択一 Q1-1〜Q4-4
-    2026-05-08: 国民年金法 L2 P219まで回収
-    2026-05-09: 国民年金法 L3 択一 Q5-1〜Q9-10
   gap_status: delayed_but_recovering
   operation_mode: recovery_forward
   recovery_required: true
   reason:
     - 健康保険法L3新規演習は完了し、GW最低ラインは達成
-    - 国民年金法L3選択問題はQ15-1〜Q15-14まで存在するため、D0標準をQ15-14完了へ修正
+    - 国民年金法L3選択問題はQ15-1〜Q15-14の14問
     - 国民年金法L2がL1より遅れているため、D2〜D3でP219まで追いつかせる
-    - 5/17の国民年金法L3択一完了目標から逆算し、D1とD4でQ1〜Q9まで進める
+    - D0〜D6はL1/L2をページ範囲＋ページ数、L3を問題番号範囲＋問題数で管理する
 
 ## Recommended lines
 
@@ -84,11 +79,11 @@ recommended_lines:
   gap_status: delayed_but_recovering
   operation_mode: recovery_forward
   must_line:
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-7
+    - 国民年金法 L3 選択問題 Q15-1〜Q15-7（7問）
   standard_line:
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-14完了
+    - 国民年金法 L3 選択問題 Q15-1〜Q15-14（14問）完了
   stretch_line:
-    - 国民年金法 L3 択一 Q1-1〜Q1-3
+    - 国民年金法 L3 択一 Q1-1〜Q1-3（3問）
   next_resume_question_id: Q15-1
   recovery_targets:
     health_insurance_deferred:
@@ -122,7 +117,7 @@ recommended_lines:
 
 ### Day0（2026-05-05）
 
-- task: 国民年金法 L3 選択問題 Q15-1〜Q15-14
+- task: 国民年金法 L3 選択問題 Q15-1〜Q15-14（14問）
   rolling_day: Day0
   due_date: 2026-05-05
   due_type: date
@@ -140,11 +135,11 @@ recommended_lines:
   stretch_end_question_id: Q1-3
   next_resume_question_id: Q15-1
   must_line:
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-7
+    - 国民年金法 L3 選択問題 Q15-1〜Q15-7（7問）
   standard_line:
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-14完了
+    - 国民年金法 L3 選択問題 Q15-1〜Q15-14（14問）完了
   stretch_line:
-    - 国民年金法 L3 択一 Q1-1〜Q1-3
+    - 国民年金法 L3 択一 Q1-1〜Q1-3（3問）
   recovery_targets:
     - 国民年金法Q15の×・△はD1以降へ保持
     - 健康保険法×・△は後日回収
@@ -162,7 +157,7 @@ recommended_lines:
 
 ### Day1（2026-05-06）
 
-- task: 国民年金法 L3 択一 Q1-1〜Q4-4
+- task: 国民年金法 L3 択一 Q1-1〜Q4-4（13問）
   rolling_day: Day1
   due_date: 2026-05-06
   due_type: date
@@ -171,7 +166,7 @@ recommended_lines:
   material: 過去問講座テキスト
   operation_mode: recovery_forward
   plan_anchor: 2026-05-06 国民年金法択一Q1章〜Q2章へ着手 / 5月17日択一完了から逆算
-  expected_position: Q1-1〜Q4-4完了
+  expected_position: Q1-1〜Q4-4（13問）完了
   current_position: D0でQ15-14完了後、Q1-1から開始
   gap_status: delayed_but_recovering
   start_question_id: Q1-1
@@ -180,11 +175,11 @@ recommended_lines:
   stretch_end_question_id: Q5-1
   next_resume_question_id: Q1-1
   must_line:
-    - 国民年金法 L3 択一 Q1-1〜Q2-5
+    - 国民年金法 L3 択一 Q1-1〜Q2-5（7問）
   standard_line:
-    - 国民年金法 L3 択一 Q1-1〜Q4-4
+    - 国民年金法 L3 択一 Q1-1〜Q4-4（13問）
   stretch_line:
-    - 国民年金法 L3 択一 Q1-1〜Q5-1
+    - 国民年金法 L3 択一 Q1-1〜Q5-1（14問）
   recovery_targets:
     - D0で発生した国民年金法Q15の×・△を保持
     - 健康保険法×・△は後日回収
@@ -199,7 +194,7 @@ recommended_lines:
 
 ### Day2（2026-05-07）
 
-- task: 国民年金法 L2 P158〜P190
+- task: 国民年金法 L2 P158〜P190（33ページ）
   rolling_day: Day2
   due_date: 2026-05-07
   due_type: date
@@ -217,11 +212,11 @@ recommended_lines:
   stretch_end_page: P200
   next_start_page: P158
   must_line:
-    - 国民年金法 L2 P158〜P175
+    - 国民年金法 L2 P158〜P175（18ページ）
   standard_line:
-    - 国民年金法 L2 P158〜P190
+    - 国民年金法 L2 P158〜P190（33ページ）
   stretch_line:
-    - 国民年金法 L2 P158〜P200
+    - 国民年金法 L2 P158〜P200（43ページ）
   recovery_targets:
     L2_gap:
       current_L1_position: P219
@@ -237,7 +232,7 @@ recommended_lines:
 
 ### Day3（2026-05-08）
 
-- task: 国民年金法 L2 P191〜P219
+- task: 国民年金法 L2 P191〜P219（29ページ）
   rolling_day: Day3
   due_date: 2026-05-08
   due_type: date
@@ -255,11 +250,11 @@ recommended_lines:
   stretch_end_page: P219
   next_start_page: P191
   must_line:
-    - 国民年金法 L2 P191〜P205
+    - 国民年金法 L2 P191〜P205（15ページ）
   standard_line:
-    - 国民年金法 L2 P191〜P219
+    - 国民年金法 L2 P191〜P219（29ページ）
   stretch_line:
-    - 国民年金法 L2 P191〜P219完了
+    - 国民年金法 L2 P191〜P219（29ページ）完了
   recovery_targets:
     L2_gap:
       target: L2をL1 P219へ追いつかせる
@@ -273,7 +268,7 @@ recommended_lines:
 
 ### Day4（2026-05-09）
 
-- task: 国民年金法 L3 択一 Q5-1〜Q9-10
+- task: 国民年金法 L3 択一 Q5-1〜Q9-10（21問）
   rolling_day: Day4
   due_date: 2026-05-09
   due_type: date
@@ -282,20 +277,20 @@ recommended_lines:
   material: 過去問講座テキスト
   operation_mode: recovery_forward
   plan_anchor: 2026-05-09 L3国民年金法択一 / 5月17日択一完了から逆算
-  expected_position: Q5-1〜Q9-10完了
+  expected_position: Q5-1〜Q9-10（21問）完了
   current_position: D1標準達成時はQ5-1から開始
   gap_status: delayed_but_recovering
   start_question_id: Q5-1
-  must_end_question_id: Q7-last
+  must_end_question_id: Q7-2
   standard_end_question_id: Q9-10
   stretch_end_question_id: Q11-3
   next_resume_question_id: Q5-1
   must_line:
-    - 国民年金法 L3 択一 Q5-1〜Q7-last
+    - 国民年金法 L3 択一 Q5-1〜Q7-2（8問）
   standard_line:
-    - 国民年金法 L3 択一 Q5-1〜Q9-10
+    - 国民年金法 L3 択一 Q5-1〜Q9-10（21問）
   stretch_line:
-    - 国民年金法 L3 択一 Q5-1〜Q11-3
+    - 国民年金法 L3 択一 Q5-1〜Q11-3（24問、Q10-0除外）
   recovery_targets:
     - 国民年金法Q15およびQ1〜Q4の×・△を保持
     - 健康保険法×・△は後日回収
@@ -318,15 +313,15 @@ recommended_lines:
   material: none
   operation_mode: normal
   plan_anchor: 2026-05-10 L3不可
-  expected_position: 新規L3なし
+  expected_position: 新規L1/L2/L3なし
   current_position: D4 daily reviewで更新
   gap_status: on_track
   must_line:
-    - 新規L3なし
+    - 新規L1/L2/L3なし
   standard_line:
-    - 新規L3なし
+    - 新規L1/L2/L3なし
   stretch_line:
-    - 余力があれば国民年金法L3の×・△番号整理のみ。新規演習はしない
+    - 国民年金法 L3 択一 Q1-1〜Q9-10の評価記号整理のみ
   recovery_targets:
     - 新規L3は実施しない
   defer_targets:
@@ -338,7 +333,7 @@ recommended_lines:
 
 ### Day6（2026-05-11）
 
-- task: 国民年金法 L1 P220〜P245
+- task: 国民年金法 L1 P220〜P245（26ページ）
   rolling_day: Day6
   due_date: 2026-05-11
   due_type: date
@@ -356,11 +351,11 @@ recommended_lines:
   stretch_end_page: P255
   next_start_page: P220
   must_line:
-    - 国民年金法 L1 P220〜P235
+    - 国民年金法 L1 P220〜P235（16ページ）
   standard_line:
-    - 国民年金法 L1 P220〜P245
+    - 国民年金法 L1 P220〜P245（26ページ）
   stretch_line:
-    - 国民年金法 L1 P220〜P255
+    - 国民年金法 L1 P220〜P255（36ページ）
   recovery_targets:
     L1_L2_completion:
       target: 5/11〜5/15で国民年金法L1/L2完了方向へ進め、厚生年金保険法へ接続する
@@ -389,11 +384,17 @@ required_fields_per_day:
   - defer_targets
   - recompute_triggers
 quantitative_management_rules:
-  - L1/L2はstart_page、must_end_page、standard_end_page、stretch_end_page、next_start_pageで管理する
-  - L3はstart_question_id、must_end_question_id、standard_end_question_id、stretch_end_question_id、next_resume_question_idで管理する
-  - 「着手」「進める」「できるところまで」だけの標準ラインは禁止
+  - L1/L2はstart_page、must_end_page、standard_end_page、stretch_end_page、next_start_pageとページ数で管理する
+  - L3はstart_question_id、must_end_question_id、standard_end_question_id、stretch_end_question_id、next_resume_question_idと問題数で管理する
+  - 「着手」「進める」「できるところまで」「Qx-last」「章だけ」「前半」「後半」だけの標準ラインは禁止
   - future dayのstart_question_id/pageは前日レビューでずれた場合にrecomputeする
   - operations更新時、D0〜D6の欠落があればwriteしない
+load_realism_guard:
+  - L1/L2 standard_line が50ページを超える場合は原則分割する
+  - L3 standard_line が25問を超える場合は原則分割する
+  - 2巡目仕分けが30問を超える場合は原則分割する
+  - 超過する場合はD0〜D6内で前倒し・分散を検討する
+  - それでも無理なら plan_alignment_status を compression_required または critical_delay とする
 
 ## Rules
 
