@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_pass_1C_failed_guard_strengthened_retest_pending
+fixture_1A_1B_pass_1C_refailed_guard_broadened_retest_pending
 
 ## category
 
@@ -35,13 +35,12 @@ Observed failures:
 
 Post-fix regressions:
 
-- DELTA instruction was once expanded to 12747 characters, above the 8000-character configured GPT limit.
-- A later controller fixture looked structurally valid but reintroduced completed 健康保険法 L3.
-- DELTA memo identified pre-generation SSOT read / preflight insufficiency as the core failure.
-- DELTA Action schema import failed because `deltaResourceWrite` operation description length was 334, exceeding the 300-character configured GPT limit.
-- Runtime fixture after Action schema update rejected writes, but not via expected `DELTA_OPERATIONS_PREFLIGHT_FAILED`; it returned legacy / alternate content marker validation with `INVALID_REQUEST` and `missing_markers`.
-- Feature-branch fixture with `branch=feature/atlas-pre-delta-foundation` accepted invalid content that reintroduced completed 健康保険法 L3 as D7+ new first-pass work.
-- Fixture 1C accepted a plan that skipped from incomplete 国民年金法 L1/L2 to 厚生年金保険法 L1/L2.
+- DELTA instruction exceeded configured GPT 8000-character limit during first fix.
+- A controller fixture reintroduced completed 健康保険法 L3.
+- DELTA Action schema import failed due to operation description length >300 characters.
+- Runtime used deployed main backend, not feature branch service code.
+- Feature-branch fixture once accepted completed 健康保険法 L3 as new first-pass work.
+- Fixture 1C twice accepted a plan that skipped from incomplete 国民年金法 L1/L2 to 厚生年金保険法 L1/L2.
 
 ## root_cause
 
@@ -59,14 +58,13 @@ DELTA lacked deterministic generation / preflight layers for:
 - L3_order_guard
 - read_evidence validation
 
-Runtime root cause:
+Runtime / validator root causes:
 
 - configured Action schema update alone was insufficient
 - `branch=feature/atlas-pre-delta-foundation` selects the GitHub content target branch, not deployed backend code branch
-- deployed `/api/repo-resource` was executing main backend code
-- main `src/services/delta-operations.js` still had old marker-only validation at the time of failed fixture
-- main `api/repo-resource.js` did not pass `read_evidence` into `updateDeltaOperations`
-- L1/L2 continuity validator used a narrow regex and did not catch YAML-style `subject / completion_status / next_start_page` current_position
+- main `api/repo-resource.js` initially did not pass `read_evidence` into `updateDeltaOperations`
+- L1/L2 continuity validator was too narrow and did not catch YAML-style `subject / completion_status / next_start_page` current_position
+- first continuity fix searched only near `current_position`, which still missed the actual fixture shape
 
 ## fix_applied
 
@@ -88,44 +86,49 @@ DELTA instruction compressed:
 - sha: `66635dffaa60f56090380043da8b9d8dc1e4d95d`
 - content_length: `6535`
 
-Action schema updated for read_evidence and import limit:
+Action schema updated:
 
 - `systems/delta/config/delta_action_schema.yaml`
 - branch: `feature/atlas-pre-delta-foundation`
-- latest sha: `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
+- sha: `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
 - version: `0.6.3`
-- user reported configured GPT Action schema updated successfully
 
-Main runtime alignment applied:
-
-- `src/services/delta-operations.js`
-- branch: `main`
-- sha: `0bd7d25285e4e58d8b76498f6393e1d0f9d3ee7c`
-- old marker-only validator replaced with read_evidence / plan-fit preflight
-- L1/L2 continuity guard strengthened for YAML current_position format
-
-Feature branch service alignment applied:
-
-- `src/services/delta-operations.js`
-- branch: `feature/atlas-pre-delta-foundation`
-- sha: `0bd7d25285e4e58d8b76498f6393e1d0f9d3ee7c`
-
-Main API pass-through applied:
+Main API pass-through:
 
 - `api/repo-resource.js`
 - branch: `main`
 - sha: `ebe2be2254a64b0792e9d150513b9341c803dde2`
-- preserves repo history/show/grep features
-- passes `read_evidence` from request body into `updateDeltaOperations`
+
+Latest service validator:
+
+- `src/services/delta-operations.js`
+- branch: `main`
+- sha: `446e1b8a4c0591cbe945907033ee3fd4a187a524`
+- `src/services/delta-operations.js`
+- branch: `feature/atlas-pre-delta-foundation`
+- sha: `446e1b8a4c0591cbe945907033ee3fd4a187a524`
+
+Latest continuity guard change:
+
+```yaml
+validator_change:
+  - no longer limits detection to current_position + 2500 chars
+  - scans full content for YAML L1/L2 subject/completion_status/next_start_page patterns
+  - detects L1 国民年金法 incomplete next_start_page P220
+  - detects L2 国民年金法 incomplete next_start_page P158
+  - detects subject-first YAML form
+  - detects prose form
+  - rejects 厚生年金保険法 L1/L2 in Next operations unless 国民年金法 completion override is explicit
+```
 
 ## runtime fixture results
 
-### Fixture 1A: `delta_operations` update without `read_evidence`
+### Fixture 1A: missing read_evidence
 
 ```yaml
 write: rejected
 error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
-request_id: 05a58e50-a7ae-4409-b8bb-a0d5cd168cfe
+required_error_observed: missing_read_evidence_role:roadmap
 sha_before: af62696214acfcf8817728ee9f97ae24e39c0011
 sha_after: af62696214acfcf8817728ee9f97ae24e39c0011
 judgment: pass
@@ -136,7 +139,6 @@ judgment: pass
 ```yaml
 write: rejected
 error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
-request_id: 0e7ba49f-1435-4b75-900e-892541e382b6
 required_error_observed: completed_health_insurance_L3_reintroduced_as_new_work
 sha_before: af62696214acfcf8817728ee9f97ae24e39c0011
 sha_after: af62696214acfcf8817728ee9f97ae24e39c0011
@@ -162,44 +164,44 @@ next_operations:
   - 厚生年金保険法 L2 P1〜P35（35ページ）
 ```
 
-Observed before guard strengthening:
+First observed failure:
 
 ```yaml
 write: accepted
-status: UPDATED
 sha_after_invalid_write: 0132fda8c1d41d167dc0df749e926f0167b8942c
 request_id: 0e1ee1e4-af63-458a-a31a-2866d1c0044f
+judgment: fail
+```
+
+Second observed failure after first guard strengthening:
+
+```yaml
+write: accepted
+sha_after_invalid_write: 6c92c5b2ed0d1c34a7b7ca3827be0ac495ede164
+request_id: 13f001a5-2202-4b53-8ace-6ae0763bcf23
 preflight:
   ok: true
   errors: []
-  warnings: []
+  warnings:
+    - l1_l2_page_count_above_guard:61,62
 judgment: fail
 ```
 
 Recovery:
 
 ```yaml
-initial_exact_restore: rejected
-reason:
-  - forbidden_Day2_vague_target:着手
-warning:
-  - l1_l2_page_count_above_guard:54
-sanitized_restore: success
-restored_sha: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
-request_id: 64267cbc-5f35-463d-b439-8e01cbf000e3
-read_back_confirmed: true
+current_restored_sha: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
+restored_to_basis_sha: true
 ```
 
-Fix after Fixture 1C FAIL:
+Current status:
 
 ```yaml
-validator_change:
-  - removed dependency on narrow NATIONAL_PENSION_INCOMPLETE_PATTERN
-  - added hasIncompleteNationalPensionL1L2
-  - detects YAML current_position with subject / completion_status / next_start_page
-  - rejects employee pension L1/L2 in Next operations unless national pension completion override is explicit
-status: retest_pending
-expected_error: current_L1_L2_subject_skipped_before_completion
+fixture_1C:
+  judgment: fail_twice
+  latest_guard: broadened_full_content_scan
+  retest_required: true
+  expected_error: current_L1_L2_subject_skipped_before_completion
 ```
 
 ## implemented preflight checks now in main backend
@@ -210,21 +212,20 @@ expected_error: current_L1_L2_subject_skipped_before_completion
 - each day has quantitative target or explicit rest / unavailable marker
 - forbidden vague target terms are rejected in target lines
 - high load is returned as warning
-- read_evidence roles and paths are required for roadmap, plan, active_operations, latest_daily_history, completed_subjects, special_days, user_capacity
-- content must still contain current_position, special_days, user_capacity, and completed_scope evidence
+- read_evidence roles and paths are required
+- content must contain current_position, special_days, user_capacity, and completed_scope evidence
 - completed 健康保険法 L3 is rejected if reintroduced as new work
-- 国民年金法 L1/L2 incomplete cannot jump to 厚生年金保険法 L1/L2 without explicit completion override
+- 国民年金法 L1/L2 incomplete should reject 厚生年金保険法 L1/L2 without explicit completion override
 - L3 order 選択 → 択一 is checked per subject
 
 ## remaining_risk
 
-- Fixture 1C retest is pending after guard strengthening
+- Fixture 1C retest is pending after full-content guard broadening
 - L3 order fixture is pending
 - positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
 - supplemental schema has not been merged into canonical `delta_schema.yaml`
-- service preflight can prove submitted metadata, but deterministic semantic use of sources still needs generator implementation
-- restored operations SHA is no longer original `af626...`; current restored SHA is `b5514...` due to sanitized restoration
+- restored operations SHA is no longer original `af626...`; current basis SHA is `b5514...`
 
 ## recurrence_prevention
 
@@ -233,11 +234,8 @@ expected_error: current_L1_L2_subject_skipped_before_completion
 - L1/L2 current subject must not be skipped before subject_end_page
 - L3 must follow 選択 → 択一 per subject
 - completed first-pass scope must not be regenerated as new work
-- write path should carry read_evidence, not rely only on content inference
-- validator fixtures must include both prose and YAML current_position shapes
-- detailed rules belong in supplemental schema / design note; instruction stays under 8000 characters
-- Action schema operation descriptions must stay under configured GPT import limits
-- Runtime fixture must distinguish configured Action schema reflection from deployed backend actual behavior
+- write path must carry read_evidence
+- validator fixtures must include prose, YAML block, subject-first YAML, and reordered YAML forms
 - Never use branch parameter success as evidence that backend service code is running that branch
 
 ## linked_refs
