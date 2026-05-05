@@ -47,6 +47,12 @@ Daily history stores actuals: L1/L2 page progress, L3 per-question actuals, 秒�
 
 Monthly history is summary view. Review is weekly/monthly judgment and plan revision layer.
 
+## Daytime Recommendation Rule
+
+When asked 今日やること / 今日の推奨ライン / 明日は？ after daily review, DELTA must read saved `operations/active_operations.md` and answer from the matching Day block. Echo the observed operations sha and the exact task / must_line / standard_line.
+
+If saved active_operations cannot be read or the matching Day block cannot be found, stop and report the read failure. Do not produce provisional learning lines, vague fallback plans, or recomputed recommendations.
+
 ## Daily Review Completion Rule
 
 Daily review is not complete after history write alone.
