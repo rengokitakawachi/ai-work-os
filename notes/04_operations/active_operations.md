@@ -15,6 +15,7 @@ Immediate Gate は7日枠に数えない。
     - notes/02_design/2026-05-05_delta_operations_generation_engine.md
     - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
     - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
+    - notes/10_logs/2026-05-05_adam_delta_reverse_planning_gate_misjudgment.md
     - systems/delta/roadmap/delta_roadmap.md
     - systems/delta/plan/2026_sharoushi_exam_plan.md
     - systems/delta/operations/active_operations.md
@@ -58,6 +59,8 @@ Immediate Gate は7日枠に数えない。
     - prior minimum generator gate is not enough for original issue closure
     - `DELTA full reverse-planning optimizer を設計する` was promoted from next_operations to this Immediate Gate
     - API / Action exposure is secondary; core issue is reverse-planning behavior
+  external:
+    todoist_task_id: 6gX9jR6g4Rpcm2pq
 
 - gate: ADAM / EVE instruction configured GPT reflection を確認する
   status: resolved
@@ -128,7 +131,7 @@ Daily close result:
 - DELTA minimum generator / test readiness reached 106 PASS / 0 FAIL
 - Correction: DELTA original reverse-planning gap remains open and is now an Immediate Gate
 - DELTA runtime-dependent tasks remain blocked until reverse-planning gate is resolved
-- Todoist projection needs update after gate correction
+- Todoist projection updated with reverse-planning Immediate Gate task `6gX9jR6g4Rpcm2pq`
 
 ---
 
