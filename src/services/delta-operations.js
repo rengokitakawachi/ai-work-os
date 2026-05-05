@@ -24,6 +24,16 @@ const REQUIRED_DAY_FIELDS = [
   'recompute_triggers',
 ];
 
+const REQUIRED_READ_ROLES = [
+  'roadmap',
+  'plan',
+  'active_operations',
+  'latest_daily_history',
+  'completed_subjects',
+  'special_days',
+  'user_capacity',
+];
+
 const FORBIDDEN_VAGUE_TARGETS = [
   '前半',
   '後半',
@@ -101,6 +111,28 @@ function normalizeMessage(message, fallback) {
   return safeMessage || fallback;
 }
 
+function normalizeReadEvidence(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((item) => item && typeof item === 'object')
+    .map((item) => ({
+      file: typeof item.file === 'string' ? item.file.trim() : '',
+      path: typeof item.path === 'string' ? item.path.trim() : '',
+      sha: typeof item.sha === 'string' ? item.sha.trim() : '',
+      role: typeof item.role === 'string' ? item.role.trim() : '',
+      source: typeof item.source === 'string' ? item.source.trim() : '',
+    }))
+    .filter((item) => item.file || item.path || item.role || item.source);
+}
+
+function hasReadRole(readEvidence, role) {
+  return readEvidence.some((item) => item.role === role || item.source === role);
+}
+
+function hasReadPath(readEvidence, pattern) {
+  return readEvidence.some((item) => pattern.test(item.file) || pattern.test(item.path));
+}
+
 function extractDayBlock(content, day) {
   const dayHeader = new RegExp(`^##\\s+${day}[^\\n]*$`, 'm');
   const match = dayHeader.exec(content);
@@ -157,24 +189,45 @@ function extractNextOperations(content) {
   return content.slice(match.index);
 }
 
+function validateReadEvidence(readEvidence, errors) {
+  for (const role of REQUIRED_READ_ROLES) {
+    if (!hasReadRole(readEvidence, role)) {
+      errors.push(`missing_read_evidence_role:${role}`);
+    }
+  }
+
+  if (!hasReadPath(readEvidence, /roadmap\/delta_roadmap\.md$/)) {
+    errors.push('missing_read_evidence_path:roadmap/delta_roadmap.md');
+  }
+  if (!hasReadPath(readEvidence, /plan\/2026_sharoushi_exam_plan\.md$/)) {
+    errors.push('missing_read_evidence_path:plan/2026_sharoushi_exam_plan.md');
+  }
+  if (!hasReadPath(readEvidence, /operations\/active_operations\.md$/)) {
+    errors.push('missing_read_evidence_path:operations/active_operations.md');
+  }
+  if (!hasReadPath(readEvidence, /history\/daily\/\d{4}-\d{2}-\d{2}\.md$/)) {
+    errors.push('missing_read_evidence_path:latest_daily_history');
+  }
+}
+
 function validatePreGenerationEvidence(content, errors) {
   if (!/roadmap|roadmap_anchor|roadmap_phase/.test(content)) {
-    errors.push('missing_roadmap_read_evidence');
+    errors.push('missing_roadmap_read_evidence_in_content');
   }
   if (!/plan_anchor|plan\//.test(content)) {
-    errors.push('missing_plan_read_evidence');
+    errors.push('missing_plan_read_evidence_in_content');
   }
   if (!EXISTING_NEXT_OPS_READ_PATTERN.test(content)) {
-    errors.push('missing_existing_active_or_next_operations_read_evidence');
+    errors.push('missing_existing_active_or_next_operations_read_evidence_in_content');
   }
   if (!/current_position/.test(content)) {
     errors.push('missing_current_position');
   }
   if (!/special_days|L3不可|年休/.test(content)) {
-    errors.push('missing_special_days_evidence');
+    errors.push('missing_special_days_evidence_in_content');
   }
   if (!/user_capacity|capacity_assumptions|standard_capacity/.test(content)) {
-    errors.push('missing_user_capacity_evidence');
+    errors.push('missing_user_capacity_evidence_in_content');
   }
 }
 
@@ -229,15 +282,17 @@ function validateL3Order(content, errors) {
   }
 }
 
-export function validateDeltaOperationsContent(content) {
+export function validateDeltaOperationsContent(content, options = {}) {
   const errors = [];
   const warnings = [];
+  const readEvidence = normalizeReadEvidence(options.read_evidence);
 
   if (typeof content !== 'string' || content.trim().length === 0) {
     errors.push('content_empty');
-    return { ok: false, errors, warnings };
+    return { ok: false, errors, warnings, read_evidence: readEvidence };
   }
 
+  validateReadEvidence(readEvidence, errors);
   validatePreGenerationEvidence(content, errors);
   validateCompletedScope(content, errors);
   validateL1L2Continuity(content, errors);
@@ -286,11 +341,12 @@ export function validateDeltaOperationsContent(content) {
     ok: errors.length === 0,
     errors,
     warnings,
+    read_evidence: readEvidence,
   };
 }
 
-function assertDeltaOperationsPreflight(content) {
-  const validation = validateDeltaOperationsContent(content);
+function assertDeltaOperationsPreflight(content, options = {}) {
+  const validation = validateDeltaOperationsContent(content, options);
   if (validation.ok) {
     return validation;
   }
@@ -320,7 +376,9 @@ export async function updateDeltaOperations(
     action: 'update',
   });
 
-  const preflight = assertDeltaOperationsPreflight(content);
+  const preflight = assertDeltaOperationsPreflight(content, {
+    read_evidence: options.read_evidence,
+  });
 
   let currentSha = typeof sha === 'string' ? sha.trim() : '';
 
