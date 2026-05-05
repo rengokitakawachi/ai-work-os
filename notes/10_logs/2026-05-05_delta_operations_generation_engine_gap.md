@@ -2,7 +2,7 @@
 
 ## status
 
-runtime_preflight_fixtures_pass_generator_service_pending_read_failure_fallback_regression_observed
+runtime_preflight_fixtures_pass_generator_service_pending_branch_resolution_guard_added_daytime_fixture_pending
 
 ## category
 
@@ -48,7 +48,8 @@ New runtime regression observed after fixtures:
 Pending:
 
 - deterministic generator service implementation test execution
-- read_saved_operations_or_stop guard for daytime recommendation
+- configured GPT reflection of updated DELTA instruction / supplemental schema
+- daytime recommendation fixture for read_saved_operations_or_stop and branch resolution
 
 ## root_cause
 
@@ -80,17 +81,19 @@ Runtime / validator causes found during fixtures:
 Read failure fallback regression root cause:
 
 - DELTA instruction says daytime questions must read saved active_operations and not recompute by default.
-- However it does not explicitly require hard stop when active_operations cannot be read.
+- DELTA did not have an explicit branch resolution rule.
+- If branch was omitted, runtime likely read default branch rather than `feature/atlas-pre-delta-foundation`.
 - DELTA allowed provisional recommendation after read failure / non-confirmation.
-- The output path did not enforce evidence citation or observed active_operations sha before giving `今日やる学習`.
+- The output path did not enforce observed branch + active_operations sha before giving `今日やる学習`.
 - The response used vague fallback wording, violating quantitative target expectations even though saved operations existed.
 
 ## fix_applied
 
 - `systems/delta/config/delta_instruction.md`
   - branch: `feature/atlas-pre-delta-foundation`
-  - sha: `66635dffaa60f56090380043da8b9d8dc1e4d95d`
-  - content_length: `6535`
+  - sha: `edc7c2a2098844055c695df13b703b701efc4a39`
+  - content_length: `7594`
+  - added branch resolution rule and read_saved_operations_or_stop rule
 
 - `systems/delta/config/delta_action_schema.yaml`
   - branch: `feature/atlas-pre-delta-foundation`
@@ -99,7 +102,8 @@ Read failure fallback regression root cause:
 
 - `systems/delta/config/delta_operations_generation_schema.yaml`
   - branch: `feature/atlas-pre-delta-foundation`
-  - sha: `1b906f2afe663d30b38fb6add66c75d0ea662b29`
+  - sha: `b64267c11da6f8f7fc348a50379e287c1917d6b2`
+  - added branch_resolution and daytime_recommendation_guard
 
 - `api/repo-resource.js`
   - branch: `main`
@@ -112,23 +116,21 @@ Read failure fallback regression root cause:
   - sha: `eb1546bd6723c6ac3c0f324ce7068d52dc2f6ef1`
   - validator_version: `delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix`
 
-## latest L3 order guard change
+## branch resolution guard added
 
 ```yaml
-validator_change:
-  - removed bare Japanese completion text from L3 selected completion override:
-      - L3選択完了
-      - 選択完了
-      - 完了済み
-  - only structured markers allow L3 択一 before selected line:
-      - selected_completion_status: completed
-      - selected_questions: completed
-      - L3_selected: completed
-      - completed_selected: true
-      - same-line 選択 with completion_status: completed
-      - same-line 選択 with completed: true
-  - prevents negative prose such as `選択完了 marker なし` from allowing 択一
-expected_error: L3_order_violation_国民年金法_takuitsu_before_selected
+canonical_branch_for_delta_runtime: feature/atlas-pre-delta-foundation
+read_order:
+  - explicitly_provided_branch
+  - branch_recorded_in_current_operations_or_prior_confirmed_sha
+  - feature/atlas-pre-delta-foundation
+  - main
+failure_policy:
+  - if_active_operations_cannot_be_read_from_any_candidate_branch_stop
+  - if_branch_cannot_be_resolved_stop
+  - do_not_generate_provisional_learning_lines
+  - do_not_recompute_recommendation_without_saved_operations
+  - report_branch_read_failure_and_required_next_action
 ```
 
 ## runtime fixture results
@@ -170,65 +172,16 @@ judgment: pass
 
 ### L3 order fixture
 
-Attempt 1:
-
 ```yaml
-write: rejected
-error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
-request_id: f6825d69-6c99-4a0d-be06-e7a4dd7b3035
-errors:
-  - missing_completed_scope_evidence
-  - missing_Day4_quantitative_target
-judgment: inconclusive_fixture_defect
-```
-
-Attempt 2 isolated:
-
-```yaml
-write: accepted
-sha_after_invalid_write: da4f3e06c37697a1261d44eeea479f0f86591450
-request_id: 79f9b024-c266-45ff-bb12-8845bbc6ac73
-validator_version: delta_operations_preflight_2026_05_05_1C_completion_override_fix
-restored_sha: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
-judgment: fail_guard_not_effective
-```
-
-Attempt 3 after line-based guard:
-
-```yaml
-write: rejected
-error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
-request_id: 456364ab-af9c-41cd-a649-0c34acf05515
-validator_version: delta_operations_preflight_2026_05_05_L3_order_line_guard
-errors:
-  - missing_roadmap_read_evidence_in_content
-  - missing_existing_active_or_next_operations_read_evidence_in_content
-judgment: inconclusive_fixture_defect_runtime_reflection_confirmed
-```
-
-Attempt 4 with evidence markers:
-
-```yaml
-write: accepted
-sha_after_invalid_write: 50a14cd2c7607a1e3f0f20e9be177f6265b26b42
-request_id: db9512ea-2bca-43b4-b861-63b2062fa66d
-validator_version: delta_operations_preflight_2026_05_05_L3_order_line_guard
-judgment: fail_guard_not_effective
-basis_restore: rejected_by_current_guard
-safe_restore_sha: ff588298afd147452493902b05a9670aa7224233
-```
-
-Final PASS after completion marker fix:
-
-```yaml
-write: rejected
-error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
-required_error_observed: L3_order_violation_国民年金法_takuitsu_before_selected
-validator_version: delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix
-request_id: d02dd2c6-a3d0-4df0-a807-d0a08c03b845
-basis_sha: ff588298afd147452493902b05a9670aa7224233
-sha_after: ff588298afd147452493902b05a9670aa7224233
-judgment: pass
+final_pass:
+  write: rejected
+  error.code: DELTA_OPERATIONS_PREFLIGHT_FAILED
+  required_error_observed: L3_order_violation_国民年金法_takuitsu_before_selected
+  validator_version: delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix
+  request_id: d02dd2c6-a3d0-4df0-a807-d0a08c03b845
+  basis_sha: ff588298afd147452493902b05a9670aa7224233
+  sha_after: ff588298afd147452493902b05a9670aa7224233
+  judgment: pass
 ```
 
 ### Positive valid-write fixture
@@ -264,7 +217,7 @@ overall_runtime_preflight: pass
 
 - deterministic generator service test execution is pending
 - preflight validates submitted operations content; it does not yet deterministically generate D0-D6 / Next operations from roadmap / plan / current_position in runtime
-- daytime recommendation path still needs read_saved_operations_or_stop guard
+- daytime recommendation path still needs configured GPT reflection and runtime fixture
 - original basis SHA `b5514...` is invalid under current L3 order guard; current operations SHA is `ef4bc3...`
 
 ## recurrence_prevention
@@ -272,8 +225,8 @@ overall_runtime_preflight: pass
 - Fixture PASS requires plan-fit, not just structure / quantitative / load checks
 - Guard-specific fixtures must isolate the target validator and satisfy all unrelated required fields
 - Operations generation must hard fail if active_operations / Next operations / current_position / completed_subjects / special_days / user_capacity are missing
-- Daytime recommendation must read saved `operations/active_operations.md` and cite/echo observed sha before giving a line
-- If saved active_operations cannot be read, DELTA must stop and report read failure; it must not produce provisional learning lines
+- Daytime recommendation must resolve branch, read saved `operations/active_operations.md`, and cite/echo observed branch + sha before giving a line
+- If saved active_operations cannot be read from candidate branches, DELTA must stop and report read failure; it must not produce provisional learning lines
 - L1/L2 current subject must not be skipped before subject_end_page
 - L3 must follow 選択 → 択一 per subject
 - completed first-pass scope must not be regenerated as new work
@@ -299,7 +252,10 @@ overall_runtime_preflight: pass
 
 Immediate:
 
-- add read_saved_operations_or_stop rule to DELTA instruction / operations generation schema
-- add a daytime recommendation fixture: ask 今日やること / 今日の推奨ライン and require saved active_operations sha + Day0 lines
-- generator must create D0-D6 Active operations and D7-target Next operations from roadmap / plan / current_position / completed_subjects / special_days / user_capacity
+- reflect updated `delta_instruction.md` and `delta_operations_generation_schema.yaml` into configured GPT / Knowledge
+- run daytime recommendation fixture: ask 今日やること / 今日の推奨ライン and require observed branch + active_operations sha + Day0 lines
+- expected Day0 line:
+  - task: 国民年金法 L3 選択 Q15-1〜Q15-14（14問）
+  - must_line: 国民年金法 L3 選択 Q15-1〜Q15-7（7問）
+  - standard_line: 国民年金法 L3 選択 Q15-1〜Q15-14（14問）
 - generator output must pass the now-confirmed runtime preflight
