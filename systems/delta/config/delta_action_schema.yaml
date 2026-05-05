@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: DELTA Resource API
-  version: "0.6.3"
-  description: Read DELTA resources, write daily history, and update active operations.
+  version: "0.6.4"
+  description: Read DELTA resources, write daily history, and update split active / next operations.
 
 servers:
   - url: https://ai-work-os.vercel.app
@@ -110,7 +110,7 @@ components:
           description: SHA observed during read-back.
         role:
           type: string
-          description: Read role, e.g. roadmap, plan, active_operations, latest_daily_history, completed_subjects, special_days, user_capacity.
+          description: Read role, e.g. roadmap, plan, active_operations, next_operations, latest_daily_history, completed_subjects, special_days, user_capacity.
         source:
           type: string
           description: Optional source alias. Can duplicate role when useful.
@@ -121,7 +121,7 @@ components:
       properties:
         file:
           type: string
-          description: Relative path under the selected DELTA write root.
+          description: Relative path under the selected DELTA write root. For delta_operations, allowed files are active_operations.md and next_operations.md.
         content:
           type: string
           description: Full markdown content to create or replace.
@@ -133,7 +133,7 @@ components:
           type: string
         read_evidence:
           type: array
-          description: Required for delta_operations update. Include roadmap, plan, active_operations, latest_daily_history, completed_subjects, special_days, and user_capacity evidence.
+          description: Required for delta_operations update. Include roadmap, plan, active_operations, next_operations, latest_daily_history, completed_subjects, special_days, and user_capacity evidence. active_operations.md owns D0-D6; next_operations.md owns D7-to-target daily plan.
           items:
             $ref: "#/components/schemas/DeltaReadEvidenceItem"
       required:
@@ -208,8 +208,8 @@ paths:
 
     post:
       operationId: deltaResourceWrite
-      summary: Write DELTA history or operations
-      description: Write daily history or update active_operations.md. Operations updates require read_evidence.
+      summary: Write DELTA history or split operations
+      description: Write daily history or update split operations. active_operations.md is D0-D6 execution SSOT. next_operations.md is D7-to-target daily plan SSOT. Operations updates require read_evidence.
       security:
         - bearerAuth: []
       parameters:
