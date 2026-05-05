@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_pass_1C_refailed_guard_broadened_retest_pending
+fixture_1A_1B_pass_1C_failed_three_times_table_guard_added_retest_pending
 
 ## category
 
@@ -20,11 +20,23 @@ critical
 
 user / DELTA
 
-## symptom
+## summary
 
-DELTA could not reliably generate roadmap / plan / current_position based operations without manual correction.
+DELTA operations generation / write preflight has been hardened after repeated runtime fixture failures.
 
-Observed failures:
+Confirmed PASS:
+
+- Fixture 1A: missing `read_evidence` is rejected
+- Fixture 1B: completed 健康保険法 L3 first-pass reintroduction is rejected
+
+Still pending:
+
+- Fixture 1C retest after table-aware L1/L2 continuity guard
+- L3 order fixture
+- positive valid-write fixture
+- deterministic generator service implementation
+
+## observed failures
 
 - D0-D6 seven-day rolling window was not preserved
 - L1/L2 targets used vague page-less wording
@@ -32,15 +44,10 @@ Observed failures:
 - 2026-06-30 milestone was not reverse-planned into realistic daily load
 - D0-D6 did not connect to D7-target Next operations
 - user_capacity, special_days, annual leave, and L3 unavailable days were not automatically reflected
-
-Post-fix regressions:
-
-- DELTA instruction exceeded configured GPT 8000-character limit during first fix.
-- A controller fixture reintroduced completed 健康保険法 L3.
-- DELTA Action schema import failed due to operation description length >300 characters.
-- Runtime used deployed main backend, not feature branch service code.
-- Feature-branch fixture once accepted completed 健康保険法 L3 as new first-pass work.
-- Fixture 1C twice accepted a plan that skipped from incomplete 国民年金法 L1/L2 to 厚生年金保険法 L1/L2.
+- DELTA instruction exceeded configured GPT 8000-character limit during first fix
+- Action schema operation description exceeded configured GPT import limit
+- feature branch fixture once accepted completed 健康保険法 L3 as new first-pass work
+- Fixture 1C accepted incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 three times before table-aware guard
 
 ## root_cause
 
@@ -61,23 +68,12 @@ DELTA lacked deterministic generation / preflight layers for:
 Runtime / validator root causes:
 
 - configured Action schema update alone was insufficient
-- `branch=feature/atlas-pre-delta-foundation` selects the GitHub content target branch, not deployed backend code branch
+- `branch=feature/atlas-pre-delta-foundation` selects GitHub content target branch, not deployed backend code branch
 - main `api/repo-resource.js` initially did not pass `read_evidence` into `updateDeltaOperations`
-- L1/L2 continuity validator was too narrow and did not catch YAML-style `subject / completion_status / next_start_page` current_position
-- first continuity fix searched only near `current_position`, which still missed the actual fixture shape
+- L1/L2 continuity validator was too narrow and repeatedly missed actual fixture shape
+- employee pension L1/L2 detector likely missed table / separated forms in Next operations
 
 ## fix_applied
-
-Design note:
-
-- `notes/02_design/2026-05-05_delta_operations_generation_engine.md`
-- sha: `9b4ea2cf90315abd57f464303086722f70bfeb69`
-
-Supplemental schema:
-
-- `systems/delta/config/delta_operations_generation_schema.yaml`
-- branch: `feature/atlas-pre-delta-foundation`
-- sha: `1b906f2afe663d30b38fb6add66c75d0ea662b29`
 
 DELTA instruction compressed:
 
@@ -93,6 +89,12 @@ Action schema updated:
 - sha: `610716c9a98a5676dad5b7cc72d5d9d84f8c59e8`
 - version: `0.6.3`
 
+Supplemental schema:
+
+- `systems/delta/config/delta_operations_generation_schema.yaml`
+- branch: `feature/atlas-pre-delta-foundation`
+- sha: `1b906f2afe663d30b38fb6add66c75d0ea662b29`
+
 Main API pass-through:
 
 - `api/repo-resource.js`
@@ -103,22 +105,22 @@ Latest service validator:
 
 - `src/services/delta-operations.js`
 - branch: `main`
-- sha: `446e1b8a4c0591cbe945907033ee3fd4a187a524`
+- sha: `d3e68e902afb42ffc0bf4d8e8e8ad51b341916a0`
 - `src/services/delta-operations.js`
 - branch: `feature/atlas-pre-delta-foundation`
-- sha: `446e1b8a4c0591cbe945907033ee3fd4a187a524`
+- sha: `d3e68e902afb42ffc0bf4d8e8e8ad51b341916a0`
+- validator_version: `delta_operations_preflight_2026_05_05_1C_table_guard`
 
 Latest continuity guard change:
 
 ```yaml
 validator_change:
-  - no longer limits detection to current_position + 2500 chars
-  - scans full content for YAML L1/L2 subject/completion_status/next_start_page patterns
-  - detects L1 国民年金法 incomplete next_start_page P220
-  - detects L2 国民年金法 incomplete next_start_page P158
-  - detects subject-first YAML form
-  - detects prose form
-  - rejects 厚生年金保険法 L1/L2 in Next operations unless 国民年金法 completion override is explicit
+  - added validator_version to preflight response
+  - detects 国民年金法 + incomplete/未完了 + P158/P220 + L1/L2 broadly across full content
+  - detects 厚生年金保険法 L1/L2 in Next operations line form
+  - detects 厚生年金保険法 L1/L2 in table / separated form
+  - rejects unless 国民年金法 completion override is explicit
+expected_error: current_L1_L2_subject_skipped_before_completion
 ```
 
 ## runtime fixture results
@@ -164,27 +166,21 @@ next_operations:
   - 厚生年金保険法 L2 P1〜P35（35ページ）
 ```
 
-First observed failure:
+Failures observed:
 
 ```yaml
-write: accepted
-sha_after_invalid_write: 0132fda8c1d41d167dc0df749e926f0167b8942c
-request_id: 0e1ee1e4-af63-458a-a31a-2866d1c0044f
-judgment: fail
-```
-
-Second observed failure after first guard strengthening:
-
-```yaml
-write: accepted
-sha_after_invalid_write: 6c92c5b2ed0d1c34a7b7ca3827be0ac495ede164
-request_id: 13f001a5-2202-4b53-8ace-6ae0763bcf23
-preflight:
-  ok: true
-  errors: []
-  warnings:
-    - l1_l2_page_count_above_guard:61,62
-judgment: fail
+first_fail:
+  write: accepted
+  sha_after_invalid_write: 0132fda8c1d41d167dc0df749e926f0167b8942c
+  request_id: 0e1ee1e4-af63-458a-a31a-2866d1c0044f
+second_fail:
+  write: accepted
+  sha_after_invalid_write: 6c92c5b2ed0d1c34a7b7ca3827be0ac495ede164
+  request_id: 13f001a5-2202-4b53-8ace-6ae0763bcf23
+third_fail:
+  write: accepted
+  sha_after_invalid_write: 2b611ec7216e22f9aa9235f379897e02deac59cb
+  request_id: d27a77db-a073-421c-8094-be6c15b7a3d4
 ```
 
 Recovery:
@@ -198,33 +194,19 @@ Current status:
 
 ```yaml
 fixture_1C:
-  judgment: fail_twice
-  latest_guard: broadened_full_content_scan
+  judgment: fail_three_times
+  latest_guard: table_aware_hard_guard_added
   retest_required: true
   expected_error: current_L1_L2_subject_skipped_before_completion
+  expected_validator_version: delta_operations_preflight_2026_05_05_1C_table_guard
 ```
-
-## implemented preflight checks now in main backend
-
-- D0-D6 exist
-- required day fields exist
-- Next operations section exists
-- each day has quantitative target or explicit rest / unavailable marker
-- forbidden vague target terms are rejected in target lines
-- high load is returned as warning
-- read_evidence roles and paths are required
-- content must contain current_position, special_days, user_capacity, and completed_scope evidence
-- completed 健康保険法 L3 is rejected if reintroduced as new work
-- 国民年金法 L1/L2 incomplete should reject 厚生年金保険法 L1/L2 without explicit completion override
-- L3 order 選択 → 択一 is checked per subject
 
 ## remaining_risk
 
-- Fixture 1C retest is pending after full-content guard broadening
+- Fixture 1C retest is pending after table-aware guard
 - L3 order fixture is pending
 - positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
-- supplemental schema has not been merged into canonical `delta_schema.yaml`
 - restored operations SHA is no longer original `af626...`; current basis SHA is `b5514...`
 
 ## recurrence_prevention
@@ -235,7 +217,8 @@ fixture_1C:
 - L3 must follow 選択 → 択一 per subject
 - completed first-pass scope must not be regenerated as new work
 - write path must carry read_evidence
-- validator fixtures must include prose, YAML block, subject-first YAML, and reordered YAML forms
+- validator fixtures must include prose, YAML block, subject-first YAML, table form, separated column form, and reordered YAML forms
+- preflight response should include validator_version so runtime code version can be verified
 - Never use branch parameter success as evidence that backend service code is running that branch
 
 ## linked_refs
@@ -255,6 +238,7 @@ fixture_1C:
 Immediate:
 
 - rerun Fixture 1C and expect `current_L1_L2_subject_skipped_before_completion`
+- confirm preflight response includes `validator_version: delta_operations_preflight_2026_05_05_1C_table_guard`
 - run L3 order fixture and expect `L3_order_violation_*_takuitsu_before_selected`
 
 After negative fixtures PASS:
