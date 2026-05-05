@@ -59,7 +59,6 @@ const EXISTING_NEXT_OPS_READ_PATTERN = /existing_next_operations_read|existing_n
 const COMPLETED_SCOPE_PATTERN = /completed_scope|completed_subject|健康保険法L3の新規演習は完了扱い|健康保険法[\s\S]{0,80}completed/;
 const HEALTH_INSURANCE_NEW_L3_PATTERN = /健康保険法\s*L3\s*(?:1巡目\s*)?(?:選択|択一|選択問題|択一問題)\s*Q/;
 const HEALTH_INSURANCE_ALLOWED_CONTEXT_PATTERN = /recovery_targets|defer_targets|deferred|review|2巡目|弱点回収|誤答再演習|参考/;
-const NATIONAL_PENSION_INCOMPLETE_PATTERN = /国民年金法[\s\S]{0,120}(?:L1|L2)[\s\S]{0,120}(?:incomplete|未完了|next_start_page:\s*P(?:158|220)|P158以降未完了)/;
 const EMPLOYEE_PENSION_L1_L2_PATTERN = /厚生年金保険法\s*L[12]\s*P\d+〜P\d+（\d+ページ）/;
 
 function buildDeltaOperationsPath(file, context = {}) {
@@ -249,11 +248,32 @@ function validateCompletedScope(content, errors) {
   }
 }
 
+function hasIncompleteNationalPensionL1L2(content) {
+  if (!content.includes('国民年金法')) return false;
+
+  const normalized = content.replace(/\r\n/g, '\n');
+  const currentPositionIndex = normalized.indexOf('current_position');
+  const searchArea = currentPositionIndex >= 0
+    ? normalized.slice(currentPositionIndex, currentPositionIndex + 2500)
+    : normalized;
+
+  const hasNationalPension = /subject:\s*国民年金法|国民年金法/.test(searchArea);
+  const hasIncomplete = /completion_status:\s*incomplete|status:\s*incomplete|incomplete|未完了/.test(searchArea);
+  const hasKnownNextPage = /next_start_page:\s*P(?:158|220)|next_start_page\s*[:：]\s*P(?:158|220)|P158以降未完了|P220以降未完了/.test(searchArea);
+  const hasL1L2 = /\bL[12]\b|L1:|L2:|L1\/L2|L1_L2/.test(searchArea);
+
+  return hasNationalPension && hasIncomplete && hasKnownNextPage && hasL1L2;
+}
+
+function hasExplicitNationalPensionCompletionBeforeEmployeePension(content) {
+  return /国民年金法[\s\S]{0,500}(?:completion_status:\s*completed|completed|完了)[\s\S]{0,500}厚生年金保険法/.test(content);
+}
+
 function validateL1L2Continuity(content, errors) {
-  const nationalPensionIncomplete = NATIONAL_PENSION_INCOMPLETE_PATTERN.test(content);
+  const nationalPensionIncomplete = hasIncompleteNationalPensionL1L2(content);
   const nextOperations = extractNextOperations(content);
   const employeePensionL1L2 = EMPLOYEE_PENSION_L1_L2_PATTERN.test(nextOperations);
-  const explicitContinuityOverride = /国民年金法[\s\S]{0,120}(?:completed|完了)[\s\S]{0,120}厚生年金保険法/.test(content);
+  const explicitContinuityOverride = hasExplicitNationalPensionCompletionBeforeEmployeePension(content);
 
   if (nationalPensionIncomplete && employeePensionL1L2 && !explicitContinuityOverride) {
     errors.push('current_L1_L2_subject_skipped_before_completion');
