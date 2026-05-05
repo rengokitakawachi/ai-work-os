@@ -252,17 +252,13 @@ function hasIncompleteNationalPensionL1L2(content) {
   if (!content.includes('国民年金法')) return false;
 
   const normalized = content.replace(/\r\n/g, '\n');
-  const currentPositionIndex = normalized.indexOf('current_position');
-  const searchArea = currentPositionIndex >= 0
-    ? normalized.slice(currentPositionIndex, currentPositionIndex + 2500)
-    : normalized;
 
-  const hasNationalPension = /subject:\s*国民年金法|国民年金法/.test(searchArea);
-  const hasIncomplete = /completion_status:\s*incomplete|status:\s*incomplete|incomplete|未完了/.test(searchArea);
-  const hasKnownNextPage = /next_start_page:\s*P(?:158|220)|next_start_page\s*[:：]\s*P(?:158|220)|P158以降未完了|P220以降未完了/.test(searchArea);
-  const hasL1L2 = /\bL[12]\b|L1:|L2:|L1\/L2|L1_L2/.test(searchArea);
+  const l1YamlIncomplete = /L1\s*:\s*[\s\S]{0,900}subject\s*:\s*国民年金法[\s\S]{0,900}completion_status\s*:\s*incomplete[\s\S]{0,900}next_start_page\s*[:：]\s*P220/.test(normalized);
+  const l2YamlIncomplete = /L2\s*:\s*[\s\S]{0,900}subject\s*:\s*国民年金法[\s\S]{0,900}completion_status\s*:\s*incomplete[\s\S]{0,900}next_start_page\s*[:：]\s*P158/.test(normalized);
+  const subjectFirstYamlIncomplete = /subject\s*:\s*国民年金法[\s\S]{0,900}completion_status\s*:\s*incomplete[\s\S]{0,900}next_start_page\s*[:：]\s*P(?:158|220)/.test(normalized);
+  const proseIncomplete = /国民年金法[\s\S]{0,1200}(?:L1|L2|L1\/L2|L1_L2)[\s\S]{0,1200}(?:completion_status\s*:\s*incomplete|incomplete|未完了)[\s\S]{0,1200}(?:next_start_page\s*[:：]\s*P(?:158|220)|P158以降未完了|P220以降未完了)/.test(normalized);
 
-  return hasNationalPension && hasIncomplete && hasKnownNextPage && hasL1L2;
+  return l1YamlIncomplete || l2YamlIncomplete || subjectFirstYamlIncomplete || proseIncomplete;
 }
 
 function hasExplicitNationalPensionCompletionBeforeEmployeePension(content) {
