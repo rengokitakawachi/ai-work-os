@@ -6,8 +6,8 @@ import {
 } from './repo-resource/common.js';
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
-export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix';
+export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md', 'next_operations.md'];
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_active_next_split';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
 
@@ -35,6 +35,8 @@ const REQUIRED_READ_ROLES = [
   'user_capacity',
 ];
 
+const REQUIRED_SPLIT_READ_ROLES = [...REQUIRED_READ_ROLES, 'next_operations'];
+
 const L3_ORDER_SUBJECTS = ['健康保険法', '国民年金法', '厚生年金保険法', '労一', '社一'];
 
 const FORBIDDEN_VAGUE_TARGETS = [
@@ -58,10 +60,13 @@ const L1_L2_PAGE_PATTERN = /P\d+〜P\d+（\d+ページ）/;
 const L3_QUESTION_PATTERN = /Q\d+-\d+〜Q\d+-\d+（\d+問(?:、[^）]+)?）/;
 const REST_OR_UNAVAILABLE_PATTERN = /新規L1\/L2\/L3なし|L3不可|休養|rest_or_light_review/;
 const NEXT_OPERATIONS_PATTERN = /#\s*Next operations:/;
-const EXISTING_NEXT_OPS_READ_PATTERN = /existing_next_operations_read|existing_next_operations_was_read|source_of_truth:[\s\S]*operations_role|current_position_primary_source/;
+const NEXT_OPERATIONS_REF_PATTERN = /next_operations_ref:[\s\S]{0,500}systems\/delta\/operations\/next_operations\.md/;
+const EXISTING_NEXT_OPS_READ_PATTERN = /existing_next_operations_read|existing_next_operations_was_read|next_operations_was_read|source_of_truth:[\s\S]*operations_role|current_position_primary_source/;
 const COMPLETED_SCOPE_PATTERN = /completed_scope|completed_subject|健康保険法L3の新規演習は完了扱い|健康保険法[\s\S]{0,80}completed/;
 const HEALTH_INSURANCE_NEW_L3_PATTERN = /健康保険法\s*L3\s*(?:1巡目\s*)?(?:選択|択一|選択問題|択一問題)\s*Q/;
 const HEALTH_INSURANCE_ALLOWED_CONTEXT_PATTERN = /recovery_targets|defer_targets|deferred|review|2巡目|弱点回収|誤答再演習|参考/;
+const DATE_RANGE_ROW_PATTERN = /^\|\s*\d{4}-\d{2}-\d{2}\s*[〜~]\s*\d{4}-\d{2}-\d{2}\s*\|/;
+const NEXT_ROW_PATTERN = /^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+)\|\s*([^|]+)\|/;
 
 function buildDeltaOperationsPath(file, context = {}) {
   const safe = assertSafeRelativePath(file, {
@@ -137,7 +142,8 @@ function extractDayBlock(content, day) {
   const rest = content.slice(start + match[0].length);
   const nextHeader = /^##\s+Day\d+[^\n]*$/m.exec(rest);
   const nextSection = /^---\s*\n\n#\s+Next operations:/m.exec(rest);
-  const candidates = [nextHeader?.index, nextSection?.index]
+  const activeNextGuard = /^---\s*\n\n##\s+Active \/ Next connection guard/m.exec(rest);
+  const candidates = [nextHeader?.index, nextSection?.index, activeNextGuard?.index]
     .filter((index) => typeof index === 'number')
     .sort((a, b) => a - b);
   const endOffset = candidates.length > 0 ? candidates[0] : rest.length;
@@ -179,13 +185,15 @@ function extractNextOperations(content) {
   return content.slice(match.index);
 }
 
-function validateReadEvidence(readEvidence, errors) {
-  for (const role of REQUIRED_READ_ROLES) {
+function validateReadEvidence(readEvidence, errors, { split = false } = {}) {
+  const roles = split ? REQUIRED_SPLIT_READ_ROLES : REQUIRED_READ_ROLES;
+  for (const role of roles) {
     if (!hasReadRole(readEvidence, role)) errors.push(`missing_read_evidence_role:${role}`);
   }
   if (!hasReadPath(readEvidence, /roadmap\/delta_roadmap\.md$/)) errors.push('missing_read_evidence_path:roadmap/delta_roadmap.md');
   if (!hasReadPath(readEvidence, /plan\/2026_sharoushi_exam_plan\.md$/)) errors.push('missing_read_evidence_path:plan/2026_sharoushi_exam_plan.md');
   if (!hasReadPath(readEvidence, /operations\/active_operations\.md$/)) errors.push('missing_read_evidence_path:operations/active_operations.md');
+  if (split && !hasReadPath(readEvidence, /operations\/next_operations\.md$/)) errors.push('missing_read_evidence_path:operations/next_operations.md');
   if (!hasReadPath(readEvidence, /history\/daily\/\d{4}-\d{2}-\d{2}\.md$/)) errors.push('missing_read_evidence_path:latest_daily_history');
 }
 
@@ -291,22 +299,7 @@ function validateL3Order(content, errors) {
   }
 }
 
-export function validateDeltaOperationsContent(content, options = {}) {
-  const errors = [];
-  const warnings = [];
-  const readEvidence = normalizeReadEvidence(options.read_evidence);
-
-  if (typeof content !== 'string' || content.trim().length === 0) {
-    errors.push('content_empty');
-    return { ok: false, errors, warnings, read_evidence: readEvidence, validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION };
-  }
-
-  validateReadEvidence(readEvidence, errors);
-  validatePreGenerationEvidence(content, errors);
-  validateCompletedScope(content, errors);
-  validateL1L2Continuity(content, errors);
-  validateL3Order(content, errors);
-
+function validateActiveDays(content, errors) {
   for (const day of REQUIRED_ACTIVE_DAYS) {
     const block = extractDayBlock(content, day);
     if (!block) {
@@ -320,8 +313,98 @@ export function validateDeltaOperationsContent(content, options = {}) {
     if (!hasQuantitativeLine(block) && !isRestOrUnavailableDay(block)) errors.push(`missing_${day}_quantitative_target`);
     validateForbiddenVagueTargetsInDay(day, block, errors);
   }
+}
 
+function validateActiveNextSplit(content, errors) {
+  if (!NEXT_OPERATIONS_REF_PATTERN.test(content)) errors.push('missing_next_operations_ref');
+  if (NEXT_OPERATIONS_PATTERN.test(content)) errors.push('active_operations_must_not_embed_next_operations_table');
+  if (!/active_day6_standard_end:\s*P245|active_day6_standard_end: P245|Day6[\s\S]*P220〜P245/.test(content)) {
+    errors.push('missing_active_day6_next_connection');
+  }
+}
+
+function parseNextRows(content) {
+  return content
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => NEXT_ROW_PATTERN.test(line))
+    .map((line) => {
+      const match = NEXT_ROW_PATTERN.exec(line);
+      return {
+        date: match[1],
+        layer: match[2].trim(),
+        standardLine: match[3].trim(),
+        raw: line,
+      };
+    });
+}
+
+function validateNextOperationsDailyPlan(content, errors, warnings) {
+  if (!/^#\s+delta next_operations/m.test(content)) errors.push('missing_delta_next_operations_title');
+  if (!/active_operations_ref:\s*systems\/delta\/operations\/active_operations\.md/.test(content)) errors.push('missing_active_operations_ref');
+  if (!/target_date:\s*2026-06-30/.test(content)) errors.push('missing_target_date_2026_06_30');
   if (!NEXT_OPERATIONS_PATTERN.test(content)) errors.push('missing_next_operations_section');
+
+  const rangeRows = content.split('\n').filter((line) => DATE_RANGE_ROW_PATTERN.test(line.trim()));
+  if (rangeRows.length > 0) errors.push(`next_operations_period_block_rows_forbidden:${rangeRows.length}`);
+
+  const rows = parseNextRows(content);
+  const rowDates = new Set(rows.map((row) => row.date));
+
+  if (!rowDates.has('2026-05-13')) errors.push('missing_next_operations_start_date:2026-05-13');
+  if (!rowDates.has('2026-06-30')) errors.push('missing_next_operations_target_date:2026-06-30');
+  if (!/2026-05-13[\s\S]{0,120}P246〜P280（35ページ）/.test(content)) errors.push('missing_active_next_connection_first_row');
+
+  for (const row of rows) {
+    const isRest = /確認日|判定|回収日|L3不可|なし/.test(row.standardLine);
+    const hasPage = L1_L2_PAGE_PATTERN.test(row.standardLine);
+    const hasQuestion = L3_QUESTION_PATTERN.test(row.standardLine) || /\d+問/.test(row.standardLine);
+    if (!hasPage && !hasQuestion && !isRest) errors.push(`next_row_missing_quantitative_range:${row.date}`);
+    for (const vague of FORBIDDEN_VAGUE_TARGETS) {
+      if (row.standardLine.includes(vague)) errors.push(`forbidden_next_row_vague_target:${row.date}:${vague}`);
+    }
+  }
+
+  if (/2026-05-10[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_05_10_unavailable');
+  if (/2026-06-13[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_06_13_unavailable');
+  if (!/2026-06-30[\s\S]{0,120}L3/.test(content)) warnings.push('annual_leave_2026_06_30_l3_not_used');
+}
+
+export function validateDeltaOperationsContent(content, options = {}) {
+  const errors = [];
+  const warnings = [];
+  const readEvidence = normalizeReadEvidence(options.read_evidence);
+  const file = typeof options.file === 'string' ? options.file.trim() : '';
+  const splitMode = Boolean(options.split_mode || file === 'active_operations.md' || file === 'next_operations.md');
+
+  if (typeof content !== 'string' || content.trim().length === 0) {
+    errors.push('content_empty');
+    return { ok: false, errors, warnings, read_evidence: readEvidence, validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION };
+  }
+
+  if (file === 'next_operations.md') {
+    validateNextOperationsDailyPlan(content, errors, warnings);
+    return {
+      ok: errors.length === 0,
+      errors,
+      warnings,
+      read_evidence: readEvidence,
+      validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION,
+    };
+  }
+
+  validateReadEvidence(readEvidence, errors, { split: splitMode });
+  validatePreGenerationEvidence(content, errors);
+  validateCompletedScope(content, errors);
+  validateL1L2Continuity(content, errors);
+  validateL3Order(content, errors);
+  validateActiveDays(content, errors);
+
+  if (splitMode) {
+    validateActiveNextSplit(content, errors);
+  } else if (!NEXT_OPERATIONS_PATTERN.test(content)) {
+    errors.push('missing_next_operations_section');
+  }
 
   const highPageMatches = [...content.matchAll(/（(\d+)ページ）/g)]
     .map((match) => Number(match[1]))
@@ -366,6 +449,8 @@ export async function updateDeltaOperations(file, content, message = '', sha = '
   });
 
   const preflight = assertDeltaOperationsPreflight(content, {
+    file,
+    split_mode: true,
     read_evidence: options.read_evidence,
   });
 
@@ -417,7 +502,7 @@ export async function updateDeltaOperations(file, content, message = '', sha = '
     sha: result.content.sha,
     branch: result.branch,
     status: 'UPDATED',
-    write_scope: `${DELTA_OPERATIONS_ROOT}active_operations.md`,
+    write_scope: `${DELTA_OPERATIONS_ROOT}${file}`,
     preflight,
   };
 }
