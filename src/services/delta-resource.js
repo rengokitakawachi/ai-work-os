@@ -1,6 +1,7 @@
 import {
   createError,
   assertSafeRelativePath,
+  getConfig,
   getRepoTree,
   getContentFile,
   mapTreeItems,
@@ -137,6 +138,13 @@ export async function bulkReadDelta(files, options = {}) {
       },
     });
   }
+
+  getConfig({
+    step: 'bulkReadDelta',
+    resource: 'delta',
+    action: 'bulk',
+    branch: options.branch,
+  });
 
   const results = await Promise.all(
     ensureArray(files).map(async (file) => {
