@@ -2,13 +2,15 @@
 
 ## status
 
-implementation_required
+implementation_required_plan_fit_validator_added
 
 ## trigger
 
 User reported that DELTA operations generation still required manual correction and did not autonomously derive D0-D6 active operations and D7-target next operations from roadmap / plan / current_position.
 
 This is not a single prompt issue. It is a missing generation and validation layer.
+
+A later fixture was structurally valid but plan-fit invalid because it reintroduced 健康保険法 L3 as new work even though daily history marks 健康保険法 L3 new exercises as completed.
 
 ## purpose
 
@@ -17,7 +19,7 @@ Enable DELTA, after daily review, to read roadmap, plan, current_position, daily
 - Active operations: D0-D6
 - Next operations: D7 through medium target date
 
-The generated operations must be quantitative, realistic, special-day-aware, and plan-fit checked.
+The generated operations must be quantitative, realistic, special-day-aware, completed-scope-aware, and plan-fit checked.
 
 ## source files
 
@@ -27,6 +29,7 @@ The generated operations must be quantitative, realistic, special-day-aware, and
 - `systems/delta/history/daily/YYYY-MM-DD.md`
 - `systems/delta/config/delta_instruction.md`
 - `systems/delta/config/delta_schema.yaml`
+- `systems/delta/config/delta_operations_generation_schema.yaml`
 - `src/services/delta-operations.js`
 
 ## gap observed
@@ -37,6 +40,26 @@ The generated operations must be quantitative, realistic, special-day-aware, and
 - 2026-06-30 target was not reverse planned into realistic daily load.
 - D0-D6 was not connected to D7-target next operations.
 - user_capacity, special_days, annual leave, and L3 unavailable days were not automatically reflected.
+- completed_scope was not excluded from future new-work operations.
+
+## concrete plan-fit failure
+
+`systems/delta/history/daily/2026-05-04.md` states:
+
+- 健康保険法 L3 is completed through Q11-21
+- 健康保険法 選択式は完了済み
+- 健康保険法L3の新規演習は完了扱い
+- next scope is 国民年金法 L3 選択問題
+
+Therefore, a generated future plan that schedules 健康保険法 L3 as new first-pass work is invalid.
+
+Health insurance may appear only as:
+
+- deferred recovery target
+- review / second-pass target
+- reference test record
+
+It must not appear as new first-pass operations after completion.
 
 ## target components
 
@@ -101,6 +124,30 @@ Known exceptions must be explicit:
 - 健康保険法 Q5/Q6 は存在しない
 - 健康保険法 Q8 は演習対象なし
 
+### completed_scope_exclusion_validator
+
+Before accepting a generated plan, DELTA must read latest daily history and active current_position.
+
+If a subject/layer/scope is marked completed for first-pass new exercise, it must be excluded from new first-pass operations.
+
+Allowed appearances after completion:
+
+- recovery_targets
+- deferred review
+- second-pass / review explicitly labeled as such
+- reference test records
+
+Forbidden appearances after completion:
+
+- new first-pass L3 operations
+- regenerated operations that treat completed scope as unfinished
+- D7-target projection that re-adds completed scope to fill capacity
+
+Current known completed scope:
+
+- 健康保険法 L3 new exercises: completed as of 2026-05-04
+- next new L3 scope: 国民年金法 L3 選択問題
+
 ### load_realism_guard
 
 Checks load realism before write.
@@ -127,10 +174,11 @@ Generation order:
 1. read roadmap milestone
 2. read plan intermediate target
 3. read current_position
-4. expand medium plan by day
-5. detect overload
-6. redistribute overload into D0-D6 or spare days
-7. write D0-D6 as Active operations and D7-target as Next operations
+4. read completed_scope and exclude completed first-pass scopes
+5. expand medium plan by day
+6. detect overload
+7. redistribute overload into D0-D6 or spare days
+8. write D0-D6 as Active operations and D7-target as Next operations
 
 ### special_day_constraint_handler
 
@@ -169,6 +217,11 @@ Quantitative:
 - L3 has question range and question count
 - no forbidden vague terms
 
+Completed scope:
+
+- completed first-pass scopes are not scheduled as new work
+- completed subjects may appear only as explicitly labeled recovery / review / second-pass work
+
 Load:
 
 - L1/L2 above 50 pages is flagged / redistributed
@@ -192,6 +245,7 @@ Plan fit:
   - roadmap_anchor
   - plan_anchor
   - current_position
+  - completed_scope
   - expected_position
   - gap_status
   - operation_mode
@@ -207,22 +261,25 @@ Plan fit:
 
 - update `systems/delta/config/delta_instruction.md`
 - update `systems/delta/config/delta_schema.yaml`
+- update `systems/delta/config/delta_operations_generation_schema.yaml`
 - update active_operations gate and completed conditions
 
 ### runtime reflection layer
 
 - configured DELTA GPT must receive updated instruction/schema
 - runtime fixture must prove D0-D6 + D7-target generation behavior
+- runtime fixture must prove completed_scope exclusion
 
 ### service implementation layer
 
-Current `src/services/delta-operations.js` is only a thin write service.
+Current `src/services/delta-operations.js` now has a service-level preflight validator, but a deterministic generator service is still required.
 
 A real deterministic service implementation would require new code, likely:
 
-- parser for roadmap / plan / current_position
+- parser for roadmap / plan / current_position / completed_scope
 - operation generation service
 - target range validator
+- completed_scope exclusion validator
 - load realism validator
 - preflight write validator
 - tests / fixtures
@@ -242,6 +299,8 @@ Whether to expose these through an API/action must be decided separately.
 - L1/L2 always has page range + page count
 - L3 always has question range + question count
 - vague targets are rejected
+- completed first-pass scopes are excluded from new operations
+- 健康保険法L3 does not reappear as new first-pass work after 2026-05-04 completion
 - load guards detect 50 pages, L3択一25 questions, second-pass30 questions
 - overload is redistributed or marked compression_required / critical_delay
 - special days are reflected
@@ -252,4 +311,4 @@ Whether to expose these through an API/action must be decided separately.
 
 This should be treated as a DELTA blocker / Immediate Gate extension because later DELTA runtime fixtures are not meaningful until the generation engine rules are reflected.
 
-Existing DELTA recovery line calibration gate should be broadened to DELTA operations generation engine reflection / runtime fixture.
+Existing DELTA recovery line calibration gate should be broadened to DELTA operations generation engine reflection / runtime fixture, including completed_scope exclusion.
