@@ -7,7 +7,7 @@ updated_at: 2026-05-05
 branch: feature/atlas-pre-delta-foundation
 last_daily_review: systems/delta/history/daily/2026-05-04.md
 latest_in_day_history: systems/delta/history/daily/2026-05-05.md
-operation_status: rebuilt_from_roadmap_plan_current_position
+operation_status: rebuilt_quantitative_d0_d6
 
 validation_markers:
   - Delta operations are learning execution order, not calendar schedule.
@@ -23,44 +23,6 @@ source_of_truth:
   legacy_monthly_role: migration_fallback_only
   todoist_role: projection_only
 
-## Reverse planning basis
-
-reverse_plan_basis:
-  roadmap_anchor:
-    source_ref: systems/delta/roadmap/delta_roadmap.md
-    phase: 2026-04-27〜2026-06-30 1巡目完了フェーズ
-    success_condition: 6月末時点で主要科目のL1/L2/L3が1巡済み
-  plan_anchor:
-    source_ref: systems/delta/plan/2026_sharoushi_exam_plan.md
-    near_term:
-      - 2026-05-05: 国民年金法 選択問題を完了目標
-      - 2026-05-06: 国民年金法 択一 Q1章〜Q2章へ着手
-      - 2026-05-07: 平日 L1/L2 国民年金法
-      - 2026-05-08: 平日 L1/L2 国民年金法
-      - 2026-05-09: L3 国民年金法 択一
-      - 2026-05-10: L3不可、秒トレのみ
-      - 2026-05-11〜2026-05-15: 平日 国民年金法完了 → 厚生年金保険法へ
-      - 2026-05-16: L3 国民年金法 択一
-      - 2026-05-17: L3 国民年金法 択一完了目標
-  material_anchor:
-    national_pension_L3:
-      selected_questions: Q15-1〜Q15-13
-      multiple_choice_scope: Q1-1〜Q14-17
-      known_exceptions:
-        - Q10-0: 過去10年間に該当過去問なし。演習対象なし
-      planning_blocks:
-        - 2026-05-05: Q15-1〜Q15-13
-        - 2026-05-06: Q1-1〜Q4-4
-        - 2026-05-09: Q5-1〜Q9-10
-        - 2026-05-16: Q11-1〜Q13-2
-        - 2026-05-17: Q14-1〜Q14-17 + 残り回収
-    national_pension_L1_L2:
-      current_L1: P219完了
-      current_L2: P158以降未完了
-      immediate_goal:
-        - 2026-05-07〜2026-05-08でL2をP219まで追いつかせる
-        - 2026-05-11からL1をP220以降へ進める
-
 ## Current plan gap
 
 plan_gap:
@@ -68,6 +30,14 @@ plan_gap:
   source_review:
     - systems/delta/history/daily/2026-05-04.md
     - systems/delta/history/daily/2026-05-05.md
+  plan_anchor:
+    roadmap_phase: 2026-04-27〜2026-06-30 1巡目完了フェーズ
+    near_term_plan:
+      - 2026-05-05 国民年金法 L3 選択問題完了
+      - 2026-05-06 国民年金法 L3 択一 Q1章〜Q2章へ着手
+      - 2026-05-17 国民年金法 L3 択一完了目標
+      - 2026-05-18〜05-31 厚生年金保険法へ接続
+      - 2026-06-30 主要科目L1/L2/L3 1巡完了状態
   current_position:
     as_of: 2026-05-05
     daily_execution_status: in_progress
@@ -87,11 +57,8 @@ plan_gap:
       current_subject: 国民年金法
       current_position: 選択問題Q15-1未着手
       next_resume_question_id: Q15-1
-    秒トレ:
-      2026-05-04: 40問完了
-      2026-05-05: 未確定
   expected_position:
-    2026-05-05: 国民年金法 L3 選択問題 Q15-13完了
+    2026-05-05: 国民年金法 L3 選択問題 Q15-14完了
     2026-05-06: 国民年金法 L3 択一 Q1-1〜Q4-4
     2026-05-08: 国民年金法 L2 P219まで回収
     2026-05-09: 国民年金法 L3 択一 Q5-1〜Q9-10
@@ -100,9 +67,9 @@ plan_gap:
   recovery_required: true
   reason:
     - 健康保険法L3新規演習は完了し、GW最低ラインは達成
-    - 国民年金法L3選択問題は5/5完了目標だが、現時点では未着手
-    - 国民年金法L2がL1より61ページ遅れているため、5/7〜5/8でP219まで回収する
-    - 5/17の国民年金法L3択一完了目標から逆算し、5/6と5/9でQ1〜Q9まで進める必要がある
+    - 国民年金法L3選択問題はQ15-1〜Q15-14まで存在するため、D0標準をQ15-14完了へ修正
+    - 国民年金法L2がL1より遅れているため、D2〜D3でP219まで追いつかせる
+    - 5/17の国民年金法L3択一完了目標から逆算し、D1とD4でQ1〜Q9まで進める
 
 ## Recommended lines
 
@@ -113,15 +80,13 @@ recommended_lines:
     - systems/delta/history/daily/2026-05-05.md
   plan_anchor: roadmap 6月末1巡完了 / plan 5月17日 国民年金法L3択一完了目標
   current_position: L1国民年金法P219完了、L2国民年金法P158以降未完了、L3国民年金法Q15-1未着手
-  expected_position: D0でQ15-13完了、D1でQ1-1〜Q4-4、D4でQ5-1〜Q9-10
+  expected_position: D0でQ15-14完了、D1でQ1-1〜Q4-4、D4でQ5-1〜Q9-10
   gap_status: delayed_but_recovering
   operation_mode: recovery_forward
   must_line:
-    - 秒トレ40問
     - 国民年金法 L3 選択問題 Q15-1〜Q15-7
   standard_line:
-    - 秒トレ40問
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-13完了
+    - 国民年金法 L3 選択問題 Q15-1〜Q15-14完了
   stretch_line:
     - 国民年金法 L3 択一 Q1-1〜Q1-3
   next_resume_question_id: Q15-1
@@ -142,7 +107,7 @@ recommended_lines:
   recompute_triggers:
     - user_explicitly_requests_recompute
     - illness_or_urgent_work_changes_available_time
-    - Q15-13未達
+    - Q15-14未達
     - 国民年金法_択一_Q番号がPDF確認と異なる
     - D1_Q4-4未達
     - D4_Q9-10未達
@@ -150,15 +115,14 @@ recommended_lines:
     - plan_changes
   next_review_checkpoint:
     - 2026-05-05 end-of-day daily review
-    - Q15-13完了可否
-    - 秒トレ40問完了可否
+    - Q15-14完了可否
     - D1をQ1-1開始で確定できるか
 
 ## Quantitative D0-D6 rolling plan
 
 ### Day0（2026-05-05）
 
-- task: 国民年金法 L3 選択問題 Q15-1〜Q15-13
+- task: 国民年金法 L3 選択問題 Q15-1〜Q15-14
   rolling_day: Day0
   due_date: 2026-05-05
   due_type: date
@@ -167,20 +131,18 @@ recommended_lines:
   material: 過去問講座テキスト
   operation_mode: recovery_forward
   plan_anchor: 2026-05-05 国民年金法選択問題完了目標
-  expected_position: Q15-13完了
+  expected_position: Q15-14完了
   current_position: Q15-1未着手
   gap_status: delayed_but_recovering
   start_question_id: Q15-1
   must_end_question_id: Q15-7
-  standard_end_question_id: Q15-13
+  standard_end_question_id: Q15-14
   stretch_end_question_id: Q1-3
   next_resume_question_id: Q15-1
   must_line:
-    - 秒トレ40問
     - 国民年金法 L3 選択問題 Q15-1〜Q15-7
   standard_line:
-    - 秒トレ40問
-    - 国民年金法 L3 選択問題 Q15-1〜Q15-13完了
+    - 国民年金法 L3 選択問題 Q15-1〜Q15-14完了
   stretch_line:
     - 国民年金法 L3 択一 Q1-1〜Q1-3
   recovery_targets:
@@ -190,32 +152,13 @@ recommended_lines:
     - 健康保険法×・△回収
     - 国民年金法L2回収はD2以降
   recompute_triggers:
-    - Q15-13未達
-    - Q15範囲がQ15-13で終わらない
+    - Q15-14未達
+    - Q15範囲がQ15-14で終わらない
     - user_explicitly_requests_recompute
   completed_condition:
     - Q15-1〜実施済みquestion_idをdaily historyへ記録
     - 選択式は各問の空欄正答数、正誤、理解度評価、実測時間を記録
     - 次再開question_idを確定
-
-- task: 秒トレ40問
-  rolling_day: Day0
-  due_date: 2026-05-05
-  due_type: date
-  subject: 共通
-  study_type: 秒トレ
-  material: iPhoneアプリ
-  operation_mode: normal
-  plan_anchor: daily_fixed_habit
-  expected_position: 秒トレ40問
-  current_position: 2026-05-05未確定
-  gap_status: needs_confirmation
-  must_line: [秒トレ40問]
-  standard_line: [秒トレ40問]
-  stretch_line: [秒トレ40問 + 間違い確認]
-  recovery_targets: []
-  defer_targets: []
-  recompute_triggers: [user_explicitly_requests_recompute, illness_or_urgent_work_changes_available_time]
 
 ### Day1（2026-05-06）
 
@@ -229,7 +172,7 @@ recommended_lines:
   operation_mode: recovery_forward
   plan_anchor: 2026-05-06 国民年金法択一Q1章〜Q2章へ着手 / 5月17日択一完了から逆算
   expected_position: Q1-1〜Q4-4完了
-  current_position: D0でQ15-13完了後、Q1-1から開始
+  current_position: D0でQ15-14完了後、Q1-1から開始
   gap_status: delayed_but_recovering
   start_question_id: Q1-1
   must_end_question_id: Q2-5
@@ -237,10 +180,8 @@ recommended_lines:
   stretch_end_question_id: Q5-1
   next_resume_question_id: Q1-1
   must_line:
-    - 秒トレ40問
     - 国民年金法 L3 択一 Q1-1〜Q2-5
   standard_line:
-    - 秒トレ40問
     - 国民年金法 L3 択一 Q1-1〜Q4-4
   stretch_line:
     - 国民年金法 L3 択一 Q1-1〜Q5-1
@@ -251,32 +192,10 @@ recommended_lines:
     - 健康保険法×・△回収
     - L2ページ回収はD2から再開
   recompute_triggers:
-    - D0でQ15-13未達
+    - D0でQ15-14未達
     - Q1-1開始不能
     - Q4-4未達
     - 国民年金法_択一_Q番号がPDF確認と異なる
-  completed_condition:
-    - 実施question_id、正誤、理解度評価、実測時間をdaily historyへ記録
-    - 次再開question_idを確定
-
-- task: 秒トレ40問
-  rolling_day: Day1
-  due_date: 2026-05-06
-  due_type: date
-  subject: 共通
-  study_type: 秒トレ
-  material: iPhoneアプリ
-  operation_mode: normal
-  plan_anchor: daily_fixed_habit
-  expected_position: 秒トレ40問
-  current_position: D0 daily reviewで更新
-  gap_status: needs_confirmation
-  must_line: [秒トレ40問]
-  standard_line: [秒トレ40問]
-  stretch_line: [秒トレ40問 + 間違い確認]
-  recovery_targets: []
-  defer_targets: []
-  recompute_triggers: [user_explicitly_requests_recompute, illness_or_urgent_work_changes_available_time]
 
 ### Day2（2026-05-07）
 
@@ -298,10 +217,8 @@ recommended_lines:
   stretch_end_page: P200
   next_start_page: P158
   must_line:
-    - 秒トレ40問
     - 国民年金法 L2 P158〜P175
   standard_line:
-    - 秒トレ40問
     - 国民年金法 L2 P158〜P190
   stretch_line:
     - 国民年金法 L2 P158〜P200
@@ -317,27 +234,6 @@ recommended_lines:
     - L2_P158開始が実際と異なる
     - D1で国民年金法L3択一が未着手
     - D2_P190未達
-  completed_condition:
-    - page_rangeとnext_start_pageをdaily historyへ記録
-
-- task: 秒トレ40問
-  rolling_day: Day2
-  due_date: 2026-05-07
-  due_type: date
-  subject: 共通
-  study_type: 秒トレ
-  material: iPhoneアプリ
-  operation_mode: normal
-  plan_anchor: daily_fixed_habit
-  expected_position: 秒トレ40問
-  current_position: D1 daily reviewで更新
-  gap_status: needs_confirmation
-  must_line: [秒トレ40問]
-  standard_line: [秒トレ40問]
-  stretch_line: [秒トレ40問 + 間違い確認]
-  recovery_targets: []
-  defer_targets: []
-  recompute_triggers: [user_explicitly_requests_recompute, illness_or_urgent_work_changes_available_time]
 
 ### Day3（2026-05-08）
 
@@ -359,14 +255,11 @@ recommended_lines:
   stretch_end_page: P219
   next_start_page: P191
   must_line:
-    - 秒トレ40問
     - 国民年金法 L2 P191〜P205
   standard_line:
-    - 秒トレ40問
     - 国民年金法 L2 P191〜P219
   stretch_line:
     - 国民年金法 L2 P191〜P219完了
-    - 余力があれば翌週L1 P220以降の準備
   recovery_targets:
     L2_gap:
       target: L2をL1 P219へ追いつかせる
@@ -377,27 +270,6 @@ recommended_lines:
     - D2でP190未達
     - L1がP219から大きく前進
     - user_explicitly_requests_recompute
-  completed_condition:
-    - page_rangeとnext_start_pageをdaily historyへ記録
-
-- task: 秒トレ40問
-  rolling_day: Day3
-  due_date: 2026-05-08
-  due_type: date
-  subject: 共通
-  study_type: 秒トレ
-  material: iPhoneアプリ
-  operation_mode: normal
-  plan_anchor: daily_fixed_habit
-  expected_position: 秒トレ40問
-  current_position: D2 daily reviewで更新
-  gap_status: needs_confirmation
-  must_line: [秒トレ40問]
-  standard_line: [秒トレ40問]
-  stretch_line: [秒トレ40問 + 間違い確認]
-  recovery_targets: []
-  defer_targets: []
-  recompute_triggers: [user_explicitly_requests_recompute, illness_or_urgent_work_changes_available_time]
 
 ### Day4（2026-05-09）
 
@@ -419,10 +291,8 @@ recommended_lines:
   stretch_end_question_id: Q11-3
   next_resume_question_id: Q5-1
   must_line:
-    - 秒トレ40問
     - 国民年金法 L3 択一 Q5-1〜Q7-last
   standard_line:
-    - 秒トレ40問
     - 国民年金法 L3 択一 Q5-1〜Q9-10
   stretch_line:
     - 国民年金法 L3 択一 Q5-1〜Q11-3
@@ -436,49 +306,26 @@ recommended_lines:
     - D1でQ4-4未達またはQ4-4を超過
     - Q5-1またはQ9-10のPDF確認差異
     - user_explicitly_requests_recompute
-  completed_condition:
-    - 実施question_id、正誤、理解度評価、実測時間をdaily historyへ記録
-    - 次再開question_idを確定
-
-- task: 秒トレ40問
-  rolling_day: Day4
-  due_date: 2026-05-09
-  due_type: date
-  subject: 共通
-  study_type: 秒トレ
-  material: iPhoneアプリ
-  operation_mode: normal
-  plan_anchor: daily_fixed_habit
-  expected_position: 秒トレ40問
-  current_position: D3 daily reviewで更新
-  gap_status: needs_confirmation
-  must_line: [秒トレ40問]
-  standard_line: [秒トレ40問]
-  stretch_line: [秒トレ40問 + 間違い確認]
-  recovery_targets: []
-  defer_targets: []
-  recompute_triggers: [user_explicitly_requests_recompute, illness_or_urgent_work_changes_available_time]
 
 ### Day5（2026-05-10）
 
-- task: L3不可日 秒トレ40問
+- task: L3不可日。新規L1/L2/L3なし
   rolling_day: Day5
   due_date: 2026-05-10
   due_type: date
   subject: 共通
-  study_type: 秒トレ
-  material: iPhoneアプリ
+  study_type: rest_or_light_review
+  material: none
   operation_mode: normal
-  plan_anchor: 2026-05-10 L3不可。秒トレのみ
-  expected_position: 秒トレ40問
+  plan_anchor: 2026-05-10 L3不可
+  expected_position: 新規L3なし
   current_position: D4 daily reviewで更新
   gap_status: on_track
   must_line:
-    - 秒トレ40問
+    - 新規L3なし
   standard_line:
-    - 秒トレ40問
+    - 新規L3なし
   stretch_line:
-    - 秒トレ40問
     - 余力があれば国民年金法L3の×・△番号整理のみ。新規演習はしない
   recovery_targets:
     - 新規L3は実施しない
@@ -488,8 +335,6 @@ recommended_lines:
   recompute_triggers:
     - user_explicitly_requests_recompute
     - 2026-05-10に学習時間が十分確保できると明示された場合
-  completed_condition:
-    - 秒トレ40問の実績をdaily historyへ記録
 
 ### Day6（2026-05-11）
 
@@ -511,10 +356,8 @@ recommended_lines:
   stretch_end_page: P255
   next_start_page: P220
   must_line:
-    - 秒トレ40問
     - 国民年金法 L1 P220〜P235
   standard_line:
-    - 秒トレ40問
     - 国民年金法 L1 P220〜P245
   stretch_line:
     - 国民年金法 L1 P220〜P255
@@ -529,40 +372,6 @@ recommended_lines:
     - D4でL3_Q9-10未達
     - plan_changes
     - user_explicitly_requests_recompute
-  completed_condition:
-    - page_rangeとnext_start_pageをdaily historyへ記録
-
-- task: 秒トレ40問
-  rolling_day: Day6
-  due_date: 2026-05-11
-  due_type: date
-  subject: 共通
-  study_type: 秒トレ
-  material: iPhoneアプリ
-  operation_mode: normal
-  plan_anchor: daily_fixed_habit
-  expected_position: 秒トレ40問
-  current_position: D5 daily reviewで更新
-  gap_status: needs_confirmation
-  must_line: [秒トレ40問]
-  standard_line: [秒トレ40問]
-  stretch_line: [秒トレ40問 + 間違い確認]
-  recovery_targets: []
-  defer_targets: []
-  recompute_triggers: [user_explicitly_requests_recompute, illness_or_urgent_work_changes_available_time]
-
-## Post D6 projection for roadmap fit
-
-post_D6_projection:
-  purpose: D0〜D6だけでは5/17択一完了まで見えにくいため、roadmap適合確認用に保持する。daily rolling時にD0〜D6へ昇格させる
-  2026-05-12:
-    standard: 国民年金法 L1 P246〜P260 またはL2対応範囲。D6実績で再計算
-  2026-05-13:
-    standard: 国民年金法 L1/L2 国民年金法完了方向。厚生年金保険法接続判断
-  2026-05-16:
-    standard: 国民年金法 L3 択一 Q11-1〜Q13-2
-  2026-05-17:
-    standard: 国民年金法 L3 択一 Q14-1〜Q14-17完了 + 未達分回収
 
 ## Operations completeness guard
 
