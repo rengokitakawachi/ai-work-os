@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_pass_1C_failed_three_times_table_guard_added_retest_pending
+fixture_1A_1B_pass_1C_completion_override_fix_retest_pending
 
 ## category
 
@@ -31,7 +31,7 @@ Confirmed PASS:
 
 Still pending:
 
-- Fixture 1C retest after table-aware L1/L2 continuity guard
+- Fixture 1C retest after completion override fix
 - L3 order fixture
 - positive valid-write fixture
 - deterministic generator service implementation
@@ -47,7 +47,7 @@ Still pending:
 - DELTA instruction exceeded configured GPT 8000-character limit during first fix
 - Action schema operation description exceeded configured GPT import limit
 - feature branch fixture once accepted completed 健康保険法 L3 as new first-pass work
-- Fixture 1C accepted incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 three times before table-aware guard
+- Fixture 1C accepted incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 four times before completion override fix
 
 ## root_cause
 
@@ -71,7 +71,8 @@ Runtime / validator root causes:
 - `branch=feature/atlas-pre-delta-foundation` selects GitHub content target branch, not deployed backend code branch
 - main `api/repo-resource.js` initially did not pass `read_evidence` into `updateDeltaOperations`
 - L1/L2 continuity validator was too narrow and repeatedly missed actual fixture shape
-- employee pension L1/L2 detector likely missed table / separated forms in Next operations
+- employee pension L1/L2 detector missed table / separated forms in Next operations before table-aware guard
+- `hasExplicitNationalPensionCompletionBeforeEmployeePension()` treated the substring `完了` inside `未完了` as an explicit completion override
 
 ## fix_applied
 
@@ -105,21 +106,23 @@ Latest service validator:
 
 - `src/services/delta-operations.js`
 - branch: `main`
-- sha: `d3e68e902afb42ffc0bf4d8e8e8ad51b341916a0`
+- sha: `5c02b765179f9e3dde7e41546da75b285eff1618`
 - `src/services/delta-operations.js`
 - branch: `feature/atlas-pre-delta-foundation`
-- sha: `d3e68e902afb42ffc0bf4d8e8e8ad51b341916a0`
-- validator_version: `delta_operations_preflight_2026_05_05_1C_table_guard`
+- sha: `5c02b765179f9e3dde7e41546da75b285eff1618`
+- validator_version: `delta_operations_preflight_2026_05_05_1C_completion_override_fix`
 
 Latest continuity guard change:
 
 ```yaml
 validator_change:
-  - added validator_version to preflight response
-  - detects 国民年金法 + incomplete/未完了 + P158/P220 + L1/L2 broadly across full content
-  - detects 厚生年金保険法 L1/L2 in Next operations line form
-  - detects 厚生年金保険法 L1/L2 in table / separated form
-  - rejects unless 国民年金法 completion override is explicit
+  - removed bare `完了` from explicit completion override
+  - only explicit markers allow override:
+      - completion_status: completed
+      - status: completed
+      - completed: true
+  - keeps broad 国民年金法 incomplete + P158/P220 + L1/L2 detection
+  - keeps table-aware 厚生年金保険法 L1/L2 detection
 expected_error: current_L1_L2_subject_skipped_before_completion
 ```
 
@@ -162,8 +165,8 @@ current_position:
     completion_status: incomplete
     next_start_page: P158
 next_operations:
-  - 厚生年金保険法 L1 P1〜P35（35ページ）
-  - 厚生年金保険法 L2 P1〜P35（35ページ）
+  - 2026-05-12 | L1 | 厚生年金保険法 L1 P1〜P35（35ページ）
+  - 2026-05-13 | L2 | 厚生年金保険法 L2 P1〜P35（35ページ）
 ```
 
 Failures observed:
@@ -181,6 +184,11 @@ third_fail:
   write: accepted
   sha_after_invalid_write: 2b611ec7216e22f9aa9235f379897e02deac59cb
   request_id: d27a77db-a073-421c-8094-be6c15b7a3d4
+fourth_fail:
+  write: accepted
+  sha_after_invalid_write: 7536693e9be1ff1133a4e7e612d9f2af6007dfe2
+  request_id: be708ca4-99ef-4a1e-ab87-cffce6069ec8
+  validator_version: delta_operations_preflight_2026_05_05_1C_table_guard
 ```
 
 Recovery:
@@ -194,16 +202,16 @@ Current status:
 
 ```yaml
 fixture_1C:
-  judgment: fail_three_times
-  latest_guard: table_aware_hard_guard_added
+  judgment: fail_four_times
+  latest_guard: completion_override_fix_added
   retest_required: true
   expected_error: current_L1_L2_subject_skipped_before_completion
-  expected_validator_version: delta_operations_preflight_2026_05_05_1C_table_guard
+  expected_validator_version: delta_operations_preflight_2026_05_05_1C_completion_override_fix
 ```
 
 ## remaining_risk
 
-- Fixture 1C retest is pending after table-aware guard
+- Fixture 1C retest is pending after completion override fix
 - L3 order fixture is pending
 - positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
@@ -217,7 +225,7 @@ fixture_1C:
 - L3 must follow 選択 → 択一 per subject
 - completed first-pass scope must not be regenerated as new work
 - write path must carry read_evidence
-- validator fixtures must include prose, YAML block, subject-first YAML, table form, separated column form, and reordered YAML forms
+- validator fixtures must include prose, YAML block, subject-first YAML, table form, separated column form, reordered YAML forms, and Japanese negative words such as `未完了`
 - preflight response should include validator_version so runtime code version can be verified
 - Never use branch parameter success as evidence that backend service code is running that branch
 
@@ -238,7 +246,7 @@ fixture_1C:
 Immediate:
 
 - rerun Fixture 1C and expect `current_L1_L2_subject_skipped_before_completion`
-- confirm preflight response includes `validator_version: delta_operations_preflight_2026_05_05_1C_table_guard`
+- confirm preflight response includes `validator_version: delta_operations_preflight_2026_05_05_1C_completion_override_fix`
 - run L3 order fixture and expect `L3_order_violation_*_takuitsu_before_selected`
 
 After negative fixtures PASS:
