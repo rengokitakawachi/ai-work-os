@@ -6,6 +6,7 @@ purpose:
   - daily_review後にroadmap/plan/current_positionからActive operations D0-D6を自律生成する
   - D7から中期目標日までのNext operationsを自律生成する
   - 定量目標、負荷現実性、特殊日、user_capacity、completed_scope、plan fitをwrite前に検証する
+  - 既存active_operationsとNext operationsとの連続性を維持する
 
 input_sources:
   required:
@@ -16,6 +17,25 @@ input_sources:
   optional:
     - systems/delta/history/monthly/YYYY-MM.md
     - systems/delta/resources/materials.md
+
+pre_generation_required_reads:
+  - roadmap/delta_roadmap.md
+  - plan/2026_sharoushi_exam_plan.md
+  - operations/active_operations.md
+  - latest_history_daily_YYYY_MM_DD
+  - recent_daily_history_as_needed
+
+hard_fail_if_missing:
+  - active_operations
+  - existing_active_operations_D0_D6
+  - existing_next_operations_when_present
+  - L1_L2_current_position
+  - L3_current_position
+  - completed_subjects
+  - special_days
+  - user_capacity
+
+failure_policy: operations_incomplete_do_not_write
 
 components:
   operation_rolling_window_generator:
@@ -48,15 +68,23 @@ components:
       - roadmap_or_plan_has_medium_target_date
       - target_date_is_beyond_D6
     example_target_date: 2026-06-30
+    required_behavior:
+      - read_existing_next_operations_before_regeneration
+      - preserve_continuity_with_existing_active_operations
+      - do_not_discard_existing_plan_without_recompute_reason
     failure_policy: missing_next_operations_do_not_write_when_medium_target_exists
 
   reverse_planning_engine:
     generation_order:
       - read_roadmap_milestone
       - read_plan_intermediate_target
+      - read_existing_active_operations
+      - read_existing_next_operations
       - read_current_position
       - read_completed_scope
       - exclude_completed_first_pass_scope
+      - check_L1_L2_subject_continuity
+      - check_L3_selection_before_takuitsu_order
       - expand_medium_plan_by_day
       - detect_overload
       - redistribute_overload
@@ -69,6 +97,44 @@ components:
       - compression_required
       - critical_delay
       - needs_confirmation
+
+  L1_L2_subject_continuity_guard:
+    rule: current_subject_completed_until_end_page_before_next_subject
+    required_inputs:
+      - current_subject
+      - next_start_page
+      - subject_end_page
+      - completion_status
+    if_current_subject_incomplete:
+      prohibit_next_subject: true
+    if_next_start_page_unknown:
+      gap_status: needs_confirmation
+      operation_mode: blocked_current_position_unknown
+      must_line: current_subject L1/L2 next_start_page確認
+      write_allowed: false
+    violation_policy: operations_incomplete_do_not_write
+    current_known_case:
+      国民年金法:
+        L1:
+          next_start_page: P220
+          completion_status: incomplete
+        L2:
+          next_start_page: P158
+          completion_status: incomplete
+        prohibit_next_subject_L1_L2: 厚生年金保険法
+
+  L3_order_guard:
+    per_subject: true
+    required_order:
+      - 選択
+      - 択一
+    prohibit:
+      - 択一_before_選択_completed
+    required_inputs:
+      - current_subject
+      - selected_completion_status
+      - next_question
+    violation_policy: operations_incomplete_do_not_write
 
   quantitative_target_validator:
     L1_L2_required_format: "科目 L1/L2 P開始〜P終了（nページ）"
@@ -92,6 +158,22 @@ components:
       - 国民年金法 Q10-0 は演習対象なし
       - 健康保険法 Q5/Q6 は存在しない
       - 健康保険法 Q8 は演習対象なし
+
+  completed_subject_guard:
+    purpose: completed first-round subjects must not be regenerated as first-round work
+    known_completed_subjects:
+      健康保険法:
+        first_round: completed
+        prohibit:
+          - 健康保険法 L3 1巡目 選択
+          - 健康保険法 L3 1巡目 択一
+        allowed_only_if_explicit:
+          - 健康保険法 2巡目
+          - 健康保険法 弱点回収
+          - 健康保険法 誤答再演習
+          - 健康保険法 recovery_targets
+          - 健康保険法 deferred_review
+    violation_policy: operations_incomplete_do_not_write
 
   completed_scope_exclusion_validator:
     purpose: completed first-pass scopes must not be regenerated as new work
@@ -168,6 +250,21 @@ components:
         - L3択一が軽い日はL1/L2を15〜30ページ追加可能
 
   operations_write_preflight_check:
+    required_checks:
+      - active_operations_was_read
+      - existing_next_operations_was_read_when_present
+      - L1_L2_current_position_confirmed
+      - L3_current_position_confirmed
+      - current_subject_not_skipped
+      - completed_subject_not_reintroduced
+      - L3_order_selection_before_takuitsu
+      - D0_D6_all_exist
+      - D7_target_next_operations_exists_when_medium_target_exists
+      - L1_L2_page_range_format_valid
+      - L3_question_range_format_valid
+      - forbidden_vague_terms_absent
+      - special_days_reflected
+      - overload_detected
     structure_check:
       - D0_D6_exist
       - next_operations_exist_when_medium_target_exists
@@ -176,10 +273,16 @@ components:
       - L1_L2_has_page_range_and_count
       - L3_has_question_range_and_count
       - forbidden_terms_absent_from_task_and_lines
+    current_position_check:
+      - L1_L2_current_position_confirmed
+      - L3_current_position_confirmed
+      - current_subject_not_skipped
     completed_scope_check:
       - completed_first_pass_scope_not_in_new_operations
       - completed_subject_only_in_recovery_review_or_second_pass
       - health_insurance_L3_not_reopened_after_2026_05_04_completion
+    order_check:
+      - L3_selection_before_takuitsu_per_subject
     load_check:
       - L1_L2_above_50_pages_flagged_or_redistributed
       - L3_multiple_choice_above_25_questions_flagged_or_redistributed
@@ -190,14 +293,30 @@ components:
       - recovery_forward_standard_line_matches_expected_position
     failure_policy: reject_write
 
+previous_generation_status:
+  status: invalid
+  reason:
+    - active_operations_not_read
+    - next_operations_not_read
+    - L1_L2_current_position_not_confirmed
+    - current_L1_L2_subject_skipped
+    - completed_health_insurance_reintroduced
+    - L3_order_rule_violated
+  write_allowed: false
+
 acceptance_criteria:
+  - operations_active_operations_md_read_before_generation
+  - existing_next_operations_read_before_generation
   - D0_D6_never_missing_after_daily_review
   - D7_target_next_operations_generated_when_medium_target_exists
   - L1_L2_page_range_and_page_count_required
   - L3_question_range_and_question_count_required
   - vague_targets_rejected
+  - current_L1_L2_subject_not_skipped
+  - if_national_pension_L1_L2_incomplete_then_employee_pension_L1_L2_not_started
   - completed_first_pass_scope_excluded_from_new_operations
   - health_insurance_L3_not_reintroduced_as_new_work_after_2026_05_04
+  - L3_selection_before_takuitsu_per_subject
   - load_guards_detect_overload
   - overload_redistributed_or_marked_compression_required
   - special_days_reflected
@@ -206,8 +325,8 @@ acceptance_criteria:
 
 implementation_status:
   repo_config_instruction: updated
-  supplemental_schema: updated_with_completed_scope_exclusion
-  service_preflight_validator: implemented_in_src/services/delta-operations.js
+  supplemental_schema: updated_with_pre_generation_and_plan_fit_guards
+  service_preflight_validator: strengthened_in_src/services/delta-operations.js
   deterministic_generator_service: not_yet_implemented
   runtime_reflection: pending
-  fixture: plan_fit_failed_needs_regeneration
+  fixture: invalid_needs_regeneration
