@@ -9,31 +9,44 @@ Immediate Gate が未完了の場合、その gate に blocked される active 
 Immediate Gate は7日枠に数えない。
 
 - gate: ADAM / EVE instruction configured GPT reflection を確認する
-  status: open
+  status: resolved
+  completed: true
+  completed_at: 2026-05-05
   source_ref:
-    - config/ai/adam_instruction.md
-    - config/ai/eve_instruction.md
+    - config/adam_instruction.md
+    - config/eve_instruction.md
+    - config/eve_action_schema.yaml
+    - notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md
     - notes/10_logs/2026-05-04_adam_immediate_gate_judgment_miss.md
     - notes/07_reports/daily/2026-05-04.md
   reason:
-    - ADAM instruction repo update は完了したが、configured GPT / runtime reflection は未確認
-    - EVE instruction repo update も完了しているが、configured GPT / runtime reflection は未確認
-    - ADAM / EVE の instruction 変更は以後の controller / task management runtime behavior の前提になる
-    - repo更新だけで configured GPT へ反映済みとは扱えない
+    - ADAM instruction repo canonical は `config/adam_instruction.md` sha `88acd8ed6489fabcec2c192a7449ff87c2213964` として確認済み
+    - EVE instruction repo canonical は `config/eve_instruction.md` sha `bb8f1e4721212dd6f46e432acb37c1e797f22f42` として確認済み
+    - EVE action schema canonical は `config/eve_action_schema.yaml` sha `8bbead866bd682f8a996a93e7d4a5dc7d0053de2` として確認済み
+    - ADAM runtime で handover restart guard / active_operations first / Immediate Gate blocker guard / tool result integrity guard が効いていることをこの thread で観測済み
+    - EVE configured GPT runtime fixture で Task 分類、listTasks before update、guessed task no-update、Todoist scope guard、ADAM operations 非正本化を user 観測で PASS 確認済み
+    - repo更新だけで runtime reflection 完了とは扱わず、runtime behavior 観測で閉じた
   blocks:
     - ADAM bug fix log の運用方法を notes に固定する
     - Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
     - EVE runtime reflection の最小確認プロンプトと完了条件を整理する
   completed_condition:
-    - ADAM configured GPT に `config/ai/adam_instruction.md` の最新内容が反映されたことを確認する
+    - ADAM configured GPT に `config/adam_instruction.md` の最新内容が反映されたことを確認する
     - ADAM runtime で Immediate Gate 判定 guard が効いていることを最小プロンプトで確認する
-    - EVE configured GPT に `config/ai/eve_instruction.md` の最新内容が反映されたことを確認する
+    - EVE configured GPT に `config/eve_instruction.md` の最新内容が反映されたことを確認する
     - EVE runtime で schema reflection / Todoist task-management scope guard が効いていることを最小プロンプトで確認する
     - repo instruction 更新を runtime reflection 完了と混同しない
+  evidence:
+    - ADAM runtime fixture: PASS
+    - EVE runtime fixture: PASS
+    - evidence_note: notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md
+    - evidence_note_sha: 329e079265d545c957ec09ad0d1eaf1e6a25289c
   notes:
     - この gate は ADAM / EVE runtime behavior の前提 gate
     - DELTA operations generation gate とは別 gate
     - 2026-05-04 daily review 後に user 指摘で追加した post-review correction
+    - 2026-05-05 ADAM / EVE runtime fixture PASS により resolved
+    - 旧 source_ref `config/ai/adam_instruction.md` / `config/ai/eve_instruction.md` は実在しないため canonical path に修正済み
   external:
     todoist_task_id: 6gX2rrfXcWXCR24q
 
@@ -111,18 +124,25 @@ Last review:
 Daily close result:
 
 - Completed task archived: `ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する`
-- Immediate Gate remains open: `ADAM / EVE instruction configured GPT reflection を確認する`
+- Immediate Gate resolved: `ADAM / EVE instruction configured GPT reflection を確認する`
 - DELTA Immediate Gate remains open: runtime preflight fixtures PASS, deterministic generator service created, `npm test` pending
 - DELTA Action schema v0.6.3 import was reported updated by user and runtime behavior was later fixture-confirmed
 - DELTA runtime preflight fixtures PASS: missing read_evidence, completed_scope reintroduction, L1/L2 continuity, L3 order, positive valid-write
 - DELTA runtime-dependent tasks remain blocked until DELTA Immediate Gate is fully resolved
-- ADAM / EVE runtime-dependent tasks remain blocked until ADAM / EVE instruction reflection gate is resolved
+- ADAM / EVE runtime-dependent tasks are unblocked as of 2026-05-05 reflection fixture PASS
 - Active rerolled to 2026-05-05 start
-- Todoist projection needs update after gate rename / completed_condition expansion
+- Todoist projection needs update after gate resolution / completed_condition expansion
 
 ---
 
 ## Recently resolved gates / completed tasks
+
+- gate: ADAM / EVE instruction configured GPT reflection を確認する
+  status: resolved
+  completed: true
+  completed_at: 2026-05-05
+  evidence_ref:
+    - notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md
 
 - task: ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する
   status: completed
@@ -148,7 +168,7 @@ Daily close result:
 
 ## Day0（05/05 火）
 
-Capacity note: First resolve Immediate Gates. After ADAM / EVE reflection gate is resolved, continue ADAM governance定着2件。DELTA runtime-dependent work is blocked by DELTA Immediate Gate.
+Capacity note: ADAM / EVE reflection gate is resolved. Continue ADAM governance定着2件. DELTA runtime-dependent work remains blocked by DELTA Immediate Gate.
 
 - task: ADAM bug fix log の運用方法を notes に固定する
   source_ref:
@@ -205,7 +225,7 @@ Capacity note: First resolve Immediate Gates. After ADAM / EVE reflection gate i
 
 ## Day1（05/06 水）
 
-Capacity note: DELTA runtime-dependent task is blocked until DELTA Immediate Gate is resolved. EVE runtime task is blocked until ADAM / EVE instruction reflection gate is resolved. If gates remain open, use this slot for non-runtime-dependent task via next reroll.
+Capacity note: DELTA runtime-dependent task is blocked until DELTA Immediate Gate is resolved. EVE runtime task has been absorbed by resolved ADAM / EVE reflection gate evidence. If DELTA gate remains open, use this slot for non-runtime-dependent task via next reroll.
 
 - task: DELTA chapter-only normalization fixture を実行する
   source_ref:
@@ -228,18 +248,22 @@ Capacity note: DELTA runtime-dependent task is blocked until DELTA Immediate Gat
 
 - task: EVE runtime reflection の最小確認プロンプトと完了条件を整理する
   source_ref:
-    - config/ai/eve_instruction.md
-    - config/ai/eve_knowledge.md
-    - config/ai/eve_action_schema.yaml
+    - config/eve_instruction.md
+    - config/eve_action_schema.yaml
+    - notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md
   rolling_day: Day1
   due_date: 2026-05-06
   due_type: date
-  blocked_by:
-    - ADAM / EVE instruction configured GPT reflection を確認する
+  status: absorbed_by_gate_resolution
+  completed: true
+  completed_at: 2026-05-05
   completed_condition:
     - EVE runtime で確認すべき instruction / knowledge / schema scope を列挙する
     - 最小確認プロンプトを作る
     - 実行を別 gate として扱うか判断する
+  notes:
+    - EVE runtime fixture was executed as part of the ADAM / EVE Immediate Gate closure.
+    - Evidence is recorded in `notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md`.
   external:
     todoist_task_id: 6gW4H8WC38gVjjCH
 
@@ -260,7 +284,6 @@ Capacity note: DELTA write resource reflection and Todoist projection profile. B
     - src/services/delta-operations.js
   rolling_day: Day2
   due_date: 2026-05-07
-  due_type: date
   blocked_by:
     - DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
   completed_condition:
