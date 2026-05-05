@@ -16,6 +16,22 @@ high
 
 2026-05-03
 
+## last_touched_at
+
+2026-05-05
+
+## touched_by
+
+daily_review
+
+## progress_note
+
+2026-05-05 daily review confirmed this issue remains active-relevant but is not today's top execution target. Current mission-critical DELTA reverse-planning Immediate Gate takes priority. The related active task `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` remains in active_operations and should resume after the DELTA blocker is cleared or explicitly rerolled.
+
+## routing_hint
+
+keep_active_task_after_DELTA_blocker
+
 ## title
 
 issue routing は運用段階に入ったが、intake routing / design routing は maturity gap が残っている
