@@ -2,7 +2,7 @@
 
 ## status
 
-fixture_1A_1B_1C_pass_L3_order_guard_runtime_reflected_fixture_evidence_markers_missing
+fixture_1A_1B_1C_pass_L3_order_completion_marker_fix_retest_pending
 
 ## category
 
@@ -28,13 +28,14 @@ Confirmed PASS:
 - Fixture 1B: completed 健康保険法 L3 first-pass reintroduction is rejected
 - Fixture 1C: incomplete 国民年金法 L1/L2 -> 厚生年金保険法 L1/L2 skip is rejected
 
-Confirmed runtime reflection:
+Current basis operations SHA:
 
-- L3 line-based validator version is runtime-visible: `delta_operations_preflight_2026_05_05_L3_order_line_guard`
+- `ff588298afd147452493902b05a9670aa7224233`
+- This replaces old basis SHA `b5514dedebc187c51d36e7d6609e5c2416d2eb3f` because the old basis content is invalid under the current L3 order guard.
 
 Pending:
 
-- L3 order fixture retest with required content evidence markers
+- L3 order fixture retest after completion marker fix
 - positive valid-write fixture
 - deterministic generator service implementation
 
@@ -63,7 +64,7 @@ Runtime / validator causes found during fixtures:
 - `hasExplicitNationalPensionCompletionBeforeEmployeePension()` treated `完了` inside `未完了` as an explicit completion override
 - first L3 order fixture was not isolating the target guard
 - isolated L3 order fixture proved old `validateL3Order()` did not detect table / line-shaped `国民年金法 L3 択一 Q1-1〜Q1-16（16問）`
-- latest L3 order retest still did not isolate target guard because content evidence markers for roadmap and existing operations read were missing
+- L3 line guard still allowed the invalid fixture, likely because `hasExplicitL3SelectedCompletion()` treated negative prose such as `選択完了 marker なし` as selected completion evidence
 
 ## fix_applied
 
@@ -87,26 +88,27 @@ Runtime / validator causes found during fixtures:
 
 - `src/services/delta-operations.js`
   - branch: `main`
-  - sha: `acbc1d7b2dac46e4712d82c6d9da566c8f27080e`
+  - sha: `eb1546bd6723c6ac3c0f324ce7068d52dc2f6ef1`
   - branch: `feature/atlas-pre-delta-foundation`
-  - sha: `acbc1d7b2dac46e4712d82c6d9da566c8f27080e`
-  - validator_version: `delta_operations_preflight_2026_05_05_L3_order_line_guard`
+  - sha: `eb1546bd6723c6ac3c0f324ce7068d52dc2f6ef1`
+  - validator_version: `delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix`
 
 ## latest L3 order guard change
 
 ```yaml
 validator_change:
-  - replaced broad matchAll order check with line-based Next operations scan
-  - tracks each subject independently
-  - explicit selected completion markers allow 択一:
+  - removed bare Japanese completion text from L3 selected completion override:
+      - L3選択完了
+      - 選択完了
+      - 完了済み
+  - only structured markers allow L3 択一 before selected line:
       - selected_completion_status: completed
       - selected_questions: completed
       - L3_selected: completed
       - completed_selected: true
-      - L3選択完了
-      - 選択完了
-  - Next operations line containing subject + L3 + 選択 + Q範囲 marks selectedSeen
-  - Next operations line containing subject + L3 + 択一 + Q範囲 before selectedSeen rejects
+      - same-line 選択 with completion_status: completed
+      - same-line 選択 with completed: true
+  - prevents negative prose such as `選択完了 marker なし` from allowing 択一
 expected_error: L3_order_violation_国民年金法_takuitsu_before_selected
 ```
 
@@ -182,23 +184,30 @@ validator_version: delta_operations_preflight_2026_05_05_L3_order_line_guard
 errors:
   - missing_roadmap_read_evidence_in_content
   - missing_existing_active_or_next_operations_read_evidence_in_content
-sha_before: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
-sha_after: b5514dedebc187c51d36e7d6609e5c2416d2eb3f
 judgment: inconclusive_fixture_defect_runtime_reflection_confirmed
+```
+
+Attempt 4 with evidence markers:
+
+```yaml
+write: accepted
+sha_after_invalid_write: 50a14cd2c7607a1e3f0f20e9be177f6265b26b42
+request_id: db9512ea-2bca-43b4-b861-63b2062fa66d
+validator_version: delta_operations_preflight_2026_05_05_L3_order_line_guard
+judgment: fail_guard_not_effective
+basis_restore: rejected_by_current_guard
+safe_restore_sha: ff588298afd147452493902b05a9670aa7224233
 ```
 
 Current status:
 
 ```yaml
 l3_order_fixture:
-  latest_guard: line_based_L3_order_guard_added
-  runtime_version_observed: true
+  latest_guard: completion_marker_fix_added
   retest_required: true
-  expected_validator_version: delta_operations_preflight_2026_05_05_L3_order_line_guard
+  expected_validator_version: delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix
   expected_error: L3_order_violation_国民年金法_takuitsu_before_selected
-  required_content_markers:
-    - roadmap or roadmap_anchor or roadmap_phase
-    - existing_next_operations_read or existing_next_operations_was_read or source_of_truth.operations_role or current_position_primary_source
+  basis_sha: ff588298afd147452493902b05a9670aa7224233
 ```
 
 ## remaining_risk
@@ -206,7 +215,7 @@ l3_order_fixture:
 - L3 order fixture retest is pending
 - positive valid-write fixture is pending
 - deterministic generator service is not implemented yet
-- restored operations SHA is no longer original `af626...`; current basis SHA is `b5514...`
+- original basis SHA `b5514...` is invalid under current L3 order guard; current basis SHA is `ff588...`
 
 ## recurrence_prevention
 
@@ -218,7 +227,7 @@ l3_order_fixture:
 - completed first-pass scope must not be regenerated as new work
 - write path must carry read_evidence
 - content must also include required evidence markers, not only read_evidence payload
-- validator fixtures must include prose, YAML block, subject-first YAML, table form, separated column form, reordered YAML forms, and Japanese negative words such as `未完了`
+- validator fixtures must include prose, YAML block, subject-first YAML, table form, separated column form, reordered YAML forms, Japanese negative words such as `未完了`, and negative completion-marker prose such as `選択完了 marker なし`
 - preflight response should include validator_version so runtime code version can be verified
 - Never use branch parameter success as evidence that backend service code is running that branch
 
@@ -238,9 +247,10 @@ l3_order_fixture:
 
 Immediate:
 
-- rerun L3 order fixture with content markers `roadmap_anchor` and `existing_next_operations_read`
+- rerun L3 order fixture
 - expect `L3_order_violation_国民年金法_takuitsu_before_selected`
-- confirm validator_version `delta_operations_preflight_2026_05_05_L3_order_line_guard`
+- confirm validator_version `delta_operations_preflight_2026_05_05_L3_order_completion_marker_fix`
+- use basis SHA `ff588298afd147452493902b05a9670aa7224233`
 
 After negative fixtures PASS:
 
