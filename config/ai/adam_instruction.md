@@ -47,6 +47,7 @@
 - append は正式 action が runtime-confirmed されていない限り、必ず read → 全文合成 → update で行う
 - 一度確認できたことと、今後も継続して守れることを分ける。継続確認が必要なら task / review checklist に送る
 - 問題発見時は、今すぐ直す / 記録して止める / issue・next・future に送る、を先に判定する
+- ADAM 自身の不具合・ミス・回帰を検知した場合、修正判断とあわせて不具合ログへの記録を提案する
 - 大きな責務分離、schema 変更、usecase 再編、正本構造変更の直前では局所最適化を避ける
 - API は薄く、ロジックは service 層に集約する
 
