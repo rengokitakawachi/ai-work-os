@@ -18,25 +18,31 @@ Immediate Gate は7日枠に数えない。
     - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
     - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
     - notes/10_logs/2026-05-05_delta_reverse_planning_generator_scaffold.md
+    - notes/10_logs/2026-05-05_delta_active_next_operations_split.md
     - notes/10_logs/2026-05-05_adam_delta_reverse_planning_gate_misjudgment.md
     - systems/delta/roadmap/delta_roadmap.md
     - systems/delta/plan/2026_sharoushi_exam_plan.md
     - systems/delta/operations/active_operations.md
+    - systems/delta/operations/next_operations.md
     - systems/delta/history/daily/2026-05-04.md
     - systems/delta/config/delta_instruction.md
     - systems/delta/config/delta_schema.yaml
     - systems/delta/config/delta_operations_generation_schema.yaml
+    - systems/delta/config/delta_action_schema.yaml
+    - src/services/delta-operations.js
     - src/services/delta/operations-generator.js
     - src/services/delta/operations-generator.test.js
     - src/services/delta/reverse-planning-generator.js
     - src/services/delta/reverse-planning-generator.test.js
+    - src/services/delta/operations-split.test.js
     - config/from-claude.md
   reason:
     - DELTA の役割は 2026-08-23 社労士試験合格に向けた学習支援である
     - 元々の不具合は、operations 生成時に roadmap / plan / current_position / remaining_scope から逆算せず、安易に7日間の計画を立ててしまうこと
-    - 106 PASS / 0 FAIL は test failure と minimum deterministic generator readiness の解消であり、本来の reverse-planning gap の完了証拠ではない
-    - minimum generator は roadmap / plan の read_evidence を要求し、unsafe draft を防ぐが、remaining scope / target date / capacity / special days から日別負荷を逆算・再配分する optimizer ではない
-    - reverse-planning scaffold は `feature/atlas-pre-delta-foundation` に実装済みだが、ATLAS / local test と runtime behavior は未確認
+    - active / next 同居により medium-term daily plan が粗い期間ブロックへ上書きされる不具合も確認された
+    - DELTA operations は ADAM / EVE と同じ思想で active_operations(D0-D6) / next_operations(D7-target) に分離済み
+    - ATLAS により repository / local tests は 115 PASS / 0 FAIL まで到達した
+    - ただし configured GPT Action schema v0.6.4 の反映と runtime-visible behavior は未確認のため、gate は open 維持
   blocks:
     - DELTA chapter-only normalization fixture を実行する
     - DELTA write resource schema reflection gate を整理する
@@ -51,24 +57,45 @@ Immediate Gate は7日枠に数えない。
     - remaining L1/L2 page scope と L3 question scope を算出する
     - user_capacity と special_days / L3 unavailable days を反映する
     - D0-D6 Active operations と D7-target Next operations を roadmap / plan から逆算して生成する
+    - active_operations.md は D0〜D6 のみを持つ
+    - next_operations.md は D7〜target_date の日別計画SSOTを持つ
+    - active_operations.md が next_operations_ref を持つ
+    - daily review generation が roadmap / plan / daily history / active_operations / next_operations を読む
     - 各 day の L1/L2 は page range + page count を持つ
     - 各 day の L3 は question range + question count を持つ
     - overload を検知し、redistribute / compression_required / critical_delay のいずれかを出す
     - generated operations が preflight を通る read_evidence を持つ
     - fixture で「roadmap / plan を読まない安易な7日計画」を拒否または失敗扱いにできることを確認する
+    - fixture で「active_operations.md への # Next operations 混入」を拒否できることを確認する
+    - fixture で「next_operations.md の期間ブロック行」を拒否できることを確認する
     - fixture で「2026-08-23 target / plan / remaining scope / capacity から逆算した計画」を生成できることを確認する
-    - ATLAS または local test で reverse-planning generator tests が PASS する
+    - ATLAS または local test で reverse-planning / active-next split generator tests が PASS する
+    - configured GPT Action schema v0.6.4 を反映または user confirmation する
+    - runtime-visible schema で delta_operations next_operations.md update が可能なことを確認する
+    - runtime fixture で active / next split preflight が実際に効くことを確認する
     - runtime-visible behavior を観測するまで repo config / test pass のみで completed と扱わない
   progress:
-    - 2026-05-05 `src/services/delta/reverse-planning-generator.js` created on `feature/atlas-pre-delta-foundation`, sha `b4d354ba2127c374cd6b6d2ce75d00b81409de28`
+    - 2026-05-05 `src/services/delta/reverse-planning-generator.js` created on `feature/atlas-pre-delta-foundation`, initial sha `b4d354ba2127c374cd6b6d2ce75d00b81409de28`, current sha `f5ee7b7fde1a1c77471274d1061d8d1ac49598f4`
     - 2026-05-05 `src/services/delta/reverse-planning-generator.test.js` created on `feature/atlas-pre-delta-foundation`, sha `72d2b101746bf3d5eed0a2828393d555a063a3f9`
+    - 2026-05-05 `systems/delta/operations/active_operations.md` split to D0-D6 only, sha `5747741a3c7e3eb0dfe95a4896249ac75201b3aa`
+    - 2026-05-05 `systems/delta/operations/next_operations.md` restored as D7-to-2026-06-30 daily plan SSOT, sha `2f3ff6409ce033e02e7bde0771882d7b417774dd`
+    - 2026-05-05 `src/services/delta-operations.js` updated for split preflight, current sha `ee8b295dfaf59b1e33dc59c1f9e753f5c5591009`
+    - 2026-05-05 `src/services/delta/operations-split.test.js` added, sha `843e5af33f62a3e7ebe3214551d34b4ab733cfcd`
+    - 2026-05-06 ATLAS confirmed repository tests: 115 PASS / 0 FAIL, commit `b656218`
     - scaffold fails closed with `missing_material_catalog` and does not fall back to fixed 7-day draft
-    - test execution is pending
+    - active/next split preflight rejects active embedded Next table and next period block rows in repository tests
+  evidence:
+    - ATLAS_test_result: 115 PASS / 0 FAIL
+    - ATLAS_commit: b656218
+    - from_claude_sha: 78a9c0b49dc9065faa8428620bd2939e494ab79a
+    - active_next_split_log_sha: 1f6551eab9a5c3c6379dfae8e8f1fe22902de02b
+    - reverse_planning_log_sha: 2034837b2422000c97233b27bd0c0eb39da1aee9
   next_closure_action:
-    - Ask ATLAS to run `npm test -- src/services/delta/reverse-planning-generator.test.js`
-    - Ask ATLAS to run full `npm test`
-    - Record result in `config/from-claude.md`
-    - If failures occur, fix by failure pattern before runtime fixture
+    - User imports or confirms DELTA configured GPT Action schema v0.6.4
+    - Confirm runtime-visible schema accepts `delta_operations` file `next_operations.md`
+    - Runtime fixture: `active_operations.md` update rejects embedded `# Next operations` table
+    - Runtime fixture: `next_operations.md` update rejects period block row
+    - Runtime fixture: valid split active / next update passes with read_evidence
   external:
     todoist_task_id: 6gX9jR6g4Rpcm2pq
 
@@ -91,7 +118,9 @@ Daily close result:
 - Completed scope archived: `ADAM / EVE instruction configured GPT reflection を確認する`
 - Completed scope archived: `DELTA minimum generator / test readiness`
 - DELTA original reverse-planning gap remains open and mission-critical
-- reverse-planning scaffold implemented on feature branch, test pending
+- reverse-planning scaffold implemented on feature branch
+- active / next split implemented and repository-tested
+- configured GPT / runtime fixture pending
 - handover latest detection failure recorded and connected to next_operations
 - report template gate issue touched
 - routing maturity issue touched
@@ -129,7 +158,8 @@ Daily close result:
     - repository npm test 106 PASS / 0 FAIL
   unresolved_scope:
     - original reverse-planning gap remains open
-    - roadmap / plan / remaining scope / capacity based load calculation is not proven
+    - configured GPT Action schema v0.6.4 not runtime-confirmed
+    - split active / next runtime write behavior not fixture-confirmed
 
 - task: ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する
   status: completed
@@ -209,7 +239,7 @@ Capacity note: DELTA reverse-planning Immediate Gate is first. ADAM governance t
   blocked_by:
     - DELTA reverse-planning operations generator を実装・確認する
   completed_condition:
-    - `健康保険法の3章が終わった` ケースで、L3なら question_id への正規化または uncertainty が必要と判断する
+    - `健康保険法の3章が終わった` ケースで、L3なら question_id への正規化または uncertaintyが必要と判断する
     - `国民年金法7章が終わった` ケースで、L1/L2なら page_range / next_start_page が必要と判断する
     - 変換不能時に confirmation next_action を出す
     - 実データを読んだ上で、推測で precise progress を作らない
@@ -359,7 +389,7 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
 - 現在の inbox を一回整理する
 - legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
 - DELTA foundation を main に統合する準備をする
-- ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
+- ATLAS 関係ファイルを systems/atlas に集約する
 - DELTA monthly summary rebuild automation を設計する
 - DELTA dedicated append_daily_event action を検討する
 - handover latest index と月別フォルダ構成を導入する
