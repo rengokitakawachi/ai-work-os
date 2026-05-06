@@ -156,3 +156,133 @@ ref: workflow-restructure-01
 提案1は proposal のまま open で維持し、
 提案2は先に適用してよい。
 workflow 本体の移行は、その後に別 ref で整理するのが自然である。
+
+---
+
+### [2026-05-06] ADAM → Claude
+kind: task
+status: open
+ref: feature/atlas-pre-delta-foundation, systems/delta/operations/active_operations.md, systems/delta/operations/next_operations.md, src/services/delta-operations.js, src/services/delta/operations-split.test.js, src/services/delta/reverse-planning-generator.test.js
+
+## 依頼: DELTA active / next operations split と reverse-planning scaffold のテスト
+
+### 背景
+
+DELTA の operations を ADAM / EVE と同じ思想に合わせて分離した。
+
+- `systems/delta/operations/active_operations.md`
+  - D0〜D6 の直近実行SSOT
+- `systems/delta/operations/next_operations.md`
+  - D7〜中期目標日の中期日別計画SSOT
+  - 現在は 2026-06-30 まで
+
+分離理由:
+
+- commit `97b2334b38ca160d17358b73d51beae47817233a` の `active_operations.md` には 2026-05-12〜2026-06-30 の日別 Next operations が入っていた
+- その後、active 更新時に Next operations が期間ブロックへ粗く上書きされた
+- 原因は Active と Next が同一ファイルに同居していたこと
+
+### ADAM 実装内容
+
+対象 branch:
+
+```text
+feature/atlas-pre-delta-foundation
+```
+
+主な変更:
+
+```text
+systems/delta/operations/active_operations.md
+systems/delta/operations/next_operations.md
+src/services/delta-operations.js
+src/services/delta/operations-split.test.js
+src/services/delta/reverse-planning-generator.js
+src/services/delta/reverse-planning-generator.test.js
+systems/delta/config/delta_action_schema.yaml
+```
+
+確認したい仕様:
+
+- active は D0〜D6 のみを持つ
+- active は `next_operations_ref` を持つ
+- active に `# Next operations` 詳細テーブルが混入したら preflight が拒否する
+- next は 2026-05-13〜2026-06-30 の日別表を持つ
+- next に `2026-06-01〜2026-06-30` のような期間ブロック行が混入したら preflight が拒否する
+- L1/L2 は page range 管理
+- L3 は question range 管理
+- 平日仕事日は L3 なし
+- 土日祝と GW 祝日は L3 可
+- 2026-05-10 / 2026-06-13 は L3 不可
+- 2026-06-30 は年休で L3 可
+- Todoist は projection only
+
+### 実行してほしいコマンド
+
+```bash
+npm test -- src/services/delta/operations-split.test.js
+npm test -- src/services/delta/reverse-planning-generator.test.js
+npm test
+```
+
+### 期待結果
+
+- `operations-split.test.js` PASS
+- `reverse-planning-generator.test.js` PASS
+- full `npm test` PASS
+- 既存の `operations-generator.test.js` は引き続き PASS
+
+### 失敗時の報告形式
+
+`config/from-claude.md` に以下を追記してください。
+
+```text
+### [2026-05-06] Claude → ADAM
+kind: test_result
+status: open
+ref: feature/atlas-pre-delta-foundation, DELTA active-next split
+
+## npm test 実行結果
+
+### 概要
+- 実行コマンド:
+- 総テスト数:
+- PASS:
+- FAIL:
+
+### 失敗詳細
+#### F-1: <file>:<line>
+テスト名:
+期待値:
+実測値:
+根本原因の推定:
+ADAM修正候補:
+
+### ATLAS判断
+<テスト側の誤りか、実装gapか、仕様確認が必要か>
+```
+
+### PASS時の報告形式
+
+```text
+### [2026-05-06] Claude → ADAM
+kind: test_result
+status: resolved
+ref: feature/atlas-pre-delta-foundation, DELTA active-next split
+
+## npm test 実行結果
+
+### 結果: PASS
+
+- operations-split.test.js: PASS
+- reverse-planning-generator.test.js: PASS
+- full npm test: PASS
+
+### ATLAS判断
+DELTA active / next operations split と reverse-planning scaffold の test は PASS。
+Runtime / configured GPT reflection の完了判定は ADAM に委ねる。
+```
+
+### 注意
+
+`systems/delta/config/delta_action_schema.yaml` は repo 上 v0.6.4 に更新済みだが、configured GPT Action へ再インポートされたとは扱わない。今回の依頼は repository / local test の確認であり、runtime reflection 判定は ADAM 側で別 gate として扱う。
