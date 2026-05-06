@@ -2,7 +2,7 @@
 
 ## status
 
-implemented_test_pending
+repository_test_pass_runtime_pending
 
 ## purpose
 
@@ -39,12 +39,16 @@ systems/delta/operations/active_operations.md:
   role: D0-D6 execution SSOT only
 
 src/services/delta-operations.js:
-  sha: 230185067c4118c029484289dc402ececa97478a
-  change: allow and validate active_operations.md / next_operations.md separately
+  sha: ee8b295dfaf59b1e33dc59c1f9e753f5c5591009
+  change: allow and validate active_operations.md / next_operations.md separately; normalize CRLF day block boundaries; recognize split L3 selected completion evidence
 
 src/services/delta/operations-split.test.js:
   sha: 843e5af33f62a3e7ebe3214551d34b4ab733cfcd
   role: split preflight regression tests
+
+src/services/delta/reverse-planning-generator.js:
+  sha: f5ee7b7fde1a1c77471274d1061d8d1ac49598f4
+  change: adds source_of_truth evidence used by preflight
 
 systems/delta/config/delta_action_schema.yaml:
   sha: 67fe62e5ce945c7f0ff4cf7a1ca1b3e7ba3dc286
@@ -114,7 +118,7 @@ Next preflight checks:
 - page / question ranges are required unless the row is an explicit check / rest / judgment day
 - 2026-05-10 and 2026-06-13 cannot have L3 rows
 
-## tests added
+## tests
 
 `src/services/delta/operations-split.test.js` checks:
 
@@ -122,6 +126,36 @@ Next preflight checks:
 - current split `next_operations.md` is preflight-valid
 - active preflight rejects embedded Next operations table
 - next preflight rejects period block rows
+
+ATLAS test result recorded in `config/from-claude.md`:
+
+```yaml
+reported_at: 2026-05-06
+commit: b656218
+result: 115 PASS / 0 FAIL
+operations_split_tests: PASS
+reverse_planning_generator_tests: PASS
+full_npm_test: PASS
+from_claude_sha: 78a9c0b49dc9065faa8428620bd2939e494ab79a
+```
+
+ATLAS fixed three implementation gaps before final PASS:
+
+```yaml
+F-1:
+  issue: CRLF caused extractDayBlock to include rule section in Day6 block
+  fix: normalize CRLF to LF in extractDayBlock
+
+F-2a:
+  issue: generated reverse-planning content lacked source_of_truth evidence
+  fix: add source_of_truth section in reverse-planning generator output
+
+F-2b:
+  issue: L3_selected multiline completed evidence was not recognized
+  fix: recognize L3_selected ... completed: true pattern
+```
+
+ATLAS judged fixture files did not need changes.
 
 ## schema update
 
@@ -136,28 +170,23 @@ Repo schema now describes:
 
 Runtime / configured GPT reflection is not confirmed by repo update alone.
 
-## not yet confirmed
+## still not confirmed
 
-- ATLAS / local tests have not been run after this split.
 - Configured GPT Action schema has not been re-imported with v0.6.4.
 - Runtime-visible schema has not been confirmed.
 - Actual `delta_operations` update behavior for `next_operations.md` has not been fixture-confirmed.
+- Valid split active / next runtime write has not been fixture-confirmed.
 
 ## next action
 
-Ask ATLAS to run:
+Runtime / configured GPT reflection gate remains.
 
-```text
-npm test -- src/services/delta/operations-split.test.js
-npm test -- src/services/delta/reverse-planning-generator.test.js
-npm test
-```
-
-If tests pass, next runtime fixture should confirm:
+Next runtime fixture should confirm:
 
 - `deltaResourceWrite(resource=delta_operations, action=update, file=active_operations.md)` rejects embedded Next table.
 - `deltaResourceWrite(resource=delta_operations, action=update, file=next_operations.md)` rejects period block rows.
 - valid split active / next files can be updated with read_evidence.
+- configured GPT Action schema reflects v0.6.4 semantics.
 
 ## linked refs
 
@@ -167,3 +196,4 @@ If tests pass, next runtime fixture should confirm:
 - `src/services/delta/operations-split.test.js`
 - `systems/delta/config/delta_action_schema.yaml`
 - `notes/10_logs/2026-05-05_delta_reverse_planning_generator_scaffold.md`
+- `config/from-claude.md`
