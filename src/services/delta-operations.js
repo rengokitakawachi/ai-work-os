@@ -134,12 +134,13 @@ function hasReadPath(readEvidence, pattern) {
 }
 
 function extractDayBlock(content, day) {
+  const normalized = content.replace(/\r\n/g, '\n');
   const dayHeader = new RegExp(`^##\\s+${day}[^\\n]*$`, 'm');
-  const match = dayHeader.exec(content);
+  const match = dayHeader.exec(normalized);
   if (!match) return '';
 
   const start = match.index;
-  const rest = content.slice(start + match[0].length);
+  const rest = normalized.slice(start + match[0].length);
   const nextHeader = /^##\s+Day\d+[^\n]*$/m.exec(rest);
   const nextSection = /^---\s*\n\n#\s+Next operations:/m.exec(rest);
   const activeNextGuard = /^---\s*\n\n##\s+Active \/ Next connection guard/m.exec(rest);
@@ -147,7 +148,7 @@ function extractDayBlock(content, day) {
     .filter((index) => typeof index === 'number')
     .sort((a, b) => a - b);
   const endOffset = candidates.length > 0 ? candidates[0] : rest.length;
-  return content.slice(start, start + match[0].length + endOffset);
+  return normalized.slice(start, start + match[0].length + endOffset);
 }
 
 function extractTargetLines(block) {
@@ -266,7 +267,7 @@ function validateL1L2Continuity(content, errors) {
 
 function hasExplicitL3SelectedCompletion(content, subject) {
   const escaped = subject.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const explicitStructuredStatus = new RegExp(`${escaped}[\\s\\S]{0,500}(?:selected_completion_status\\s*[:：]\\s*completed|selected_questions\\s*[:：]\\s*completed|L3_selected\\s*[:：]\\s*completed|completed_selected\\s*[:：]\\s*true)`).test(content);
+  const explicitStructuredStatus = new RegExp(`${escaped}[\\s\\S]{0,500}(?:selected_completion_status\\s*[:：]\\s*completed|selected_questions\\s*[:：]\\s*completed|L3_selected\\s*[:：]\\s*completed|completed_selected\\s*[:：]\\s*true|L3_selected:[\\s\\S]{0,100}completed:\\s*true)`).test(content);
   const explicitSelectedLine = new RegExp(`${escaped}[^\\n]*(?:L3)?[^\\n]*選択[^\\n]*(?:completion_status\\s*[:：]\\s*completed|completed\\s*[:：]\\s*true)`).test(content);
   return explicitStructuredStatus || explicitSelectedLine;
 }

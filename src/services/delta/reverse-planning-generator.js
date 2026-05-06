@@ -245,6 +245,10 @@ generator:
   version: ${DELTA_REVERSE_PLANNING_GENERATOR_VERSION}
   mode: reverse_planning_catalog_gated
 
+source_of_truth:
+  active_operations_role: d0_to_d6_execution_source
+  next_operations_role: d7_to_medium_target_daily_plan_source
+
 roadmap_anchor:
   roadmap: systems/delta/roadmap/delta_roadmap.md
   exam_target: ${examDate}
