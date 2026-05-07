@@ -2,7 +2,7 @@
 
 ## status
 
-open_critical_investigation_required
+investigation_complete_user_decision_required
 
 ## severity
 
@@ -12,22 +12,24 @@ critical
 
 After ATLAS reported a corrupt root tree and recovery push during the DELTA active / next split main integration, ADAM expanded the investigation.
 
-Current judgment changed from `possible total history loss` to a more precise diagnosis:
+ATLAS later completed a non-destructive local investigation and reported the result to the user. The result was not pushed, so ADAM records it here as user-provided ATLAS evidence.
+
+Current diagnosis:
 
 ```yaml
-current_tree_restored: likely_yes
+current_tree_restored: yes
 README_only_corrupt_commits_in_history: confirmed
-full_repo_history_loss: not_confirmed
-many_core_file_histories: still_reachable
-config_path_relocation_or_duplication: confirmed_needs_review
-repair_strategy: not_decided
+total_history_loss: no
+older_commits_reachable: yes
+config_path_consistency: ng
+repair_strategy: user_decision_required
 ```
 
-The current file tree appears mostly restored, and many important file histories remain reachable. However, at least several corrupt commits with README-only trees remain in history, and config path consistency is suspect.
+The repository is not suffering total history loss. However, three README-only corrupt commits remain in history, and `config/ai/*` was accidentally flattened to `config/*` earlier in the ATLAS flow.
 
 ## immediate judgment
 
-Do not continue DELTA GPT schema / instruction update until repository history integrity is reviewed.
+Do not continue DELTA GPT schema / instruction update until the user decides how to handle repo history pollution and config canonical path.
 
 Do not run destructive git operations.
 
@@ -69,7 +71,7 @@ systems/delta/operations/next_operations.md: present
 
 This suggests the current tree is not empty.
 
-### README-only corrupt commits confirmed
+### README-only corrupt commits confirmed by ADAM
 
 ADAM directly checked corrupt commit refs.
 
@@ -126,7 +128,7 @@ notes/04_operations/active_operations.md:
 
 These results argue against total repo history loss.
 
-### Config path findings
+### Config path findings by ADAM
 
 Initial concern came from:
 
@@ -184,118 +186,136 @@ config_path_relocation: likely
 canonical_path_conflict: confirmed
 ```
 
-The current repository has root-level `config/*.md` / `config/*_action_schema.yaml` files, while ADAM rules still reference `config/ai/*` in several places. This may have happened at or before commit `fb74e86b...`, not necessarily during the later `eeba598a` recovery.
+The current repository has root-level `config/*.md` / `config/*_action_schema.yaml` files, while ADAM rules still reference `config/ai/*` in several places.
 
-### Config schema example
+### ATLAS non-destructive investigation result
 
-ADAM checked:
+User relayed ATLAS local investigation result.
+
+ATLAS reported:
 
 ```yaml
-config/adam_action_schema.yaml:
-  current: present
-  history_count: 3
-  commits:
-    - eeba598a
-    - 1a13c64
-    - fb74e86b
-
-config/ai/adam_action_schema.yaml:
-  current: NOT_FOUND at fb74e86b
-  history_count: 2
-  older_blob_exists_at: 800b2829
+current_tree_restored: yes
+origin_main: 48492e4
+origin_main_root_entries: 10
+README_only_corrupt_commits:
+  - 1a13c64
+  - 126409f
+  - 2c89e4f
+total_history_loss: no
+git_fsck: no_missing_or_corrupt_objects_only_dangling
+older_commits_reachable: yes
+pre_incident_normal_main_head: 74138c5
+recovery_commit: eeba598a
+post_recovery_adam_commits: 0de394b_to_48492e4
 ```
 
-This indicates root-level config files were already present by `fb74e86b`, and `config/ai/*` files were already absent by that point.
+ATLAS config path finding:
+
+```yaml
+commit: fb74e86b
+message: ATLAS test result: 102 pass / 4 fail
+finding: all config/ai/* files were renamed to config/*
+rename_examples:
+  - config/ai/adam_action_schema.yaml -> config/adam_action_schema.yaml
+  - config/ai/adam_instruction.md -> config/adam_instruction.md
+cause: accidental
+mechanism: ATLAS built config/ tree as flat structure with mktree during test result recording; git interpreted this as R100 renames
+current_main: config/* flat structure
+config_ai_current: absent
+```
+
+ATLAS repair options:
+
+```yaml
+Option_A:
+  summary: keep current state; eeba598a documents the recovery
+  force_push_required: no
+  ATLAS_recommendation: preferred
+
+Option_B:
+  summary: remove the 3 corrupt commits from history
+  force_push_required: yes
+
+Option_C:
+  summary: push config/ai/from-claude.md as config/from-claude.md
+  force_push_required: no
+```
+
+ATLAS stopped without code changes, commit, or push.
 
 ## current risk assessment
 
 ```yaml
-current_tree_restored: likely_yes
+current_tree_restored: yes
 core_file_histories_reachable: yes_for_sampled_files
 README_only_corrupt_commits_in_history: yes_confirmed
-config_path_consistency: broken_or_changed_needs_review
-normal_main_history: partially_preserved_but_polluted
-force_push_needed: unknown
-DELTA_GPT_schema_update: blocked_until_user_decides_risk
+total_history_loss: no
+config_path_consistency: ng
+normal_main_history: preserved_but_polluted
+force_push_needed_for_clean_history: yes
+force_push_needed_for_operational_continuation: no
+DELTA_GPT_schema_update: blocked_until_user_decides_risk_and_config_canonical_path
 ```
 
 ## suspected failure modes
 
-Several different issues may be overlapping:
+Confirmed overlapping issues:
 
 1. README-only corrupt commits were pushed to main and remain in history.
 2. Recovery commit rebuilt current tree, so file contents are mostly present again.
 3. Some path histories include corrupt commits because files disappeared and reappeared across README-only commits.
-4. Config path moved from `config/ai/*` to `config/*` around `fb74e86b` or earlier in the ATLAS flow; this may be intentional, accidental, or side effect of branch selection.
-5. ADAM instruction currently says canonical schema paths are `config/ai/*_schema.*`, but current main appears to hold root-level `config/*_schema.*` files.
+4. `config/ai/*` was accidentally flattened to `config/*` at `fb74e86b` before the later README-only recovery incident.
+5. ADAM instruction / archive entries still reference `config/ai/*` in places, while current main uses root `config/*`.
 
-## tomorrow investigation checklist
+## user decision required
 
-Ask ATLAS to report, without changing history:
+Decision point:
 
-```bash
-git fetch --all --prune
-git status
-git branch -vv
-git log --oneline --decorate --graph -40 --all
-git log --follow -- config/adam_instruction.md
-git log --follow -- config/ai/adam_instruction.md
-git log --follow -- config/adam_action_schema.yaml
-git log --follow -- config/ai/adam_action_schema.yaml
-git log --oneline --decorate --graph --all -- config/adam_instruction.md config/ai/adam_instruction.md
-git log --oneline --decorate --graph --all -- api/repo-resource.js
-git log --oneline --decorate --graph --all -- notes/04_operations/active_operations.md
-git ls-tree --name-only origin/main
-git ls-tree -r --name-only origin/main | sed -n '1,200p'
-git show --stat --oneline eeba598a73532ebe0022d14cc5da3892ab1acb89
-git show --stat --oneline 1a13c6438a7f095d30f2b996e141683d3393d5b0
-git show --stat --oneline 126409f
-git show --stat --oneline 2c89e4f
-git show --name-status --oneline fb74e86b59fc323327bb4581639f0ba5d1d2dd3a
-git fsck --full
+```yaml
+A_keep_current_history:
+  effect: no force-push; continue with polluted but operational history
+  must_follow_up:
+    - decide whether root config/* is now canonical
+    - update ADAM references from config/ai/* to config/* if root config is accepted
+    - optionally ask ATLAS to move unpushed config/ai/from-claude.md report to config/from-claude.md
+
+B_rewrite_history:
+  effect: clean out README-only corrupt commits and possibly accidental config relocation
+  requires: force-push
+  risk: high
+  must_follow_up:
+    - identify exact safe target / repair branch
+    - reapply DELTA integration and post-recovery ADAM logs
+    - user explicit approval required
+
+C_follow_up_config_report_only:
+  effect: ask ATLAS to copy unpushed local report from config/ai/from-claude.md to config/from-claude.md and push
+  requires: no force-push
+  risk: low, but does not solve history pollution or canonical path decision
 ```
 
-Need answers:
+## preliminary ADAM judgment
 
-- Is `origin/main` history actually broken / truncated, or only polluted by README-only commits?
-- Can pre-incident main head be identified?
-- Are older commits still reachable from main / all branches?
-- Did `fb74e86b` move config files from `config/ai/*` to `config/*`?
-- Was the config path move intentional or an accidental side effect of ATLAS using the wrong tree as base?
-- Are both current file contents and expected canonical paths correct?
-- Is repair possible with normal revert / follow-up commits, or is force-push required?
-- If force-push is needed, what exact safe target commit should be used?
-- How can the DELTA 9-file integration be reapplied on top of a clean historical main?
+Do not force-push immediately.
 
-## hard safety rules for tomorrow
+Operationally, Option A is plausible if the user accepts polluted history and if config canonical path is explicitly updated to root `config/*`.
+
+However, because the config path relocation was accidental, ADAM should not silently accept it. The user should decide whether to preserve root `config/*` as new canonical or restore `config/ai/*` via normal follow-up commit.
+
+## hard safety rules
 
 - No force-push without explicit user approval.
 - No reset of `main` without explicit user approval.
-- No delete / rewrite operations before identifying pre-incident normal main head.
+- No delete / rewrite operations before explicit repair strategy selection.
 - No DELTA GPT schema / instruction update until repository history integrity and config path canonical state are resolved or explicitly accepted.
-- Preserve current recovery state as evidence.
-- Treat `from-claude.md` statements as reports, not proof; verify with git commands.
-
-## likely repair direction
-
-Not yet decided.
-
-Potential safe direction if history pollution / config path regression is confirmed:
-
-1. Identify last known good `main` commit before the README-only corruption and before unintended config path relocation if any.
-2. Create a repair branch from that last known good commit.
-3. Reapply only approved changes:
-   - DELTA active / next split files
-   - prerequisite test fixes
-   - any legitimate from-claude / notes logs that must be preserved
-4. Preserve canonical config path intentionally, either root `config/*` or `config/ai/*`, but do not leave instruction and repo disagreeing.
-5. Run `npm test`.
-6. Compare tree contents against intended final state.
-7. Only after user approval, decide whether to replace `main`, revert, or add corrective commits.
+- Preserve backup branch `feature/backup-main-before-history-repair-2026-05-07`.
+- Treat unpushed `config/ai/from-claude.md` report as local ATLAS evidence only until pushed or copied.
 
 ## linked refs
 
 - `config/from-claude.md`
+- `config/ai/from-claude.md`
 - `config/adam_instruction.md`
 - `config/ai/adam_instruction.md`
 - `config/adam_action_schema.yaml`
