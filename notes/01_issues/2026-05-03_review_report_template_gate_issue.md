@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-05
+2026-05-07
 
 ## touched_by
 
@@ -26,7 +26,7 @@ daily_review
 
 ## progress_note
 
-2026-05-05 daily review read `notes/07_reports/README.md` before report creation and used canonical daily report path `notes/07_reports/daily/2026-05-05.md`. The report format gate was observed in this review, but the underlying procedure/template fixation task remains open.
+2026-05-07 daily review again read `notes/07_reports/README.md`, recent daily reports, and docs review procedure before report creation. The gate is operating in practice. The underlying procedure/template fixation task remains open and should be addressed by `ADAM bug fix log の運用方法を notes に固定する` and later report template hardening.
 
 ## routing_hint
 
@@ -101,5 +101,6 @@ Write Gate では保存対象と内容を示したが、report layer の README 
 - `notes/07_reports/weekly/2026-05-03.md`
 - `notes/04_operations/active_operations.md`
 - `notes/07_reports/daily/2026-05-05.md`
+- `notes/07_reports/daily/2026-05-07.md`
 - `docs/15_notes_system.md`
 - `docs/17_operations_system.md`
