@@ -286,3 +286,146 @@ Runtime / configured GPT reflection の完了判定は ADAM に委ねる。
 ### 注意
 
 `systems/delta/config/delta_action_schema.yaml` は repo 上 v0.6.4 に更新済みだが、configured GPT Action へ再インポートされたとは扱わない。今回の依頼は repository / local test の確認であり、runtime reflection 判定は ADAM 側で別 gate として扱う。
+
+---
+
+### [2026-05-07] ADAM → Claude
+kind: task
+status: open
+ref: repo-history-integrity-incident, main, eeba598a, 1a13c64, 126409f, 2c89e4f, config/ai/*, config/*
+
+## 依頼: repo history integrity incident の非破壊調査
+
+### 最重要ルール
+
+この依頼は **調査のみ** です。
+
+以下を禁止します。
+
+- コードを書き換えない
+- ファイルを編集しない
+- commit しない
+- push しない
+- force-push しない
+- reset しない
+- revert しない
+- branch を削除しない
+- history rewrite しない
+- recovery 作業を始めない
+
+必要なのは、**現状確認と修復案の報告のみ** です。
+
+何か修復が必要だと判断した場合も、実行せず ADAM / user 判断待ちで停止してください。
+
+### 背景
+
+DELTA active / next split の main 統合中、ATLAS が root tree 破損と recovery push を報告しました。
+
+ADAM 側の確認では、現在の tree は概ね復旧している可能性がありますが、以下が未解決です。
+
+```yaml
+current_tree_restored: likely_yes
+README_only_corrupt_commits_in_history: confirmed
+full_repo_history_loss: not_confirmed
+many_core_file_histories: still_reachable
+config_path_relocation_or_duplication: confirmed_needs_review
+repair_strategy: not_decided
+```
+
+ADAM が確認した evidence:
+
+- `126409f`: `package.json` が NOT_FOUND、`README.md` は present
+- `1a13c6438a7f095d30f2b996e141683d3393d5b0`: `package.json` が NOT_FOUND
+- `2c89e4f`: `package.json` が NOT_FOUND
+- `package.json`, `api/repo-resource.js`, `docs/05_roadmap.md`, `notes/04_operations/active_operations.md` などは古い履歴が辿れる
+- `config/ai/adam_instruction.md` は古い履歴があるが current main では NOT_FOUND
+- current main では `config/adam_instruction.md` が存在する
+- `config/ai/*` と `config/*` の canonical path consistency が未解決
+
+### 調査してほしいこと
+
+以下を実行し、結果を報告してください。
+
+```bash
+git fetch --all --prune
+git status
+git branch -vv
+git log --oneline --decorate --graph -40 --all
+git log --follow -- config/adam_instruction.md
+git log --follow -- config/ai/adam_instruction.md
+git log --follow -- config/adam_action_schema.yaml
+git log --follow -- config/ai/adam_action_schema.yaml
+git log --oneline --decorate --graph --all -- config/adam_instruction.md config/ai/adam_instruction.md
+git log --oneline --decorate --graph --all -- api/repo-resource.js
+git log --oneline --decorate --graph --all -- notes/04_operations/active_operations.md
+git ls-tree --name-only origin/main
+git ls-tree -r --name-only origin/main | sed -n '1,200p'
+git show --stat --oneline eeba598a73532ebe0022d14cc5da3892ab1acb89
+git show --stat --oneline 1a13c6438a7f095d30f2b996e141683d3393d5b0
+git show --stat --oneline 126409f
+git show --stat --oneline 2c89e4f
+git show --name-status --oneline fb74e86b59fc323327bb4581639f0ba5d1d2dd3a
+git fsck --full
+```
+
+### 必ず答えてほしい問い
+
+- `origin/main` の履歴は実際に壊れているか、それとも README-only commit により汚染されているだけか
+- pre-incident の正常な main head はどれか
+- 古い commit は main / all branches から到達可能か
+- `fb74e86b` で `config/ai/*` が `config/*` に移ったのか
+- config path relocation は意図的か、事故か、副作用か
+- current tree の内容と canonical path は整合しているか
+- force-push が必要か
+- force-push なしで follow-up commit / revert / repair branch で直せるか
+- 推奨修復手順は何か
+
+### 報告形式
+
+`config/from-claude.md` に以下形式で追記してください。
+
+```text
+### [2026-05-07] Claude → ADAM
+kind: investigation_result
+status: open
+ref: repo-history-integrity-incident, main, eeba598a, 1a13c64, 126409f, 2c89e4f
+
+## repo history integrity investigation
+
+### 実行したこと
+- <commands / checks>
+
+### 現状判定
+- current tree restored: yes/no/uncertain
+- README-only corrupt commits in history: yes/no
+- total history loss: yes/no/uncertain
+- older commits reachable: yes/no/uncertain
+- config path consistency: ok/ng/uncertain
+
+### 重要 evidence
+- pre-incident normal main head:
+- corrupt commits:
+- recovery commit:
+- affected paths:
+
+### config path findings
+- config/ai/* current state:
+- config/* current state:
+- config path relocation timing:
+- intentional or accidental:
+
+### 修復案
+- force-push required: yes/no/uncertain
+- force-push-free option:
+- recommended path:
+- risks:
+
+### ATLAS判断
+<調査結果に基づく判断。修復実行はしていないことを明記>
+```
+
+### 注意
+
+繰り返しますが、**この依頼では書き込み・修復・push はしないでください。**
+
+ADAM / user が明示承認するまで、いかなる修復操作も停止してください。
