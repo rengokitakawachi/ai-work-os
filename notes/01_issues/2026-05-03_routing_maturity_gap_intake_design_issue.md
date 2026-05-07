@@ -2,7 +2,7 @@
 
 ## status
 
-open
+progressed
 
 ## category
 
@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-05
+2026-05-07
 
 ## touched_by
 
@@ -26,11 +26,11 @@ daily_review
 
 ## progress_note
 
-2026-05-05 daily review confirmed this issue remains active-relevant but is not today's top execution target. Current mission-critical DELTA reverse-planning Immediate Gate takes priority. The related active task `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` remains in active_operations and should resume after the DELTA blocker is cleared or explicitly rerolled.
+2026-05-07 daily review confirmed the mission-critical DELTA reverse-planning Immediate Gate is now closed. The related active task `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` is unblocked and should continue after `ADAM bug fix log の運用方法を notes に固定する`, unless the next review reroll changes order. This issue remains relevant and should feed the active task rather than be fully routed during daily review.
 
 ## routing_hint
 
-keep_active_task_after_DELTA_blocker
+keep_active_task_after_bug_fix_log
 
 ## title
 
@@ -82,3 +82,4 @@ issue routing だけが先に運用段階へ進むと、未整理入力と desig
 - `notes/01_issues/idea_log.md`
 - `notes/04_operations/active_operations.md`
 - `notes/04_operations/next_operations.md`
+- `notes/07_reports/daily/2026-05-07.md`
