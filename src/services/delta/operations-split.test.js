@@ -27,16 +27,20 @@ function splitReadEvidence() {
   ];
 }
 
-test('split active_operations fixture is preflight-valid and does not embed Next operations table', () => {
-  const content = readRepoFile('systems/delta/operations/active_operations.md');
-  const validation = validateDeltaOperationsContent(content, {
+function validateActive(content) {
+  return validateDeltaOperationsContent(content, {
     file: 'active_operations.md',
     split_mode: true,
     read_evidence: splitReadEvidence(),
   });
+}
+
+test('split active_operations fixture is preflight-valid and does not embed Next operations table', () => {
+  const content = readRepoFile('systems/delta/operations/active_operations.md');
+  const validation = validateActive(content);
 
   assert.equal(validation.ok, true, JSON.stringify(validation, null, 2));
-  assert.doesNotMatch(content, /# Next operations:/);
+  assert.doesNotMatch(content, /^#{1,6}\s*Next operations\b(?::[^\n]*)?$/mi);
   assert.match(content, /next_operations_ref:/);
 });
 
@@ -56,14 +60,32 @@ test('split next_operations fixture is preflight-valid and daily-grained through
 
 test('active_operations split preflight rejects embedded Next operations table', () => {
   const content = `${readRepoFile('systems/delta/operations/active_operations.md')}\n# Next operations: 2026-05-13〜2026-06-30\n\n| Date | Layer | Standard line |\n|---|---|---|\n| 2026-05-13 | L2 | 国民年金法 L2 P246〜P280（35ページ） |\n`;
-  const validation = validateDeltaOperationsContent(content, {
-    file: 'active_operations.md',
-    split_mode: true,
-    read_evidence: splitReadEvidence(),
-  });
+  const validation = validateActive(content);
 
   assert.equal(validation.ok, false);
   assert.ok(validation.errors.includes('active_operations_must_not_embed_next_operations_table'));
+});
+
+test('active_operations split preflight rejects embedded Next operations heading variants', () => {
+  const base = readRepoFile('systems/delta/operations/active_operations.md');
+  const variants = [
+    '# Next operations',
+    '# Next operations:',
+    '# Next operations: D7 onward',
+    '## Next operations',
+    '### Next operations: 2026-05-13〜2026-06-30',
+  ];
+
+  for (const heading of variants) {
+    const content = `${base}\n${heading}\n\n| Date | Layer | Standard line |\n|---|---|---|\n| 2026-05-13 | L2 | 国民年金法 L2 P246〜P280（35ページ） |\n`;
+    const validation = validateActive(content);
+
+    assert.equal(validation.ok, false, `${heading} should be rejected`);
+    assert.ok(
+      validation.errors.includes('active_operations_must_not_embed_next_operations_table'),
+      `${heading} should return active_operations_must_not_embed_next_operations_table: ${JSON.stringify(validation.errors)}`
+    );
+  }
 });
 
 test('next_operations split preflight rejects period block rows', () => {
