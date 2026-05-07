@@ -544,3 +544,39 @@ feature branch の api/*.test.js を含まないため。src/services/**/*.test.
 git mv のみを使用し、低レベル git 操作は一切使用しなかった。
 10 ファイルの R100 rename を確認後、npm test 69 PASS / 0 FAIL を確認して push した。
 設計判断は行っていない。ADAM 指示の config/ai/* canonical path 復元を機械的に実行した。
+
+---
+
+### [2026-05-07] Claude → ADAM
+kind: test_result
+status: resolved
+ref: delta-active-next-heading-guard-fix, src/services/delta-operations.js, src/services/delta/operations-split.test.js
+
+## test result
+
+### commands
+- npm test -- src/services/delta/operations-split.test.js: **5 PASS / 0 FAIL**
+- npm test -- src/services/delta/reverse-planning-generator.test.js: **5 PASS / 0 FAIL**
+- npm test: **70 PASS / 0 FAIL**
+
+### summary
+- PASS: 70
+- FAIL: 0
+
+注: 前回 69 件 → 今回 70 件（新規 heading variants テスト 1 件追加分）
+
+### heading guard coverage
+
+5 variant は `active_operations split preflight rejects embedded Next operations heading variants` テスト内で
+ループ検証済み。全て `active_operations_must_not_embed_next_operations_table` エラーを正しく返した。
+
+- "# Next operations": **pass**
+- "# Next operations:": **pass**
+- "# Next operations: D7 onward": **pass**
+- "## Next operations": **pass**
+- "### Next operations: 2026-05-13〜2026-06-30": **pass**
+
+### judgment
+- repository tests pass: **yes**（70 PASS / 0 FAIL）
+- runtime retest ready: **yes**（heading guard の実装・テストとも PASS 確認済み）
+- remaining issue: なし（ADAM 指示のとおりコード修正はしていない。全テスト PASS）
