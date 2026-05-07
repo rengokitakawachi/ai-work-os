@@ -18,36 +18,29 @@ Open immediate gates:
 
 Last review:
 
-- type: critical incident limited daily review
-- date: 2026-05-06
-- daily_report: `notes/07_reports/daily/2026-05-06.md`
-- active_reroll: intentionally_not_applied
-- todoist_projection_status: not_applied
-- reason: repo history integrity incident was unresolved at review time
+- type: daily review
+- date: 2026-05-07
+- daily_report: `notes/07_reports/daily/2026-05-07.md`
+- active_reroll: applied
+- todoist_projection_status: pending_apply_after_active_update
 
 Latest gate closure:
 
 - gate: DELTA reverse-planning operations generator を実装・確認する
 - status: resolved
 - completed_at: 2026-05-07
+- archived_to: `notes/04_operations/archive_operations.md`
 - evidence:
   - notes/10_logs/2026-05-07_delta_configured_action_schema_v0_6_4_user_confirmed.md
   - notes/10_logs/2026-05-07_delta_configured_instruction_user_confirmed.md
-  - notes/10_logs/2026-05-07_delta_runtime_reflection_blocked_actual_behavior_unconfirmed.md
-  - notes/10_logs/2026-05-07_delta_runtime_fixture_active_next_guard_failure.md
   - notes/10_logs/2026-05-07_delta_active_next_heading_guard_fix.md
-  - notes/10_logs/2026-05-07_delta_runtime_fixture_retest_resolved_main_sources_missing.md
   - notes/10_logs/2026-05-07_delta_main_source_files_imported.md
   - notes/10_logs/2026-05-07_delta_main_source_read_confirmation_resolved.md
 - result:
-  - repo / backend split implementation confirmed
   - configured GPT Action schema v0.6.4 user-confirmed
   - configured DELTA instruction user-confirmed
   - runtime-visible deltaResourceGet / deltaResourceWrite confirmed
-  - runtime write surface for delta_operations confirmed
-  - active_operations embedded Next operations heading/table reject confirmed
-  - next_operations period block row reject confirmed
-  - valid no-op update with read_evidence confirmed
+  - runtime active / next split guard confirmed
   - required main source files readable on main confirmed
 
 Latest incident closure:
@@ -64,15 +57,8 @@ Latest incident closure:
   status: resolved
   completed: true
   completed_at: 2026-05-07
+  archived_to: `notes/04_operations/archive_operations.md`
   evidence_ref:
-    - notes/02_design/2026-05-05_delta_operations_generation_engine.md
-    - notes/02_design/2026-05-07_config_canonical_path_repair_plan.md
-    - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
-    - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
-    - notes/10_logs/2026-05-05_delta_reverse_planning_generator_scaffold.md
-    - notes/10_logs/2026-05-05_delta_active_next_operations_split.md
-    - notes/10_logs/2026-05-06_delta_main_merge_recovery_and_backend_ready.md
-    - notes/10_logs/2026-05-06_repo_history_integrity_incident_after_atlas_recovery.md
     - notes/10_logs/2026-05-07_delta_configured_action_schema_v0_6_4_user_confirmed.md
     - notes/10_logs/2026-05-07_delta_configured_instruction_user_confirmed.md
     - notes/10_logs/2026-05-07_delta_runtime_reflection_blocked_actual_behavior_unconfirmed.md
@@ -90,7 +76,6 @@ Latest incident closure:
     - systems/delta/config/delta_action_schema.yaml
     - src/services/delta-operations.js
     - src/services/delta/reverse-planning-generator.js
-    - src/services/delta/reverse-planning-generator.test.js
     - src/services/delta/operations-split.test.js
   result:
     - DELTA active / next split repository implementation confirmed
@@ -99,10 +84,6 @@ Latest incident closure:
     - configured DELTA instruction confirmed by user
     - runtime actual behavior confirmed for active / next split guard
     - runtime read confirmation confirmed all required main sources
-  notes:
-    - README-only corrupt commits remain in history under user-approved Option A
-    - root `config/adam_schema.yaml` and `config/eve_schema.yaml` remain to classify later as internal / legacy schemas
-    - runtime fixture branch `feature/delta-runtime-fixture-2026-05-07-v2` is disposable
 
 - task: repo history integrity incident after ATLAS recovery を調査・復旧方針を決める
   status: operationally_resolved
@@ -123,37 +104,18 @@ Latest incident closure:
   status: completed_scope_only
   completed_at: 2026-05-05
   archived_to: `notes/04_operations/archive_operations.md`
-  evidence_ref:
-    - config/ai/from-claude.md
-    - notes/10_logs/2026-05-05_delta_operations_generator_service_implementation.md
 
 - gate: ADAM / EVE instruction configured GPT reflection を確認する
   status: resolved
   completed: true
   completed_at: 2026-05-05
   archived_to: `notes/04_operations/archive_operations.md`
-  evidence_ref:
-    - notes/08_analysis/2026-05-05_adam_eve_instruction_reflection_check.md
-
-- gate: DELTA operations generation engine configured GPT reflection / runtime fixture を確認する
-  status: resolved_by_reverse_planning_gate
-  completed: true
-  completed_at: 2026-05-07
-  evidence_ref:
-    - notes/10_logs/2026-05-07_delta_main_source_read_confirmation_resolved.md
-    - notes/10_logs/2026-05-07_delta_runtime_fixture_retest_resolved_main_sources_missing.md
-    - notes/10_logs/2026-05-07_delta_active_next_heading_guard_fix.md
-
-- task: ADAM / EVE / DELTA の Action schema 正規ファイル名ルールを固定する
-  status: completed
-  completed_at: 2026-05-04
-  archived_to: `notes/04_operations/archive_operations.md`
 
 ---
 
-## Day0（05/07 木）
+## Day0（05/08 金）
 
-Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal active order. Because the day already contained critical incident / runtime closure work, execute only one small next task before the next review unless user explicitly continues.
+Capacity note: 約2h。DELTA critical gate が閉じたため、ADAM governance の小〜中タスクへ復帰する。
 
 - task: ADAM bug fix log の運用方法を notes に固定する
   source_ref:
@@ -162,13 +124,12 @@ Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal ac
     - docs/15_notes_system.md
     - notes/01_issues/2026-05-03_review_report_template_gate_issue.md
     - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
-    - notes/04_operations/next_operations.md
     - notes/10_logs/2026-05-04_adam_immediate_gate_judgment_miss.md
     - notes/10_logs/2026-05-05_adam_delta_reverse_planning_gate_misjudgment.md
     - notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md
     - notes/10_logs/2026-05-06_repo_history_integrity_incident_after_atlas_recovery.md
   rolling_day: Day0
-  due_date: 2026-05-07
+  due_date: 2026-05-08
   due_type: date
   status: active
   completed_condition:
@@ -193,7 +154,7 @@ Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal ac
     - docs/15_notes_system.md
     - docs/17_operations_system.md
   rolling_day: Day0
-  due_date: 2026-05-07
+  due_date: 2026-05-08
   due_type: date
   status: active
   completed_condition:
@@ -209,7 +170,9 @@ Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal ac
   external:
     todoist_task_id: 6gWr53gP72vVPvjH
 
-## Day1（05/08 金）
+## Day1（05/09 土）
+
+Capacity note: 約2h。DELTA gate closure 後の後続 fixture / schema 整理を実行する。
 
 - task: DELTA chapter-only normalization fixture を実行する
   source_ref:
@@ -220,9 +183,9 @@ Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal ac
     - systems/delta/operations/next_operations.md
     - systems/delta/history/daily/2026-05-05.md
   rolling_day: Day1
-  due_date: 2026-05-08
+  due_date: 2026-05-09
   due_type: date
-  status: next_active_after_day0
+  status: active_unblocked
   completed_condition:
     - `健康保険法の3章が終わった` ケースで、L3なら question_id への正規化または uncertaintyが必要と判断する
     - `国民年金法7章が終わった` ケースで、L1/L2なら page_range / next_start_page が必要と判断する
@@ -230,8 +193,6 @@ Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal ac
     - 実データを読んだ上で、推測で precise progress を作らない
   external:
     todoist_task_id: 6gWVwmxWFcf9Wp4H
-
-## Day2（05/09 土）
 
 - task: DELTA write resource schema reflection gate を整理する
   source_ref:
@@ -242,14 +203,41 @@ Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal ac
     - systems/delta/operations/active_operations.md
     - systems/delta/operations/next_operations.md
     - notes/02_design/2026-05-05_delta_operations_generation_engine.md
-    - notes/10_logs/2026-05-05_delta_operations_generation_engine_gap.md
     - api/repo-resource.js
     - src/services/delta-operations.js
-  rolling_day: Day2
+  rolling_day: Day1
   due_date: 2026-05-09
+  due_type: date
   status: active_unblocked
   external:
     todoist_task_id: 6gWVwp3j8jW25jPH
+
+## Day2（05/10 日）
+
+Capacity note: Sunday. Sunday Weekly Review Mode applies if daily review is requested. Do not double-run reroll / Todoist projection.
+
+- task: Sunday Weekly Review Mode を実行する
+  source_ref:
+    - docs/17_operations_system.md
+    - docs/15_notes_system.md
+    - notes/04_operations/active_operations.md
+    - notes/04_operations/next_operations.md
+    - notes/04_operations/archive_operations.md
+    - notes/07_reports/weekly/2026-05-03.md
+    - notes/01_issues/2026-05-03_review_report_template_gate_issue.md
+    - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
+  rolling_day: Day2
+  due_date: 2026-05-10
+  due_type: date
+  status: recurring_review_due
+  completed_condition:
+    - daily close を先に行う
+    - weekly review を後に行う
+    - archive_operations snapshot を保存する
+    - issue routing check を実行する
+    - inbox / issue / design / future / operations 滞留を確認する
+    - active_operations / next_operations を週次で再設計する
+    - Todoist projection を一度だけ判断・実行する
 
 - task: DELTA Todoist projection profile を設計・実装する
   source_ref:
@@ -258,15 +246,13 @@ Capacity note: DELTA reverse-planning Immediate Gate is closed. Resume normal ac
     - systems/delta/operations/active_operations.md
     - config/ai/adam_action_schema.yaml
   rolling_day: Day2
-  due_date: 2026-05-09
+  due_date: 2026-05-10
   due_type: date
-  status: active_unblocked
+  status: active_unblocked_after_review_if_capacity
   external:
     todoist_task_id: 6gWVwpw43m9q8Cfq
 
-## Day3（05/10 日）
-
-Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday Weekly Review Mode applies. Do not double-run reroll / Todoist projection.
+## Day3（05/11 月）
 
 - task: DELTA Todoist dry_run / apply / write-back fixture を実行する
   source_ref:
@@ -274,7 +260,7 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
     - src/services/tasks/projection.js
     - systems/delta/config/delta_schema.yaml
   rolling_day: Day3
-  due_date: 2026-05-10
+  due_date: 2026-05-11
   due_type: date
   blocked_by:
     - DELTA Todoist projection profile を設計・実装する
@@ -288,12 +274,12 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
     - notes/08_analysis/2026-04-30_phase0_hardening_weekly_readiness_review_draft.md
     - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
   rolling_day: Day3
-  due_date: 2026-05-10
+  due_date: 2026-05-11
   due_type: date
   external:
     todoist_task_id: 6gW4H8Wx6C8cp8hH
 
-## Day4（05/11 月）
+## Day4（05/12 火）
 
 - task: docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する
   source_ref:
@@ -303,7 +289,7 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
     - docs/15_notes_system.md
     - docs/17_operations_system.md
   rolling_day: Day4
-  due_date: 2026-05-11
+  due_date: 2026-05-12
   due_type: date
   external:
     todoist_task_id: 6gWG92HjPG42mh4q
@@ -313,7 +299,7 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
     - notes/04_operations/next_operations.md
     - notes/07_reports/weekly/2026-05-03.md
   rolling_day: Day4
-  due_date: 2026-05-11
+  due_date: 2026-05-12
   due_type: date
   completed_condition:
     - next_operations の候補を dependency / blocker / phase priority で再評価する
@@ -323,7 +309,7 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
   external:
     todoist_task_id: 6gWjr8pQXPfC9fjH
 
-## Day5（05/12 火）
+## Day5（05/13 水）
 
 - task: repo history / show / grep の docs・schema・runtime reflection 残範囲を再確認する
   source_ref:
@@ -331,7 +317,7 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
     - config/ai/adam_action_schema.yaml
     - notes/08_analysis/2026-04-30_phase0_hardening_followup_candidate_routing.md
   rolling_day: Day5
-  due_date: 2026-05-12
+  due_date: 2026-05-13
   due_type: date
   external:
     todoist_task_id: 6gW4H8h3P22gwPvq
@@ -342,14 +328,14 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
     - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
     - notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
   rolling_day: Day5
-  due_date: 2026-05-12
+  due_date: 2026-05-13
   due_type: date
   notes:
     - 最新 OpenAI 情報を扱う場合は web / official source 確認が必要
   external:
     todoist_task_id: 6gWG92RX28p37gfq
 
-## Day6（05/13 水）
+## Day6（05/14 木）
 
 - task: Phase 1 Outlook Calendar API の読取設計を整理する
   source_ref:
@@ -357,7 +343,7 @@ Capacity note: Sunday. If weekly review is due and not already satisfied, Sunday
     - docs/05_roadmap.md
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
   rolling_day: Day6
-  due_date: 2026-05-13
+  due_date: 2026-05-14
   due_type: date
   external:
     todoist_task_id: 6gW4H8g4c2HCvvRH
