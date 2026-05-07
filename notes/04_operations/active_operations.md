@@ -22,7 +22,12 @@ Last review:
 - date: 2026-05-07
 - daily_report: `notes/07_reports/daily/2026-05-07.md`
 - active_reroll: applied
-- todoist_projection_status: pending_apply_after_active_update
+- todoist_projection_status: applied
+- todoist_projection_request_id: `02413b72-e611-4b3d-926d-daf8d7c24cad`
+- todoist_projection_result:
+  - closed: `DELTA reverse-planning operations generator を実装・確認する` / `6gX9jR6g4Rpcm2pq`
+  - created: `Sunday Weekly Review Mode を実行する` / `6gXh2qjvc69qcMQq`
+  - updated_existing_tasks: 12
 
 Latest gate closure:
 
@@ -238,6 +243,8 @@ Capacity note: Sunday. Sunday Weekly Review Mode applies if daily review is requ
     - inbox / issue / design / future / operations 滞留を確認する
     - active_operations / next_operations を週次で再設計する
     - Todoist projection を一度だけ判断・実行する
+  external:
+    todoist_task_id: 6gXh2qjvc69qcMQq
 
 - task: DELTA Todoist projection profile を設計・実装する
   source_ref:
