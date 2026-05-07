@@ -2,7 +2,7 @@
 
 ## status
 
-investigation_complete_user_decision_required
+option_a_selected_config_path_repair_required
 
 ## severity
 
@@ -14,6 +14,17 @@ After ATLAS reported a corrupt root tree and recovery push during the DELTA acti
 
 ATLAS later completed a non-destructive local investigation and reported the result to the user. The result was not pushed, so ADAM records it here as user-provided ATLAS evidence.
 
+User decision on 2026-05-07:
+
+```yaml
+selected_option: A_keep_current_history
+force_push: no
+reset_main: no
+keep_current_main: yes
+README_only_commits: remain_in_history_with_incident_explanation
+next_required_repair: config_canonical_path_consistency
+```
+
 Current diagnosis:
 
 ```yaml
@@ -22,18 +33,18 @@ README_only_corrupt_commits_in_history: confirmed
 total_history_loss: no
 older_commits_reachable: yes
 config_path_consistency: ng
-repair_strategy: user_decision_required
+repair_strategy: option_a_no_force_push
 ```
 
 The repository is not suffering total history loss. However, three README-only corrupt commits remain in history, and `config/ai/*` was accidentally flattened to `config/*` earlier in the ATLAS flow.
 
 ## immediate judgment
 
-Do not continue DELTA GPT schema / instruction update until the user decides how to handle repo history pollution and config canonical path.
+Do not force-push.
 
-Do not run destructive git operations.
+Do not reset `main`.
 
-Do not ask ATLAS to force-push, reset, or rewrite history without explicit ADAM / user approval.
+Continue from current `main`, but do not proceed to DELTA GPT schema / instruction update until config canonical path consistency is repaired or explicitly accepted.
 
 ## observed evidence
 
@@ -244,6 +255,34 @@ Option_C:
 
 ATLAS stopped without code changes, commit, or push.
 
+## user decision
+
+User selected Option A on 2026-05-07.
+
+Decision meaning:
+
+```yaml
+force_push: no
+reset_main: no
+rewrite_history: no
+current_main: keep
+README_only_corrupt_commits: keep_with_incident_explanation
+backup_branch: preserve feature/backup-main-before-history-repair-2026-05-07
+```
+
+This does not by itself settle config canonical path.
+
+ADAM recommendation for config path remains:
+
+```yaml
+preferred_config_canonical_path: config/ai/*
+reason:
+  - ADAM instruction and historical procedure reference config/ai/*
+  - archive evidence references config/ai/*
+  - root config/* relocation was accidental
+  - accepting root config/* silently would convert an accident into architecture
+```
+
 ## current risk assessment
 
 ```yaml
@@ -255,7 +294,7 @@ config_path_consistency: ng
 normal_main_history: preserved_but_polluted
 force_push_needed_for_clean_history: yes
 force_push_needed_for_operational_continuation: no
-DELTA_GPT_schema_update: blocked_until_user_decides_risk_and_config_canonical_path
+DELTA_GPT_schema_update: blocked_until_config_canonical_path_repair
 ```
 
 ## suspected failure modes
@@ -268,47 +307,29 @@ Confirmed overlapping issues:
 4. `config/ai/*` was accidentally flattened to `config/*` at `fb74e86b` before the later README-only recovery incident.
 5. ADAM instruction / archive entries still reference `config/ai/*` in places, while current main uses root `config/*`.
 
-## user decision required
+## next required action
 
-Decision point:
+Prepare a non-destructive normal-commit repair plan for config canonical path.
+
+The next investigation / repair planning should answer:
 
 ```yaml
-A_keep_current_history:
-  effect: no force-push; continue with polluted but operational history
-  must_follow_up:
-    - decide whether root config/* is now canonical
-    - update ADAM references from config/ai/* to config/* if root config is accepted
-    - optionally ask ATLAS to move unpushed config/ai/from-claude.md report to config/from-claude.md
-
-B_rewrite_history:
-  effect: clean out README-only corrupt commits and possibly accidental config relocation
-  requires: force-push
-  risk: high
-  must_follow_up:
-    - identify exact safe target / repair branch
-    - reapply DELTA integration and post-recovery ADAM logs
-    - user explicit approval required
-
-C_follow_up_config_report_only:
-  effect: ask ATLAS to copy unpushed local report from config/ai/from-claude.md to config/from-claude.md and push
-  requires: no force-push
-  risk: low, but does not solve history pollution or canonical path decision
+- Which root config/* files should move back under config/ai/*?
+- Which root config/* files should remain at root, if any?
+- How should config/from-adam.md and config/from-claude.md be handled?
+- Should ATLAS's unpushed config/ai/from-claude.md investigation report be copied into config/from-claude.md before or during repair?
+- What references in notes / docs / instructions need path correction?
+- Can the repair be done by normal commit without force-push?
+- What test / read-back checks are required after repair?
 ```
-
-## preliminary ADAM judgment
-
-Do not force-push immediately.
-
-Operationally, Option A is plausible if the user accepts polluted history and if config canonical path is explicitly updated to root `config/*`.
-
-However, because the config path relocation was accidental, ADAM should not silently accept it. The user should decide whether to preserve root `config/*` as new canonical or restore `config/ai/*` via normal follow-up commit.
 
 ## hard safety rules
 
-- No force-push without explicit user approval.
-- No reset of `main` without explicit user approval.
-- No delete / rewrite operations before explicit repair strategy selection.
-- No DELTA GPT schema / instruction update until repository history integrity and config path canonical state are resolved or explicitly accepted.
+- No force-push.
+- No reset of `main`.
+- No history rewrite.
+- No delete / rewrite operations before explicit config repair plan selection.
+- No DELTA GPT schema / instruction update until config path canonical state is resolved or explicitly accepted.
 - Preserve backup branch `feature/backup-main-before-history-repair-2026-05-07`.
 - Treat unpushed `config/ai/from-claude.md` report as local ATLAS evidence only until pushed or copied.
 
