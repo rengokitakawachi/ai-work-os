@@ -2,7 +2,7 @@
 
 ## status
 
-ready_for_user_approved_atlas_git_mv_repair
+completed
 
 ## context
 
@@ -16,7 +16,7 @@ keep_current_main: yes
 README_only_commits: remain_in_history_with_incident_explanation
 ```
 
-Option A resolves the history-rewrite question, but it does not resolve the config canonical path issue.
+Option A resolved the history-rewrite question, but it did not resolve the config canonical path issue.
 
 ATLAS investigation found that commit `fb74e86b` accidentally flattened `config/ai/*` into `config/*`:
 
@@ -35,80 +35,6 @@ Cause:
 ATLAS built config/ tree as a flat structure with mktree during test result recording; Git interpreted this as R100 renames.
 ```
 
-## current main state verified by ADAM
-
-Root-level files exist and are part of the AI config set:
-
-```yaml
-config/adam_instruction.md: present
-config/eve_instruction.md: present
-config/adam_action_schema.yaml: present
-config/eve_action_schema.yaml: present
-config/adam_knowledge.md: present
-config/eve_knowledge.md: present
-config/adam_review_cadence_knowledge.md: present
-config/from-adam.md: present
-config/from-claude.md: present
-config/dialogue.md: present_readonly_archive
-```
-
-`config/ai/*` files are absent:
-
-```yaml
-config/ai/adam_instruction.md: NOT_FOUND
-config/ai/eve_instruction.md: NOT_FOUND
-config/ai/adam_action_schema.yaml: NOT_FOUND
-config/ai/eve_action_schema.yaml: NOT_FOUND
-config/ai/adam_knowledge.md: NOT_FOUND
-config/ai/eve_knowledge.md: NOT_FOUND
-config/ai/adam_review_cadence_knowledge.md: NOT_FOUND
-config/ai/from-adam.md: NOT_FOUND
-config/ai/from-claude.md: NOT_FOUND
-config/ai/dialogue.md: NOT_FOUND
-```
-
-DELTA config files are not root `config/*` files and must not be moved in this repair:
-
-```yaml
-config/delta_action_schema.yaml: NOT_FOUND
-config/delta_schema.yaml: NOT_FOUND
-config/delta_instruction.md: NOT_FOUND
-config/delta_operations_generation_schema.yaml: NOT_FOUND
-systems/delta/config/*: out_of_scope_for_this_repair
-```
-
-## reference evidence
-
-`config/ai/*` is still referenced as canonical or expected path in current repository content:
-
-```yaml
-config/adam_instruction.md:
-  - line 108: config/ai/*_schema.* update is not runtime reflection
-
-config/adam_knowledge.md:
-  - references config/ai/*_schema.*
-
-config/adam_review_cadence_knowledge.md:
-  - supplements config/ai/adam_instruction.md
-
-config/dialogue.md:
-  - references config/ai/from-adam.md
-  - references config/ai/from-claude.md
-  - references config/ai/adam_instruction.md
-  - references config/ai/adam_knowledge.md
-  - references config/ai/eve_instruction.md
-
-docs/10_repo_resource_api.md:
-  - documents config/ai/adam_instruction.md examples
-  - documents config/ai/*.md and config/ai/*.yaml
-
-archive_operations / notes references:
-  - prior evidence references config/ai/adam_action_schema.yaml
-  - prior evidence references config/ai/eve_action_schema.yaml
-  - prior evidence references config/ai/adam_instruction.md
-  - prior evidence references config/ai/eve_instruction.md
-```
-
 ## ADAM judgment
 
 `config/ai/*` should remain the canonical path.
@@ -121,38 +47,33 @@ Reasons:
 - Silently accepting root `config/*` would convert an operational accident into system design.
 - Runtime / configured GPT schema tasks already depend on a stable canonical path rule.
 
-## repair goal
+## executed repair
 
-Repair by normal commit only.
-
-Do not rewrite history.
-
-Do not force-push.
-
-Do not reset main.
-
-Target end state:
+ATLAS executed the repair by normal git move and normal push.
 
 ```yaml
-canonical_config_paths:
-  - config/ai/adam_instruction.md
-  - config/ai/eve_instruction.md
-  - config/ai/adam_action_schema.yaml
-  - config/ai/eve_action_schema.yaml
-  - config/ai/adam_knowledge.md
-  - config/ai/eve_knowledge.md
-  - config/ai/adam_review_cadence_knowledge.md
-  - config/ai/from-adam.md
-  - config/ai/from-claude.md
-  - config/ai/dialogue.md
-
-root_config_paths:
-  expected_after_repair: none_for_ai_config
+commit: 71acfc3
+message: Restore config ai canonical paths after history incident
+push: normal_push
+force_push: no
+reset: no
+history_rewrite: no
+npm_test: 69 PASS / 0 FAIL
 ```
 
-## approved move set proposal
+ATLAS report was saved in:
 
-Move root-level AI config files back under `config/ai/`:
+```yaml
+path: config/ai/from-claude.md
+sha: 611b147c494edbf0346560ae63f07b98bb136e07
+entries:
+  - repo history integrity investigation_result
+  - config canonical path repair_result
+```
+
+## completed move set
+
+Moved root-level AI config files back under `config/ai/`:
 
 ```yaml
 move_back:
@@ -168,114 +89,117 @@ move_back:
   config/dialogue.md: config/ai/dialogue.md
 ```
 
-Do not move:
+ADAM read-back verification:
 
 ```yaml
-- systems/delta/config/*
-- src/*
-- api/*
-- docs/*
-- notes/*
+config/ai/adam_instruction.md:
+  status: present
+  sha: 88acd8ed6489fabcec2c192a7449ff87c2213964
+
+config/ai/from-claude.md:
+  status: present
+  sha: 611b147c494edbf0346560ae63f07b98bb136e07
+  contains_investigation_result: yes
+  contains_repair_result: yes
+
+config/adam_instruction.md:
+  status: NOT_FOUND
+
+config/from-claude.md:
+  status: NOT_FOUND
 ```
 
-## dialogue archive decision
-
-`config/dialogue.md` is a read-only archive.
-
-It should still move back to `config/ai/dialogue.md` because:
-
-- its own header points to `config/ai/from-adam.md` and `config/ai/from-claude.md`
-- historical refs are `config/ai/dialogue.md`
-- the file is part of the ADAM / Claude AI config communication layer
-
-## from-claude investigation report issue
-
-ATLAS wrote the investigation report locally to `config/ai/from-claude.md`, but did not push.
-
-Because current main has root `config/from-claude.md`, ADAM currently only has the user-relayed summary, not the actual pushed report.
-
-Preferred handling for the repair commit:
+Root files remaining:
 
 ```yaml
-- first git mv config/from-claude.md config/ai/from-claude.md
-- then append the local unpushed investigation_result entry to config/ai/from-claude.md if ATLAS still has it
-- do not lose existing config/from-claude.md entries
+config/adam_schema.yaml:
+  status: present
+  sha: cd4c5f51f95f88c20393a8bf9cc66a992c0e0ca0
+  treatment: root legacy/internal schema, not part of AI canonical path repair
+
+config/eve_schema.yaml:
+  status: present
+  treatment: root legacy/internal schema, not part of AI canonical path repair
 ```
 
-If ATLAS cannot safely append the local report, skip append and report that the local investigation result was not persisted. ADAM already recorded the user-relayed summary in the incident log.
-
-## recommended repair execution path
-
-Use ATLAS, but only with a constrained normal-git procedure.
-
-Reason:
-
-- Local git can perform proper `git mv` preserving rename semantics.
-- `repoResourceWrite` does not support atomic move/rename.
-- Multiple create/delete operations through ADAM would be riskier and less transparent.
-
-## ATLAS repair constraints
-
-Allowed:
+DELTA config files were not moved:
 
 ```yaml
-- git status
-- mkdir -p config/ai
-- git mv config/<approved_file> config/ai/<same_file>
-- append local investigation_result to config/ai/from-claude.md only if already available and safe
-- npm test
-- git diff --stat
-- git diff --name-status
-- git status
-- commit normal working tree changes only after checking diff
-- push only if explicitly instructed in the prompt
+systems/delta/config/*: unchanged_by_repair
 ```
 
-Forbidden:
+## test count note
+
+ATLAS reported:
 
 ```yaml
-- git mktree
-- git commit-tree
-- low-level tree object construction
-- force-push
-- reset main
-- rewrite history
-- delete files outside approved path list
-- edit src/services or systems/delta as part of this repair
-- change file contents except appending approved investigation report if requested
+npm_test: 69 PASS / 0 FAIL
 ```
 
-## completed condition for config path repair
+ATLAS explanation:
+
+```text
+npm test の件数が 115 → 69 に変わっているのは、origin/main (daae441) の現時点の test suite が feature branch の api/*.test.js を含まないため。src/services/**/*.test.js の 9 ファイル・69 件が正。
+```
+
+ADAM has not independently rerun tests. Treat the test count explanation as ATLAS-reported until repository test configuration is reviewed.
+
+## safety checks
+
+ATLAS reported:
 
 ```yaml
-- current main contains config/ai/adam_instruction.md
-- current main contains config/ai/eve_instruction.md
-- current main contains config/ai/adam_action_schema.yaml
-- current main contains config/ai/eve_action_schema.yaml
-- current main contains config/ai/from-adam.md
-- current main contains config/ai/from-claude.md
-- current main contains config/ai/adam_knowledge.md
-- current main contains config/ai/eve_knowledge.md
-- current main contains config/ai/adam_review_cadence_knowledge.md
-- current main contains config/ai/dialogue.md
-- root duplicate config/adam_instruction.md etc. are absent
-- systems/delta/config/* remains unchanged
-- npm test passes or no code-affecting changes are confirmed
-- no history rewrite occurred
-- backup branch remains intact
+used_git_mv_only: yes
+used_mktree: no
+used_commit_tree: no
+force_push: no
+systems_delta_config_changed: no
+src_changed: no
+api_changed: no
+docs_changed: no
+notes_changed: no
+investigation_report_persisted: yes
 ```
 
-## next ADAM action
+ADAM observed:
 
-Provide ATLAS a constrained `git mv`-only repair prompt.
+```yaml
+config_ai_canonical_restored: yes
+root_duplicate_config_adam_instruction_absent: yes
+root_duplicate_config_from_claude_absent: yes
+```
 
-ADAM should not use low-level git or synthetic tree construction for this repair.
+## remaining issues
+
+- `notes/04_operations/active_operations.md` still contains some stale refs to `config/from-claude.md` and should be corrected during the next operations update / review.
+- README-only corrupt commits remain in history by user-approved Option A.
+- Root `config/adam_schema.yaml` and `config/eve_schema.yaml` remain and should be classified later as internal / legacy schemas.
+- DELTA GPT Action schema / instruction update can resume only after ADAM confirms active gate state and current main backend state are still acceptable.
+
+## completed condition result
+
+```yaml
+current_main_contains_config_ai_adam_instruction: yes
+current_main_contains_config_ai_eve_instruction: reported_yes
+current_main_contains_config_ai_adam_action_schema: reported_yes
+current_main_contains_config_ai_eve_action_schema: reported_yes
+current_main_contains_config_ai_from_adam: reported_yes
+current_main_contains_config_ai_from_claude: yes
+current_main_contains_config_ai_adam_knowledge: reported_yes
+current_main_contains_config_ai_eve_knowledge: reported_yes
+current_main_contains_config_ai_adam_review_cadence_knowledge: reported_yes
+current_main_contains_config_ai_dialogue: reported_yes
+root_duplicate_config_adam_instruction_absent: yes
+root_duplicate_config_from_claude_absent: yes
+systems_delta_config_unchanged: reported_yes
+no_history_rewrite: yes
+backup_branch_intact: assumed_yes
+```
 
 ## linked refs
 
 - `notes/10_logs/2026-05-06_repo_history_integrity_incident_after_atlas_recovery.md`
-- `config/adam_instruction.md`
 - `config/ai/adam_instruction.md`
-- `config/from-adam.md`
-- `config/from-claude.md`
+- `config/ai/from-adam.md`
+- `config/ai/from-claude.md`
 - `docs/10_repo_resource_api.md`
