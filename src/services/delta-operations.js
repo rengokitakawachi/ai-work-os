@@ -7,7 +7,7 @@ import {
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
 export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md', 'next_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_05_active_next_split';
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_07_active_next_heading_guard';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
 
@@ -59,7 +59,8 @@ const FORBIDDEN_VAGUE_TARGETS = [
 const L1_L2_PAGE_PATTERN = /P\d+〜P\d+（\d+ページ）/;
 const L3_QUESTION_PATTERN = /Q\d+-\d+〜Q\d+-\d+（\d+問(?:、[^）]+)?）/;
 const REST_OR_UNAVAILABLE_PATTERN = /新規L1\/L2\/L3なし|L3不可|休養|rest_or_light_review/;
-const NEXT_OPERATIONS_PATTERN = /#\s*Next operations:/;
+const NEXT_OPERATIONS_PATTERN = /^#{1,6}\s*Next operations\b(?::[^\n]*)?$/mi;
+const NEXT_OPERATIONS_SECTION_AFTER_SEPARATOR_PATTERN = /^---\s*\n\n#{1,6}\s+Next operations\b(?::[^\n]*)?$/mi;
 const NEXT_OPERATIONS_REF_PATTERN = /next_operations_ref:[\s\S]{0,500}systems\/delta\/operations\/next_operations\.md/;
 const EXISTING_NEXT_OPS_READ_PATTERN = /existing_next_operations_read|existing_next_operations_was_read|next_operations_was_read|source_of_truth:[\s\S]*operations_role|current_position_primary_source/;
 const COMPLETED_SCOPE_PATTERN = /completed_scope|completed_subject|健康保険法L3の新規演習は完了扱い|健康保険法[\s\S]{0,80}completed/;
@@ -133,8 +134,12 @@ function hasReadPath(readEvidence, pattern) {
   return readEvidence.some((item) => pattern.test(item.file) || pattern.test(item.path));
 }
 
+function normalizeContent(content) {
+  return String(content || '').replace(/\r\n/g, '\n');
+}
+
 function extractDayBlock(content, day) {
-  const normalized = content.replace(/\r\n/g, '\n');
+  const normalized = normalizeContent(content);
   const dayHeader = new RegExp(`^##\\s+${day}[^\\n]*$`, 'm');
   const match = dayHeader.exec(normalized);
   if (!match) return '';
@@ -142,7 +147,7 @@ function extractDayBlock(content, day) {
   const start = match.index;
   const rest = normalized.slice(start + match[0].length);
   const nextHeader = /^##\s+Day\d+[^\n]*$/m.exec(rest);
-  const nextSection = /^---\s*\n\n#\s+Next operations:/m.exec(rest);
+  const nextSection = NEXT_OPERATIONS_SECTION_AFTER_SEPARATOR_PATTERN.exec(rest);
   const activeNextGuard = /^---\s*\n\n##\s+Active \/ Next connection guard/m.exec(rest);
   const candidates = [nextHeader?.index, nextSection?.index, activeNextGuard?.index]
     .filter((index) => typeof index === 'number')
@@ -181,9 +186,10 @@ function validateForbiddenVagueTargetsInDay(day, block, errors) {
 }
 
 function extractNextOperations(content) {
-  const match = NEXT_OPERATIONS_PATTERN.exec(content);
+  const normalized = normalizeContent(content);
+  const match = NEXT_OPERATIONS_PATTERN.exec(normalized);
   if (!match) return '';
-  return content.slice(match.index);
+  return normalized.slice(match.index);
 }
 
 function validateReadEvidence(readEvidence, errors, { split = false } = {}) {
@@ -226,7 +232,7 @@ function validateCompletedScope(content, errors) {
 
 function hasIncompleteNationalPensionL1L2(content) {
   if (!content.includes('国民年金法')) return false;
-  const normalized = content.replace(/\r\n/g, '\n');
+  const normalized = normalizeContent(content);
   const hasNationalPension = normalized.includes('国民年金法');
   const hasIncomplete = /completion_status\s*[:：]\s*incomplete|status\s*[:：]\s*incomplete|\bincomplete\b|未完了/.test(normalized);
   const hasNextPage = /next_start_page\s*[:：]\s*["']?P(?:158|220)["']?|P158以降未完了|P220以降未完了/.test(normalized);
@@ -289,9 +295,7 @@ function validateL3Order(content, errors) {
     let selectedSeen = hasExplicitL3SelectedCompletion(content, subject);
 
     for (const line of lines) {
-      if (lineHasSubjectL3Type(line, subject, '選択')) {
-        selectedSeen = true;
-      }
+      if (lineHasSubjectL3Type(line, subject, '選択')) selectedSeen = true;
       if (lineHasSubjectL3Type(line, subject, '択一') && !selectedSeen) {
         errors.push(`L3_order_violation_${subject}_takuitsu_before_selected`);
         break;
@@ -325,7 +329,7 @@ function validateActiveNextSplit(content, errors) {
 }
 
 function parseNextRows(content) {
-  return content
+  return normalizeContent(content)
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => NEXT_ROW_PATTERN.test(line))
@@ -341,20 +345,21 @@ function parseNextRows(content) {
 }
 
 function validateNextOperationsDailyPlan(content, errors, warnings) {
-  if (!/^#\s+delta next_operations/m.test(content)) errors.push('missing_delta_next_operations_title');
-  if (!/active_operations_ref:\s*systems\/delta\/operations\/active_operations\.md/.test(content)) errors.push('missing_active_operations_ref');
-  if (!/target_date:\s*2026-06-30/.test(content)) errors.push('missing_target_date_2026_06_30');
-  if (!NEXT_OPERATIONS_PATTERN.test(content)) errors.push('missing_next_operations_section');
+  const normalized = normalizeContent(content);
+  if (!/^#\s+delta next_operations/m.test(normalized)) errors.push('missing_delta_next_operations_title');
+  if (!/active_operations_ref:\s*systems\/delta\/operations\/active_operations\.md/.test(normalized)) errors.push('missing_active_operations_ref');
+  if (!/target_date:\s*2026-06-30/.test(normalized)) errors.push('missing_target_date_2026_06_30');
+  if (!NEXT_OPERATIONS_PATTERN.test(normalized)) errors.push('missing_next_operations_section');
 
-  const rangeRows = content.split('\n').filter((line) => DATE_RANGE_ROW_PATTERN.test(line.trim()));
+  const rangeRows = normalized.split('\n').filter((line) => DATE_RANGE_ROW_PATTERN.test(line.trim()));
   if (rangeRows.length > 0) errors.push(`next_operations_period_block_rows_forbidden:${rangeRows.length}`);
 
-  const rows = parseNextRows(content);
+  const rows = parseNextRows(normalized);
   const rowDates = new Set(rows.map((row) => row.date));
 
   if (!rowDates.has('2026-05-13')) errors.push('missing_next_operations_start_date:2026-05-13');
   if (!rowDates.has('2026-06-30')) errors.push('missing_next_operations_target_date:2026-06-30');
-  if (!/2026-05-13[\s\S]{0,120}P246〜P280（35ページ）/.test(content)) errors.push('missing_active_next_connection_first_row');
+  if (!/2026-05-13[\s\S]{0,120}P246〜P280（35ページ）/.test(normalized)) errors.push('missing_active_next_connection_first_row');
 
   for (const row of rows) {
     const isRest = /確認日|判定|回収日|L3不可|なし/.test(row.standardLine);
@@ -366,9 +371,9 @@ function validateNextOperationsDailyPlan(content, errors, warnings) {
     }
   }
 
-  if (/2026-05-10[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_05_10_unavailable');
-  if (/2026-06-13[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_06_13_unavailable');
-  if (!/2026-06-30[\s\S]{0,120}L3/.test(content)) warnings.push('annual_leave_2026_06_30_l3_not_used');
+  if (/2026-05-10[\s\S]{0,120}\|\s*L3\s*\|/.test(normalized)) errors.push('L3_scheduled_on_2026_05_10_unavailable');
+  if (/2026-06-13[\s\S]{0,120}\|\s*L3\s*\|/.test(normalized)) errors.push('L3_scheduled_on_2026_06_13_unavailable');
+  if (!/2026-06-30[\s\S]{0,120}L3/.test(normalized)) warnings.push('annual_leave_2026_06_30_l3_not_used');
 }
 
 export function validateDeltaOperationsContent(content, options = {}) {
@@ -377,14 +382,15 @@ export function validateDeltaOperationsContent(content, options = {}) {
   const readEvidence = normalizeReadEvidence(options.read_evidence);
   const file = typeof options.file === 'string' ? options.file.trim() : '';
   const splitMode = Boolean(options.split_mode || file === 'active_operations.md' || file === 'next_operations.md');
+  const normalized = normalizeContent(content);
 
-  if (typeof content !== 'string' || content.trim().length === 0) {
+  if (normalized.trim().length === 0) {
     errors.push('content_empty');
     return { ok: false, errors, warnings, read_evidence: readEvidence, validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION };
   }
 
   if (file === 'next_operations.md') {
-    validateNextOperationsDailyPlan(content, errors, warnings);
+    validateNextOperationsDailyPlan(normalized, errors, warnings);
     return {
       ok: errors.length === 0,
       errors,
@@ -395,24 +401,24 @@ export function validateDeltaOperationsContent(content, options = {}) {
   }
 
   validateReadEvidence(readEvidence, errors, { split: splitMode });
-  validatePreGenerationEvidence(content, errors);
-  validateCompletedScope(content, errors);
-  validateL1L2Continuity(content, errors);
-  validateL3Order(content, errors);
-  validateActiveDays(content, errors);
+  validatePreGenerationEvidence(normalized, errors);
+  validateCompletedScope(normalized, errors);
+  validateL1L2Continuity(normalized, errors);
+  validateL3Order(normalized, errors);
+  validateActiveDays(normalized, errors);
 
   if (splitMode) {
-    validateActiveNextSplit(content, errors);
-  } else if (!NEXT_OPERATIONS_PATTERN.test(content)) {
+    validateActiveNextSplit(normalized, errors);
+  } else if (!NEXT_OPERATIONS_PATTERN.test(normalized)) {
     errors.push('missing_next_operations_section');
   }
 
-  const highPageMatches = [...content.matchAll(/（(\d+)ページ）/g)]
+  const highPageMatches = [...normalized.matchAll(/（(\d+)ページ）/g)]
     .map((match) => Number(match[1]))
     .filter((pageCount) => Number.isFinite(pageCount) && pageCount > 50);
   if (highPageMatches.length > 0) warnings.push(`l1_l2_page_count_above_guard:${highPageMatches.join(',')}`);
 
-  const highQuestionMatches = [...content.matchAll(/択一[^\n]*（(\d+)問/g)]
+  const highQuestionMatches = [...normalized.matchAll(/択一[^\n]*（(\d+)問/g)]
     .map((match) => Number(match[1]))
     .filter((questionCount) => Number.isFinite(questionCount) && questionCount > 25);
   if (highQuestionMatches.length > 0) warnings.push(`l3_multiple_choice_count_above_guard:${highQuestionMatches.join(',')}`);
