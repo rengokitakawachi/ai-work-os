@@ -2,7 +2,7 @@
 
 ## status
 
-proposal_ready_no_write_repair_yet
+ready_for_user_approved_atlas_git_mv_repair
 
 ## context
 
@@ -37,15 +37,19 @@ ATLAS built config/ tree as a flat structure with mktree during test result reco
 
 ## current main state verified by ADAM
 
-Root-level files exist:
+Root-level files exist and are part of the AI config set:
 
 ```yaml
 config/adam_instruction.md: present
 config/eve_instruction.md: present
 config/adam_action_schema.yaml: present
 config/eve_action_schema.yaml: present
+config/adam_knowledge.md: present
+config/eve_knowledge.md: present
+config/adam_review_cadence_knowledge.md: present
 config/from-adam.md: present
 config/from-claude.md: present
+config/dialogue.md: present_readonly_archive
 ```
 
 `config/ai/*` files are absent:
@@ -55,8 +59,22 @@ config/ai/adam_instruction.md: NOT_FOUND
 config/ai/eve_instruction.md: NOT_FOUND
 config/ai/adam_action_schema.yaml: NOT_FOUND
 config/ai/eve_action_schema.yaml: NOT_FOUND
+config/ai/adam_knowledge.md: NOT_FOUND
+config/ai/eve_knowledge.md: NOT_FOUND
+config/ai/adam_review_cadence_knowledge.md: NOT_FOUND
 config/ai/from-adam.md: NOT_FOUND
 config/ai/from-claude.md: NOT_FOUND
+config/ai/dialogue.md: NOT_FOUND
+```
+
+DELTA config files are not root `config/*` files and must not be moved in this repair:
+
+```yaml
+config/delta_action_schema.yaml: NOT_FOUND
+config/delta_schema.yaml: NOT_FOUND
+config/delta_instruction.md: NOT_FOUND
+config/delta_operations_generation_schema.yaml: NOT_FOUND
+systems/delta/config/*: out_of_scope_for_this_repair
 ```
 
 ## reference evidence
@@ -129,11 +147,10 @@ canonical_config_paths:
   - config/ai/dialogue.md
 
 root_config_paths:
-  allowed_only_if_explicitly_non_ai:
-    - TBD
+  expected_after_repair: none_for_ai_config
 ```
 
-## proposed file moves
+## approved move set proposal
 
 Move root-level AI config files back under `config/ai/`:
 
@@ -151,16 +168,25 @@ move_back:
   config/dialogue.md: config/ai/dialogue.md
 ```
 
-Need confirm current existence before actual repair:
+Do not move:
 
 ```yaml
-must_check_before_write:
-  - config/adam_knowledge.md
-  - config/eve_knowledge.md
-  - config/adam_review_cadence_knowledge.md
-  - config/dialogue.md
-  - any other current config/* files
+- systems/delta/config/*
+- src/*
+- api/*
+- docs/*
+- notes/*
 ```
+
+## dialogue archive decision
+
+`config/dialogue.md` is a read-only archive.
+
+It should still move back to `config/ai/dialogue.md` because:
+
+- its own header points to `config/ai/from-adam.md` and `config/ai/from-claude.md`
+- historical refs are `config/ai/dialogue.md`
+- the file is part of the ADAM / Claude AI config communication layer
 
 ## from-claude investigation report issue
 
@@ -168,63 +194,41 @@ ATLAS wrote the investigation report locally to `config/ai/from-claude.md`, but 
 
 Because current main has root `config/from-claude.md`, ADAM currently only has the user-relayed summary, not the actual pushed report.
 
-Preferred handling:
+Preferred handling for the repair commit:
 
 ```yaml
-before_or_during_repair:
-  - ask ATLAS to provide the investigation report content
-  - append it to canonical config/ai/from-claude.md during the path repair commit
-  - do not lose existing config/from-claude.md entries
+- first git mv config/from-claude.md config/ai/from-claude.md
+- then append the local unpushed investigation_result entry to config/ai/from-claude.md if ATLAS still has it
+- do not lose existing config/from-claude.md entries
 ```
 
-Do not ask ATLAS to push a separate root `config/from-claude.md` update if canonical restoration is about to move it back to `config/ai/from-claude.md`, unless needed for evidence preservation.
+If ATLAS cannot safely append the local report, skip append and report that the local investigation result was not persisted. ADAM already recorded the user-relayed summary in the incident log.
 
-## repair strategy options
+## recommended repair execution path
 
-### Option R1: ADAM prepares full replacement tree through repoResourceWrite
+Use ATLAS, but only with a constrained normal-git procedure.
 
-Pros:
-
-- ADAM can construct exact canonical file contents from current root config files.
-- Normal commit only.
-- No force-push.
-
-Cons:
-
-- `repoResourceWrite` does not support move/rename as atomic operation.
-- Creating `config/ai/*` and deleting root `config/*` would require multiple writes.
-- Deleting root files must be handled carefully and may be outside current safe path.
-- Large multi-file content writes increase risk during incident recovery.
-
-### Option R2: ATLAS executes mechanical path repair after ADAM approval
-
-Pros:
+Reason:
 
 - Local git can perform proper `git mv` preserving rename semantics.
-- Easier to run `npm test` and inspect tree.
-- Can stage all path moves in one normal commit.
+- `repoResourceWrite` does not support atomic move/rename.
+- Multiple create/delete operations through ADAM would be riskier and less transparent.
 
-Cons:
-
-- ATLAS caused the prior mktree incidents; must strictly forbid mktree / low-level tree construction.
-- Must use plain `git mv`, not manual tree object creation.
-- Must not make design decisions.
-
-Recommended: R2, but only with a very constrained prompt.
-
-## ATLAS repair constraints if R2 is selected
+## ATLAS repair constraints
 
 Allowed:
 
 ```yaml
 - git status
-- git mv config/<file> config/ai/<file>
-- append supplied investigation report to config/ai/from-claude.md if provided
+- mkdir -p config/ai
+- git mv config/<approved_file> config/ai/<same_file>
+- append local investigation_result to config/ai/from-claude.md only if already available and safe
 - npm test
 - git diff --stat
 - git diff --name-status
-- commit normal working tree changes
-- push only after ADAM/user explicit approval
+- git status
+- commit normal working tree changes only after checking diff
+- push only if explicitly instructed in the prompt
 ```
 
 Forbidden:
@@ -250,11 +254,12 @@ Forbidden:
 - current main contains config/ai/eve_action_schema.yaml
 - current main contains config/ai/from-adam.md
 - current main contains config/ai/from-claude.md
-- current main contains config/ai/adam_knowledge.md if root version exists
-- current main contains config/ai/eve_knowledge.md if root version exists
-- current main contains config/ai/adam_review_cadence_knowledge.md if root version exists
-- root duplicate config/adam_instruction.md etc. are absent unless explicitly retained
-- docs / notes references do not contradict canonical path
+- current main contains config/ai/adam_knowledge.md
+- current main contains config/ai/eve_knowledge.md
+- current main contains config/ai/adam_review_cadence_knowledge.md
+- current main contains config/ai/dialogue.md
+- root duplicate config/adam_instruction.md etc. are absent
+- systems/delta/config/* remains unchanged
 - npm test passes or no code-affecting changes are confirmed
 - no history rewrite occurred
 - backup branch remains intact
@@ -262,12 +267,9 @@ Forbidden:
 
 ## next ADAM action
 
-Before asking ATLAS to execute repair, ADAM should:
+Provide ATLAS a constrained `git mv`-only repair prompt.
 
-1. Verify full current `config/*` inventory.
-2. Decide whether `config/dialogue.md` should move back to `config/ai/dialogue.md` or remain archived / read-only.
-3. Decide how to preserve ATLAS's unpushed investigation report.
-4. Provide ATLAS a constrained `git mv`-only prompt.
+ADAM should not use low-level git or synthetic tree construction for this repair.
 
 ## linked refs
 
