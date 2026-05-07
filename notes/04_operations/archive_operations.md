@@ -12,6 +12,45 @@ weekly review までの短期履歴置き場であり、
 
 ## Current week completed tasks
 
+### 2026-05-07
+
+- task: DELTA reverse-planning operations generator を実装・確認する
+  completed_at: 2026-05-07
+  source_ref:
+    - notes/02_design/2026-05-05_delta_operations_generation_engine.md
+    - notes/10_logs/2026-05-07_delta_configured_action_schema_v0_6_4_user_confirmed.md
+    - notes/10_logs/2026-05-07_delta_configured_instruction_user_confirmed.md
+    - notes/10_logs/2026-05-07_delta_runtime_reflection_blocked_actual_behavior_unconfirmed.md
+    - notes/10_logs/2026-05-07_delta_runtime_fixture_active_next_guard_failure.md
+    - notes/10_logs/2026-05-07_delta_active_next_heading_guard_fix.md
+    - notes/10_logs/2026-05-07_delta_runtime_fixture_retest_resolved_main_sources_missing.md
+    - notes/10_logs/2026-05-07_delta_main_source_files_imported.md
+    - notes/10_logs/2026-05-07_delta_main_source_read_confirmation_resolved.md
+    - systems/delta/roadmap/delta_roadmap.md
+    - systems/delta/plan/2026_sharoushi_exam_plan.md
+    - systems/delta/history/daily/2026-05-05.md
+    - systems/delta/operations/active_operations.md
+    - systems/delta/operations/next_operations.md
+    - systems/delta/config/delta_action_schema.yaml
+    - src/services/delta-operations.js
+    - src/services/delta/reverse-planning-generator.js
+    - src/services/delta/operations-split.test.js
+    - config/ai/from-claude.md
+  completed_evidence:
+    - configured GPT Action schema v0.6.4 user-confirmed
+    - configured DELTA instruction user-confirmed
+    - runtime-visible `deltaResourceGet` / `deltaResourceWrite` confirmed
+    - runtime `delta_operations` allowed files include `active_operations.md` and `next_operations.md`
+    - active embedded `# Next operations` heading/table reject confirmed after ADAM validator fix
+    - next period-block row reject confirmed
+    - valid no-op update with read_evidence confirmed
+    - main required source files readable: roadmap / plan / latest daily history / active / next
+    - active_operations Immediate Gate marked resolved
+  remaining_risk:
+    - README-only corrupt commits remain in repository history under user-approved Option A
+    - root `config/adam_schema.yaml` and `config/eve_schema.yaml` still require later classification as internal / legacy schema
+    - DELTA disposable runtime fixture branches can be cleaned later if needed
+
 ### 2026-05-05
 
 - task: ADAM / EVE instruction configured GPT reflection を確認する
@@ -44,8 +83,7 @@ weekly review までの短期履歴置き場であり、
     - runtime preflight negative / positive fixtures PASS
     - daytime recommendation fixture PASS
   remaining_risk:
-    - original DELTA reverse-planning issue remains open and is tracked by Immediate Gate `DELTA reverse-planning operations generator を実装・確認する`
-    - this archive entry covers only minimum generator / test readiness, not original defect closure
+    - original DELTA reverse-planning issue was later tracked and closed by `DELTA reverse-planning operations generator を実装・確認する`
 
 ### 2026-05-04
 
