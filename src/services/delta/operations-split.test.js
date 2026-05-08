@@ -27,6 +27,33 @@ function splitReadEvidence() {
   ];
 }
 
+function buildActiveWithDay6(day6DueDate) {
+  return `# delta active_operations
+
+## Day6（${day6DueDate}）
+
+- task: Active Day6 connection source
+  due_date: ${day6DueDate}
+  plan_anchor: test
+  expected_position: 国民年金法 L2 P245完了
+  current_position: test
+  gap_status: test
+  operation_mode: test
+  must_line:
+    - 国民年金法 L2 P236〜P240（5ページ）
+  standard_line:
+    - 国民年金法 L2 P236〜P245（10ページ）
+  stretch_line:
+    - 国民年金法 L2 P236〜P245（10ページ）
+  recovery_targets:
+    - test
+  defer_targets:
+    - test
+  recompute_triggers:
+    - test
+`;
+}
+
 test('split active_operations fixture is preflight-valid and does not embed Next operations table', () => {
   const content = readRepoFile('systems/delta/operations/active_operations.md');
   const validation = validateDeltaOperationsContent(content, {
@@ -48,10 +75,32 @@ test('split next_operations fixture is preflight-valid and daily-grained through
   });
 
   assert.equal(validation.ok, true, JSON.stringify(validation, null, 2));
-  assert.match(content, /# Next operations: 2026-05-13〜2026-06-30/);
-  assert.match(content, /\| 2026-05-13 \|/);
+  assert.match(content, /# Next operations: \d{4}-\d{2}-\d{2}〜2026-06-30/);
   assert.match(content, /\| 2026-06-30 \|/);
   assert.doesNotMatch(content, /^\|\s*2026-06-01〜2026-06-30\s*\|/m);
+});
+
+test('next_operations split preflight accepts D7 start from active Day6 plus one day', () => {
+  const content = readRepoFile('systems/delta/operations/next_operations.md');
+  const validation = validateDeltaOperationsContent(content, {
+    file: 'next_operations.md',
+    split_mode: true,
+    active_operations_content: buildActiveWithDay6('2026-05-12'),
+  });
+
+  assert.equal(validation.ok, true, JSON.stringify(validation, null, 2));
+});
+
+test('next_operations split preflight rejects stale start date when active Day6 moved', () => {
+  const content = readRepoFile('systems/delta/operations/next_operations.md');
+  const validation = validateDeltaOperationsContent(content, {
+    file: 'next_operations.md',
+    split_mode: true,
+    active_operations_content: buildActiveWithDay6('2026-05-15'),
+  });
+
+  assert.equal(validation.ok, false);
+  assert.ok(validation.errors.some((error) => error === 'next_operations_start_date_must_follow_active_day6:2026-05-13:expected:2026-05-16'));
 });
 
 test('active_operations split preflight rejects embedded Next operations table', () => {
