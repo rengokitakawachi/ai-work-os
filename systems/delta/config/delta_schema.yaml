@@ -41,6 +41,7 @@ write_resources:
     root: systems/delta/operations/
     allowed_files:
       - active_operations.md
+      - next_operations.md
     actions:
       - update
     role: next_action_operations_update
@@ -216,6 +217,7 @@ models:
       - compare_expected_position_and_current_position
       - validate_recovery_line_calibration_before_operations_write
       - update_active_operations
+      - update_next_operations
       - report_history_sha_and_operations_sha
     output_fields:
       - next_day_main_objective
@@ -235,11 +237,17 @@ models:
       - next_review_checkpoint
     write_target:
       resource: delta_operations
-      file: active_operations.md
-      canonical_path: systems/delta/operations/active_operations.md
+      files:
+        - active_operations.md
+        - next_operations.md
+      canonical_paths:
+        - systems/delta/operations/active_operations.md
+        - systems/delta/operations/next_operations.md
     rules:
       - daily_review_is_not_complete_after_history_write_alone
       - active_operations_must_be_updated_after_daily_history_confirmation
+      - next_operations_must_be_updated_after_active_operations_when_rolling_changes_d7
+      - next_operations_start_date_must_follow_active_day6
       - tomorrow_questions_read_saved_operations_not_recomputed_by_default
       - actual_performance_records_remain_in_daily_history
       - on_track_requires_plan_alignment_not_only_daily_execution
