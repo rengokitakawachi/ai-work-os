@@ -2,13 +2,13 @@
 
 ## Metadata
 
-version: delta_v0.8_next_operations_2026_05_09_weekends_l3_only_commute_exception_confirmed
+version: delta_v0.9_next_operations_2026_05_17_after_2026_05_09_daily_review
 updated_at: 2026-05-09
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_restored_after_runtime_fixture_tests
+operation_status: next_operations_d7_to_target_after_active_roll_2026_05_10_2026_05_16
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
-next_start_date: 2026-05-16
+next_start_date: 2026-05-17
 
 ## Purpose
 
@@ -38,14 +38,14 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: e705ebda3e4e536c333e03cca82829b28cc3aee2
-  expected_active_range: 2026-05-09〜2026-05-15
-  active_day6_due_date: 2026-05-15
-  active_day6_expected_position: 厚生年金保険法 L1 P110完了、L2 P80完了。国民年金法L1/L2 P277完了
-  next_start_date: 2026-05-16
+  active_sha: 7a0dcad9514ab271e649e87897d63164717063ee
+  expected_active_range: 2026-05-10〜2026-05-16
+  active_day6_due_date: 2026-05-16
+  active_day6_expected_position: 厚生年金保険法 L1 P110完了、L2 P80完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q9-6完了
+  next_start_date: 2026-05-17
   connection_rule: next_operations starts after active Day6
-  connection_status: connected_to_active_day6_2026_05_15
-  next_day_first_line: 2026-05-16 国民年金法 択一 Q7-1〜Q7-2（2問）＋Q8-1〜Q8-3（3問）＋Q9-1〜Q9-10（10問）
+  connection_status: connected_to_active_day6_2026_05_16
+  next_day_first_line: 2026-05-17 国民年金法 択一 Q9-7〜Q9-10（4問）＋Q10-0（演習対象なし）＋Q11-1〜Q11-7（7問）＋Q12-1（1問）＋Q13-1〜Q13-2（2問）
 
 ## Planning assumptions
 
@@ -71,12 +71,11 @@ special_day_overrides:
 
 ---
 
-# Next operations: 2026-05-16〜2026-06-30
+# Next operations: 2026-05-17〜2026-06-30
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-16 | L3 | 国民年金法 択一 Q7-1〜Q7-2（2問）＋Q8-1〜Q8-3（3問）＋Q9-1〜Q9-10（10問） |
-| 2026-05-17 | L3 | 国民年金法 択一 Q10-0（演習対象なし）＋Q11-1〜Q11-7（7問）＋Q12-1（1問）＋Q13-1〜Q13-2（2問） |
+| 2026-05-17 | L3 | 国民年金法 択一 Q9-7〜Q9-10（4問）＋Q10-0（演習対象なし）＋Q11-1〜Q11-7（7問）＋Q12-1（1問）＋Q13-1〜Q13-2（2問） |
 | 2026-05-18 | L1 | 厚生年金保険法 L1 P111〜P155（45ページ） |
 | 2026-05-19 | L2 | 厚生年金保険法 L2 P81〜P125（45ページ） |
 | 2026-05-20 | L1 | 厚生年金保険法 L1 P156〜P200（45ページ） |
@@ -144,7 +143,7 @@ special_day_overrides:
 
 required_granularity: daily
 required_range:
-  start: 2026-05-16
+  start: 2026-05-17
   end: 2026-06-30
 required_fields_per_row:
   - Date
@@ -174,10 +173,10 @@ preflight_check_result:
   prior_daily_history_was_read: true
   active_operations_was_read: true
   next_operations_was_read: true
-  active_day6_next_start_connection_target: 2026-05-16
-  next_start_date: 2026-05-16
-  header_start_date: 2026-05-16
-  first_row_date: 2026-05-16
+  active_day6_next_start_connection_target: 2026-05-17
+  next_start_date: 2026-05-17
+  header_start_date: 2026-05-17
+  first_row_date: 2026-05-17
   D7_target_next_operations_exists: true
   daily_granularity_preserved: true
   period_block_absent: true
