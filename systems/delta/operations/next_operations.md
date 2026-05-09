@@ -2,10 +2,10 @@
 
 ## Metadata
 
-version: delta_v0.6_next_operations_after_2026_05_09_sequence_correction
+version: delta_v0.6_next_operations_after_2026_05_09_first_pass_priority_patch
 updated_at: 2026-05-09
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_sequence_corrected
+operation_status: next_operations_d7_to_target_first_pass_priority_corrected
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
 next_start_date: 2026-05-16
@@ -18,6 +18,10 @@ latest_in_day_history: systems/delta/history/daily/2026-05-09.md
 
 - `active_operations.md` owns D0〜D6 only.
 - `next_operations.md` owns D7〜target_date.
+- DELTA canonical branch is feature/atlas-pre-delta-foundation unless explicitly overridden.
+- 2026-06-30までに1巡完了を優先する。
+- 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
+- △・×・確認対象は記録だけ残し、1巡目中の新規学習には再投入しない。
 - Daily review reads roadmap / plan / daily history / active_operations / next_operations before rolling.
 - Actual performance records are written to daily history, not operations.
 
@@ -27,6 +31,7 @@ source_of_truth:
   next_operations_role: d7_to_medium_target_daily_plan_source
   active_operations_role: d0_to_d6_execution_source
   actual_primary_source: systems/delta/history/daily/YYYY-MM-DD.md
+  canonical_branch: feature/atlas-pre-delta-foundation
   roadmap_source: systems/delta/roadmap/delta_roadmap.md
   plan_source: systems/delta/plan/2026_sharoushi_exam_plan.md
   todoist_role: projection_only
@@ -35,14 +40,14 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: cb98c7f7c5b488129489d78802f804a253d95464
+  active_sha: b980de87e0e24afd8ab59c3779cadb4ffcad1b65
   expected_active_range: 2026-05-09〜2026-05-15
   active_day6_due_date: 2026-05-15
   active_day6_expected_position: 厚生年金保険法 L2 P35完了
   next_start_date: 2026-05-16
   connection_rule: next_operations starts after active Day6
   connection_status: connected_to_active_day6_2026_05_15
-  next_day_first_line: 2026-05-16 国民年金法 L3 択一 Q4-1〜Q4-1（1問）＋回収Q1-1・Q2-2・Q3-2（3問）
+  next_day_first_line: 2026-05-16 国民年金法 L3 択一 Q4-1〜Q4-1（1問・新規通過のみ）
 
 ## Planning assumptions
 
@@ -67,6 +72,14 @@ material_sequence_notes:
     next_after_Q3-3: Q4-1
     chapter4: 老齢基礎年金
     mechanical_range_inference: prohibited
+    review_deferred_until_after_first_pass:
+      - Q1-1
+      - Q2-2
+      - Q3-2
+      - Q2-1
+      - Q2-3
+      - Q2-4
+      - Q2-5
 
 ---
 
@@ -74,15 +87,15 @@ material_sequence_notes:
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-16 | L3 | 国民年金法 L3 択一 Q4-1〜Q4-1（1問）＋回収Q1-1・Q2-2・Q3-2（3問）。Q4後続は教材インデックス確認後に再計算 |
-| 2026-05-17 | L3 | 国民年金法 L3 択一：Q4-1後の実在確認済み次問から16問相当。問題番号インデックス確定後にquestion_rangeを固定 |
+| 2026-05-16 | L3 | 国民年金法 L3 択一 Q4-1〜Q4-1（1問・新規通過のみ）。Q1-1・Q2-2・Q3-2の回収は1巡後 |
+| 2026-05-17 | L3 | 国民年金法 L3 択一：Q4-1後の実在確認済み次問から16問。問題番号インデックス確定後にquestion_rangeを固定 |
 | 2026-05-18 | L1/L2 | 平日仕事日のL3なし。国民年金法L1/L2未完了がなければ厚生年金保険法 L1 P36〜P70（35ページ） |
 | 2026-05-19 | L2 | 厚生年金保険法 L2 P1〜P35（35ページ） |
 | 2026-05-20 | L1 | 厚生年金保険法 L1 P71〜P110（40ページ） |
 | 2026-05-21 | L2 | 厚生年金保険法 L2 P36〜P70（35ページ） |
 | 2026-05-22 | L1 | 厚生年金保険法 L1 P111〜P150（40ページ） |
-| 2026-05-23 | L3 + L2 | 国民年金法L3択一の未完了16問相当＋厚生年金保険法 L2 P71〜P95（25ページ） |
-| 2026-05-24 | L3 + L2 | 国民年金法L3択一の未完了16問相当＋厚生年金保険法 L2 P96〜P110（15ページ） |
+| 2026-05-23 | L3 + L2 | 国民年金法L3択一の未通過16問＋厚生年金保険法 L2 P71〜P95（25ページ） |
+| 2026-05-24 | L3 + L2 | 国民年金法L3択一の未通過16問＋厚生年金保険法 L2 P96〜P110（15ページ） |
 | 2026-05-25 | L1 | 厚生年金保険法 L1 P151〜P190（40ページ） |
 | 2026-05-26 | L2 | 厚生年金保険法 L2 P111〜P150（40ページ） |
 | 2026-05-27 | L1 | 厚生年金保険法 L1 P191〜P230（40ページ） |
@@ -124,6 +137,10 @@ material_sequence_notes:
 ## Next operation guardrails
 
 - D7以降〜target_date の日別計画はこのファイルをSSOTとする。
+- DELTA canonical branch is feature/atlas-pre-delta-foundation unless explicitly overridden.
+- 2026-06-30までに1巡完了を優先する。
+- 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
+- △・×・確認対象は記録だけ残し、1巡目中の新規学習には再投入しない。
 - L1/L2はpage rangeとページ数で管理する。
 - L3はquestion rangeまたは教材インデックス不確定時の明示的な再計算条件で管理する。
 - 国民年金法L3択一Q3-4は存在しない。3章はQ3-3まで、次は4章Q4-1。
@@ -165,7 +182,7 @@ preflight_check_result:
   roadmap_was_read: true
   plan_was_read: true
   latest_daily_history_was_read: true
-  recent_daily_history_was_read: true
+  prior_daily_history_was_read: true
   active_operations_was_read: true
   next_operations_was_read: true
   active_day6_next_start_connection_target: 2026-05-16
@@ -177,12 +194,19 @@ preflight_check_result:
   period_block_absent: true
   material_sequence_uncertainty_reflected: true
   sequence_correction_reflected: Q3-4不存在、Q4-1開始へ修正
+  first_pass_priority_reflected: true
+  review_deferred_until_after_first_pass: true
+  canonical_branch_reflected: feature/atlas-pre-delta-foundation
   validator_version_expected: delta_operations_preflight_2026_05_08_dynamic_active_next_split
 
 ## Rules
 
 - Next operations is D7-to-medium-target daily plan SSOT.
 - Active operations is D0-D6 execution SSOT.
+- DELTA canonical branch is feature/atlas-pre-delta-foundation unless explicitly overridden.
+- 2026-06-30までに1巡完了を優先する。
+- 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
+- △・×・確認対象は記録だけ残し、1巡目中の新規学習には再投入しない。
 - Actual performance records are written to daily history, not operations.
 - Daily history is the primary actual source.
 - Todoist is projection only.
