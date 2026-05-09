@@ -4,10 +4,11 @@ import {
   getContentFile,
   putContentFile,
 } from './repo-resource/common.js';
+import { validateL3QuestionIndex } from './delta/l3-question-index.js';
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
 export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md', 'next_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_08_dynamic_active_next_split';
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_09_l3_question_index_guard';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -35,10 +36,7 @@ const REQUIRED_READ_ROLES = [
   'special_days',
   'user_capacity',
 ];
-
 const REQUIRED_SPLIT_READ_ROLES = [...REQUIRED_READ_ROLES, 'next_operations'];
-
-const L3_ORDER_SUBJECTS = ['健康保険法', '国民年金法', '厚生年金保険法', '労一', '社一'];
 
 const FORBIDDEN_VAGUE_TARGETS = [
   '前半',
@@ -55,17 +53,22 @@ const FORBIDDEN_VAGUE_TARGETS = [
   '択一入口',
   '着手',
   '未達分回収のみ',
+  'n問相当',
+  '問相当',
+  '実在未確認',
+  '確認済み次問',
+  '教材インデックス確認',
+  'インデックス確認',
+  '未通過',
 ];
 
 const L1_L2_PAGE_PATTERN = /P\d+〜P\d+（\d+ページ）/;
-const L3_QUESTION_PATTERN = /Q\d+-\d+〜Q\d+-\d+（\d+問(?:、[^）]+)?）/;
+const L3_QUESTION_PATTERN = /Q\d+-\d+〜Q\d+-\d+（\d+問(?:、[^）]+)?）|Q\d+-0/;
 const REST_OR_UNAVAILABLE_PATTERN = /新規L1\/L2\/L3なし|L3不可|休養|rest_or_light_review/;
 const NEXT_OPERATIONS_PATTERN = /#\s*Next operations:/;
 const NEXT_OPERATIONS_REF_PATTERN = /next_operations_ref:[\s\S]{0,500}systems\/delta\/operations\/next_operations\.md/;
 const EXISTING_NEXT_OPS_READ_PATTERN = /existing_next_operations_read|existing_next_operations_was_read|next_operations_was_read|source_of_truth:[\s\S]*operations_role|current_position_primary_source/;
 const COMPLETED_SCOPE_PATTERN = /completed_scope|completed_subject|健康保険法L3の新規演習は完了扱い|健康保険法[\s\S]{0,80}completed/;
-const HEALTH_INSURANCE_NEW_L3_PATTERN = /健康保険法\s*L3\s*(?:1巡目\s*)?(?:選択|択一|選択問題|択一問題)\s*Q/;
-const HEALTH_INSURANCE_ALLOWED_CONTEXT_PATTERN = /recovery_targets|defer_targets|deferred|review|2巡目|弱点回収|誤答再演習|参考/;
 const DATE_RANGE_ROW_PATTERN = /^\|\s*\d{4}-\d{2}-\d{2}\s*[〜~]\s*\d{4}-\d{2}-\d{2}\s*\|/;
 const NEXT_ROW_PATTERN = /^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+)\|\s*([^|]+)\|/;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -76,7 +79,6 @@ function buildDeltaOperationsPath(file, context = {}) {
     resource: 'delta_operations',
     action: context.action || '',
   });
-
   if (safe.startsWith(DELTA_OPERATIONS_ROOT) || safe.startsWith('systems/')) {
     throw createError({
       status: 400,
@@ -90,7 +92,6 @@ function buildDeltaOperationsPath(file, context = {}) {
       details: { file: safe, expected_root: DELTA_OPERATIONS_ROOT },
     });
   }
-
   if (!DELTA_OPERATIONS_ALLOWED_FILES.includes(safe)) {
     throw createError({
       status: 400,
@@ -104,7 +105,6 @@ function buildDeltaOperationsPath(file, context = {}) {
       details: { file: safe, allowed_files: DELTA_OPERATIONS_ALLOWED_FILES },
     });
   }
-
   return `${DELTA_OPERATIONS_ROOT}${safe}`;
 }
 
@@ -152,17 +152,15 @@ function addDays(dateText, days) {
 }
 
 function extractDayBlock(content, day) {
-  const normalized = content.replace(/\r\n/g, '\n');
+  const normalized = String(content || '').replace(/\r\n/g, '\n');
   const dayHeader = new RegExp(`^##\\s+${day}[^\\n]*$`, 'm');
   const match = dayHeader.exec(normalized);
   if (!match) return '';
-
   const start = match.index;
   const rest = normalized.slice(start + match[0].length);
   const nextHeader = /^##\s+Day\d+[^\n]*$/m.exec(rest);
-  const nextSection = /^---\s*\n\n#\s+Next operations:/m.exec(rest);
   const activeNextGuard = /^---\s*\n\n##\s+Active \/ Next connection guard/m.exec(rest);
-  const candidates = [nextHeader?.index, nextSection?.index, activeNextGuard?.index]
+  const candidates = [nextHeader?.index, activeNextGuard?.index]
     .filter((index) => typeof index === 'number')
     .sort((a, b) => a - b);
   const endOffset = candidates.length > 0 ? candidates[0] : rest.length;
@@ -178,7 +176,8 @@ function extractTargetLines(block) {
       line.startsWith('- ') ||
       line.startsWith('must_line:') ||
       line.startsWith('standard_line:') ||
-      line.startsWith('stretch_line:')
+      line.startsWith('stretch_line:') ||
+      line.startsWith('|')
     ));
 }
 
@@ -190,18 +189,12 @@ function isRestOrUnavailableDay(block) {
   return REST_OR_UNAVAILABLE_PATTERN.test(block);
 }
 
-function validateForbiddenVagueTargetsInDay(day, block, errors) {
-  for (const line of extractTargetLines(block)) {
+function validateForbiddenVagueTargets(content, errors, prefix = 'forbidden_vague_target') {
+  for (const line of String(content || '').split('\n')) {
     for (const vague of FORBIDDEN_VAGUE_TARGETS) {
-      if (line.includes(vague)) errors.push(`forbidden_${day}_vague_target:${vague}`);
+      if (line.includes(vague)) errors.push(`${prefix}:${vague}`);
     }
   }
-}
-
-function extractNextOperations(content) {
-  const match = NEXT_OPERATIONS_PATTERN.exec(content);
-  if (!match) return '';
-  return content.slice(match.index);
 }
 
 function validateReadEvidence(readEvidence, errors, { split = false } = {}) {
@@ -223,98 +216,7 @@ function validatePreGenerationEvidence(content, errors) {
   if (!/current_position/.test(content)) errors.push('missing_current_position');
   if (!/special_days|L3不可|年休/.test(content)) errors.push('missing_special_days_evidence_in_content');
   if (!/user_capacity|capacity_assumptions|standard_capacity/.test(content)) errors.push('missing_user_capacity_evidence_in_content');
-}
-
-function validateCompletedScope(content, errors) {
-  if (!COMPLETED_SCOPE_PATTERN.test(content)) {
-    errors.push('missing_completed_scope_evidence');
-    return;
-  }
-  const nextOperations = extractNextOperations(content);
-  const healthInsuranceNew = HEALTH_INSURANCE_NEW_L3_PATTERN.exec(nextOperations);
-  if (healthInsuranceNew) {
-    const lineStart = nextOperations.lastIndexOf('\n', healthInsuranceNew.index);
-    const lineEnd = nextOperations.indexOf('\n', healthInsuranceNew.index);
-    const line = nextOperations.slice(lineStart + 1, lineEnd === -1 ? undefined : lineEnd);
-    if (!HEALTH_INSURANCE_ALLOWED_CONTEXT_PATTERN.test(line)) {
-      errors.push('completed_health_insurance_L3_reintroduced_as_new_work');
-    }
-  }
-}
-
-function hasIncompleteNationalPensionL1L2(content) {
-  if (!content.includes('国民年金法')) return false;
-  const normalized = content.replace(/\r\n/g, '\n');
-  const hasIncomplete = /completion_status\s*[:：]\s*incomplete|status\s*[:：]\s*incomplete|\bincomplete\b|未完了/.test(normalized);
-  const hasNextPage = /next_start_page\s*[:：]\s*["']?P(?:158|220|234)["']?|P158以降未完了|P220以降未完了|P234以降未完了/.test(normalized);
-  const hasLayer = /(^|[^A-Za-z0-9])L[12]([^A-Za-z0-9]|$)|L1\/L2|L1_L2/.test(normalized);
-  return hasIncomplete && hasNextPage && hasLayer;
-}
-
-function hasEmployeePensionL1L2InNextOperations(content) {
-  const nextOperations = extractNextOperations(content);
-  if (!nextOperations.includes('厚生年金保険法')) return false;
-
-  const lineHit = nextOperations
-    .split('\n')
-    .some((line) => (
-      line.includes('厚生年金保険法') &&
-      /(^|[^A-Za-z0-9])L[12]([^A-Za-z0-9]|$)/.test(line) &&
-      L1_L2_PAGE_PATTERN.test(line)
-    ));
-
-  const tableOrSeparatedHit = /厚生年金保険法[\s\S]{0,250}(^|[^A-Za-z0-9])L[12]([^A-Za-z0-9]|$)[\s\S]{0,250}P\d+〜P\d+（\d+ページ）/.test(nextOperations);
-
-  return lineHit || tableOrSeparatedHit;
-}
-
-function hasExplicitNationalPensionCompletionBeforeEmployeePension(content) {
-  return /国民年金法[\s\S]{0,500}(?:completion_status\s*[:：]\s*completed|status\s*[:：]\s*completed|completed\s*[:：]\s*true)[\s\S]{0,500}厚生年金保険法/.test(content);
-}
-
-function validateL1L2Continuity(content, errors) {
-  if (
-    hasIncompleteNationalPensionL1L2(content) &&
-    hasEmployeePensionL1L2InNextOperations(content) &&
-    !hasExplicitNationalPensionCompletionBeforeEmployeePension(content)
-  ) {
-    errors.push('current_L1_L2_subject_skipped_before_completion');
-  }
-}
-
-function hasExplicitL3SelectedCompletion(content, subject) {
-  const escaped = subject.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const explicitStructuredStatus = new RegExp(`${escaped}[\\s\\S]{0,500}(?:selected_completion_status\\s*[:：]\\s*completed|selected_questions\\s*[:：]\\s*completed|L3_selected\\s*[:：]\\s*completed|completed_selected\\s*[:：]\\s*true|L3_selected:[\\s\\S]{0,100}completed:\\s*true)`).test(content);
-  const explicitSelectedLine = new RegExp(`${escaped}[^\\n]*(?:L3)?[^\\n]*選択[^\\n]*(?:completion_status\\s*[:：]\\s*completed|completed\\s*[:：]\\s*true)`).test(content);
-  return explicitStructuredStatus || explicitSelectedLine;
-}
-
-function lineHasSubjectL3Type(line, subject, type) {
-  return (
-    line.includes(subject) &&
-    line.includes('L3') &&
-    line.includes(type) &&
-    L3_QUESTION_PATTERN.test(line)
-  );
-}
-
-function validateL3Order(content, errors) {
-  const nextOperations = extractNextOperations(content);
-  const lines = nextOperations.split('\n').map((line) => line.trim()).filter(Boolean);
-
-  for (const subject of L3_ORDER_SUBJECTS) {
-    let selectedSeen = hasExplicitL3SelectedCompletion(content, subject);
-
-    for (const line of lines) {
-      if (lineHasSubjectL3Type(line, subject, '選択')) {
-        selectedSeen = true;
-      }
-      if (lineHasSubjectL3Type(line, subject, '択一') && !selectedSeen) {
-        errors.push(`L3_order_violation_${subject}_takuitsu_before_selected`);
-        break;
-      }
-    }
-  }
+  if (!COMPLETED_SCOPE_PATTERN.test(content)) errors.push('missing_completed_scope_evidence');
 }
 
 function validateActiveDays(content, errors) {
@@ -329,17 +231,18 @@ function validateActiveDays(content, errors) {
       if (!fieldPattern.test(block)) errors.push(`missing_${day}_${field}`);
     }
     if (!hasQuantitativeLine(block) && !isRestOrUnavailableDay(block)) errors.push(`missing_${day}_quantitative_target`);
-    validateForbiddenVagueTargetsInDay(day, block, errors);
+    validateForbiddenVagueTargets(extractTargetLines(block).join('\n'), errors, `forbidden_${day}_vague_target`);
   }
 }
 
 function validateActiveNextSplit(content, errors) {
   if (!NEXT_OPERATIONS_REF_PATTERN.test(content)) errors.push('missing_next_operations_ref');
   if (NEXT_OPERATIONS_PATTERN.test(content)) errors.push('active_operations_must_not_embed_next_operations_table');
+  if (/^##\s+Day[7-9]\b|^##\s+Day\d{2,}\b/m.test(content)) errors.push('active_operations_must_not_contain_D7_or_later');
 }
 
 function parseNextRows(content) {
-  return content
+  return String(content || '')
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => NEXT_ROW_PATTERN.test(line))
@@ -397,31 +300,21 @@ function validateNextStartConnection(content, errors, warnings, options = {}) {
   const expectedStart = activeExpectedStart || selfExpectedStart;
   const rows = parseNextRows(content);
   const firstRowDate = rows[0]?.date || '';
-
   if (!declaredStart) errors.push('missing_next_operations_start_date');
-  if (headerStart && declaredStart && headerStart !== declaredStart) {
-    errors.push(`next_operations_header_start_mismatch:${headerStart}:declared:${declaredStart}`);
-  }
-  if (firstRowDate && declaredStart && firstRowDate !== declaredStart) {
-    errors.push(`next_operations_first_row_start_mismatch:${firstRowDate}:declared:${declaredStart}`);
-  }
-  if (expectedStart && declaredStart && declaredStart !== expectedStart) {
-    errors.push(`next_operations_start_date_must_follow_active_day6:${declaredStart}:expected:${expectedStart}`);
-  }
-  if (!expectedStart) {
-    warnings.push('next_operations_dynamic_start_checked_without_active_day6_source');
-  }
+  if (headerStart && declaredStart && headerStart !== declaredStart) errors.push(`next_operations_header_start_mismatch:${headerStart}:declared:${declaredStart}`);
+  if (firstRowDate && declaredStart && firstRowDate !== declaredStart) errors.push(`next_operations_first_row_start_mismatch:${firstRowDate}:declared:${declaredStart}`);
+  if (expectedStart && declaredStart && declaredStart !== expectedStart) errors.push(`next_operations_start_date_must_follow_active_day6:${declaredStart}:expected:${expectedStart}`);
+  if (!expectedStart) warnings.push('next_operations_dynamic_start_checked_without_active_day6_source');
 }
 
 function validateNextOperationsDailyPlan(content, errors, warnings, options = {}) {
   if (!/^#\s+delta next_operations/m.test(content)) errors.push('missing_delta_next_operations_title');
   if (!/active_operations_ref:\s*systems\/delta\/operations\/active_operations\.md/.test(content)) errors.push('missing_active_operations_ref');
   if (!NEXT_OPERATIONS_PATTERN.test(content)) errors.push('missing_next_operations_section');
-
-  const targetDate = extractTargetDate(content);
-  if (targetDate !== '2026-06-30') errors.push('missing_target_date_2026_06_30');
+  if (extractTargetDate(content) !== '2026-06-30') errors.push('missing_target_date_2026_06_30');
 
   validateNextStartConnection(content, errors, warnings, options);
+  validateForbiddenVagueTargets(content, errors, 'forbidden_next_vague_target');
 
   const rangeRows = content.split('\n').filter((line) => DATE_RANGE_ROW_PATTERN.test(line.trim()));
   if (rangeRows.length > 0) errors.push(`next_operations_period_block_rows_forbidden:${rangeRows.length}`);
@@ -431,18 +324,14 @@ function validateNextOperationsDailyPlan(content, errors, warnings, options = {}
   if (!rowDates.has('2026-06-30')) errors.push('missing_next_operations_target_date:2026-06-30');
 
   for (const row of rows) {
-    const isRest = /確認日|判定|回収日|L3不可|なし|休養|接続確認/.test(row.standardLine);
+    const isRest = /確認日|判定|L3不可|なし|休養|接続確認|Q\d+-0/.test(row.standardLine);
     const hasPage = L1_L2_PAGE_PATTERN.test(row.standardLine);
-    const hasQuestion = L3_QUESTION_PATTERN.test(row.standardLine) || /\d+問/.test(row.standardLine);
+    const hasQuestion = L3_QUESTION_PATTERN.test(row.standardLine);
     if (!hasPage && !hasQuestion && !isRest) errors.push(`next_row_missing_quantitative_range:${row.date}`);
-    for (const vague of FORBIDDEN_VAGUE_TARGETS) {
-      if (row.standardLine.includes(vague)) errors.push(`forbidden_next_row_vague_target:${row.date}:${vague}`);
-    }
   }
 
   if (/2026-05-10[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_05_10_unavailable');
   if (/2026-06-13[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_06_13_unavailable');
-  if (!/2026-06-30[\s\S]{0,120}L3/.test(content)) warnings.push('annual_leave_2026_06_30_l3_not_used');
 }
 
 export function validateDeltaOperationsContent(content, options = {}) {
@@ -457,29 +346,17 @@ export function validateDeltaOperationsContent(content, options = {}) {
     return { ok: false, errors, warnings, read_evidence: readEvidence, validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION };
   }
 
+  validateL3QuestionIndex(content, errors);
+
   if (file === 'next_operations.md') {
     validateNextOperationsDailyPlan(content, errors, warnings, options);
-    return {
-      ok: errors.length === 0,
-      errors,
-      warnings,
-      read_evidence: readEvidence,
-      validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION,
-    };
+    return { ok: errors.length === 0, errors: [...new Set(errors)], warnings, read_evidence: readEvidence, validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION };
   }
 
   validateReadEvidence(readEvidence, errors, { split: splitMode });
   validatePreGenerationEvidence(content, errors);
-  validateCompletedScope(content, errors);
-  validateL1L2Continuity(content, errors);
-  validateL3Order(content, errors);
   validateActiveDays(content, errors);
-
-  if (splitMode) {
-    validateActiveNextSplit(content, errors);
-  } else if (!NEXT_OPERATIONS_PATTERN.test(content)) {
-    errors.push('missing_next_operations_section');
-  }
+  validateActiveNextSplit(content, errors);
 
   const highPageMatches = [...content.matchAll(/（(\d+)ページ）/g)]
     .map((match) => Number(match[1]))
@@ -491,19 +368,12 @@ export function validateDeltaOperationsContent(content, options = {}) {
     .filter((questionCount) => Number.isFinite(questionCount) && questionCount > 25);
   if (highQuestionMatches.length > 0) warnings.push(`l3_multiple_choice_count_above_guard:${highQuestionMatches.join(',')}`);
 
-  return {
-    ok: errors.length === 0,
-    errors,
-    warnings,
-    read_evidence: readEvidence,
-    validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION,
-  };
+  return { ok: errors.length === 0, errors: [...new Set(errors)], warnings, read_evidence: readEvidence, validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION };
 }
 
 function assertDeltaOperationsPreflight(content, options = {}) {
   const validation = validateDeltaOperationsContent(content, options);
   if (validation.ok) return validation;
-
   throw createError({
     status: 400,
     code: 'DELTA_OPERATIONS_PREFLIGHT_FAILED',
@@ -533,15 +403,10 @@ async function readActiveOperationsForNextValidation(options = {}) {
 }
 
 export async function updateDeltaOperations(file, content, message = '', sha = '', options = {}) {
-  const path = buildDeltaOperationsPath(file, {
-    step: 'updateDeltaOperations',
-    action: 'update',
-  });
-
+  const path = buildDeltaOperationsPath(file, { step: 'updateDeltaOperations', action: 'update' });
   const activeForNext = file === 'next_operations.md'
     ? await readActiveOperationsForNextValidation(options)
     : { content: '', sha: '' };
-
   const preflight = assertDeltaOperationsPreflight(content, {
     file,
     split_mode: true,
@@ -578,18 +443,12 @@ export async function updateDeltaOperations(file, content, message = '', sha = '
     }
   }
 
-  const result = await putContentFile(
-    path,
-    content,
-    normalizeMessage(message, `update ${path}`),
-    currentSha,
-    {
-      step: 'updateDeltaOperations',
-      resource: 'delta_operations',
-      action: 'update',
-      branch: options.branch,
-    }
-  );
+  const result = await putContentFile(path, content, normalizeMessage(message, `update ${path}`), currentSha, {
+    step: 'updateDeltaOperations',
+    resource: 'delta_operations',
+    action: 'update',
+    branch: options.branch,
+  });
 
   return {
     resource: 'delta_operations',
