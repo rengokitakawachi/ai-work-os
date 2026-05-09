@@ -1,6 +1,6 @@
 # DELTA next_operations dynamic D7 validator fix
 
-status: repo_main_fixed_runtime_retest_required
+status: fixed_actual_behavior_confirmed
 severity: high
 category: delta_operations_validator_regression
 observed_at: 2026-05-09
@@ -129,9 +129,9 @@ Main read-back:
 
 ---
 
-## Runtime fixture result
+## Runtime fixture results
 
-DELTA runtime fixture after feature branch fix: failed.
+### First runtime fixture after feature branch fix: failed
 
 Observed:
 
@@ -156,22 +156,59 @@ Errors observed:
 Judgment:
 
 - configured file reflection: partially confirmed
-- repo main implementation: now updated
-- actual runtime behavior: not yet confirmed after main update
+- repo main implementation: then updated
+- actual runtime behavior: not confirmed at that point
+
+### Second runtime fixture after main update: passed
+
+DELTA reran runtime fixture after main update.
+
+Observed successful preflight:
+
+- `validator_version: delta_operations_preflight_2026_05_08_dynamic_active_next_split`
+- `ok: true`
+- `errors: []`
+- `warnings: []`
+
+Old errors disappeared:
+
+- `missing_next_operations_start_date:2026-05-13`: gone
+- `missing_active_next_connection_first_row`: gone
+
+`next_operations.md` update succeeded:
+
+- path: `systems/delta/operations/next_operations.md`
+- branch: `feature/atlas-pre-delta-foundation`
+- new sha: `ab6022c8e2408ee51b63566c998954c26c8aa2dc`
+
+Read-back confirmed D7 alignment:
+
+- metadata:
+  - `next_start_date: 2026-05-16`
+- active_connection:
+  - `expected_active_range: 2026-05-09〜2026-05-15`
+  - `active_day6_due_date: 2026-05-15`
+  - `next_start_date: 2026-05-16`
+- header:
+  - `# Next operations: 2026-05-16〜2026-06-30`
+- first row:
+  - `| 2026-05-16 | L3 | 国民年金法 L3 択一 Q3-4〜Q3-4（1問）＋回収Q1-1・Q2-2・Q3-2（3問）。Q3-5以降は教材インデックス確認後に再計算 |`
+
+Judgment:
+
+- actual behavior confirmed for dynamic D7 next_operations start update.
 
 ---
 
 ## Remaining risk
 
-Vercel / configured runtime may still be serving an older deployment until redeploy or Action runtime refresh completes.
+The specific defect is closed.
 
-Current remaining confirmation chain:
+Residual governance risks:
 
-1. main repo code updated: confirmed
-2. runtime deployment uses main updated code: unconfirmed
-3. runtime-visible / actual validator version returns `delta_operations_preflight_2026_05_08_dynamic_active_next_split`: unconfirmed
-4. `next_operations.md` update with D7 dynamic start succeeds: unconfirmed
-5. update read-back confirms metadata / header / first row alignment: unconfirmed
+- Similar validator rules may still encode dated fixture values elsewhere.
+- Branch-visible file reflection and actual runtime behavior can diverge when runtime uses main deployment code.
+- Future fixes that modify service code must be confirmed at the runtime behavior layer, not only config / file read-back.
 
 ---
 
@@ -184,6 +221,7 @@ Current remaining confirmation chain:
 - Keep internal schema, action schema, runtime-visible behavior, and actual behavior separated.
 - Treat repo branch update and runtime actual behavior as separate states.
 - If runtime fixture still shows an old validator version, check main implementation before asking for another behavior fixture.
+- Service-layer fixes that affect actual Action behavior must be promoted to the runtime branch and validated with a behavior fixture.
 
 ---
 
@@ -201,8 +239,6 @@ Current remaining confirmation chain:
 
 ## Next disposition
 
-- Ask DELTA to rerun runtime fixture after main update / redeploy reflection.
-- Confirm returned validator version is `delta_operations_preflight_2026_05_08_dynamic_active_next_split`.
-- Confirm `next_operations.md` can update with D7 start derived from Active Day6 + 1.
-- Read back `next_operations.md` after successful update.
-- Decide whether this individual log should be summarized into `notes/10_logs/adam_bug_fix_log.md` during the active task `ADAM bug fix log の運用方法を notes に固定する`.
+- Treat this defect as fixed for `next_operations.md` dynamic D7 start update.
+- During `ADAM bug fix log の運用方法を notes に固定する`, decide whether this individual log should also be summarized into `notes/10_logs/adam_bug_fix_log.md`.
+- Consider a separate sweep for other dated fixture values in validators / tests.
