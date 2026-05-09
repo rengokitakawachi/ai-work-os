@@ -22,7 +22,12 @@ Last review:
 - date: 2026-05-09
 - daily_report: `notes/07_reports/daily/2026-05-09.md`
 - active_reroll: applied
-- todoist_projection_status: pending_apply
+- todoist_projection_status: applied
+- todoist_projection_request_id: `7935d9c9-e57e-474f-a397-a04887cb34a2`
+- todoist_projection_result:
+  - updated_existing_tasks: 13
+  - created: `DELTA L3 question index runtime fixture を確認する` / `6gc8VQqGG6FhM4rH`
+  - closed: none
 - correction_note:
   - 2026-05-09 daily review was briefly mistaken for Sunday Weekly Review Mode.
   - Mistaken weekly snapshot `notes/99_archive/operations/2026-05-10_weekly_operations.md` was marked `superseded_mistaken_creation`.
@@ -146,6 +151,8 @@ Capacity note: Sunday. If daily review is requested on this date, Sunday Weekly 
     - Q1-17〜Q1-32 が reject されることを確認する
     - 未通過16問 / できるところまで / n問相当 が reject されることを確認する
     - runtime fixture 結果を log に保存し、actual behavior confirmed か判定する
+  external:
+    todoist_task_id: 6gc8VQqGG6FhM4rH
 
 ## Day1（05/11 月）
 
