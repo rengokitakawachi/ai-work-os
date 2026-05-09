@@ -8,7 +8,7 @@ import { validateL3QuestionIndex } from './delta/l3-question-index.js';
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
 export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md', 'next_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_09_l3_question_index_special_day_l1_l2_commute_guard';
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_09_l3_question_index_l3_unavailable_day_guard';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -37,6 +37,13 @@ const REQUIRED_READ_ROLES = [
   'user_capacity',
 ];
 const REQUIRED_SPLIT_READ_ROLES = [...REQUIRED_READ_ROLES, 'next_operations'];
+
+const SPECIAL_DAY_RULES = {
+  '2026-05-10': { l3_allowed: false, l1_l2_allowed: true, sekotore_allowed: true, reason: 'l3_unavailable_day' },
+  '2026-06-13': { l3_allowed: false, l1_l2_allowed: true, sekotore_allowed: true, reason: 'saturday_workday_commute' },
+  '2026-06-26': { l3_allowed: false, l1_l2_allowed: true, sekotore_allowed: true, reason: 'weekday' },
+  '2026-06-30': { l3_allowed: true, l1_l2_allowed: true, sekotore_allowed: true, reason: 'annual_leave' },
+};
 
 const FORBIDDEN_VAGUE_TARGETS = [
   '前半',
@@ -309,18 +316,23 @@ function validateNextStartConnection(content, errors, warnings, options = {}) {
   if (!expectedStart) warnings.push('next_operations_dynamic_start_checked_without_active_day6_source');
 }
 
+function stripL3UnavailableNote(text) {
+  return String(text || '').replace(/L3不可日?|L3不可/g, '');
+}
+
 function rowContainsActualL3(row) {
   const layerHasL3 = /(^|[^A-Za-z0-9])L3([^A-Za-z0-9]|$)/.test(row.layer);
-  const lineHasL3Work = /\bL3\b|選択\s*Q|択一\s*Q|過去問講座/.test(row.standardLine);
-  const onlyUnavailableNote = /L3不可/.test(row.standardLine) && !/\bL3\b|選択\s*Q|択一\s*Q|過去問講座/.test(row.standardLine.replace(/L3不可日?|L3不可/g, ''));
-  return layerHasL3 || (lineHasL3Work && !onlyUnavailableNote);
+  const lineWithoutUnavailableNote = stripL3UnavailableNote(row.standardLine);
+  const lineHasL3Work = /\bL3\b|選択\s*Q|択一\s*Q|過去問講座/.test(lineWithoutUnavailableNote);
+  return layerHasL3 || lineHasL3Work;
 }
 
 function validateSpecialDayRows(rows, errors) {
   for (const row of rows) {
-    if (row.date !== '2026-06-13') continue;
-    if (rowContainsActualL3(row)) {
-      errors.push('L3_scheduled_on_2026_06_13_unavailable');
+    const rule = SPECIAL_DAY_RULES[row.date];
+    if (!rule) continue;
+    if (rule.l3_allowed === false && rowContainsActualL3(row)) {
+      errors.push(`L3_scheduled_on_${row.date}_unavailable`);
     }
   }
 }
@@ -349,8 +361,6 @@ function validateNextOperationsDailyPlan(content, errors, warnings, options = {}
     const hasSekotore = SEKOTORE_PATTERN.test(row.standardLine);
     if (!hasPage && !hasQuestion && !hasSekotore && !isRest) errors.push(`next_row_missing_quantitative_range:${row.date}`);
   }
-
-  if (/2026-05-10[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_05_10_unavailable');
 }
 
 export function validateDeltaOperationsContent(content, options = {}) {
