@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-07
+2026-05-09
 
 ## touched_by
 
@@ -26,11 +26,11 @@ daily_review
 
 ## progress_note
 
-2026-05-07 daily review confirmed the mission-critical DELTA reverse-planning Immediate Gate is now closed. The related active task `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` is unblocked and should continue after `ADAM bug fix log の運用方法を notes に固定する`, unless the next review reroll changes order. This issue remains relevant and should feed the active task rather than be fully routed during daily review.
+2026-05-09 daily review confirmed that multiple DELTA validator regressions were fixed and actual behavior confirmed, but the active task `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` was not executed today. The task remains relevant and should continue after `ADAM bug fix log の運用方法を notes に固定する`, unless Sunday Weekly Review Mode rerolls order.
 
 ## routing_hint
 
-keep_active_task_after_bug_fix_log
+keep_active_task_after_bug_fix_log / weekly_review_recheck
 
 ## title
 
