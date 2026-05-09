@@ -1,6 +1,6 @@
 # DELTA next_operations dynamic D7 validator fix
 
-status: partially_fixed_schema_followup_required
+status: repo_main_fixed_runtime_retest_required
 severity: high
 category: delta_operations_validator_regression
 observed_at: 2026-05-09
@@ -48,6 +48,15 @@ The validator required:
 `src/services/delta/operations-split.test.js` also asserted the same fixed start date and treated the original fixture as the stable rule.
 
 This made a past fixture value behave like a specification.
+
+A later runtime fixture also showed that Vercel runtime was not using the feature branch implementation. Runtime returned:
+
+- `validator_version: delta_operations_preflight_2026_05_07_active_next_heading_guard`
+- `missing_active_day6_next_connection`
+- `missing_next_operations_start_date:2026-05-13`
+- `missing_active_next_connection_first_row`
+
+This proved that repo feature branch changes were visible as files but actual runtime validator behavior still came from main.
 
 ---
 
@@ -97,40 +106,72 @@ Changes:
 - Added test that accepts D7 as Active Day6 + 1.
 - Added test that rejects stale `2026-05-13` when Active Day6 moved to `2026-05-15` and expected D7 is `2026-05-16`.
 
+Updated `systems/delta/config/delta_schema.yaml` on `feature/atlas-pre-delta-foundation`.
+
+New sha:
+
+- `3d155bcb0e93b6dbf1e3a46de13a545f8e26f962`
+
+Changes:
+
+- Added `next_operations.md` to `write_resources.delta_operations.allowed_files`.
+- Added `update_next_operations` to daily review operations update flow.
+- Added `next_operations_start_date_must_follow_active_day6` rule.
+
+Promoted runtime implementation to `main` after DELTA runtime fixture still observed the old validator.
+
+Main read-back:
+
+- file: `src/services/delta-operations.js`
+- branch: `main`
+- sha: `6cd9134d4e2934c6e46be644eca62952e889f512`
+- validator version in code: `delta_operations_preflight_2026_05_08_dynamic_active_next_split`
+
+---
+
+## Runtime fixture result
+
+DELTA runtime fixture after feature branch fix: failed.
+
+Observed:
+
+- `systems/delta/config/delta_schema.yaml` was readable at sha `3d155bcb0e93b6dbf1e3a46de13a545f8e26f962`.
+- Actual `delta_operations` preflight still returned old validator version:
+  - `delta_operations_preflight_2026_05_07_active_next_heading_guard`
+- `active_operations.md` fixture with Active Day6 `2026-05-15` failed.
+- `next_operations.md` fixture with `2026-05-16` start failed.
+
+Errors observed:
+
+- active fixture 1:
+  - `missing_user_capacity_evidence_in_content`
+  - `missing_completed_scope_evidence`
+  - `missing_active_day6_next_connection`
+- active fixture 2:
+  - `missing_active_day6_next_connection`
+- next fixture:
+  - `missing_next_operations_start_date:2026-05-13`
+  - `missing_active_next_connection_first_row`
+
+Judgment:
+
+- configured file reflection: partially confirmed
+- repo main implementation: now updated
+- actual runtime behavior: not yet confirmed after main update
+
 ---
 
 ## Remaining risk
 
-`systems/delta/config/delta_schema.yaml` still has an internal schema inconsistency.
+Vercel / configured runtime may still be serving an older deployment until redeploy or Action runtime refresh completes.
 
-Observed content:
+Current remaining confirmation chain:
 
-```yaml
-write_resources:
-  delta_operations:
-    root: systems/delta/operations/
-    allowed_files:
-      - active_operations.md
-    actions:
-      - update
-    role: next_action_operations_update
-```
-
-Required follow-up:
-
-```yaml
-write_resources:
-  delta_operations:
-    root: systems/delta/operations/
-    allowed_files:
-      - active_operations.md
-      - next_operations.md
-    actions:
-      - update
-    role: next_action_operations_update
-```
-
-This was not updated in the same step because `repoResourceWrite(action=update)` is full replacement and the schema file is large. It must be updated through read → full-content synthesis → update → read-back.
+1. main repo code updated: confirmed
+2. runtime deployment uses main updated code: unconfirmed
+3. runtime-visible / actual validator version returns `delta_operations_preflight_2026_05_08_dynamic_active_next_split`: unconfirmed
+4. `next_operations.md` update with D7 dynamic start succeeds: unconfirmed
+5. update read-back confirms metadata / header / first row alignment: unconfirmed
 
 ---
 
@@ -141,7 +182,8 @@ This was not updated in the same step because `repoResourceWrite(action=update)`
 - Validate `next_start_date = active Day6 due_date + 1`.
 - Keep tests focused on invariant behavior, not one fixture date.
 - Keep internal schema, action schema, runtime-visible behavior, and actual behavior separated.
-- Treat schema cleanup as follow-up until read-back confirms it.
+- Treat repo branch update and runtime actual behavior as separate states.
+- If runtime fixture still shows an old validator version, check main implementation before asking for another behavior fixture.
 
 ---
 
@@ -159,6 +201,8 @@ This was not updated in the same step because `repoResourceWrite(action=update)`
 
 ## Next disposition
 
-- Add `next_operations.md` to `systems/delta/config/delta_schema.yaml` allowed files.
+- Ask DELTA to rerun runtime fixture after main update / redeploy reflection.
+- Confirm returned validator version is `delta_operations_preflight_2026_05_08_dynamic_active_next_split`.
+- Confirm `next_operations.md` can update with D7 start derived from Active Day6 + 1.
+- Read back `next_operations.md` after successful update.
 - Decide whether this individual log should be summarized into `notes/10_logs/adam_bug_fix_log.md` during the active task `ADAM bug fix log の運用方法を notes に固定する`.
-- Run or request DELTA-side runtime fixture for next update attempt after dynamic validator reflection.
