@@ -43,8 +43,20 @@ export const DELTA_L3_QUESTION_INDEX = {
   },
 };
 
+function isOperationLine(line) {
+  return (
+    /^\|\s*\d{4}-\d{2}-\d{2}\s*\|/.test(line) ||
+    line.startsWith('- task:') ||
+    line.startsWith('- 国民年金法') ||
+    line.startsWith('task:') ||
+    line.startsWith('standard_line:') ||
+    line.startsWith('must_line:') ||
+    line.startsWith('stretch_line:')
+  );
+}
+
 function lineMentionsKnownL3(line) {
-  return line.includes('L3') && line.includes('国民年金法') && line.includes('択一');
+  return isOperationLine(line) && line.includes('L3') && line.includes('国民年金法') && line.includes('択一');
 }
 
 function uniqueErrors(errors) {
