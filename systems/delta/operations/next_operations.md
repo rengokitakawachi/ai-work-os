@@ -2,10 +2,10 @@
 
 ## Metadata
 
-version: delta_v0.7_next_operations_2026_05_09_regenerated
+version: delta_v0.7_next_operations_2026_05_09_active_connection_p111_patch
 updated_at: 2026-05-09
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_regenerated_compression_required
+operation_status: next_operations_d7_to_target_connection_p111_patch
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
 next_start_date: 2026-05-16
@@ -40,13 +40,15 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: 171a54a677b0e3f08ae869d33d615c9b7b9b2986
+  active_sha: 46ae687c1448f9f9a754ba992d18fdcf532ca9e3
   expected_active_range: 2026-05-09〜2026-05-15
   active_day6_due_date: 2026-05-15
-  active_day6_expected_position: 厚生年金保険法 L1 P100完了、L2 P80完了
+  active_day6_expected_position: 厚生年金保険法 L1 P110完了、L2 P80完了
   next_start_date: 2026-05-16
   connection_rule: next_operations starts after active Day6
   connection_status: connected_to_active_day6_2026_05_15
+  next_l1_kounen_start: 厚生年金保険法 L1 P111
+  next_l2_kounen_start: 厚生年金保険法 L2 P81
   next_day_first_line: 2026-05-16 国民年金法 L3 択一 Q7-1〜Q9-10（15問）
 
 ## Planning assumptions
@@ -117,16 +119,16 @@ confirmed_question_index:
 |---|---|---|
 | 2026-05-16 | L3 | 国民年金法 L3 択一 Q7-1〜Q9-10（15問） |
 | 2026-05-17 | L3 | 国民年金法 L3 択一 Q10-0（演習対象なし）＋Q11-1〜Q13-2（10問） |
-| 2026-05-18 | L1/L2 | 厚生年金保険法 L1 P101〜P140（40ページ） |
+| 2026-05-18 | L1/L2 | 厚生年金保険法 L1 P111〜P150（40ページ） |
 | 2026-05-19 | L2 | 厚生年金保険法 L2 P81〜P120（40ページ） |
-| 2026-05-20 | L1 | 厚生年金保険法 L1 P141〜P180（40ページ） |
+| 2026-05-20 | L1 | 厚生年金保険法 L1 P151〜P190（40ページ） |
 | 2026-05-21 | L2 | 厚生年金保険法 L2 P121〜P160（40ページ） |
-| 2026-05-22 | L1 | 厚生年金保険法 L1 P181〜P220（40ページ） |
+| 2026-05-22 | L1 | 厚生年金保険法 L1 P191〜P230（40ページ） |
 | 2026-05-23 | L3 + L2 | 国民年金法 L3 択一 Q14-1〜Q14-17（17問）＋厚生年金保険法 L2 P161〜P180（20ページ） |
 | 2026-05-24 | L3 + L2 | 厚生年金保険法 選択 Q16-1〜Q16-12（12問）＋厚生年金保険法 L2 P181〜P200（20ページ） |
-| 2026-05-25 | L1 | 厚生年金保険法 L1 P221〜P260（40ページ） |
+| 2026-05-25 | L1 | 厚生年金保険法 L1 P231〜P270（40ページ） |
 | 2026-05-26 | L2 | 厚生年金保険法 L2 P201〜P240（40ページ） |
-| 2026-05-27 | L1 | 厚生年金保険法 L1 P261〜P284（24ページ） |
+| 2026-05-27 | L1 | 厚生年金保険法 L1 P271〜P284（14ページ） |
 | 2026-05-28 | L2 | 厚生年金保険法 L2 P241〜P284（44ページ） |
 | 2026-05-29 | L1 | 労一 L1 P1〜P40（40ページ） |
 | 2026-05-30 | L3 + L2 | 厚生年金保険法 択一 Q1-1〜Q4-1（9問）＋労一 L2 P1〜P30（30ページ） |
@@ -229,6 +231,7 @@ preflight_check_result:
   first_pass_priority_reflected: true
   review_deferred_until_after_first_pass: true
   canonical_branch_reflected: feature/atlas-pre-delta-foundation
+  active_connection_updated_to_kounen_l1_P110_L2_P80: true
   compression_required: true
   validator_version_expected: delta_operations_preflight_2026_05_08_dynamic_active_next_split
 
