@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-07
+2026-05-09
 
 ## touched_by
 
@@ -26,7 +26,7 @@ daily_review
 
 ## progress_note
 
-2026-05-07 daily review again read `notes/07_reports/README.md`, recent daily reports, and docs review procedure before report creation. The gate is operating in practice. The underlying procedure/template fixation task remains open and should be addressed by `ADAM bug fix log の運用方法を notes に固定する` and later report template hardening.
+2026-05-09 daily review again read `notes/07_reports/README.md`, the recent 2026-05-07 daily report, and docs review / operations procedure before report creation. The report path gate operated correctly. The underlying template / README hardening remains open and should be addressed by the active task `ADAM bug fix log の運用方法を notes に固定する` or a later report template hardening task.
 
 ## routing_hint
 
