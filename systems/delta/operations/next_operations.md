@@ -2,10 +2,10 @@
 
 ## Metadata
 
-version: delta_v0.6_next_operations_after_2026_05_09_first_pass_priority_patch
+version: delta_v0.7_next_operations_2026_05_09_regenerated
 updated_at: 2026-05-09
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_first_pass_priority_corrected
+operation_status: next_operations_d7_to_target_regenerated_compression_required
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
 next_start_date: 2026-05-16
@@ -40,46 +40,74 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: b980de87e0e24afd8ab59c3779cadb4ffcad1b65
+  active_sha: 171a54a677b0e3f08ae869d33d615c9b7b9b2986
   expected_active_range: 2026-05-09〜2026-05-15
   active_day6_due_date: 2026-05-15
-  active_day6_expected_position: 厚生年金保険法 L2 P35完了
+  active_day6_expected_position: 厚生年金保険法 L1 P100完了、L2 P80完了
   next_start_date: 2026-05-16
   connection_rule: next_operations starts after active Day6
   connection_status: connected_to_active_day6_2026_05_15
-  next_day_first_line: 2026-05-16 国民年金法 L3 択一 Q4-1〜Q4-1（1問・新規通過のみ）
+  next_day_first_line: 2026-05-16 国民年金法 L3 択一 Q7-1〜Q9-10（15問）
 
 ## Planning assumptions
 
 capacity_assumptions:
   L1_L2_pages:
     standard_capacity: 35〜40ページ程度
-    upper_guard: 50ページ超は原則分割
+    compression_capacity: 40〜60ページ程度
+    upper_guard: 60ページ超は原則分割
   L3_multiple_choice_questions:
-    standard_capacity: 16問程度
-    material_sequence_uncertainty: 国民年金法L3択一は教材確認済み問題番号のみ採用
+    standard_capacity: 12〜18問程度
+    real_question_id_required: true
+  sekotore:
+    daily_target_questions: 40
 
 special_days:
   - 2026-05-10: L3不可
   - 2026-06-13: L3不可
   - 2026-06-30: 年休。L3可
 
-material_sequence_notes:
+confirmed_question_index:
   国民年金法_L3_択一:
-    chapter3: 給付の通則
-    chapter3_last_question: Q3-3
-    Q3-4_exists: false
-    next_after_Q3-3: Q4-1
-    chapter4: 老齢基礎年金
-    mechanical_range_inference: prohibited
-    review_deferred_until_after_first_pass:
-      - Q1-1
-      - Q2-2
-      - Q3-2
-      - Q2-1
-      - Q2-3
-      - Q2-4
-      - Q2-5
+    completed: Q1-1、Q2-1〜Q2-5、Q3-1〜Q3-3
+    active_day0_plan: Q4-1〜Q4-4、Q5-0、Q6-1〜Q6-2
+    next_start: Q7-1
+    chapters:
+      - chapter: 4
+        range: Q4-1〜Q4-4
+        count: 4
+      - chapter: 5
+        range: Q5-0
+        count: 0
+        no_exercise: true
+      - chapter: 6
+        range: Q6-1〜Q6-2
+        count: 2
+      - chapter: 7
+        range: Q7-1〜Q7-2
+        count: 2
+      - chapter: 8
+        range: Q8-1〜Q8-3
+        count: 3
+      - chapter: 9
+        range: Q9-1〜Q9-10
+        count: 10
+      - chapter: 10
+        range: Q10-0
+        count: 0
+        no_exercise: true
+      - chapter: 11
+        range: Q11-1〜Q11-7
+        count: 7
+      - chapter: 12
+        range: Q12-1
+        count: 1
+      - chapter: 13
+        range: Q13-1〜Q13-2
+        count: 2
+      - chapter: 14
+        range: Q14-1〜Q14-17
+        count: 17
 
 ---
 
@@ -87,52 +115,52 @@ material_sequence_notes:
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-16 | L3 | 国民年金法 L3 択一 Q4-1〜Q4-1（1問・新規通過のみ）。Q1-1・Q2-2・Q3-2の回収は1巡後 |
-| 2026-05-17 | L3 | 国民年金法 L3 択一：Q4-1後の実在確認済み次問から16問。問題番号インデックス確定後にquestion_rangeを固定 |
-| 2026-05-18 | L1/L2 | 平日仕事日のL3なし。国民年金法L1/L2未完了がなければ厚生年金保険法 L1 P36〜P70（35ページ） |
-| 2026-05-19 | L2 | 厚生年金保険法 L2 P1〜P35（35ページ） |
-| 2026-05-20 | L1 | 厚生年金保険法 L1 P71〜P110（40ページ） |
-| 2026-05-21 | L2 | 厚生年金保険法 L2 P36〜P70（35ページ） |
-| 2026-05-22 | L1 | 厚生年金保険法 L1 P111〜P150（40ページ） |
-| 2026-05-23 | L3 + L2 | 国民年金法L3択一の未通過16問＋厚生年金保険法 L2 P71〜P95（25ページ） |
-| 2026-05-24 | L3 + L2 | 国民年金法L3択一の未通過16問＋厚生年金保険法 L2 P96〜P110（15ページ） |
-| 2026-05-25 | L1 | 厚生年金保険法 L1 P151〜P190（40ページ） |
-| 2026-05-26 | L2 | 厚生年金保険法 L2 P111〜P150（40ページ） |
-| 2026-05-27 | L1 | 厚生年金保険法 L1 P191〜P230（40ページ） |
-| 2026-05-28 | L2 | 厚生年金保険法 L2 P151〜P190（40ページ） |
-| 2026-05-29 | L1 | 厚生年金保険法 L1 P231〜P260（30ページ） |
-| 2026-05-30 | L3 + L2 | 厚生年金保険法 選択 Q16-1〜Q16-12（12問）＋厚生年金保険法 L2 P191〜P220（30ページ） |
-| 2026-05-31 | L3 + L1 | 厚生年金保険法 択一 Q1-1〜Q4-1（9問）＋厚生年金保険法 L1 P261〜P284（24ページ） |
-| 2026-06-01 | L2 | 厚生年金保険法 L2 P221〜P260（40ページ） |
-| 2026-06-02 | L1 | 労一 L1 P1〜P40（40ページ） |
-| 2026-06-03 | L2 | 厚生年金保険法 L2 P261〜P284（24ページ）＋労一 L2 P1〜P16（16ページ） |
-| 2026-06-04 | L1 | 労一 L1 P41〜P80（40ページ） |
-| 2026-06-05 | L2 | 労一 L2 P17〜P56（40ページ） |
-| 2026-06-06 | L3 + L1 | 厚生年金保険法 択一 Q5-1〜Q8-1（10問、Q7-0除外）＋労一 L1 P81〜P100（20ページ） |
-| 2026-06-07 | L3 + L2 | 厚生年金保険法 択一 Q8-2〜Q11-1（16問）＋労一 L2 P57〜P80（24ページ） |
-| 2026-06-08 | L1 | 労一 L1 P101〜P140（40ページ） |
-| 2026-06-09 | L2 | 労一 L2 P81〜P120（40ページ） |
-| 2026-06-10 | L1 | 労一 L1 P141〜P180（40ページ） |
-| 2026-06-11 | L2 | 労一 L2 P121〜P160（40ページ） |
-| 2026-06-12 | L1 | 労一 L1 P181〜P220（40ページ） |
-| 2026-06-13 | L2 | 労一 L2 P161〜P200（40ページ）。L3不可日 |
-| 2026-06-14 | L1 | 労一 L1 P221〜P260（40ページ） |
-| 2026-06-15 | L2 | 労一 L2 P201〜P240（40ページ） |
-| 2026-06-16 | L1 | 労一 L1 P261〜P300（40ページ） |
-| 2026-06-17 | L2 | 労一 L2 P241〜P280（40ページ） |
-| 2026-06-18 | L1/L2 | 労一 L1 P301〜P314（14ページ）＋労一 L2 P281〜P300（20ページ） |
-| 2026-06-19 | L2 + L1 | 労一 L2 P301〜P314（14ページ）＋社一 L1 P1〜P25（25ページ） |
-| 2026-06-20 | L3 + L1 | 労一 選択 Q7-1〜Q7-10（10問）＋労一 択一 Q1-1〜Q2-2（6問）＋社一 L1 P26〜P45（20ページ） |
-| 2026-06-21 | L3 + L2 | 労一 択一 Q2-3〜Q5-1（16問）＋社一 L2 P1〜P20（20ページ） |
-| 2026-06-22 | L1 | 社一 L1 P46〜P85（40ページ） |
-| 2026-06-23 | L2 | 社一 L2 P21〜P60（40ページ） |
-| 2026-06-24 | L1 | 社一 L1 P86〜P125（40ページ） |
-| 2026-06-25 | L2 | 社一 L2 P61〜P100（40ページ） |
-| 2026-06-26 | L1/L2 | 社一 L1 P126〜P165（40ページ）＋社一 L2 P101〜P120（20ページ）。平日のためL3不可 |
-| 2026-06-27 | L3 + L2 | 労一 択一 Q5-2〜Q6-9（9問）＋社一 選択 Q7-1〜Q7-16（16問）＋社一 L2 P121〜P140（20ページ） |
-| 2026-06-28 | L3 + L1 | 社一 択一 Q1-1〜Q3-2（16問）＋社一 L1 P166〜P190（25ページ） |
-| 2026-06-29 | L1/L2 | 社一 L1 P191〜P231（41ページ）＋社一 L2 P141〜P165（25ページ） |
-| 2026-06-30 | L3 + L2 | 年休。社一 択一 Q4-1〜Q6-2（17問）＋社一 L2 P166〜P191（26ページ） |
+| 2026-05-16 | L3 | 国民年金法 L3 択一 Q7-1〜Q9-10（15問） |
+| 2026-05-17 | L3 | 国民年金法 L3 択一 Q10-0（演習対象なし）＋Q11-1〜Q13-2（10問） |
+| 2026-05-18 | L1/L2 | 厚生年金保険法 L1 P101〜P140（40ページ） |
+| 2026-05-19 | L2 | 厚生年金保険法 L2 P81〜P120（40ページ） |
+| 2026-05-20 | L1 | 厚生年金保険法 L1 P141〜P180（40ページ） |
+| 2026-05-21 | L2 | 厚生年金保険法 L2 P121〜P160（40ページ） |
+| 2026-05-22 | L1 | 厚生年金保険法 L1 P181〜P220（40ページ） |
+| 2026-05-23 | L3 + L2 | 国民年金法 L3 択一 Q14-1〜Q14-17（17問）＋厚生年金保険法 L2 P161〜P180（20ページ） |
+| 2026-05-24 | L3 + L2 | 厚生年金保険法 選択 Q16-1〜Q16-12（12問）＋厚生年金保険法 L2 P181〜P200（20ページ） |
+| 2026-05-25 | L1 | 厚生年金保険法 L1 P221〜P260（40ページ） |
+| 2026-05-26 | L2 | 厚生年金保険法 L2 P201〜P240（40ページ） |
+| 2026-05-27 | L1 | 厚生年金保険法 L1 P261〜P284（24ページ） |
+| 2026-05-28 | L2 | 厚生年金保険法 L2 P241〜P284（44ページ） |
+| 2026-05-29 | L1 | 労一 L1 P1〜P40（40ページ） |
+| 2026-05-30 | L3 + L2 | 厚生年金保険法 択一 Q1-1〜Q4-1（9問）＋労一 L2 P1〜P30（30ページ） |
+| 2026-05-31 | L3 + L1 | 厚生年金保険法 択一 Q4-2〜Q8-1（10問）＋労一 L1 P41〜P70（30ページ） |
+| 2026-06-01 | L2 | 労一 L2 P31〜P70（40ページ） |
+| 2026-06-02 | L1 | 労一 L1 P71〜P110（40ページ） |
+| 2026-06-03 | L2 | 労一 L2 P71〜P110（40ページ） |
+| 2026-06-04 | L1 | 労一 L1 P111〜P150（40ページ） |
+| 2026-06-05 | L2 | 労一 L2 P111〜P150（40ページ） |
+| 2026-06-06 | L3 + L1 | 厚生年金保険法 択一 Q8-2〜Q11-1（16問）＋労一 L1 P151〜P170（20ページ） |
+| 2026-06-07 | L3 + L2 | 厚生年金保険法 択一 Q11-2〜Q15-12（16問）＋労一 L2 P151〜P170（20ページ） |
+| 2026-06-08 | L1 | 労一 L1 P171〜P210（40ページ） |
+| 2026-06-09 | L2 | 労一 L2 P171〜P210（40ページ） |
+| 2026-06-10 | L1 | 労一 L1 P211〜P250（40ページ） |
+| 2026-06-11 | L2 | 労一 L2 P211〜P250（40ページ） |
+| 2026-06-12 | L1 | 労一 L1 P251〜P290（40ページ） |
+| 2026-06-13 | L2 | 労一 L2 P251〜P290（40ページ）。L3不可日 |
+| 2026-06-14 | L1/L2 | 労一 L1 P291〜P314（24ページ）＋労一 L2 P291〜P314（24ページ） |
+| 2026-06-15 | L1 | 社一 L1 P1〜P40（40ページ） |
+| 2026-06-16 | L2 | 社一 L2 P1〜P40（40ページ） |
+| 2026-06-17 | L1 | 社一 L1 P41〜P80（40ページ） |
+| 2026-06-18 | L2 | 社一 L2 P41〜P80（40ページ） |
+| 2026-06-19 | L1 | 社一 L1 P81〜P120（40ページ） |
+| 2026-06-20 | L3 + L2 | 労一 選択 Q7-1〜Q7-10（10問）＋労一 択一 Q1-1〜Q2-2（6問）＋社一 L2 P81〜P100（20ページ） |
+| 2026-06-21 | L3 + L1 | 労一 択一 Q2-3〜Q5-1（16問）＋社一 L1 P121〜P140（20ページ） |
+| 2026-06-22 | L2 | 社一 L2 P101〜P140（40ページ） |
+| 2026-06-23 | L1 | 社一 L1 P141〜P180（40ページ） |
+| 2026-06-24 | L2 | 社一 L2 P141〜P180（40ページ） |
+| 2026-06-25 | L1 | 社一 L1 P181〜P231（51ページ） |
+| 2026-06-26 | L2 | 社一 L2 P181〜P231（51ページ）。平日のためL3不可 |
+| 2026-06-27 | L3 | 労一 択一 Q5-2〜Q6-9（9問）＋社一 選択 Q7-1〜Q7-16（16問） |
+| 2026-06-28 | L3 | 社一 択一 Q1-1〜Q3-2（16問） |
+| 2026-06-29 | L1/L2 | 1巡未達ページ調整日。標準は白書・法改正・一般常識テキスト確認 P1〜P40（40ページ） |
+| 2026-06-30 | L3 + L2 | 年休。社一 択一 Q4-1〜Q6-2（17問）＋1巡完了確認リスト作成 |
 
 ## Next operation guardrails
 
@@ -142,10 +170,15 @@ material_sequence_notes:
 - 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
 - △・×・確認対象は記録だけ残し、1巡目中の新規学習には再投入しない。
 - L1/L2はpage rangeとページ数で管理する。
-- L3はquestion rangeまたは教材インデックス不確定時の明示的な再計算条件で管理する。
+- L3はquestion rangeと問題数で管理する。
+- L3の日別計画は実在Q番号のみを使う。
+- Qx-0は演習対象なしとして扱い、演習問題数に含めない。
 - 国民年金法L3択一Q3-4は存在しない。3章はQ3-3まで、次は4章Q4-1。
+- 国民年金法L3択一5章Q5-0、10章Q10-0は演習対象なし。
 - 2026-05-10はL3不可。
 - 2026-06-13はL3不可。
+- 2026-06-26は平日のためL3不可。
+- 2026-06-30は年休のためL3可。
 - 平日仕事日はL3なし。
 - 土日祝とGW祝日はL3可。
 - active Day6 と next first day の接続を daily review で確認する。
@@ -164,8 +197,8 @@ required_fields_per_row:
 quantitative_management_rules:
   - L1/L2はpage rangeとページ数で管理する
   - L3はquestion rangeと問題数で管理する
-  - 国民年金法L3択一だけは教材インデックス不確定のため、次問確認条件を併記する
   - 日付範囲を1行にまとめる期間ブロックは禁止
+  - 「n問相当」「できるところまで」「章だけ」「前半」「後半」は禁止
 
 ## Daily review read requirements
 
@@ -192,11 +225,11 @@ preflight_check_result:
   D7_target_next_operations_exists: true
   daily_granularity_preserved: true
   period_block_absent: true
-  material_sequence_uncertainty_reflected: true
-  sequence_correction_reflected: Q3-4不存在、Q4-1開始へ修正
+  material_sequence_uncertainty_resolved_for_kokunen: true
   first_pass_priority_reflected: true
   review_deferred_until_after_first_pass: true
   canonical_branch_reflected: feature/atlas-pre-delta-foundation
+  compression_required: true
   validator_version_expected: delta_operations_preflight_2026_05_08_dynamic_active_next_split
 
 ## Rules
