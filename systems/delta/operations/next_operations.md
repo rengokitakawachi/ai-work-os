@@ -1,7 +1,7 @@
 # delta next_operations
 
 ## Metadata
-version: runtime_fixture_l2_allow_2026_06_13
+version: runtime_fixture_l1_l2_allow_2026_06_13
 updated_at: 2026-05-09
 branch: feature/atlas-pre-delta-foundation
 target_date: 2026-06-30
@@ -9,7 +9,7 @@ next_start_date: 2026-05-16
 active_operations_ref: systems/delta/operations/active_operations.md
 
 ## Purpose
-Runtime validator fixture for L3 unavailable day guard. Fixture 3: L2 commute slot on 2026-06-13 must be allowed.
+Runtime validator fixture for L3 unavailable day guard. Fixture 4: L1/L2 commute slot on 2026-06-13 must be allowed.
 
 ---
 
@@ -45,24 +45,24 @@ Runtime validator fixture for L3 unavailable day guard. Fixture 3: L2 commute sl
 | 2026-06-10 | L2 | 労一 L2 P41〜P50（10ページ） |
 | 2026-06-11 | L1 | 労一 L1 P51〜P60（10ページ） |
 | 2026-06-12 | L2 | 労一 L2 P51〜P60（10ページ） |
-| 2026-06-13 | L2 | 社一 L2 P1〜P25（25ページ・通勤枠） |
-| 2026-06-14 | L1 | 社一 L1 P1〜P10（10ページ） |
-| 2026-06-15 | L2 | 社一 L2 P26〜P35（10ページ） |
-| 2026-06-16 | L1 | 社一 L1 P11〜P20（10ページ） |
-| 2026-06-17 | L2 | 社一 L2 P36〜P45（10ページ） |
-| 2026-06-18 | L1 | 社一 L1 P21〜P30（10ページ） |
-| 2026-06-19 | L2 | 社一 L2 P46〜P55（10ページ） |
-| 2026-06-20 | L1 | 社一 L1 P31〜P40（10ページ） |
-| 2026-06-21 | L2 | 社一 L2 P56〜P65（10ページ） |
-| 2026-06-22 | L1 | 社一 L1 P41〜P50（10ページ） |
-| 2026-06-23 | L2 | 社一 L2 P66〜P75（10ページ） |
-| 2026-06-24 | L1 | 社一 L1 P51〜P60（10ページ） |
-| 2026-06-25 | L2 | 社一 L2 P76〜P85（10ページ） |
-| 2026-06-26 | L1 | 社一 L1 P61〜P70（10ページ） |
-| 2026-06-27 | L2 | 社一 L2 P86〜P95（10ページ） |
-| 2026-06-28 | L1 | 社一 L1 P71〜P80（10ページ） |
-| 2026-06-29 | L2 | 社一 L2 P96〜P105（10ページ） |
-| 2026-06-30 | L1 | 社一 L1 P81〜P90（10ページ） |
+| 2026-06-13 | L1/L2 | 社一 L1 P1〜P20（20ページ・通勤枠）＋社一 L2 P1〜P20（20ページ・通勤枠） |
+| 2026-06-14 | L1 | 社一 L1 P21〜P30（10ページ） |
+| 2026-06-15 | L2 | 社一 L2 P21〜P30（10ページ） |
+| 2026-06-16 | L1 | 社一 L1 P31〜P40（10ページ） |
+| 2026-06-17 | L2 | 社一 L2 P31〜P40（10ページ） |
+| 2026-06-18 | L1 | 社一 L1 P41〜P50（10ページ） |
+| 2026-06-19 | L2 | 社一 L2 P41〜P50（10ページ） |
+| 2026-06-20 | L1 | 社一 L1 P51〜P60（10ページ） |
+| 2026-06-21 | L2 | 社一 L2 P51〜P60（10ページ） |
+| 2026-06-22 | L1 | 社一 L1 P61〜P70（10ページ） |
+| 2026-06-23 | L2 | 社一 L2 P61〜P70（10ページ） |
+| 2026-06-24 | L1 | 社一 L1 P71〜P80（10ページ） |
+| 2026-06-25 | L2 | 社一 L2 P71〜P80（10ページ） |
+| 2026-06-26 | L1 | 社一 L1 P81〜P90（10ページ） |
+| 2026-06-27 | L2 | 社一 L2 P81〜P90（10ページ） |
+| 2026-06-28 | L1 | 社一 L1 P91〜P100（10ページ） |
+| 2026-06-29 | L2 | 社一 L2 P91〜P100（10ページ） |
+| 2026-06-30 | L1 | 社一 L1 P101〜P110（10ページ） |
 
 ## Next operation guardrails
 - 2026-06-13 is L3 unavailable but L1/L2 commute work is allowed.
