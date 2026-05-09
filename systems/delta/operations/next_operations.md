@@ -2,13 +2,14 @@
 
 ## Metadata
 
-version: delta_v0.6_runtime_fixture_next_2026_05_16
+version: delta_v0.6_next_operations_after_2026_05_08_review_rolled
 updated_at: 2026-05-09
 branch: feature/atlas-pre-delta-foundation
-operation_status: runtime_fixture_next_operations_start_2026_05_16
+operation_status: next_operations_d7_to_target_rolled_after_daily_review
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
 next_start_date: 2026-05-16
+last_daily_review: systems/delta/history/daily/2026-05-08.md
 
 ## Purpose
 
@@ -33,13 +34,29 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
+  active_sha: 1b9748916eb11967e51b0e271e866bc99ad14483
   expected_active_range: 2026-05-09〜2026-05-15
   active_day6_due_date: 2026-05-15
   active_day6_expected_position: 厚生年金保険法 L1 P35完了
   next_start_date: 2026-05-16
   connection_rule: next_operations starts after active Day6
-  connection_status: runtime_fixture_testing_2026_05_16
+  connection_status: connected_to_active_day6_2026_05_15
   next_day_first_line: 2026-05-16 国民年金法 L3 択一 Q3-4〜Q3-4（1問）＋回収Q1-1・Q2-2・Q3-2（3問）
+
+## Planning assumptions
+
+capacity_assumptions:
+  L1_L2_pages:
+    standard_capacity: 35〜40ページ程度
+    upper_guard: 50ページ超は原則分割
+  L3_multiple_choice_questions:
+    standard_capacity: 16問程度
+    material_sequence_uncertainty: 国民年金法L3択一はQ3-5以降の機械的範囲推定を禁止
+
+special_days:
+  - 2026-05-10: L3不可
+  - 2026-06-13: L3不可
+  - 2026-06-30: 年休。L3可
 
 ---
 
@@ -131,6 +148,25 @@ required_read_sources:
   - systems/delta/history/daily/YYYY-MM-DD.md
   - systems/delta/operations/active_operations.md
   - systems/delta/operations/next_operations.md
+
+## Preflight check result
+
+preflight_check_result:
+  roadmap_was_read: true
+  plan_was_read: true
+  latest_daily_history_was_read: true
+  recent_daily_history_was_read: true
+  active_operations_was_read: true
+  next_operations_was_read: true
+  active_day6_next_start_connection_target: 2026-05-16
+  next_start_date: 2026-05-16
+  header_start_date: 2026-05-16
+  first_row_date: 2026-05-16
+  D7_target_next_operations_exists: true
+  daily_granularity_preserved: true
+  period_block_absent: true
+  material_sequence_uncertainty_reflected: true
+  validator_version_expected: delta_operations_preflight_2026_05_08_dynamic_active_next_split
 
 ## Rules
 
