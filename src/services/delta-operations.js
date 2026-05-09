@@ -7,9 +7,10 @@ import {
 
 export const DELTA_OPERATIONS_ROOT = 'systems/delta/operations/';
 export const DELTA_OPERATIONS_ALLOWED_FILES = ['active_operations.md', 'next_operations.md'];
-export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_07_active_next_heading_guard';
+export const DELTA_OPERATIONS_VALIDATOR_VERSION = 'delta_operations_preflight_2026_05_08_dynamic_active_next_split';
 
 const REQUIRED_ACTIVE_DAYS = ['Day0', 'Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6'];
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 const REQUIRED_DAY_FIELDS = [
   'plan_anchor',
@@ -59,8 +60,7 @@ const FORBIDDEN_VAGUE_TARGETS = [
 const L1_L2_PAGE_PATTERN = /P\d+〜P\d+（\d+ページ）/;
 const L3_QUESTION_PATTERN = /Q\d+-\d+〜Q\d+-\d+（\d+問(?:、[^）]+)?）/;
 const REST_OR_UNAVAILABLE_PATTERN = /新規L1\/L2\/L3なし|L3不可|休養|rest_or_light_review/;
-const NEXT_OPERATIONS_PATTERN = /^#{1,6}\s*Next operations\b(?::[^\n]*)?$/mi;
-const NEXT_OPERATIONS_SECTION_AFTER_SEPARATOR_PATTERN = /^---\s*\n\n#{1,6}\s+Next operations\b(?::[^\n]*)?$/mi;
+const NEXT_OPERATIONS_PATTERN = /#\s*Next operations:/;
 const NEXT_OPERATIONS_REF_PATTERN = /next_operations_ref:[\s\S]{0,500}systems\/delta\/operations\/next_operations\.md/;
 const EXISTING_NEXT_OPS_READ_PATTERN = /existing_next_operations_read|existing_next_operations_was_read|next_operations_was_read|source_of_truth:[\s\S]*operations_role|current_position_primary_source/;
 const COMPLETED_SCOPE_PATTERN = /completed_scope|completed_subject|健康保険法L3の新規演習は完了扱い|健康保険法[\s\S]{0,80}completed/;
@@ -68,6 +68,7 @@ const HEALTH_INSURANCE_NEW_L3_PATTERN = /健康保険法\s*L3\s*(?:1巡目\s*)?(
 const HEALTH_INSURANCE_ALLOWED_CONTEXT_PATTERN = /recovery_targets|defer_targets|deferred|review|2巡目|弱点回収|誤答再演習|参考/;
 const DATE_RANGE_ROW_PATTERN = /^\|\s*\d{4}-\d{2}-\d{2}\s*[〜~]\s*\d{4}-\d{2}-\d{2}\s*\|/;
 const NEXT_ROW_PATTERN = /^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+)\|\s*([^|]+)\|/;
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function buildDeltaOperationsPath(file, context = {}) {
   const safe = assertSafeRelativePath(file, {
@@ -134,12 +135,24 @@ function hasReadPath(readEvidence, pattern) {
   return readEvidence.some((item) => pattern.test(item.file) || pattern.test(item.path));
 }
 
-function normalizeContent(content) {
-  return String(content || '').replace(/\r\n/g, '\n');
+function parseIsoDate(value) {
+  if (typeof value !== 'string' || !ISO_DATE_PATTERN.test(value.trim())) return null;
+  const date = new Date(`${value.trim()}T00:00:00.000Z`);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatIsoDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function addDays(dateText, days) {
+  const date = parseIsoDate(dateText);
+  if (!date) return '';
+  return formatIsoDate(new Date(date.getTime() + (days * DAY_MS)));
 }
 
 function extractDayBlock(content, day) {
-  const normalized = normalizeContent(content);
+  const normalized = content.replace(/\r\n/g, '\n');
   const dayHeader = new RegExp(`^##\\s+${day}[^\\n]*$`, 'm');
   const match = dayHeader.exec(normalized);
   if (!match) return '';
@@ -147,7 +160,7 @@ function extractDayBlock(content, day) {
   const start = match.index;
   const rest = normalized.slice(start + match[0].length);
   const nextHeader = /^##\s+Day\d+[^\n]*$/m.exec(rest);
-  const nextSection = NEXT_OPERATIONS_SECTION_AFTER_SEPARATOR_PATTERN.exec(rest);
+  const nextSection = /^---\s*\n\n#\s+Next operations:/m.exec(rest);
   const activeNextGuard = /^---\s*\n\n##\s+Active \/ Next connection guard/m.exec(rest);
   const candidates = [nextHeader?.index, nextSection?.index, activeNextGuard?.index]
     .filter((index) => typeof index === 'number')
@@ -186,10 +199,9 @@ function validateForbiddenVagueTargetsInDay(day, block, errors) {
 }
 
 function extractNextOperations(content) {
-  const normalized = normalizeContent(content);
-  const match = NEXT_OPERATIONS_PATTERN.exec(normalized);
+  const match = NEXT_OPERATIONS_PATTERN.exec(content);
   if (!match) return '';
-  return normalized.slice(match.index);
+  return content.slice(match.index);
 }
 
 function validateReadEvidence(readEvidence, errors, { split = false } = {}) {
@@ -232,12 +244,11 @@ function validateCompletedScope(content, errors) {
 
 function hasIncompleteNationalPensionL1L2(content) {
   if (!content.includes('国民年金法')) return false;
-  const normalized = normalizeContent(content);
-  const hasNationalPension = normalized.includes('国民年金法');
+  const normalized = content.replace(/\r\n/g, '\n');
   const hasIncomplete = /completion_status\s*[:：]\s*incomplete|status\s*[:：]\s*incomplete|\bincomplete\b|未完了/.test(normalized);
-  const hasNextPage = /next_start_page\s*[:：]\s*["']?P(?:158|220)["']?|P158以降未完了|P220以降未完了/.test(normalized);
+  const hasNextPage = /next_start_page\s*[:：]\s*["']?P(?:158|220|234)["']?|P158以降未完了|P220以降未完了|P234以降未完了/.test(normalized);
   const hasLayer = /(^|[^A-Za-z0-9])L[12]([^A-Za-z0-9]|$)|L1\/L2|L1_L2/.test(normalized);
-  return hasNationalPension && hasIncomplete && hasNextPage && hasLayer;
+  return hasIncomplete && hasNextPage && hasLayer;
 }
 
 function hasEmployeePensionL1L2InNextOperations(content) {
@@ -295,7 +306,9 @@ function validateL3Order(content, errors) {
     let selectedSeen = hasExplicitL3SelectedCompletion(content, subject);
 
     for (const line of lines) {
-      if (lineHasSubjectL3Type(line, subject, '選択')) selectedSeen = true;
+      if (lineHasSubjectL3Type(line, subject, '選択')) {
+        selectedSeen = true;
+      }
       if (lineHasSubjectL3Type(line, subject, '択一') && !selectedSeen) {
         errors.push(`L3_order_violation_${subject}_takuitsu_before_selected`);
         break;
@@ -323,13 +336,10 @@ function validateActiveDays(content, errors) {
 function validateActiveNextSplit(content, errors) {
   if (!NEXT_OPERATIONS_REF_PATTERN.test(content)) errors.push('missing_next_operations_ref');
   if (NEXT_OPERATIONS_PATTERN.test(content)) errors.push('active_operations_must_not_embed_next_operations_table');
-  if (!/active_day6_standard_end:\s*P245|active_day6_standard_end: P245|Day6[\s\S]*P220〜P245/.test(content)) {
-    errors.push('missing_active_day6_next_connection');
-  }
 }
 
 function parseNextRows(content) {
-  return normalizeContent(content)
+  return content
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => NEXT_ROW_PATTERN.test(line))
@@ -344,25 +354,84 @@ function parseNextRows(content) {
     });
 }
 
-function validateNextOperationsDailyPlan(content, errors, warnings) {
-  const normalized = normalizeContent(content);
-  if (!/^#\s+delta next_operations/m.test(normalized)) errors.push('missing_delta_next_operations_title');
-  if (!/active_operations_ref:\s*systems\/delta\/operations\/active_operations\.md/.test(normalized)) errors.push('missing_active_operations_ref');
-  if (!/target_date:\s*2026-06-30/.test(normalized)) errors.push('missing_target_date_2026_06_30');
-  if (!NEXT_OPERATIONS_PATTERN.test(normalized)) errors.push('missing_next_operations_section');
+function extractNextHeaderStartDate(content) {
+  const match = /^#\s+Next operations:\s*(\d{4}-\d{2}-\d{2})\s*[〜~]/m.exec(content);
+  return match?.[1] || '';
+}
 
-  const rangeRows = normalized.split('\n').filter((line) => DATE_RANGE_ROW_PATTERN.test(line.trim()));
+function extractDeclaredNextStartDate(content) {
+  const metadataMatch = /next_start_date:\s*(\d{4}-\d{2}-\d{2})/.exec(content);
+  if (metadataMatch) return metadataMatch[1];
+  return extractNextHeaderStartDate(content);
+}
+
+function extractTargetDate(content) {
+  const metadataMatch = /target_date:\s*(\d{4}-\d{2}-\d{2})/.exec(content);
+  if (metadataMatch) return metadataMatch[1];
+  const headerMatch = /^#\s+Next operations:\s*\d{4}-\d{2}-\d{2}\s*[〜~]\s*(\d{4}-\d{2}-\d{2})/m.exec(content);
+  return headerMatch?.[1] || '';
+}
+
+function extractExpectedActiveRangeEnd(content) {
+  const match = /expected_active_range:\s*\d{4}-\d{2}-\d{2}\s*[〜~]\s*(\d{4}-\d{2}-\d{2})/.exec(content);
+  return match?.[1] || '';
+}
+
+function extractActiveDay6DueDate(activeOperationsContent = '') {
+  const block = extractDayBlock(activeOperationsContent, 'Day6');
+  const match = /(?:^|\n)\s*due_date:\s*(\d{4}-\d{2}-\d{2})/.exec(block);
+  return match?.[1] || '';
+}
+
+function expectedNextStartFromActiveContent(activeOperationsContent = '') {
+  const day6DueDate = extractActiveDay6DueDate(activeOperationsContent);
+  return day6DueDate ? addDays(day6DueDate, 1) : '';
+}
+
+function validateNextStartConnection(content, errors, warnings, options = {}) {
+  const declaredStart = extractDeclaredNextStartDate(content);
+  const headerStart = extractNextHeaderStartDate(content);
+  const expectedActiveRangeEnd = extractExpectedActiveRangeEnd(content);
+  const selfExpectedStart = expectedActiveRangeEnd ? addDays(expectedActiveRangeEnd, 1) : '';
+  const activeExpectedStart = expectedNextStartFromActiveContent(options.active_operations_content || '');
+  const expectedStart = activeExpectedStart || selfExpectedStart;
+  const rows = parseNextRows(content);
+  const firstRowDate = rows[0]?.date || '';
+
+  if (!declaredStart) errors.push('missing_next_operations_start_date');
+  if (headerStart && declaredStart && headerStart !== declaredStart) {
+    errors.push(`next_operations_header_start_mismatch:${headerStart}:declared:${declaredStart}`);
+  }
+  if (firstRowDate && declaredStart && firstRowDate !== declaredStart) {
+    errors.push(`next_operations_first_row_start_mismatch:${firstRowDate}:declared:${declaredStart}`);
+  }
+  if (expectedStart && declaredStart && declaredStart !== expectedStart) {
+    errors.push(`next_operations_start_date_must_follow_active_day6:${declaredStart}:expected:${expectedStart}`);
+  }
+  if (!expectedStart) {
+    warnings.push('next_operations_dynamic_start_checked_without_active_day6_source');
+  }
+}
+
+function validateNextOperationsDailyPlan(content, errors, warnings, options = {}) {
+  if (!/^#\s+delta next_operations/m.test(content)) errors.push('missing_delta_next_operations_title');
+  if (!/active_operations_ref:\s*systems\/delta\/operations\/active_operations\.md/.test(content)) errors.push('missing_active_operations_ref');
+  if (!NEXT_OPERATIONS_PATTERN.test(content)) errors.push('missing_next_operations_section');
+
+  const targetDate = extractTargetDate(content);
+  if (targetDate !== '2026-06-30') errors.push('missing_target_date_2026_06_30');
+
+  validateNextStartConnection(content, errors, warnings, options);
+
+  const rangeRows = content.split('\n').filter((line) => DATE_RANGE_ROW_PATTERN.test(line.trim()));
   if (rangeRows.length > 0) errors.push(`next_operations_period_block_rows_forbidden:${rangeRows.length}`);
 
-  const rows = parseNextRows(normalized);
+  const rows = parseNextRows(content);
   const rowDates = new Set(rows.map((row) => row.date));
-
-  if (!rowDates.has('2026-05-13')) errors.push('missing_next_operations_start_date:2026-05-13');
   if (!rowDates.has('2026-06-30')) errors.push('missing_next_operations_target_date:2026-06-30');
-  if (!/2026-05-13[\s\S]{0,120}P246〜P280（35ページ）/.test(normalized)) errors.push('missing_active_next_connection_first_row');
 
   for (const row of rows) {
-    const isRest = /確認日|判定|回収日|L3不可|なし/.test(row.standardLine);
+    const isRest = /確認日|判定|回収日|L3不可|なし|休養|接続確認/.test(row.standardLine);
     const hasPage = L1_L2_PAGE_PATTERN.test(row.standardLine);
     const hasQuestion = L3_QUESTION_PATTERN.test(row.standardLine) || /\d+問/.test(row.standardLine);
     if (!hasPage && !hasQuestion && !isRest) errors.push(`next_row_missing_quantitative_range:${row.date}`);
@@ -371,9 +440,9 @@ function validateNextOperationsDailyPlan(content, errors, warnings) {
     }
   }
 
-  if (/2026-05-10[\s\S]{0,120}\|\s*L3\s*\|/.test(normalized)) errors.push('L3_scheduled_on_2026_05_10_unavailable');
-  if (/2026-06-13[\s\S]{0,120}\|\s*L3\s*\|/.test(normalized)) errors.push('L3_scheduled_on_2026_06_13_unavailable');
-  if (!/2026-06-30[\s\S]{0,120}L3/.test(normalized)) warnings.push('annual_leave_2026_06_30_l3_not_used');
+  if (/2026-05-10[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_05_10_unavailable');
+  if (/2026-06-13[\s\S]{0,120}\|\s*L3\s*\|/.test(content)) errors.push('L3_scheduled_on_2026_06_13_unavailable');
+  if (!/2026-06-30[\s\S]{0,120}L3/.test(content)) warnings.push('annual_leave_2026_06_30_l3_not_used');
 }
 
 export function validateDeltaOperationsContent(content, options = {}) {
@@ -382,15 +451,14 @@ export function validateDeltaOperationsContent(content, options = {}) {
   const readEvidence = normalizeReadEvidence(options.read_evidence);
   const file = typeof options.file === 'string' ? options.file.trim() : '';
   const splitMode = Boolean(options.split_mode || file === 'active_operations.md' || file === 'next_operations.md');
-  const normalized = normalizeContent(content);
 
-  if (normalized.trim().length === 0) {
+  if (typeof content !== 'string' || content.trim().length === 0) {
     errors.push('content_empty');
     return { ok: false, errors, warnings, read_evidence: readEvidence, validator_version: DELTA_OPERATIONS_VALIDATOR_VERSION };
   }
 
   if (file === 'next_operations.md') {
-    validateNextOperationsDailyPlan(normalized, errors, warnings);
+    validateNextOperationsDailyPlan(content, errors, warnings, options);
     return {
       ok: errors.length === 0,
       errors,
@@ -401,24 +469,24 @@ export function validateDeltaOperationsContent(content, options = {}) {
   }
 
   validateReadEvidence(readEvidence, errors, { split: splitMode });
-  validatePreGenerationEvidence(normalized, errors);
-  validateCompletedScope(normalized, errors);
-  validateL1L2Continuity(normalized, errors);
-  validateL3Order(normalized, errors);
-  validateActiveDays(normalized, errors);
+  validatePreGenerationEvidence(content, errors);
+  validateCompletedScope(content, errors);
+  validateL1L2Continuity(content, errors);
+  validateL3Order(content, errors);
+  validateActiveDays(content, errors);
 
   if (splitMode) {
-    validateActiveNextSplit(normalized, errors);
-  } else if (!NEXT_OPERATIONS_PATTERN.test(normalized)) {
+    validateActiveNextSplit(content, errors);
+  } else if (!NEXT_OPERATIONS_PATTERN.test(content)) {
     errors.push('missing_next_operations_section');
   }
 
-  const highPageMatches = [...normalized.matchAll(/（(\d+)ページ）/g)]
+  const highPageMatches = [...content.matchAll(/（(\d+)ページ）/g)]
     .map((match) => Number(match[1]))
     .filter((pageCount) => Number.isFinite(pageCount) && pageCount > 50);
   if (highPageMatches.length > 0) warnings.push(`l1_l2_page_count_above_guard:${highPageMatches.join(',')}`);
 
-  const highQuestionMatches = [...normalized.matchAll(/択一[^\n]*（(\d+)問/g)]
+  const highQuestionMatches = [...content.matchAll(/択一[^\n]*（(\d+)問/g)]
     .map((match) => Number(match[1]))
     .filter((questionCount) => Number.isFinite(questionCount) && questionCount > 25);
   if (highQuestionMatches.length > 0) warnings.push(`l3_multiple_choice_count_above_guard:${highQuestionMatches.join(',')}`);
@@ -449,16 +517,37 @@ function assertDeltaOperationsPreflight(content, options = {}) {
   });
 }
 
+async function readActiveOperationsForNextValidation(options = {}) {
+  try {
+    const existing = await getContentFile(`${DELTA_OPERATIONS_ROOT}active_operations.md`, {
+      step: 'readActiveOperationsForNextValidation',
+      resource: 'delta_operations',
+      action: 'update',
+      branch: options.branch,
+    });
+    return { content: existing.content || '', sha: existing.sha || '' };
+  } catch (error) {
+    if (error.code === 'GITHUB_NOT_FOUND') return { content: '', sha: '' };
+    throw error;
+  }
+}
+
 export async function updateDeltaOperations(file, content, message = '', sha = '', options = {}) {
   const path = buildDeltaOperationsPath(file, {
     step: 'updateDeltaOperations',
     action: 'update',
   });
 
+  const activeForNext = file === 'next_operations.md'
+    ? await readActiveOperationsForNextValidation(options)
+    : { content: '', sha: '' };
+
   const preflight = assertDeltaOperationsPreflight(content, {
     file,
     split_mode: true,
     read_evidence: options.read_evidence,
+    active_operations_content: activeForNext.content,
+    active_operations_sha: activeForNext.sha,
   });
 
   let currentSha = typeof sha === 'string' ? sha.trim() : '';
