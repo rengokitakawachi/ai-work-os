@@ -21,10 +21,18 @@ Last review:
 - type: daily review with overdue weekly review gate closure
 - date: 2026-05-11
 - daily_report: `notes/07_reports/daily/2026-05-11.md`
+- weekly_report: `notes/07_reports/weekly/2026-05-10.md`
+- weekly_report_sha: `d2bc61161f19df3a7db2a3f499895c27fbc99efe`
 - overdue_weekly_review_target: 2026-05-10
 - weekly_snapshot: `notes/99_archive/operations/2026-05-10_weekly_operations.md`
+- weekly_snapshot_sha: `7e881de90451bee85f01ffb8825472b7fcc2fe05`
 - active_reroll: applied
-- todoist_projection_status: pending_apply
+- todoist_projection_status: applied
+- todoist_projection_request_id: `afad73f7-3e5d-49d2-bb84-e83d725f1d98`
+- todoist_projection_result:
+  - closed: `Sunday Weekly Review Mode を実行する` / `6gXh2qjvc69qcMQq`
+  - updated_existing_tasks: 13
+  - created: `Sunday Weekly Review Mode を実行する` / `6gcP4GjpwhXpq32q`
 
 Latest closure:
 
@@ -34,11 +42,13 @@ Latest closure:
 - archived_to: `notes/04_operations/archive_operations.md`
 - evidence:
   - notes/99_archive/operations/2026-05-10_weekly_operations.md
+  - notes/07_reports/weekly/2026-05-10.md
   - notes/04_operations/archive_operations.md
 - result:
   - invalid mistaken weekly snapshot path was restored as valid overdue weekly snapshot
   - archive_operations snapshot closed and reopened for the new week
   - known issue state checked; `idea_log.md` contains keep issues only
+  - old Todoist weekly projection closed and new weekly recurring task created
 
 ---
 
@@ -318,6 +328,8 @@ Capacity note: Sunday. Sunday Weekly Review Mode recurring task.
     - inbox / issue / design / future / operations 滞留を確認する
     - active_operations / next_operations を週次で再設計する
     - Todoist projection を一度だけ判断・実行する
+  external:
+    todoist_task_id: 6gcP4GjpwhXpq32q
 
 - task: Phase 1 Outlook Calendar API の読取設計を整理する
   source_ref:
