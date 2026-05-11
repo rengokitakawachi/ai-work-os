@@ -21,6 +21,13 @@ Because delete was not supported and the 2026-05-10 Sunday Weekly Review was lat
 
 This file is now valid.
 
+Additional 2026-05-11 correction:
+
+- ADAM initially interpreted a `tree` response-too-large failure as possible evidence that `notes/01_issues` contained too many files to confirm.
+- User showed `notes/01_issues` contains only four files.
+- ADAM directly read all four files and corrected the interpretation.
+- The response-too-large result was a tool call / response behavior issue, not evidence of issue volume.
+
 ---
 
 ## Snapshot contents
@@ -113,14 +120,19 @@ This file is now valid.
 ## Weekly review observations
 
 - `archive_operations.md` contained valid completed tasks and is now snapshotted here.
+- `notes/01_issues` currently contains four files, all directly read after correction:
+  - `README.md`
+  - `idea_log.md`
+  - `2026-05-03_review_report_template_gate_issue.md`
+  - `2026-05-03_routing_maturity_gap_intake_design_issue.md`
 - `idea_log.md` contained keep issues only.
 - Known individual issues remain connected to active operations:
   - `notes/01_issues/2026-05-03_review_report_template_gate_issue.md`
   - `notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md`
-- Full `notes/01_issues` tree was too large to fetch; this is not proof of absence of other issue files.
+- No full issue routing session was executed during this overdue weekly gate; the check was issue state confirmation and active connection confirmation.
 - The active plan remains Phase 0 common operating model hardening.
-- DELTA L3 question index runtime fixture remains unconfirmed and should stay active.
-- ADAM bug fix log operating method remains active and should absorb or summarize the 2026-05-09 DELTA validator logs.
+- DELTA L3 question index runtime fixture remained unconfirmed at snapshot time and stayed active. It was later confirmed on 2026-05-11.
+- ADAM bug fix log operating method remained active at snapshot time and was later fixed on 2026-05-11.
 
 ---
 
