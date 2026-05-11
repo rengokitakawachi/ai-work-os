@@ -36,6 +36,23 @@ Last review:
 
 Latest closure:
 
+- task: ADAM bug fix log の運用方法を notes に固定する
+- status: completed
+- completed_at: 2026-05-11
+- archived_to: `notes/04_operations/archive_operations.md`
+- evidence:
+  - notes/10_logs/README.md
+  - notes/10_logs/adam_bug_fix_log_operating_method.md
+  - notes/04_operations/archive_operations.md
+- result:
+  - logs layer role clarified
+  - ADAM bug fix log operating method created
+  - status taxonomy / review triggers / disposition rules fixed
+  - current individual logs classified
+  - `adam_bug_fix_log.md` explicitly remains non-SSOT and non-execution source
+
+Previous closure:
+
 - task: DELTA L3 question index runtime fixture を確認する
 - status: actual_behavior_confirmed
 - completed_at: 2026-05-11
@@ -50,25 +67,15 @@ Latest closure:
   - invalid ranges / count mismatch / vague wording reject confirmed
   - `next_operations.md` restored after fixture
 
-Previous closure:
-
-- task: overdue Sunday Weekly Review Mode Immediate Gate を解消する
-- status: completed
-- completed_at: 2026-05-11
-- archived_to: `notes/04_operations/archive_operations.md`
-- evidence:
-  - notes/99_archive/operations/2026-05-10_weekly_operations.md
-  - notes/07_reports/weekly/2026-05-10.md
-  - notes/04_operations/archive_operations.md
-- result:
-  - invalid mistaken weekly snapshot path was restored as valid overdue weekly snapshot
-  - archive_operations snapshot closed and reopened for the new week
-  - known issue state checked; `idea_log.md` contains keep issues only
-  - old Todoist weekly projection closed and new weekly recurring task created
-
 ---
 
 ## Recently resolved gates / completed scopes
+
+- task: ADAM bug fix log の運用方法を notes に固定する
+  status: completed
+  completed: true
+  completed_at: 2026-05-11
+  archived_to: `notes/04_operations/archive_operations.md`
 
 - task: DELTA L3 question index runtime fixture を確認する
   status: actual_behavior_confirmed
@@ -98,42 +105,7 @@ Previous closure:
 
 ## Day0（05/11 月）
 
-Capacity note: 約2h。L3 question index fixture は完了したため、ADAM governance を次の実行対象にする。
-
-- task: ADAM bug fix log の運用方法を notes に固定する
-  source_ref:
-    - notes/10_logs/adam_bug_fix_log.md
-    - notes/10_logs/README.md
-    - docs/15_notes_system.md
-    - notes/01_issues/2026-05-03_review_report_template_gate_issue.md
-    - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
-    - notes/10_logs/2026-05-04_adam_immediate_gate_judgment_miss.md
-    - notes/10_logs/2026-05-05_adam_delta_reverse_planning_gate_misjudgment.md
-    - notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md
-    - notes/10_logs/2026-05-06_repo_history_integrity_incident_after_atlas_recovery.md
-    - notes/10_logs/2026-05-09_delta_next_operations_dynamic_d7_validator_fix.md
-    - notes/10_logs/2026-05-09_delta_special_day_l3_unavailable_guard.md
-    - notes/10_logs/2026-05-11_delta_l3_question_index_runtime_fixture.md
-  rolling_day: Day0
-  due_date: 2026-05-11
-  due_type: date
-  status: active_carryover
-  completed_condition:
-    - `adam_bug_fix_log` の役割を `notes/10_logs/README.md` または専用 log 冒頭に明文化する
-    - bug / regression / fix entry の追加条件を定義する
-    - issue / operations / design / docs へ送る条件を定義する
-    - 修正済み / 未修正 / 再発観測中 / instruction反映候補などの status を固定する
-    - daily / weekly review で bug fix log を確認する条件を定義する
-    - `2026-05-04_adam_immediate_gate_judgment_miss.md` を `adam_bug_fix_log.md` に吸収するか判断する
-    - 2026-05-09 / 2026-05-11 DELTA validator logs を集約対象にするか判断する
-    - ADAM instruction 圧縮後の regression inventory task へ接続するか判断する
-    - 更新後に read-back し sha を記録する
-  external:
-    todoist_task_id: 6gWr53PC2R3QwRxq
-
-## Day1（05/12 火）
-
-Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
+Capacity note: Day0 primary tasks are completed. Continue only if remaining capacity exists; otherwise resume Day1 next.
 
 - task: Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
   source_ref:
@@ -144,7 +116,7 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - docs/05_roadmap.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
-  rolling_day: Day1
+  rolling_day: Day0
   due_date: 2026-05-12
   due_type: date
   status: active_carryover
@@ -160,6 +132,10 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - report / analysis / operations のどこに evidence を残すか判断し、read-back sha を記録する
   external:
     todoist_task_id: 6gWr53gP72vVPvjH
+
+## Day1（05/12 火）
+
+Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
 
 - task: DELTA chapter-only normalization fixture を実行する
   source_ref:
