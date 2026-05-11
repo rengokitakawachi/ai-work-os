@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-09
+2026-05-11
 
 ## touched_by
 
@@ -26,11 +26,11 @@ daily_review
 
 ## progress_note
 
-2026-05-09 daily review again read `notes/07_reports/README.md`, the recent 2026-05-07 daily report, and docs review / operations procedure before report creation. The report path gate operated correctly. The underlying template / README hardening remains open and should be addressed by the active task `ADAM bug fix log の運用方法を notes に固定する` or a later report template hardening task.
+2026-05-11 daily review used the report layer gate again and corrected the 2026-05-11 daily report / 2026-05-10 weekly report after the user identified a tool-failure interpretation miss. Report artifacts now explicitly distinguish tool failure from repository content evidence. The broader report template / README hardening remains open and should be handled by a later report template hardening task or by the Phase 0 routing maturity / docs reflection flow.
 
 ## routing_hint
 
-operations_candidate / docs_or_readme_update_candidate
+operations_candidate / docs_or_readme_update_candidate / keep_open
 
 ## title
 
@@ -62,8 +62,16 @@ daily / weekly review report 作成前に template / README / recent reports を
 - old weekly report was marked superseded:
   - `notes/07_reports/weekly/2026-05-03_weekly_review.md`
   - sha: `84bb59a8a5c85a11d69a1c06e82b03a6a2386671`
-- `active_operations.md` report refs were updated:
+- `active_operations.md` の report refs を canonical report に差し替えた。
   - sha: `db148c3d038daf1eb0f2512ac95e281d999b2ee1`
+
+2026-05-11 には、tool failure interpretation miss により report / snapshot に不正確な issue tree uncertainty が残ったため、以下を correction した。
+
+- `notes/07_reports/daily/2026-05-11.md`
+- `notes/07_reports/weekly/2026-05-10.md`
+- `notes/99_archive/operations/2026-05-10_weekly_operations.md`
+- `notes/04_operations/archive_operations.md`
+- `notes/10_logs/2026-05-11_adam_issue_tree_response_too_large_misinterpretation.md`
 
 ## root cause
 
@@ -72,6 +80,8 @@ Review Start Gate では procedure steps / update targets / completed condition 
 Write Gate では保存対象と内容を示したが、report layer の README / template / recent format との照合を必須にしていなかった。
 
 そのため、review procedure と report artifact quality を分けて扱えなかった。
+
+2026-05-11 の追加観測として、tool failure を report に書く際に、tool failure と repository content fact を分離する gate も必要である。
 
 ## recurrence prevention candidate
 
@@ -83,6 +93,7 @@ Write Gate では保存対象と内容を示したが、report layer の README 
 - ADAM instruction に短い常時 guard を追加する必要があるか Rule Placement Guard で判断する
 - daily / weekly review task の completed condition に report format read-back を入れる
 - report 保存後に canonical path / language / required sections / superseded duplicate absence を確認する
+- tool failure を report に書く場合、failure と content fact を明示的に分ける
 
 ## completed_condition
 
@@ -102,5 +113,8 @@ Write Gate では保存対象と内容を示したが、report layer の README 
 - `notes/04_operations/active_operations.md`
 - `notes/07_reports/daily/2026-05-05.md`
 - `notes/07_reports/daily/2026-05-07.md`
+- `notes/07_reports/daily/2026-05-11.md`
+- `notes/07_reports/weekly/2026-05-10.md`
+- `notes/10_logs/2026-05-11_adam_issue_tree_response_too_large_misinterpretation.md`
 - `docs/15_notes_system.md`
 - `docs/17_operations_system.md`
