@@ -35,6 +35,28 @@ weekly review までの短期履歴置き場であり、
   remaining_risk:
     - full `notes/01_issues` tree still returns response-too-large; not proof of absence of other issue files
 
+- task: DELTA L3 question index runtime fixture を確認する
+  completed_at: 2026-05-11
+  source_ref:
+    - notes/10_logs/2026-05-11_delta_l3_question_index_runtime_fixture.md
+    - src/services/delta/l3-question-index.js
+    - src/services/delta-operations.js
+    - src/services/delta/operations-split.test.js
+    - systems/delta/operations/next_operations.md
+    - systems/delta/config/delta_operations_generation_schema.yaml
+  completed_evidence:
+    - runtime validator version confirmed: `delta_operations_preflight_2026_05_09_l3_question_index_l3_unavailable_day_guard`
+    - allow confirmed for `国民年金法 L3 択一 Q4-1〜Q4-4（4問）`
+    - allow confirmed for `国民年金法 L3 択一 Q5-0（演習対象なし）`
+    - reject confirmed for count mismatch `Q4-1〜Q4-4（3問）`
+    - reject confirmed for nonexistent `Q3-4〜Q3-4`
+    - reject confirmed for `Q5-1〜Q5-1` in no-exercise chapter
+    - reject confirmed for nonexistent `Q1-17〜Q1-32`
+    - reject confirmed for `未通過16問`, `できるところまで`, and `4問相当`
+    - `next_operations.md` restored after fixture with sha `84f6abf2cdf9ba6aefab545d9a1f6da2c69554fd`
+  remaining_risk:
+    - guard is confirmed for 国民年金法 L3 択一 index; other subjects require their own index before enforcement
+
 ---
 
 ## Last weekly snapshot
