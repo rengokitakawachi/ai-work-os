@@ -18,21 +18,18 @@ Open immediate gates:
 
 Last review:
 
-- type: daily review with overdue weekly review gate closure
+- type: daily review
 - date: 2026-05-11
 - daily_report: `notes/07_reports/daily/2026-05-11.md`
 - weekly_report: `notes/07_reports/weekly/2026-05-10.md`
-- weekly_report_sha: `d2bc61161f19df3a7db2a3f499895c27fbc99efe`
 - overdue_weekly_review_target: 2026-05-10
 - weekly_snapshot: `notes/99_archive/operations/2026-05-10_weekly_operations.md`
-- weekly_snapshot_sha: `7e881de90451bee85f01ffb8825472b7fcc2fe05`
 - active_reroll: applied
-- todoist_projection_status: applied
-- todoist_projection_request_id: `afad73f7-3e5d-49d2-bb84-e83d725f1d98`
-- todoist_projection_result:
-  - closed: `Sunday Weekly Review Mode を実行する` / `6gXh2qjvc69qcMQq`
-  - updated_existing_tasks: 13
-  - created: `Sunday Weekly Review Mode を実行する` / `6gcP4GjpwhXpq32q`
+- todoist_projection_status: pending_apply
+- correction_note:
+  - `notes/01_issues` response-too-large interpretation was corrected.
+  - All four files in `notes/01_issues` were directly read.
+  - Correction log: `notes/10_logs/2026-05-11_adam_issue_tree_response_too_large_misinterpretation.md`
 
 Latest closure:
 
@@ -89,23 +86,11 @@ Previous closure:
   completed_at: 2026-05-11
   archived_to: `notes/04_operations/archive_operations.md`
 
-- task: DELTA special-day L3 unavailable guard
-  status: fixed_actual_behavior_confirmed
-  completed: true
-  completed_at: 2026-05-09
-  archived_to: `notes/99_archive/operations/2026-05-10_weekly_operations.md`
-
-- task: DELTA next_operations dynamic D7 validator fix
-  status: fixed_actual_behavior_confirmed
-  completed: true
-  completed_at: 2026-05-09
-  archived_to: `notes/99_archive/operations/2026-05-10_weekly_operations.md`
-
 ---
 
-## Day0（05/11 月）
+## Day0（05/12 火）
 
-Capacity note: Day0 primary tasks are completed. Continue only if remaining capacity exists; otherwise resume Day1 next.
+Capacity note: 約2h。Phase 0 matrix と DELTA fixture を1件ずつ。
 
 - task: Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
   source_ref:
@@ -119,7 +104,7 @@ Capacity note: Day0 primary tasks are completed. Continue only if remaining capa
   rolling_day: Day0
   due_date: 2026-05-12
   due_type: date
-  status: active_carryover
+  status: active
   completed_condition:
     - Phase 0 plan の重点テーマを列挙する
     - issue / intake / design / test system の maturity を同じ基準で比較する
@@ -133,10 +118,6 @@ Capacity note: Day0 primary tasks are completed. Continue only if remaining capa
   external:
     todoist_task_id: 6gWr53gP72vVPvjH
 
-## Day1（05/12 火）
-
-Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
-
 - task: DELTA chapter-only normalization fixture を実行する
   source_ref:
     - systems/delta/config/delta_schema.yaml
@@ -145,7 +126,7 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - systems/delta/operations/active_operations.md
     - systems/delta/operations/next_operations.md
     - systems/delta/history/daily/2026-05-05.md
-  rolling_day: Day1
+  rolling_day: Day0
   due_date: 2026-05-12
   due_type: date
   status: active_unblocked
@@ -157,7 +138,9 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
   external:
     todoist_task_id: 6gWVwmxWFcf9Wp4H
 
-## Day2（05/13 水）
+## Day1（05/13 水）
+
+Capacity note: 約2h。DELTA schema reflection と projection profile。
 
 - task: DELTA write resource schema reflection gate を整理する
   source_ref:
@@ -171,7 +154,7 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - api/repo-resource.js
     - src/services/delta-operations.js
     - systems/delta/config/delta_special_day_guard.md
-  rolling_day: Day2
+  rolling_day: Day1
   due_date: 2026-05-13
   due_type: date
   status: progressed_carryover
@@ -188,21 +171,21 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - src/services/tasks/projection.js
     - systems/delta/operations/active_operations.md
     - config/ai/adam_action_schema.yaml
-  rolling_day: Day2
+  rolling_day: Day1
   due_date: 2026-05-13
   due_type: date
   status: active_unblocked_after_review_if_capacity
   external:
     todoist_task_id: 6gWVwpw43m9q8Cfq
 
-## Day3（05/14 木）
+## Day2（05/14 木）
 
 - task: DELTA Todoist dry_run / apply / write-back fixture を実行する
   source_ref:
     - systems/delta/operations/active_operations.md
     - src/services/tasks/projection.js
     - systems/delta/config/delta_schema.yaml
-  rolling_day: Day3
+  rolling_day: Day2
   due_date: 2026-05-14
   due_type: date
   blocked_by:
@@ -216,13 +199,13 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
     - notes/08_analysis/2026-04-30_phase0_hardening_weekly_readiness_review_draft.md
     - notes/02_design/2026-04-30_routing_core_concept_redefinition.md
-  rolling_day: Day3
+  rolling_day: Day2
   due_date: 2026-05-14
   due_type: date
   external:
     todoist_task_id: 6gW4H8Wx6C8cp8hH
 
-## Day4（05/15 金）
+## Day3（05/15 金）
 
 - task: docs/15 / docs/17 に routing core / weekly routing session を反映するか判断する
   source_ref:
@@ -231,7 +214,7 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - notes/08_analysis/2026-04-30_routing_session_checklist.md
     - docs/15_notes_system.md
     - docs/17_operations_system.md
-  rolling_day: Day4
+  rolling_day: Day3
   due_date: 2026-05-15
   due_type: date
   external:
@@ -240,8 +223,8 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
 - task: next_operations から次週補充候補を再評価する
   source_ref:
     - notes/04_operations/next_operations.md
-    - notes/07_reports/weekly/2026-05-03.md
-  rolling_day: Day4
+    - notes/07_reports/weekly/2026-05-10.md
+  rolling_day: Day3
   due_date: 2026-05-15
   due_type: date
   completed_condition:
@@ -252,14 +235,14 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
   external:
     todoist_task_id: 6gWjr8pQXPfC9fjH
 
-## Day5（05/16 土）
+## Day4（05/16 土）
 
 - task: repo history / show / grep の docs・schema・runtime reflection 残範囲を再確認する
   source_ref:
     - docs/10_repo_resource_api.md
     - config/ai/adam_action_schema.yaml
     - notes/08_analysis/2026-04-30_phase0_hardening_followup_candidate_routing.md
-  rolling_day: Day5
+  rolling_day: Day4
   due_date: 2026-05-16
   due_type: date
   external:
@@ -270,7 +253,7 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
     - notes/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md
     - notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
     - notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
-  rolling_day: Day5
+  rolling_day: Day4
   due_date: 2026-05-16
   due_type: date
   notes:
@@ -278,7 +261,7 @@ Capacity note: 約2h。Phase 0 と DELTA fixture を1件ずつ。
   external:
     todoist_task_id: 6gWG92RX28p37gfq
 
-## Day6（05/17 日）
+## Day5（05/17 日）
 
 Capacity note: Sunday. Sunday Weekly Review Mode recurring task.
 
@@ -291,7 +274,7 @@ Capacity note: Sunday. Sunday Weekly Review Mode recurring task.
     - notes/04_operations/archive_operations.md
     - notes/07_reports/weekly/2026-05-10.md
     - notes/01_issues/idea_log.md
-  rolling_day: Day6
+  rolling_day: Day5
   due_date: 2026-05-17
   due_type: date
   status: recurring_review_due
@@ -311,19 +294,35 @@ Capacity note: Sunday. Sunday Weekly Review Mode recurring task.
     - notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
     - docs/05_roadmap.md
     - notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
-  rolling_day: Day6
+  rolling_day: Day5
   due_date: 2026-05-17
   due_type: date
   external:
     todoist_task_id: 6gW4H8g4c2HCvvRH
 
+## Day6（05/18 月）
+
+- task: notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
+  source_ref:
+    - notes/02_design/2026-03-24_notes_delete_api_draft.md
+    - docs/10_repo_resource_api.md
+    - config/ai/adam_action_schema.yaml
+    - notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
+  rolling_day: Day6
+  due_date: 2026-05-18
+  due_type: date
+  status: promoted_from_next
+  completed_condition:
+    - docs/10_repo_resource_api.md を読む
+    - current repoResourceWrite schema / actual behavior を確認する
+    - archive / future/design retain / docs update candidate のどれにするか判断する
+
 ---
 
 ## Rolled out to next_operations
 
-以下は7日枠から外し、next_operations に送る。
+以下は7日枠から外し、next_operations に残す。
 
-- notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
 - 現在の inbox を一回整理する
 - legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
 - DELTA foundation を main に統合する準備をする
