@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-09
+2026-05-11
 
 ## touched_by
 
@@ -26,11 +26,11 @@ daily_review
 
 ## progress_note
 
-2026-05-09 daily review confirmed that multiple DELTA validator regressions were fixed and actual behavior confirmed, but the active task `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` was not executed today. The task remains relevant and should continue after `ADAM bug fix log の運用方法を notes に固定する`, unless Sunday Weekly Review Mode rerolls order.
+2026-05-11 daily review confirmed that `DELTA L3 question index runtime fixture` and `ADAM bug fix log の運用方法を notes に固定する` are completed and archived. The active front now returns to `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する`, which directly addresses this issue. The issue remains open/progressed until the matrix is created and the plan-driven discovery gate disposition is saved.
 
 ## routing_hint
 
-keep_active_task_after_bug_fix_log / weekly_review_recheck
+active_task_now / keep_open_until_matrix_saved
 
 ## title
 
@@ -67,6 +67,11 @@ issue routing だけが先に運用段階へ進むと、未整理入力と desig
 2. design routing の最小 fixture を実行し、docs / future / archive / operations candidate への流れを観測する
 3. Phase 0 routing maturity matrix を作り、issue / intake / design の完成条件差分を整理する
 
+Current active connection:
+
+- `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する`
+- active source: `notes/04_operations/active_operations.md`
+
 ## completed_condition
 
 - issue / intake / design routing の成熟度を同じ基準で比較する
@@ -83,3 +88,4 @@ issue routing だけが先に運用段階へ進むと、未整理入力と desig
 - `notes/04_operations/active_operations.md`
 - `notes/04_operations/next_operations.md`
 - `notes/07_reports/daily/2026-05-07.md`
+- `notes/07_reports/daily/2026-05-11.md`
