@@ -25,7 +25,13 @@ Last review:
 - overdue_weekly_review_target: 2026-05-10
 - weekly_snapshot: `notes/99_archive/operations/2026-05-10_weekly_operations.md`
 - active_reroll: applied
-- todoist_projection_status: pending_apply
+- todoist_projection_status: applied
+- todoist_projection_request_id: `d725d391-de94-45ff-b471-e2dd4ee50c02`
+- todoist_projection_result:
+  - noop: `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する` / `6gWr53gP72vVPvjH`
+  - updated_existing_tasks: 11
+  - created: `notes delete API draft と current repoResourceWrite delete semantics の差分を確認する` / `6gcfPRhfQVcxWGJH`
+  - closed: none
 - correction_note:
   - `notes/01_issues` response-too-large interpretation was corrected.
   - All four files in `notes/01_issues` were directly read.
@@ -316,6 +322,8 @@ Capacity note: Sunday. Sunday Weekly Review Mode recurring task.
     - docs/10_repo_resource_api.md を読む
     - current repoResourceWrite schema / actual behavior を確認する
     - archive / future/design retain / docs update candidate のどれにするか判断する
+  external:
+    todoist_task_id: 6gcfPRhfQVcxWGJH
 
 ---
 
