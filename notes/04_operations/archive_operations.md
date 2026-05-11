@@ -57,6 +57,36 @@ weekly review までの短期履歴置き場であり、
   remaining_risk:
     - guard is confirmed for 国民年金法 L3 択一 index; other subjects require their own index before enforcement
 
+- task: ADAM bug fix log の運用方法を notes に固定する
+  completed_at: 2026-05-11
+  source_ref:
+    - notes/10_logs/README.md
+    - notes/10_logs/adam_bug_fix_log.md
+    - notes/10_logs/adam_bug_fix_log_operating_method.md
+    - notes/01_issues/2026-05-03_review_report_template_gate_issue.md
+    - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
+    - notes/10_logs/2026-05-04_adam_immediate_gate_judgment_miss.md
+    - notes/10_logs/2026-05-05_adam_delta_reverse_planning_gate_misjudgment.md
+    - notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md
+    - notes/10_logs/2026-05-06_repo_history_integrity_incident_after_atlas_recovery.md
+    - notes/10_logs/2026-05-09_delta_next_operations_dynamic_d7_validator_fix.md
+    - notes/10_logs/2026-05-09_delta_special_day_l3_unavailable_guard.md
+    - notes/10_logs/2026-05-11_delta_l3_question_index_runtime_fixture.md
+  completed_evidence:
+    - `notes/10_logs/README.md` now defines logs layer role and points to `adam_bug_fix_log_operating_method.md`
+    - `notes/10_logs/adam_bug_fix_log_operating_method.md` created
+    - operating method defines ADAM bug fix log role, non-SSOT status, required fields, status taxonomy, review triggers, and disposition rules
+    - current relevant individual logs were classified
+    - 2026-05-04 Immediate Gate miss remains individual log and instruction-reflected
+    - 2026-05-05 DELTA reverse-planning misjudgment remains individual log and closure judgment lesson
+    - 2026-05-05 handover latest detection failure remains next/future operations candidate until latest pointer is implemented
+    - 2026-05-06 repo history incident remains incident evidence with follow-ups elsewhere
+    - 2026-05-09 / 2026-05-11 DELTA validator logs remain individual evidence; only recurrence-prevention themes are summarized by operating method
+    - `adam_bug_fix_log.md` is explicitly not execution SSOT
+  remaining_risk:
+    - `adam_bug_fix_log.md` itself remains large and may later need summarization / indexing, but that is not required for this operating-method task
+    - stable rules discovered from repeated logs may still require future docs / instruction placement judgment
+
 ---
 
 ## Last weekly snapshot
