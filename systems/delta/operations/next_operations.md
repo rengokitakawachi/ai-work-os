@@ -2,13 +2,13 @@
 
 ## Metadata
 
-version: delta_v0.11_next_operations_2026_05_19_after_2026_05_11_daily_review
-updated_at: 2026-05-11
+version: delta_v0.12_next_operations_2026_05_20_after_2026_05_12_daily_review
+updated_at: 2026-05-12
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_after_active_roll_2026_05_12_2026_05_18
+operation_status: next_operations_d7_to_target_after_active_roll_2026_05_13_2026_05_19
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
-next_start_date: 2026-05-19
+next_start_date: 2026-05-20
 
 ## Purpose
 
@@ -39,14 +39,14 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: ee3d8474c530e9f8640463be7bab10bb38e9b800
-  expected_active_range: 2026-05-12〜2026-05-18
-  active_day6_due_date: 2026-05-18
-  active_day6_expected_position: 厚生年金保険法 L1 P200完了、L2 P80完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
-  next_start_date: 2026-05-19
+  active_sha: e3fabea09a2d41051892ddecacfe056ea3d6e4e9
+  expected_active_range: 2026-05-13〜2026-05-19
+  active_day6_due_date: 2026-05-19
+  active_day6_expected_position: 厚生年金保険法 L1 P200完了、L2 P125完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
+  next_start_date: 2026-05-20
   connection_rule: next_operations starts after active Day6
-  connection_status: connected_to_active_day6_2026_05_18
-  next_day_first_line: 2026-05-19 厚生年金保険法 L2 P81〜P125（45ページ）
+  connection_status: connected_to_active_day6_2026_05_19
+  next_day_first_line: 2026-05-20 厚生年金保険法 L1 P201〜P245（45ページ）
 
 ## Planning assumptions
 
@@ -72,11 +72,10 @@ special_day_overrides:
 
 ---
 
-# Next operations: 2026-05-19〜2026-06-30
+# Next operations: 2026-05-20〜2026-06-30
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-19 | L2 | 厚生年金保険法 L2 P81〜P125（45ページ） |
 | 2026-05-20 | L1 | 厚生年金保険法 L1 P201〜P245（45ページ） |
 | 2026-05-21 | L2 | 厚生年金保険法 L2 P126〜P170（45ページ） |
 | 2026-05-22 | L1 | 厚生年金保険法 L1 P246〜P284（39ページ） |
@@ -143,7 +142,7 @@ special_day_overrides:
 
 required_granularity: daily
 required_range:
-  start: 2026-05-19
+  start: 2026-05-20
   end: 2026-06-30
 required_fields_per_row:
   - Date
@@ -173,10 +172,10 @@ preflight_check_result:
   prior_daily_history_was_read: true
   active_operations_was_read: true
   next_operations_was_read: true
-  active_day6_next_start_connection_target: 2026-05-19
-  next_start_date: 2026-05-19
-  header_start_date: 2026-05-19
-  first_row_date: 2026-05-19
+  active_day6_next_start_connection_target: 2026-05-20
+  next_start_date: 2026-05-20
+  header_start_date: 2026-05-20
+  first_row_date: 2026-05-20
   D7_target_next_operations_exists: true
   daily_granularity_preserved: true
   period_block_absent: true
