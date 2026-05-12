@@ -2,10 +2,10 @@
 
 ## Metadata
 
-version: delta_v0.12_next_operations_2026_05_20_after_2026_05_12_daily_review
+version: delta_v0.13_next_operations_2026_05_20_l2_catch_up_then_l1_advance_fix
 updated_at: 2026-05-12
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_after_active_roll_2026_05_13_2026_05_19
+operation_status: next_operations_d7_to_target_l2_catches_up_then_l1_advances
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
 next_start_date: 2026-05-20
@@ -19,6 +19,8 @@ next_start_date: 2026-05-20
 - DELTA canonical branch is feature/atlas-pre-delta-foundation unless explicitly overridden.
 - 2026-06-30までに1巡完了を優先する。
 - 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
+- L2はL1に追いつくまで実施し、追いついたらL1を進める。
+- L2はL1の進行範囲を追い越さない。L2はL1と同ページまで追いつくことは可。
 - 原則として、土日祝はL3のみとする。
 - 通常の土日祝にL1/L2を入れない。
 - 2026-06-13は土曜だが仕事日扱い。過去問演習は不可、通勤枠でL1/L2可。
@@ -39,14 +41,14 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: e3fabea09a2d41051892ddecacfe056ea3d6e4e9
+  active_sha: be0f64e177973b3a6a745d604499ac53133798b0
   expected_active_range: 2026-05-13〜2026-05-19
   active_day6_due_date: 2026-05-19
-  active_day6_expected_position: 厚生年金保険法 L1 P200完了、L2 P125完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
+  active_day6_expected_position: 厚生年金保険法 L1 P230完了、L2 P200完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
   next_start_date: 2026-05-20
   connection_rule: next_operations starts after active Day6
   connection_status: connected_to_active_day6_2026_05_19
-  next_day_first_line: 2026-05-20 厚生年金保険法 L1 P201〜P245（45ページ）
+  next_day_first_line: 2026-05-20 厚生年金保険法 L2 P201〜P230（30ページ）＋厚生年金保険法 L1 P231〜P260（30ページ）
 
 ## Planning assumptions
 
@@ -76,47 +78,47 @@ special_day_overrides:
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-20 | L1 | 厚生年金保険法 L1 P201〜P245（45ページ） |
-| 2026-05-21 | L2 | 厚生年金保険法 L2 P126〜P170（45ページ） |
-| 2026-05-22 | L1 | 厚生年金保険法 L1 P246〜P284（39ページ） |
+| 2026-05-20 | L2/L1 | 厚生年金保険法 L2 P201〜P230（30ページ）＋厚生年金保険法 L1 P231〜P260（30ページ） |
+| 2026-05-21 | L2/L1 | 厚生年金保険法 L2 P231〜P260（30ページ）＋厚生年金保険法 L1 P261〜P284（24ページ） |
+| 2026-05-22 | L2 | 厚生年金保険法 L2 P261〜P284（24ページ） |
 | 2026-05-23 | L3 | 国民年金法 択一 Q14-1〜Q14-17（17問） |
 | 2026-05-24 | L3 | 厚生年金保険法 選択 Q16-1〜Q16-12（12問） |
-| 2026-05-25 | L2 | 厚生年金保険法 L2 P171〜P220（50ページ） |
-| 2026-05-26 | L2 | 厚生年金保険法 L2 P221〜P284（64ページ） |
-| 2026-05-27 | L1 | 労一 L1 P1〜P55（55ページ） |
-| 2026-05-28 | L2 | 労一 L2 P1〜P55（55ページ） |
-| 2026-05-29 | L1 | 労一 L1 P56〜P110（55ページ） |
+| 2026-05-25 | L1 | 労一 L1 P1〜P55（55ページ） |
+| 2026-05-26 | L2 | 労一 L2 P1〜P55（55ページ） |
+| 2026-05-27 | L1 | 労一 L1 P56〜P110（55ページ） |
+| 2026-05-28 | L2 | 労一 L2 P56〜P110（55ページ） |
+| 2026-05-29 | L1 | 労一 L1 P111〜P165（55ページ） |
 | 2026-05-30 | L3 | 厚生年金保険法 択一 Q1-1〜Q4-1（9問） |
 | 2026-05-31 | L3 | 厚生年金保険法 択一 Q4-2〜Q8-1（10問） |
-| 2026-06-01 | L2 | 労一 L2 P56〜P110（55ページ） |
-| 2026-06-02 | L1 | 労一 L1 P111〜P165（55ページ） |
-| 2026-06-03 | L2 | 労一 L2 P111〜P165（55ページ） |
-| 2026-06-04 | L1 | 労一 L1 P166〜P220（55ページ） |
-| 2026-06-05 | L2 | 労一 L2 P166〜P220（55ページ） |
+| 2026-06-01 | L2/L1 | 労一 L2 P111〜P165（55ページ）＋労一 L1 P166〜P180（15ページ） |
+| 2026-06-02 | L1 | 労一 L1 P181〜P235（55ページ） |
+| 2026-06-03 | L2 | 労一 L2 P166〜P220（55ページ） |
+| 2026-06-04 | L1 | 労一 L1 P236〜P290（55ページ） |
+| 2026-06-05 | L2/L1 | 労一 L2 P221〜P275（55ページ）＋労一 L1 P291〜P314（24ページ） |
 | 2026-06-06 | L3 | 厚生年金保険法 択一 Q8-2〜Q11-1（16問） |
 | 2026-06-07 | L3 | 厚生年金保険法 択一 Q11-2〜Q15-12（16問） |
-| 2026-06-08 | L1 | 労一 L1 P221〜P275（55ページ） |
-| 2026-06-09 | L2 | 労一 L2 P221〜P275（55ページ） |
-| 2026-06-10 | L1/L2 | 労一 L1 P276〜P314（39ページ）＋労一 L2 P276〜P290（15ページ） |
-| 2026-06-11 | L2 | 労一 L2 P291〜P314（24ページ） |
-| 2026-06-12 | L1 | 社一 L1 P1〜P50（50ページ） |
-| 2026-06-13 | L2 | 社一 L2 P1〜P25（25ページ・通勤枠） |
+| 2026-06-08 | L2 | 労一 L2 P276〜P314（39ページ） |
+| 2026-06-09 | L1 | 社一 L1 P1〜P50（50ページ） |
+| 2026-06-10 | L2/L1 | 社一 L2 P1〜P50（50ページ）＋社一 L1 P51〜P75（25ページ） |
+| 2026-06-11 | L1 | 社一 L1 P76〜P125（50ページ） |
+| 2026-06-12 | L2/L1 | 社一 L2 P51〜P100（50ページ）＋社一 L1 P126〜P150（25ページ） |
+| 2026-06-13 | L2 | 社一 L2 P101〜P125（25ページ・通勤枠） |
 | 2026-06-14 | L3 | 労一 選択 Q7-1〜Q7-10（10問）＋労一 択一 Q1-1〜Q2-2（6問） |
-| 2026-06-15 | L2 | 社一 L2 P26〜P75（50ページ） |
-| 2026-06-16 | L1 | 社一 L1 P51〜P100（50ページ） |
-| 2026-06-17 | L2 | 社一 L2 P76〜P125（50ページ） |
-| 2026-06-18 | L1 | 社一 L1 P101〜P150（50ページ） |
-| 2026-06-19 | L2 | 社一 L2 P126〜P175（50ページ） |
+| 2026-06-15 | L1 | 社一 L1 P151〜P200（50ページ） |
+| 2026-06-16 | L2 | 社一 L2 P126〜P175（50ページ） |
+| 2026-06-17 | L1 | 社一 L1 P201〜P231（31ページ） |
+| 2026-06-18 | L2 | 社一 L2 P176〜P231（56ページ） |
+| 2026-06-19 | L2 | 労働経済白書のポイント L2 P14〜P53（40ページ） |
 | 2026-06-20 | L3 | 労一 択一 Q2-3〜Q5-1（16問） |
 | 2026-06-21 | L3 | 労一 択一 Q5-2〜Q6-9（9問）＋社一 選択 Q7-1〜Q7-16（16問） |
-| 2026-06-22 | L1 | 社一 L1 P151〜P200（50ページ） |
-| 2026-06-23 | L2 | 社一 L2 P176〜P231（56ページ） |
-| 2026-06-24 | L1 | 社一 L1 P201〜P231（31ページ） |
-| 2026-06-25 | L2 | 労働経済白書のポイント L2 P14〜P53（40ページ） |
-| 2026-06-26 | L2 | 厚生労働白書のポイント L2 P1〜P40（40ページ） |
+| 2026-06-22 | L2 | 厚生労働白書のポイント L2 P1〜P40（40ページ） |
+| 2026-06-23 | L2 | 厚生労働白書のポイント L2 P41〜P80（40ページ） |
+| 2026-06-24 | L2 | 厚生労働白書のポイント L2 P81〜P120（40ページ） |
+| 2026-06-25 | L2 | 厚生労働白書のポイント L2 P121〜P160（40ページ） |
+| 2026-06-26 | L2 | 厚生労働白書のポイント L2 P161〜P200（40ページ） |
 | 2026-06-27 | L3 | 社一 択一 Q1-1〜Q3-2（16問） |
 | 2026-06-28 | L3 | 社一 択一 Q4-1〜Q6-2（17問） |
-| 2026-06-29 | L2 | 厚生労働白書のポイント L2 P41〜P80（40ページ） |
+| 2026-06-29 | L2 | 厚生労働白書のポイント L2 P201〜P240（40ページ） |
 | 2026-06-30 | L3 | 年休。社一 択一 Q6-3〜Q6-10（8問）＋1巡L3評価台帳の×・△・○整理 |
 
 ## Next operation guardrails
@@ -125,6 +127,8 @@ special_day_overrides:
 - DELTA canonical branch is feature/atlas-pre-delta-foundation unless explicitly overridden.
 - 2026-06-30までに1巡完了を優先する。
 - 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
+- L2はL1に追いつくまで実施し、追いついたらL1を進める。
+- L2はL1の進行範囲を追い越さない。L2はL1と同ページまで追いつくことは可。
 - 原則として土日祝はL3のみ。
 - 2026-06-13は土曜だが仕事日扱い。通勤枠でL1/L2可。
 - 通常の土日祝にL1/L2を混在させない。
@@ -169,7 +173,6 @@ preflight_check_result:
   roadmap_was_read: true
   plan_was_read: true
   latest_daily_history_was_read: true
-  prior_daily_history_was_read: true
   active_operations_was_read: true
   next_operations_was_read: true
   active_day6_next_start_connection_target: 2026-05-20
@@ -179,11 +182,11 @@ preflight_check_result:
   D7_target_next_operations_exists: true
   daily_granularity_preserved: true
   period_block_absent: true
+  L2_not_overtake_L1: true
   weekend_holiday_l3_only_reflected: true
   l1_l2_removed_from_regular_weekends_and_holidays: true
   commute_l1_l2_exception_2026_06_13_reflected: true
   whitepaper_l2_only_reflected: true
-  l3_unavailable_day_runtime_behavior_confirmed: true
   first_pass_priority_reflected: true
   review_deferred_until_after_first_pass: true
   canonical_branch_reflected: feature/atlas-pre-delta-foundation
@@ -195,14 +198,14 @@ preflight_check_result:
 - Next operations is D7-to-medium-target daily plan SSOT.
 - Active operations is D0-D6 execution SSOT.
 - DELTA canonical branch is feature/atlas-pre-delta-foundation unless explicitly overridden.
+- L2はL1に追いつくまで実施し、追いついたらL1を進める。
+- L2はL1の進行範囲を追い越さない。
 - 原則として土日祝はL3のみ。
 - 通常の土日祝にL1/L2を入れない。
 - 2026-06-13は土曜だが仕事日扱い。通勤枠でL1/L2可。
 - 労働経済白書のポイントはL1なし、L2のみ。
 - 2026-06-30までに1巡完了を優先する。
 - 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
-- △・×・確認対象は記録だけ残し、1巡目中の新規学習には再投入しない。
 - Actual performance records are written to daily history, not operations.
 - Daily history is the primary actual source.
 - Todoist is projection only.
-- Delta operations are learning execution order, not calendar schedule.
