@@ -2,10 +2,10 @@
 
 ## Metadata
 
-version: delta_v0.11_active_operations_2026_05_13_after_2026_05_12_daily_review
+version: delta_v0.12_active_operations_2026_05_13_l2_catch_up_then_l1_advance_fix
 updated_at: 2026-05-12
 branch: feature/atlas-pre-delta-foundation
-operation_status: active_d0_d6_after_2026_05_12_review_l2_catchup_success
+operation_status: active_d0_d6_l2_catches_up_then_l1_advances
 active_range: 2026-05-13〜2026-05-19
 next_operations_ref: systems/delta/operations/next_operations.md
 
@@ -44,8 +44,6 @@ current_position:
     L2: P277完了。一巡目終了
     選択問題: Q15-1〜Q15-14完了
     択一問題: Q4-2まで実施済み。次はQ4-3
-    weak_points_for_after_first_pass: [Q1-1, Q2-2, Q3-2, Q4-1, Q4-2]
-    review_targets_for_after_first_pass: [Q2-1, Q2-3, Q2-4, Q2-5]
   厚生年金保険法:
     L1: P66完了。次はP67
     L2: P47完了。次はP48
@@ -56,7 +54,15 @@ current_position:
     latest: 2026-05-12 40問
     daily_target: 40問
   gap_status: compression_required_but_l2_improved
-  operation_mode: first_pass_priority_l2_catchup
+  operation_mode: l2_catches_up_then_l1_advances
+
+## Operating rule override from user
+
+l1_l2_sequence_rule:
+  rule: L2はL1に追いつくまで実施し、追いついてからL1を進める
+  no_overtake: true
+  same_page_allowed: true
+  applied_from: 2026-05-13
 
 ## Confirmed question index
 
@@ -94,105 +100,110 @@ special_days:
 
 ## Day0（2026-05-13）
 
-- task: 厚生年金保険法 L2 P48〜P80（33ページ）＋厚生年金保険法 L1 P67〜P70（4ページ）
+- task: 厚生年金保険法 L2 P48〜P66（19ページ）＋厚生年金保険法 L1 P67〜P100（34ページ）
   rolling_day: Day0
   due_date: 2026-05-13
   subject: 厚生年金保険法
-  study_type: L2_plus_L1
+  study_type: L2_then_L1
   material: 基礎講座テキスト＋動画講義
-  estimated_minutes: 120
-  operation_mode: first_pass_priority_l2_catchup
-  plan_anchor: 2026-05-12実績でL2はP47まで前倒し。5/13はL2をP80へ接続し、L1未報告分P67〜P70を回収
-  expected_position: 厚生年金保険法 L2 P80完了、L1 P70完了
+  estimated_minutes: 130
+  operation_mode: l2_catches_up_then_l1_advances
+  plan_anchor: L2を現在のL1位置P66まで追いつかせ、その後L1をP100まで進める。L2はL1を追い越さない
+  expected_position: 厚生年金保険法 L2 P66完了、L1 P100完了
   current_position: 厚生年金保険法 L2 P47完了、L1 P66完了
   gap_status: compression_required_but_l2_improved
   start_page: L2 P48、L1 P67
-  standard_end_page: L2 P80、L1 P70
-  next_start_page: 厚生年金保険法 L1 P71、L2 P81
-  page_range: L2 P48〜P80、L1 P67〜P70
-  pages: 37
+  standard_end_page: L2 P66、L1 P100
+  next_start_page: 厚生年金保険法 L2 P67、L1 P101
+  page_range: L2 P48〜P66、L1 P67〜P100
+  pages: 53
   must_line:
-    - 厚生年金保険法 L2 P48〜P70（23ページ）
+    - 厚生年金保険法 L2 P48〜P66（19ページ）
   standard_line:
-    - 厚生年金保険法 L2 P48〜P80（33ページ）＋厚生年金保険法 L1 P67〜P70（4ページ）
+    - 厚生年金保険法 L2 P48〜P66（19ページ）＋厚生年金保険法 L1 P67〜P100（34ページ）
   stretch_line:
     - 標準ライン＋秒トレ40問
   recovery_targets:
-    - 厚生年金保険法 L2 P80到達
-    - 厚生年金保険法 L1 P70到達
+    - 厚生年金保険法 L2 P66到達
+    - 厚生年金保険法 L1 P100到達
   defer_targets:
     - 平日仕事日のL3
-    - 労働経済白書のポイント L2 P14以降
+    - 厚生年金保険法 L2 P67以降。L1が先行してから追いつく
   recompute_triggers:
-    - 厚生年金保険法 L2 P70未達
-    - 厚生年金保険法 L2 P80未達
-    - 厚生年金保険法 L1 P70未達
+    - 厚生年金保険法 L2 P66未達
+    - 厚生年金保険法 L1 P80未達
+    - 厚生年金保険法 L2がL1を追い越す報告
     - 秒トレ20問未満
 
 ## Day1（2026-05-14）
 
-- task: 厚生年金保険法 L1 P71〜P110（40ページ）
+- task: 厚生年金保険法 L2 P67〜P100（34ページ）＋厚生年金保険法 L1 P101〜P125（25ページ）
   rolling_day: Day1
   due_date: 2026-05-14
   subject: 厚生年金保険法
-  study_type: L1
-  material: 動画講義
-  estimated_minutes: 120
-  operation_mode: first_pass_priority_compression
-  plan_anchor: 厚生年金保険法L1をP110へ接続する
-  expected_position: 厚生年金保険法 L1 P110完了
-  current_position: Day0標準達成後は厚生年金保険法 L1 P71開始
+  study_type: L2_then_L1
+  material: 基礎講座テキスト＋動画講義
+  estimated_minutes: 140
+  operation_mode: l2_catches_up_then_l1_advances
+  plan_anchor: Day0でL1 P100まで先行後、L2をP100まで追いつかせ、その後L1をP125へ進める
+  expected_position: 厚生年金保険法 L2 P100完了、L1 P125完了
+  current_position: Day0標準達成後はL2 P67、L1 P101開始
   gap_status: compression_required
-  start_page: P71
-  standard_end_page: P110
-  next_start_page: P111
-  page_range: P71〜P110
-  pages: 40
+  start_page: L2 P67、L1 P101
+  standard_end_page: L2 P100、L1 P125
+  next_start_page: 厚生年金保険法 L2 P101、L1 P126
+  page_range: L2 P67〜P100、L1 P101〜P125
+  pages: 59
   must_line:
-    - 厚生年金保険法 L1 P71〜P90（20ページ）
+    - 厚生年金保険法 L2 P67〜P100（34ページ）
   standard_line:
-    - 厚生年金保険法 L1 P71〜P110（40ページ）
+    - 厚生年金保険法 L2 P67〜P100（34ページ）＋厚生年金保険法 L1 P101〜P125（25ページ）
   stretch_line:
-    - 厚生年金保険法 L1 P71〜P130（60ページ）＋秒トレ40問
+    - 標準ライン＋秒トレ40問
   recovery_targets:
-    - 厚生年金保険法 L1 P110到達
+    - 厚生年金保険法 L2 P100到達
+    - 厚生年金保険法 L1 P125到達
   defer_targets:
     - 平日仕事日のL3
   recompute_triggers:
-    - P110未達
+    - L2 P100未達
+    - L1 P125未達
+    - L2がL1を追い越す報告
 
 ## Day2（2026-05-15）
 
-- task: 厚生年金保険法 L1 P111〜P155（45ページ）
+- task: 厚生年金保険法 L2 P101〜P125（25ページ）＋厚生年金保険法 L1 P126〜P170（45ページ）
   rolling_day: Day2
   due_date: 2026-05-15
   subject: 厚生年金保険法
-  study_type: L1
-  material: 動画講義
-  estimated_minutes: 130
-  operation_mode: first_pass_priority_compression
-  plan_anchor: 厚生年金保険法L1をP155へ接続する
-  expected_position: 厚生年金保険法 L1 P155完了
-  current_position: Day1標準達成後は厚生年金保険法 L1 P111開始
+  study_type: L2_then_L1
+  material: 基礎講座テキスト＋動画講義
+  estimated_minutes: 150
+  operation_mode: l2_catches_up_then_l1_advances
+  plan_anchor: L2をP125まで追いつかせた後、L1をP170へ先行させる
+  expected_position: 厚生年金保険法 L2 P125完了、L1 P170完了
+  current_position: Day1標準達成後はL2 P101、L1 P126開始
   gap_status: compression_required
-  start_page: P111
-  standard_end_page: P155
-  next_start_page: P156
-  page_range: P111〜P155
-  pages: 45
+  start_page: L2 P101、L1 P126
+  standard_end_page: L2 P125、L1 P170
+  next_start_page: 厚生年金保険法 L2 P126、L1 P171
+  page_range: L2 P101〜P125、L1 P126〜P170
+  pages: 70
   must_line:
-    - 厚生年金保険法 L1 P111〜P130（20ページ）
+    - 厚生年金保険法 L2 P101〜P125（25ページ）
   standard_line:
-    - 厚生年金保険法 L1 P111〜P155（45ページ）
+    - 厚生年金保険法 L2 P101〜P125（25ページ）＋厚生年金保険法 L1 P126〜P170（45ページ）
   stretch_line:
-    - 厚生年金保険法 L1 P111〜P165（55ページ）＋秒トレ40問
+    - 標準ライン＋秒トレ40問
   recovery_targets:
-    - 厚生年金保険法 L1 P155到達
+    - 厚生年金保険法 L2 P125到達
+    - 厚生年金保険法 L1 P170到達
   defer_targets:
     - 平日仕事日のL3
-    - 厚生年金保険法 L2 P81以降
   recompute_triggers:
-    - P155未達
+    - L2 P125未達
+    - L1 P170未達
+    - L2がL1を追い越す報告
 
 ## Day3（2026-05-16）
 
@@ -204,7 +215,7 @@ special_days:
   material: 過去問講座テキスト
   estimated_minutes: 90
   operation_mode: first_pass_priority_compression
-  plan_anchor: 2026-05-16は土曜でL3のみ。2026-05-09未達分をQ4-3から再開し、実在Q番号で進める
+  plan_anchor: 2026-05-16は土曜でL3のみ。Q4-3から再開し、実在Q番号で進める
   expected_position: 国民年金法 択一 Q9-6完了
   current_position: 国民年金法 択一 Q4-2まで実施済み、次回Q4-3
   gap_status: compression_required
@@ -220,13 +231,11 @@ special_days:
   stretch_line:
     - 国民年金法 択一 Q9-7〜Q9-10（4問）
   recovery_targets:
-    - なし。Q4-1・Q4-2を含む×回収は1巡後へ延期
+    - なし。×・△回収は1巡後へ延期
   defer_targets:
-    - Q1-1・Q2-2・Q3-2・Q4-1・Q4-2の回収
-    - Q2-1・Q2-3・Q2-4・Q2-5の確認
+    - Q4-1・Q4-2を含む×回収
   recompute_triggers:
     - Q4-3未達
-    - Q6-2未達
     - Q9-6未達
 
 ## Day4（2026-05-17）
@@ -257,78 +266,80 @@ special_days:
   recovery_targets:
     - なし。×・△回収は1巡後へ延期
   defer_targets:
-    - Q4-1・Q4-2を含む×回収
     - Q14-1以降の本格実施はnextへ接続
   recompute_triggers:
     - Q9-7未達
-    - Q11-7未達
     - Q13-2未達
 
 ## Day5（2026-05-18）
 
-- task: 厚生年金保険法 L1 P156〜P200（45ページ）
+- task: 厚生年金保険法 L2 P126〜P170（45ページ）＋厚生年金保険法 L1 P171〜P200（30ページ）
   rolling_day: Day5
   due_date: 2026-05-18
   subject: 厚生年金保険法
-  study_type: L1
-  material: 動画講義
-  estimated_minutes: 130
-  operation_mode: first_pass_priority_compression
-  plan_anchor: 厚生年金保険法L1をP200へ接続する
-  expected_position: 厚生年金保険法 L1 P200完了
-  current_position: Day2標準達成後は厚生年金保険法 L1 P156開始
+  study_type: L2_then_L1
+  material: 基礎講座テキスト＋動画講義
+  estimated_minutes: 150
+  operation_mode: l2_catches_up_then_l1_advances
+  plan_anchor: Day2でL1 P170まで先行後、L2をP170まで追いつかせ、その後L1をP200へ進める
+  expected_position: 厚生年金保険法 L2 P170完了、L1 P200完了
+  current_position: Day2標準達成後はL2 P126、L1 P171開始
   gap_status: compression_required
-  start_page: P156
-  standard_end_page: P200
-  next_start_page: P201
-  page_range: P156〜P200
-  pages: 45
+  start_page: L2 P126、L1 P171
+  standard_end_page: L2 P170、L1 P200
+  next_start_page: 厚生年金保険法 L2 P171、L1 P201
+  page_range: L2 P126〜P170、L1 P171〜P200
+  pages: 75
   must_line:
-    - 厚生年金保険法 L1 P156〜P175（20ページ）
+    - 厚生年金保険法 L2 P126〜P150（25ページ）
   standard_line:
-    - 厚生年金保険法 L1 P156〜P200（45ページ）
+    - 厚生年金保険法 L2 P126〜P170（45ページ）＋厚生年金保険法 L1 P171〜P200（30ページ）
   stretch_line:
-    - 厚生年金保険法 L1 P156〜P210（55ページ）＋秒トレ40問
+    - 標準ライン＋秒トレ40問
   recovery_targets:
+    - 厚生年金保険法 L2 P170到達
     - 厚生年金保険法 L1 P200到達
   defer_targets:
     - 平日仕事日のL3
-    - 労働経済白書のポイント L2 P14以降
   recompute_triggers:
-    - P200未達
+    - L2 P170未達
+    - L1 P200未達
+    - L2がL1を追い越す報告
 
 ## Day6（2026-05-19）
 
-- task: 厚生年金保険法 L2 P81〜P125（45ページ）
+- task: 厚生年金保険法 L2 P171〜P200（30ページ）＋厚生年金保険法 L1 P201〜P230（30ページ）
   rolling_day: Day6
   due_date: 2026-05-19
   subject: 厚生年金保険法
-  study_type: L2
-  material: 基礎講座テキスト
-  estimated_minutes: 130
-  operation_mode: first_pass_priority_compression
-  plan_anchor: Active側で5/19を所有し、next_operationsは5/20開始へ接続する
-  expected_position: 厚生年金保険法 L2 P125完了
-  current_position: Day0標準達成後は厚生年金保険法 L2 P81開始
+  study_type: L2_then_L1
+  material: 基礎講座テキスト＋動画講義
+  estimated_minutes: 140
+  operation_mode: l2_catches_up_then_l1_advances
+  plan_anchor: Active側で5/19を所有し、next_operationsは5/20開始へ接続する。L2はL1 P200まで追いつき、その後L1をP230へ進める
+  expected_position: 厚生年金保険法 L2 P200完了、L1 P230完了
+  current_position: Day5標準達成後はL2 P171、L1 P201開始
   gap_status: compression_required
-  start_page: P81
-  standard_end_page: P125
-  next_start_page: P126
-  page_range: P81〜P125
-  pages: 45
+  start_page: L2 P171、L1 P201
+  standard_end_page: L2 P200、L1 P230
+  next_start_page: 厚生年金保険法 L2 P201、L1 P231
+  page_range: L2 P171〜P200、L1 P201〜P230
+  pages: 60
   must_line:
-    - 厚生年金保険法 L2 P81〜P100（20ページ）
+    - 厚生年金保険法 L2 P171〜P200（30ページ）
   standard_line:
-    - 厚生年金保険法 L2 P81〜P125（45ページ）
+    - 厚生年金保険法 L2 P171〜P200（30ページ）＋厚生年金保険法 L1 P201〜P230（30ページ）
   stretch_line:
-    - 厚生年金保険法 L2 P81〜P135（55ページ）＋秒トレ40問
+    - 標準ライン＋秒トレ40問
   recovery_targets:
-    - 厚生年金保険法 L2 P125到達
+    - 厚生年金保険法 L2 P200到達
+    - 厚生年金保険法 L1 P230到達
   defer_targets:
     - 平日仕事日のL3
-    - 労働経済白書のポイント L2 P14以降
   recompute_triggers:
-    - P125未達
+    - L2 P200未達
+    - L1 P230未達
+    - L2がL1を追い越す報告
 
 ---
 
@@ -336,16 +347,16 @@ special_days:
 
 active_day6_next_connection:
   active_day6_due_date: 2026-05-19
-  active_day6_expected_position: 厚生年金保険法 L1 P200完了、L2 P125完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
+  active_day6_expected_position: 厚生年金保険法 L1 P230完了、L2 P200完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
   expected_next_start_date: 2026-05-20
-  next_day_first_line: 2026-05-20 厚生年金保険法 L1 P201〜P245（45ページ）
-  connection_status: next_operations_needs_patch_to_start_2026_05_20
+  next_day_first_line: 2026-05-20 厚生年金保険法 L2 P201〜P230（30ページ）＋厚生年金保険法 L1 P231〜P260（30ページ）
+  connection_status: next_operations_needs_patch_to_start_2026_05_20_from_l2_p201_l1_p231
 
 next_operations_ref:
   path: systems/delta/operations/next_operations.md
   expected_next_start_date: 2026-05-20
-  active_day6_expected_position: 厚生年金保険法 L1 P200完了、L2 P125完了、国民年金法 択一 Q13-2完了
-  next_day_first_line: 2026-05-20 厚生年金保険法 L1 P201〜P245（45ページ）
+  active_day6_expected_position: 厚生年金保険法 L1 P230完了、L2 P200完了、国民年金法 択一 Q13-2完了
+  next_day_first_line: 2026-05-20 厚生年金保険法 L2 P201〜P230（30ページ）＋厚生年金保険法 L1 P231〜P260（30ページ）
 
 ## Operations completeness guard
 
@@ -354,7 +365,6 @@ preflight_check_result:
   roadmap_was_read: true
   plan_was_read: true
   latest_daily_history_was_read: true
-  prior_daily_history_was_read: true
   active_operations_was_read: true
   next_operations_was_read: true
   completed_scope_evidence_present: true
@@ -364,13 +374,14 @@ preflight_check_result:
   active_day6_next_start_connection_target: 2026-05-20
   L1_L2_page_range_format_valid: true
   L3_question_range_format_valid: true
+  L2_not_overtake_L1: true
   special_days_reflected: true
   weekday_workday_L3_constraint_reflected: true
   weekend_L3_only_reflected: true
   first_pass_priority_reflected: true
   review_deferred_until_after_first_pass: true
   canonical_branch_reflected: feature/atlas-pre-delta-foundation
-  correction_reflected: 2026-05-12実績により厚生年金保険法L2はP48から、L1はP67から
+  correction_reflected: L2はL1に追いつくまで実施し、追いついたらL1を進める運用に修正
   overload_detected: true
   overload_resolution: compression_required
 
@@ -383,6 +394,8 @@ preflight_check_result:
 - Daily history is the primary actual source.
 - 2026-06-30までに1巡完了を優先する。
 - 1巡目は未通過範囲を優先し、振り返り・回収は1巡後に行う。
+- L2はL1に追いつくまで実施し、追いついたらL1を進める。
+- L2はL1の進行範囲を追い越さない。L2はL1と同ページまで追いつくことは可。
 - 労働経済白書のポイントはL1なし。L2のみでページ管理する。
 - L1/L2 progress uses page_range / next_start_page.
 - L3 progress uses question_id / questions / next_question.
