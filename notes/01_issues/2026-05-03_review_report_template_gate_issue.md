@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-11
+2026-05-12
 
 ## touched_by
 
@@ -26,7 +26,7 @@ daily_review
 
 ## progress_note
 
-2026-05-11 daily review used the report layer gate again and corrected the 2026-05-11 daily report / 2026-05-10 weekly report after the user identified a tool-failure interpretation miss. Report artifacts now explicitly distinguish tool failure from repository content evidence. The broader report template / README hardening remains open and should be handled by a later report template hardening task or by the Phase 0 routing maturity / docs reflection flow.
+2026-05-12 daily review reused the report procedure gate and did not repeat the prior response-too-large interpretation error. The broader report template / README hardening remains open because no dedicated template or README update was completed today.
 
 ## routing_hint
 
@@ -114,6 +114,7 @@ Write Gate では保存対象と内容を示したが、report layer の README 
 - `notes/07_reports/daily/2026-05-05.md`
 - `notes/07_reports/daily/2026-05-07.md`
 - `notes/07_reports/daily/2026-05-11.md`
+- `notes/07_reports/daily/2026-05-12.md`
 - `notes/07_reports/weekly/2026-05-10.md`
 - `notes/10_logs/2026-05-11_adam_issue_tree_response_too_large_misinterpretation.md`
 - `docs/15_notes_system.md`
