@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-11
+2026-05-12
 
 ## touched_by
 
@@ -26,7 +26,7 @@ daily_review
 
 ## progress_note
 
-2026-05-11 daily review confirmed that `DELTA L3 question index runtime fixture` and `ADAM bug fix log の運用方法を notes に固定する` are completed and archived. The active front now returns to `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する`, which directly addresses this issue. The issue remains open/progressed until the matrix is created and the plan-driven discovery gate disposition is saved.
+2026-05-12 daily review confirmed that the Phase 0 routing maturity matrix task is still the active front and remains incomplete. No completion evidence was observed for the matrix or plan-driven discovery gate. The task was carried over to 2026-05-13 Day0 with the DELTA chapter-only normalization fixture.
 
 ## routing_hint
 
@@ -71,6 +71,7 @@ Current active connection:
 
 - `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する`
 - active source: `notes/04_operations/active_operations.md`
+- carried over by 2026-05-12 daily review to 2026-05-13 Day0
 
 ## completed_condition
 
@@ -89,3 +90,4 @@ Current active connection:
 - `notes/04_operations/next_operations.md`
 - `notes/07_reports/daily/2026-05-07.md`
 - `notes/07_reports/daily/2026-05-11.md`
+- `notes/07_reports/daily/2026-05-12.md`
