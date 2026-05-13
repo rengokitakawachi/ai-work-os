@@ -22,7 +22,12 @@ Last review:
 - date: 2026-05-13
 - daily_report: `notes/07_reports/daily/2026-05-13.md`
 - active_reroll: applied
-- todoist_projection_status: pending_apply
+- todoist_projection_status: applied
+- todoist_projection_request_id: `3eb2df3e-3438-4c58-b44e-37d997d8e619`
+- todoist_projection_result:
+  - updated_existing_tasks: 13
+  - created: none
+  - closed: none
 - completed_today: none
 - note:
   - 2026-05-13 active Day0 tasks had no completion evidence, so they were carried forward.
