@@ -22,7 +22,12 @@ Last review:
 - date: 2026-05-12
 - daily_report: `notes/07_reports/daily/2026-05-12.md`
 - active_reroll: applied
-- todoist_projection_status: pending_apply
+- todoist_projection_status: applied
+- todoist_projection_request_id: `ccb40a9c-ecca-4ed6-8209-365a54e251a0`
+- todoist_projection_result:
+  - updated_existing_tasks: 13
+  - created: none
+  - closed: none
 - completed_today: none
 - correction_note:
   - Previous assistant response incorrectly treated 2026-05-11 review as sufficient.
