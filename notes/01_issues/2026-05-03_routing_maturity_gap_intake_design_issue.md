@@ -18,7 +18,7 @@ high
 
 ## last_touched_at
 
-2026-05-12
+2026-05-13
 
 ## touched_by
 
@@ -26,11 +26,11 @@ daily_review
 
 ## progress_note
 
-2026-05-12 daily review confirmed that the Phase 0 routing maturity matrix task is still the active front and remains incomplete. No completion evidence was observed for the matrix or plan-driven discovery gate. The task was carried over to 2026-05-13 Day0 with the DELTA chapter-only normalization fixture.
+2026-05-13 daily review confirmed that the Phase 0 routing maturity matrix task is still the active front and remains incomplete. No completion evidence was observed for the matrix or plan-driven discovery gate. The task was carried over to 2026-05-14 Day0 with the DELTA chapter-only normalization fixture. This has now been carried across multiple daily reviews and should be treated as the next execution focus rather than deferred again without an explicit blocker.
 
 ## routing_hint
 
-active_task_now / keep_open_until_matrix_saved
+active_task_now / keep_open_until_matrix_saved / do_not_defer_without_blocker
 
 ## title
 
@@ -71,7 +71,7 @@ Current active connection:
 
 - `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する`
 - active source: `notes/04_operations/active_operations.md`
-- carried over by 2026-05-12 daily review to 2026-05-13 Day0
+- carried over by 2026-05-13 daily review to 2026-05-14 Day0
 
 ## completed_condition
 
@@ -91,3 +91,4 @@ Current active connection:
 - `notes/07_reports/daily/2026-05-07.md`
 - `notes/07_reports/daily/2026-05-11.md`
 - `notes/07_reports/daily/2026-05-12.md`
+- `notes/07_reports/daily/2026-05-13.md`
