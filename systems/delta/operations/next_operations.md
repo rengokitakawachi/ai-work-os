@@ -2,13 +2,14 @@
 
 ## Metadata
 
-version: delta_v0.13_next_operations_2026_05_20_l2_catch_up_then_l1_advance_fix
-updated_at: 2026-05-12
+version: delta_v0.14_next_operations_2026_05_21_after_2026_05_13_daily_review
+author: DELTA
+updated_at: 2026-05-13
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_l2_catches_up_then_l1_advances
+operation_status: next_operations_d7_to_target_after_active_roll_2026_05_14_2026_05_20
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
-next_start_date: 2026-05-20
+next_start_date: 2026-05-21
 
 ## Purpose
 
@@ -41,14 +42,14 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: be0f64e177973b3a6a745d604499ac53133798b0
-  expected_active_range: 2026-05-13〜2026-05-19
-  active_day6_due_date: 2026-05-19
-  active_day6_expected_position: 厚生年金保険法 L1 P230完了、L2 P200完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
-  next_start_date: 2026-05-20
+  active_sha: 65ec36aa7888d0458d99c3f79bcdab8c2164a5f6
+  expected_active_range: 2026-05-14〜2026-05-20
+  active_day6_due_date: 2026-05-20
+  active_day6_expected_position: 厚生年金保険法 L1 P260完了、L2 P230完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
+  next_start_date: 2026-05-21
   connection_rule: next_operations starts after active Day6
-  connection_status: connected_to_active_day6_2026_05_19
-  next_day_first_line: 2026-05-20 厚生年金保険法 L2 P201〜P230（30ページ）＋厚生年金保険法 L1 P231〜P260（30ページ）
+  connection_status: connected_to_active_day6_2026_05_20
+  next_day_first_line: 2026-05-21 厚生年金保険法 L2 P231〜P260（30ページ）＋厚生年金保険法 L1 P261〜P284（24ページ）
 
 ## Planning assumptions
 
@@ -70,15 +71,14 @@ special_day_overrides:
     l1_l2_allowed: true
     sekotore_allowed: true
     allowed_context: commute
-    standard_line: 社一 L2 P1〜P25（25ページ・通勤枠）
+    standard_line: 社一 L2 P101〜P125（25ページ・通勤枠）
 
 ---
 
-# Next operations: 2026-05-20〜2026-06-30
+# Next operations: 2026-05-21〜2026-06-30
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-20 | L2/L1 | 厚生年金保険法 L2 P201〜P230（30ページ）＋厚生年金保険法 L1 P231〜P260（30ページ） |
 | 2026-05-21 | L2/L1 | 厚生年金保険法 L2 P231〜P260（30ページ）＋厚生年金保険法 L1 P261〜P284（24ページ） |
 | 2026-05-22 | L2 | 厚生年金保険法 L2 P261〜P284（24ページ） |
 | 2026-05-23 | L3 | 国民年金法 択一 Q14-1〜Q14-17（17問） |
@@ -146,7 +146,7 @@ special_day_overrides:
 
 required_granularity: daily
 required_range:
-  start: 2026-05-20
+  start: 2026-05-21
   end: 2026-06-30
 required_fields_per_row:
   - Date
@@ -175,10 +175,10 @@ preflight_check_result:
   latest_daily_history_was_read: true
   active_operations_was_read: true
   next_operations_was_read: true
-  active_day6_next_start_connection_target: 2026-05-20
-  next_start_date: 2026-05-20
-  header_start_date: 2026-05-20
-  first_row_date: 2026-05-20
+  active_day6_next_start_connection_target: 2026-05-21
+  next_start_date: 2026-05-21
+  header_start_date: 2026-05-21
+  first_row_date: 2026-05-21
   D7_target_next_operations_exists: true
   daily_granularity_preserved: true
   period_block_absent: true
