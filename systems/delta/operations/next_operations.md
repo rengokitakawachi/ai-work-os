@@ -2,14 +2,14 @@
 
 ## Metadata
 
-version: delta_v0.16_next_operations_2026_05_22_after_2026_05_14_no_study_correction
+version: delta_v0.17_next_operations_2026_05_24_after_2026_05_16_no_progress_roll
 author: DELTA
-updated_at: 2026-05-15
+updated_at: 2026-05-16
 branch: feature/atlas-pre-delta-foundation
-operation_status: next_operations_d7_to_target_after_2026_05_14_no_study_correction
+operation_status: next_operations_d7_to_target_after_active_roll_2026_05_17_2026_05_23
 active_operations_ref: systems/delta/operations/active_operations.md
 target_date: 2026-06-30
-next_start_date: 2026-05-22
+next_start_date: 2026-05-24
 
 ## Purpose
 
@@ -42,14 +42,14 @@ source_of_truth:
 
 active_connection:
   active_ref: systems/delta/operations/active_operations.md
-  active_sha: 9c55019db378ffe0630e659a83865640f9cee467
-  expected_active_range: 2026-05-15〜2026-05-21
-  active_day6_due_date: 2026-05-21
+  active_sha: 7c1b723a9c3e32d257ff3da8e373b2f731620fdc
+  expected_active_range: 2026-05-17〜2026-05-23
+  active_day6_due_date: 2026-05-23
   active_day6_expected_position: 厚生年金保険法 L1 P284完了、L2 P240完了。国民年金法L1/L2 P277完了。国民年金法 択一 Q13-2完了。労働経済白書のポイント L2 P13完了
-  next_start_date: 2026-05-22
+  next_start_date: 2026-05-24
   connection_rule: next_operations starts after active Day6
-  connection_status: connected_to_active_day6_2026_05_21
-  next_day_first_line: 2026-05-22 厚生年金保険法 L2 P241〜P284（44ページ）
+  connection_status: connected_to_active_day6_2026_05_23
+  next_day_first_line: 2026-05-24 国民年金法 択一 Q14-1〜Q14-17（17問）
 
 ## Planning assumptions
 
@@ -75,50 +75,48 @@ special_day_overrides:
 
 ---
 
-# Next operations: 2026-05-22〜2026-06-30
+# Next operations: 2026-05-24〜2026-06-30
 
 | Date | Layer | Standard line |
 |---|---|---|
-| 2026-05-22 | L2 | 厚生年金保険法 L2 P241〜P284（44ページ） |
-| 2026-05-23 | L3 | 国民年金法 択一 Q14-1〜Q14-17（17問） |
-| 2026-05-24 | L3 | 厚生年金保険法 選択 Q16-1〜Q16-12（12問） |
-| 2026-05-25 | L1 | 労一 L1 P1〜P55（55ページ） |
-| 2026-05-26 | L2/L1 | 労一 L2 P1〜P55（55ページ）＋労一 L1 P56〜P80（25ページ） |
-| 2026-05-27 | L1 | 労一 L1 P81〜P135（55ページ） |
-| 2026-05-28 | L2 | 労一 L2 P56〜P110（55ページ） |
-| 2026-05-29 | L1 | 労一 L1 P136〜P190（55ページ） |
-| 2026-05-30 | L3 | 厚生年金保険法 択一 Q1-1〜Q4-1（9問） |
-| 2026-05-31 | L3 | 厚生年金保険法 択一 Q4-2〜Q8-1（10問） |
-| 2026-06-01 | L2/L1 | 労一 L2 P111〜P165（55ページ）＋労一 L1 P191〜P215（25ページ） |
-| 2026-06-02 | L1 | 労一 L1 P216〜P270（55ページ） |
-| 2026-06-03 | L2 | 労一 L2 P166〜P220（55ページ） |
-| 2026-06-04 | L1 | 労一 L1 P271〜P314（44ページ） |
-| 2026-06-05 | L2 | 労一 L2 P221〜P275（55ページ） |
-| 2026-06-06 | L3 | 厚生年金保険法 択一 Q8-2〜Q11-1（16問） |
-| 2026-06-07 | L3 | 厚生年金保険法 択一 Q11-2〜Q15-12（16問） |
-| 2026-06-08 | L2 | 労一 L2 P276〜P314（39ページ） |
-| 2026-06-09 | L1 | 社一 L1 P1〜P50（50ページ） |
-| 2026-06-10 | L2 | 社一 L2 P1〜P50（50ページ） |
-| 2026-06-11 | L1 | 社一 L1 P51〜P100（50ページ） |
-| 2026-06-12 | L2 | 社一 L2 P51〜P100（50ページ） |
-| 2026-06-13 | L2 | 社一 L2 P101〜P125（25ページ・通勤枠） |
-| 2026-06-14 | L3 | 労一 選択 Q7-1〜Q7-10（10問）＋労一 択一 Q1-1〜Q2-2（6問） |
-| 2026-06-15 | L1 | 社一 L1 P101〜P150（50ページ） |
-| 2026-06-16 | L2/L1 | 社一 L2 P126〜P150（25ページ）＋社一 L1 P151〜P200（50ページ） |
-| 2026-06-17 | L2 | 社一 L2 P151〜P200（50ページ） |
-| 2026-06-18 | L1 | 社一 L1 P201〜P231（31ページ） |
+| 2026-05-24 | L3 | 国民年金法 択一 Q14-1〜Q14-17（17問） |
+| 2026-05-25 | L2 | 厚生年金保険法 L2 P241〜P284（44ページ） |
+| 2026-05-26 | L1 | 労一 L1 P1〜P55（55ページ） |
+| 2026-05-27 | L2/L1 | 労一 L2 P1〜P55（55ページ）＋労一 L1 P56〜P80（25ページ） |
+| 2026-05-28 | L1 | 労一 L1 P81〜P135（55ページ） |
+| 2026-05-29 | L2 | 労一 L2 P56〜P110（55ページ） |
+| 2026-05-30 | L3 | 厚生年金保険法 選択 Q16-1〜Q16-12（12問） |
+| 2026-05-31 | L3 | 厚生年金保険法 択一 Q1-1〜Q4-1（9問） |
+| 2026-06-01 | L1 | 労一 L1 P136〜P190（55ページ） |
+| 2026-06-02 | L2/L1 | 労一 L2 P111〜P165（55ページ）＋労一 L1 P191〜P215（25ページ） |
+| 2026-06-03 | L1 | 労一 L1 P216〜P270（55ページ） |
+| 2026-06-04 | L2 | 労一 L2 P166〜P220（55ページ） |
+| 2026-06-05 | L1 | 労一 L1 P271〜P314（44ページ） |
+| 2026-06-06 | L3 | 厚生年金保険法 択一 Q4-2〜Q8-1（10問） |
+| 2026-06-07 | L3 | 厚生年金保険法 択一 Q8-2〜Q11-1（16問） |
+| 2026-06-08 | L2 | 労一 L2 P221〜P275（55ページ） |
+| 2026-06-09 | L2 | 労一 L2 P276〜P314（39ページ） |
+| 2026-06-10 | L1 | 社一 L1 P1〜P50（50ページ） |
+| 2026-06-11 | L2 | 社一 L2 P1〜P50（50ページ） |
+| 2026-06-12 | L1 | 社一 L1 P51〜P100（50ページ） |
+| 2026-06-13 | L2 | 社一 L2 P51〜P75（25ページ・通勤枠） |
+| 2026-06-14 | L3 | 厚生年金保険法 択一 Q11-2〜Q15-12（16問） |
+| 2026-06-15 | L1/L2 | 社一 L1 P101〜P150（50ページ）＋社一 L2 P76〜P100（25ページ） |
+| 2026-06-16 | L2/L1 | 社一 L2 P101〜P150（50ページ）＋社一 L1 P151〜P175（25ページ） |
+| 2026-06-17 | L1 | 社一 L1 P176〜P231（56ページ） |
+| 2026-06-18 | L2 | 社一 L2 P151〜P200（50ページ） |
 | 2026-06-19 | L2 | 社一 L2 P201〜P231（31ページ） |
-| 2026-06-20 | L3 | 労一 択一 Q2-3〜Q5-1（16問） |
-| 2026-06-21 | L3 | 労一 択一 Q5-2〜Q6-9（9問）＋社一 選択 Q7-1〜Q7-16（16問） |
+| 2026-06-20 | L3 | 労一 選択 Q7-1〜Q7-10（10問）＋労一 択一 Q1-1〜Q2-2（6問） |
+| 2026-06-21 | L3 | 労一 択一 Q2-3〜Q5-1（16問） |
 | 2026-06-22 | L2 | 労働経済白書のポイント L2 P14〜P53（40ページ） |
 | 2026-06-23 | L2 | 厚生労働白書のポイント L2 P1〜P40（40ページ） |
 | 2026-06-24 | L2 | 厚生労働白書のポイント L2 P41〜P80（40ページ） |
 | 2026-06-25 | L2 | 厚生労働白書のポイント L2 P81〜P120（40ページ） |
 | 2026-06-26 | L2 | 厚生労働白書のポイント L2 P121〜P160（40ページ） |
-| 2026-06-27 | L3 | 社一 択一 Q1-1〜Q3-2（16問） |
-| 2026-06-28 | L3 | 社一 択一 Q4-1〜Q6-2（17問） |
+| 2026-06-27 | L3 | 労一 択一 Q5-2〜Q6-9（9問）＋社一 選択 Q7-1〜Q7-16（16問） |
+| 2026-06-28 | L3 | 社一 択一 Q1-1〜Q3-2（16問） |
 | 2026-06-29 | L2 | 厚生労働白書のポイント L2 P161〜P200（40ページ） |
-| 2026-06-30 | L3 | 年休。社一 択一 Q6-3〜Q6-10（8問）＋1巡L3評価台帳の×・△・○整理 |
+| 2026-06-30 | L3 | 年休。社一 択一 Q4-1〜Q6-10（25問）＋1巡L3評価台帳の×・△・○整理 |
 
 ## Next operation guardrails
 
@@ -145,7 +143,7 @@ special_day_overrides:
 
 required_granularity: daily
 required_range:
-  start: 2026-05-22
+  start: 2026-05-24
   end: 2026-06-30
 required_fields_per_row:
   - Date
@@ -174,10 +172,10 @@ preflight_check_result:
   latest_daily_history_was_read: true
   active_operations_was_read: true
   next_operations_was_read: true
-  active_day6_next_start_connection_target: 2026-05-22
-  next_start_date: 2026-05-22
-  header_start_date: 2026-05-22
-  first_row_date: 2026-05-22
+  active_day6_next_start_connection_target: 2026-05-24
+  next_start_date: 2026-05-24
+  header_start_date: 2026-05-24
+  first_row_date: 2026-05-24
   D7_target_next_operations_exists: true
   daily_granularity_preserved: true
   period_block_absent: true
