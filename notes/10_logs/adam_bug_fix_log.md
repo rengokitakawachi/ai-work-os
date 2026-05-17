@@ -83,6 +83,122 @@ next_disposition:
 
 ## entries
 
+### 2026-05-17-007 Bug-log omission after Todoist projection bug
+
+status: fixed_with_monitoring
+severity: high
+category: bug_log_procedure / operations_rolling
+observed_at: 2026-05-17
+reported_by: user
+
+symptom:
+
+- ADAM corrected the Todoist stale due-date projection bug but did not immediately record the defect in the ADAM bug fix log.
+- After ADAM later logged the Todoist projection bug, the user correctly pointed out that the failure to log it immediately was itself another bug.
+
+impact:
+
+- This violated `notes/10_logs/adam_bug_fix_log_operating_method.md`.
+- The omission delayed recurrence-prevention tracking and weakened traceability of the original projection defect.
+
+root_cause:
+
+- ADAM treated the Todoist stale due-date issue as a quick projection correction and did not immediately run the bug-log procedure.
+- The correction flow skipped the required sequence: detect ADAM-owned bug → fix immediate symptom → record bug log → decide monitoring / operations / docs / instruction disposition.
+
+fix_applied:
+
+- Created individual log:
+  - `notes/10_logs/2026-05-17_adam_bug_log_omission_for_todoist_projection_bug.md`
+  - sha: `8b4c92227e22b4c5779199d18f2a0c68bf6f6c2c`
+- Updated this consolidated ledger with the current entry.
+
+remaining_risk:
+
+- ADAM may still correct small operational mistakes without logging them if the bug-log step is not treated as part of the correction completed condition.
+
+recurrence_prevention:
+
+- When ADAM detects or is told about an ADAM-owned defect, the correction is not complete until the bug log is created or updated.
+- If the bug-log step is missed, that omission must be treated as a separate bug.
+
+linked_refs:
+
+- `notes/10_logs/README.md`
+- `notes/10_logs/adam_bug_fix_log_operating_method.md`
+- `notes/10_logs/2026-05-17_adam_bug_log_omission_for_todoist_projection_bug.md`
+- `notes/10_logs/2026-05-17_adam_todoist_projection_stale_due_date.md`
+
+next_disposition:
+
+- fixed_with_monitoring。
+- Monitor during next daily / weekly review and any ADAM-owned bug correction.
+
+---
+
+### 2026-05-17-006 Todoist active projection stale due date after reroute
+
+status: fixed_with_monitoring
+severity: high
+category: todoist_projection / operations_rolling
+observed_at: 2026-05-17
+reported_by: user
+
+symptom:
+
+- ADAM Phase 0 priority reroute 後、Todoist に active projection task が期限切れとして残った。
+- `現在の inbox を一回整理する` が 2026-05-15 のまま表示された。
+- `design routing の最小 fixture を実行する` と `report template / README hardening を実行する` が 2026-05-16 のまま表示された。
+
+impact:
+
+- Todoist は operations の projection であるにもかかわらず、current active intent と異なる overdue view を表示した。
+- ユーザーが今日やるべき task を期限切れ task として見ることになり、実行順判断を誤らせるリスクがあった。
+
+root_cause:
+
+- `projectTasks dry_run` が uncompleted removed-active tasks を delete 判定したため、ADAM が安全側で manual close/create/update に切り替えた。
+- その際、active に残す / 新たに今日実行対象にする task の due_date を今日の日付へ正規化しなかった。
+- active review / reroute 後の Todoist date normalization gate が抜けていた。
+
+fix_applied:
+
+- Todoist due_date を 2026-05-17 に補正した。
+  - `現在の inbox を一回整理する` / `6gfxCHWgH4M8755q`
+  - `design routing の最小 fixture を実行する` / `6gfxCHphWggvM2MH`
+  - `report template / README hardening を実行する` / `6gfxCJ5Gmr25PvRH`
+- `notes/04_operations/active_operations.md` の due_date と projection adjustment を更新した。
+  - sha: `7b8f6f13dda9707282ae19360b0321be4b15ccb2`
+- 個別ログを作成した。
+  - `notes/10_logs/2026-05-17_adam_todoist_projection_stale_due_date.md`
+
+remaining_risk:
+
+- manual projection を使う場合、同じ stale due date が再発する可能性がある。
+- `projectTasks` の delete / close / defer semantics は別途整理が必要。
+
+recurrence_prevention:
+
+- active tasks を review / reroute した場合、未完了かつ今日実行対象に残す task は今日の日付にする。
+- Todoist overdue 表示が current active task に出た場合、projection defect として扱う。
+- manual Todoist projection 後は due_date / Today view を確認する。
+- `projectTasks dry_run` が uncompleted task removal を delete と判断した場合は apply せず、close / defer semantics を別途判断する。
+
+linked_refs:
+
+- `notes/10_logs/2026-05-17_adam_todoist_projection_stale_due_date.md`
+- `notes/04_operations/active_operations.md`
+- Todoist task `6gfxCHWgH4M8755q`
+- Todoist task `6gfxCHphWggvM2MH`
+- Todoist task `6gfxCJ5Gmr25PvRH`
+
+next_disposition:
+
+- fixed_with_monitoring。
+- `tasks API 全体を execution projection 前提で再設計する` または次回 weekly review で、delete / close / defer semantics と date normalization を確認する。
+
+---
+
 ### 2026-05-03-001 daily / weekly report template and filename regression
 
 status: fixed_with_followup_issue
@@ -395,66 +511,3 @@ next_disposition:
 
 - `notes/04_operations/active_operations.md` の `DELTA write resource schema reflection gate を整理する` に runtime fixture condition として接続する。
 - DELTA configured GPT reflection / runtime-visible schema / actual behavior を確認するまで runtime completed とは扱わない。
-
----
-
-### 2026-05-17-006 Todoist active projection stale due date after reroute
-
-status: fixed_with_monitoring
-severity: high
-category: todoist_projection / operations_rolling
-observed_at: 2026-05-17
-reported_by: user
-
-symptom:
-
-- ADAM Phase 0 priority reroute 後、Todoist に active projection task が期限切れとして残った。
-- `現在の inbox を一回整理する` が 2026-05-15 のまま表示された。
-- `design routing の最小 fixture を実行する` と `report template / README hardening を実行する` が 2026-05-16 のまま表示された。
-
-impact:
-
-- Todoist は operations の projection であるにもかかわらず、current active intent と異なる overdue view を表示した。
-- ユーザーが今日やるべき task を期限切れ task として見ることになり、実行順判断を誤らせるリスクがあった。
-
-root_cause:
-
-- `projectTasks dry_run` が uncompleted removed-active tasks を delete 判定したため、ADAM が安全側で manual close/create/update に切り替えた。
-- その際、active に残す / 新たに今日実行対象にする task の due_date を今日の日付へ正規化しなかった。
-- active review / reroute 後の Todoist date normalization gate が抜けていた。
-
-fix_applied:
-
-- Todoist due_date を 2026-05-17 に補正した。
-  - `現在の inbox を一回整理する` / `6gfxCHWgH4M8755q`
-  - `design routing の最小 fixture を実行する` / `6gfxCHphWggvM2MH`
-  - `report template / README hardening を実行する` / `6gfxCJ5Gmr25PvRH`
-- `notes/04_operations/active_operations.md` の due_date と projection adjustment を更新した。
-  - sha: `7b8f6f13dda9707282ae19360b0321be4b15ccb2`
-- 個別ログを作成した。
-  - `notes/10_logs/2026-05-17_adam_todoist_projection_stale_due_date.md`
-
-remaining_risk:
-
-- manual projection を使う場合、同じ stale due date が再発する可能性がある。
-- `projectTasks` の delete / close / defer semantics は別途整理が必要。
-
-recurrence_prevention:
-
-- active tasks を review / reroute した場合、未完了かつ今日実行対象に残す task は今日の日付にする。
-- Todoist overdue 表示が current active task に出た場合、projection defect として扱う。
-- manual Todoist projection 後は due_date / Today view を確認する。
-- `projectTasks dry_run` が uncompleted task removal を delete と判断した場合は apply せず、close / defer semantics を別途判断する。
-
-linked_refs:
-
-- `notes/10_logs/2026-05-17_adam_todoist_projection_stale_due_date.md`
-- `notes/04_operations/active_operations.md`
-- Todoist task `6gfxCHWgH4M8755q`
-- Todoist task `6gfxCHphWggvM2MH`
-- Todoist task `6gfxCJ5Gmr25PvRH`
-
-next_disposition:
-
-- fixed_with_monitoring。
-- `tasks API 全体を execution projection 前提で再設計する` または次回 weekly review で、delete / close / defer semantics と date normalization を確認する。
