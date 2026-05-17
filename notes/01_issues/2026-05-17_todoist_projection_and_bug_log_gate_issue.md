@@ -2,7 +2,7 @@
 
 ## status
 
-open
+progressed
 
 ## category
 
@@ -22,11 +22,28 @@ high
 
 ## touched_by
 
-user_report / issue_creation
+sunday_weekly_review
 
 ## title
 
 Todoist projection の期限補正と ADAM 不具合ログ記録 gate が弱い
+
+## progress_note
+
+2026-05-17 Sunday Weekly Review Mode checked this issue immediately after creation.
+
+Confirmed:
+
+- Todoist stale due-date defect was corrected for the three active projection tasks.
+- `active_operations.md` contains a recurrence note that unfinished today-executable active tasks must be assigned today's date after review/reroute.
+- Two bug logs were created and the consolidated bug ledger was updated.
+- The bug-log omission was separately logged.
+
+Remaining:
+
+- `projectTasks` delete / close / defer semantics still need later design or operations review.
+- Manual projection should continue to be monitored in daily / weekly review.
+- The issue should stay open/progressed until the next projection cycle confirms the gate holds without user correction.
 
 ## observation
 
@@ -94,7 +111,7 @@ Consolidated bug log updated:
 
 ## routing_hint
 
-operations_candidate / design_candidate_if_recurs / keep_open_until_next_review_confirms_gate
+operations_candidate / design_candidate_if_recurs / keep_open_until_next_projection_cycle_confirms_gate
 
 ## recurrence prevention candidate
 
@@ -113,6 +130,7 @@ This issue can be closed when:
 - `active_operations.md` or review procedure captures the rule that today-executable active tasks get today's date after review/reroute
 - bug-log gate is included in correction completed condition for ADAM-owned defects
 - if `projectTasks` delete/close/defer semantics need implementation work, an operations or design candidate is created
+- at least one later projection cycle completes without stale due-date correction by user
 
 ## source_ref
 
@@ -121,3 +139,4 @@ This issue can be closed when:
 - `notes/10_logs/2026-05-17_adam_bug_log_omission_for_todoist_projection_bug.md`
 - `notes/10_logs/adam_bug_fix_log.md`
 - `notes/10_logs/adam_bug_fix_log_operating_method.md`
+- `notes/07_reports/weekly/2026-05-17.md`
