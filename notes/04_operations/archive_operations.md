@@ -12,126 +12,52 @@ weekly review までの短期履歴置き場であり、
 
 ## Current week completed tasks
 
-### 2026-05-11
+### 2026-05-17
 
-- task: overdue Sunday Weekly Review Mode Immediate Gate を解消する
-  completed_at: 2026-05-11
+- task: Sunday Weekly Review Mode を実行する
+  completed_at: 2026-05-17
   source_ref:
     - docs/17_operations_system.md
     - docs/15_notes_system.md
     - notes/04_operations/active_operations.md
+    - notes/04_operations/next_operations.md
     - notes/04_operations/archive_operations.md
-    - notes/99_archive/operations/2026-05-10_weekly_operations.md
-    - notes/01_issues/README.md
+    - notes/99_archive/operations/2026-05-17_weekly_operations.md
+    - notes/07_reports/daily/2026-05-17.md
+    - notes/07_reports/weekly/2026-05-17.md
     - notes/01_issues/idea_log.md
+    - notes/01_issues/2026-05-17_todoist_projection_and_bug_log_gate_issue.md
     - notes/01_issues/2026-05-03_review_report_template_gate_issue.md
     - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
-    - notes/10_logs/2026-05-11_adam_issue_tree_response_too_large_misinterpretation.md
   completed_evidence:
-    - 2026-05-10 weekly snapshot path was corrected from mistaken superseded file into valid overdue weekly snapshot
-    - snapshot saved at `notes/99_archive/operations/2026-05-10_weekly_operations.md`
-    - snapshot sha: `7e881de90451bee85f01ffb8825472b7fcc2fe05`
-    - archive_operations was cleared after snapshot and then reopened for current week
-    - `notes/01_issues` contains four files and all four were directly read after correction
-    - `idea_log.md` confirmed keep issues only
-    - known active issues remained connected to active operations
+    - daily close executed first
+    - weekly operations snapshot saved at `notes/99_archive/operations/2026-05-17_weekly_operations.md`
+    - snapshot sha: `9e117a221249661309d5a57bf64dad32df10b176`
+    - issue state check performed for current touched issues
+    - `notes/01_issues/2026-05-17_todoist_projection_and_bug_log_gate_issue.md` touched and left progressed
+    - active / next operations rerolled for week of 2026-05-18
+    - Todoist projection updated once after weekly reroll
   remaining_risk:
-    - no unresolved risk from issue-file volume; earlier `response too large` interpretation was an ADAM tool failure interpretation miss
-    - no full issue routing session was executed during the overdue weekly gate; only issue state / active connection confirmation was performed
-
-- task: DELTA L3 question index runtime fixture を確認する
-  completed_at: 2026-05-11
-  source_ref:
-    - notes/10_logs/2026-05-11_delta_l3_question_index_runtime_fixture.md
-    - src/services/delta/l3-question-index.js
-    - src/services/delta-operations.js
-    - src/services/delta/operations-split.test.js
-    - systems/delta/operations/next_operations.md
-    - systems/delta/config/delta_operations_generation_schema.yaml
-  completed_evidence:
-    - runtime validator version confirmed: `delta_operations_preflight_2026_05_09_l3_question_index_l3_unavailable_day_guard`
-    - allow confirmed for `国民年金法 L3 択一 Q4-1〜Q4-4（4問）`
-    - allow confirmed for `国民年金法 L3 択一 Q5-0（演習対象なし）`
-    - reject confirmed for count mismatch `Q4-1〜Q4-4（3問）`
-    - reject confirmed for nonexistent `Q3-4〜Q3-4`
-    - reject confirmed for `Q5-1〜Q5-1` in no-exercise chapter
-    - reject confirmed for nonexistent `Q1-17〜Q1-32`
-    - reject confirmed for `未通過16問`, `できるところまで`, and `4問相当`
-    - `next_operations.md` restored after fixture with sha `84f6abf2cdf9ba6aefab545d9a1f6da2c69554fd`
-  remaining_risk:
-    - guard is confirmed for 国民年金法 L3 択一 index; other subjects require their own index before enforcement
-
-- task: ADAM bug fix log の運用方法を notes に固定する
-  completed_at: 2026-05-11
-  source_ref:
-    - notes/10_logs/README.md
-    - notes/10_logs/adam_bug_fix_log.md
-    - notes/10_logs/adam_bug_fix_log_operating_method.md
-    - notes/01_issues/2026-05-03_review_report_template_gate_issue.md
-    - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
-    - notes/10_logs/2026-05-04_adam_immediate_gate_judgment_miss.md
-    - notes/10_logs/2026-05-05_adam_delta_reverse_planning_gate_misjudgment.md
-    - notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md
-    - notes/10_logs/2026-05-06_repo_history_integrity_incident_after_atlas_recovery.md
-    - notes/10_logs/2026-05-09_delta_next_operations_dynamic_d7_validator_fix.md
-    - notes/10_logs/2026-05-09_delta_special_day_l3_unavailable_guard.md
-    - notes/10_logs/2026-05-11_delta_l3_question_index_runtime_fixture.md
-  completed_evidence:
-    - `notes/10_logs/README.md` now defines logs layer role and points to `adam_bug_fix_log_operating_method.md`
-    - `notes/10_logs/adam_bug_fix_log_operating_method.md` created
-    - operating method defines ADAM bug fix log role, non-SSOT status, required fields, status taxonomy, review triggers, and disposition rules
-    - current relevant individual logs were classified
-    - 2026-05-04 Immediate Gate miss remains individual log and instruction-reflected
-    - 2026-05-05 DELTA reverse-planning misjudgment remains individual log and closure judgment lesson
-    - 2026-05-05 handover latest detection failure remains next/future operations candidate until latest pointer is implemented
-    - 2026-05-06 repo history incident remains incident evidence with follow-ups elsewhere
-    - 2026-05-09 / 2026-05-11 DELTA validator logs remain individual evidence; only recurrence-prevention themes are summarized by operating method
-    - `adam_bug_fix_log.md` is explicitly not execution SSOT
-  remaining_risk:
-    - `adam_bug_fix_log.md` itself remains large and may later need summarization / indexing, but that is not required for this operating-method task
-    - stable rules discovered from repeated logs may still require future docs / instruction placement judgment
-
-### 2026-05-15
-
-- task: Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
-  completed_at: 2026-05-15
-  source_ref:
-    - notes/08_analysis/2026-05-15_adam_only_phase0_routing_maturity_matrix.md
-    - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - docs/05_roadmap.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-  completed_evidence:
-    - scope corrected to ADAM-only; EVE maturity was not scored
-    - ADAM maturity matrix saved
-    - Phase 0重点テーマ were listed
-    - issue / intake / design / test / review / operations / runtime fixture / handover domains were compared with one scale
-    - intake routing gap identified as not yet operational
-    - design routing gap identified as not yet operational / early partial
-    - plan-driven discovery gate steps defined
-    - follow-up candidates dispositioned into next / future / absorbed
-    - original routing maturity issue marked close_candidate
-  remaining_risk:
-    - this closes the matrix task, not all underlying routing gaps
-    - intake routing fixture and design routing fixture remain follow-up candidates
-    - EVE maturity remains explicitly unassessed until EVE has operational evidence
+    - `現在の inbox を一回整理する` remains incomplete because full `notes/00_inbox` listing is blocked
+    - report template hardening remains open
+    - design routing minimum fixture remains open
+    - Todoist projection delete / close / defer semantics need monitoring
 
 ---
 
 ## Last weekly snapshot
 
-- `notes/99_archive/operations/2026-05-10_weekly_operations.md`
-- snapshot sha: `7e881de90451bee85f01ffb8825472b7fcc2fe05`
+- `notes/99_archive/operations/2026-05-17_weekly_operations.md`
+- snapshot sha: `9e117a221249661309d5a57bf64dad32df10b176`
 
 Cleared at:
 
-- 2026-05-11 overdue Sunday Weekly Review Mode Immediate Gate
+- 2026-05-17 Sunday Weekly Review Mode
 
 Previous weekly snapshot:
 
-- `notes/99_archive/operations/2026-05-03_weekly_operations.md`
-- snapshot sha: `acbbbc339243b00d3e92410a55d250de3348edcd`
+- `notes/99_archive/operations/2026-05-10_weekly_operations.md`
+- snapshot sha: `7e881de90451bee85f01ffb8825472b7fcc2fe05`
 
 ---
 
