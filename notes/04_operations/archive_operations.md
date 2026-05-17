@@ -91,6 +91,32 @@ weekly review までの短期履歴置き場であり、
     - `adam_bug_fix_log.md` itself remains large and may later need summarization / indexing, but that is not required for this operating-method task
     - stable rules discovered from repeated logs may still require future docs / instruction placement judgment
 
+### 2026-05-15
+
+- task: Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
+  completed_at: 2026-05-15
+  source_ref:
+    - notes/08_analysis/2026-05-15_adam_only_phase0_routing_maturity_matrix.md
+    - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
+    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
+    - docs/05_roadmap.md
+    - docs/15_notes_system.md
+    - docs/17_operations_system.md
+  completed_evidence:
+    - scope corrected to ADAM-only; EVE maturity was not scored
+    - ADAM maturity matrix saved
+    - Phase 0重点テーマ were listed
+    - issue / intake / design / test / review / operations / runtime fixture / handover domains were compared with one scale
+    - intake routing gap identified as not yet operational
+    - design routing gap identified as not yet operational / early partial
+    - plan-driven discovery gate steps defined
+    - follow-up candidates dispositioned into next / future / absorbed
+    - original routing maturity issue marked close_candidate
+  remaining_risk:
+    - this closes the matrix task, not all underlying routing gaps
+    - intake routing fixture and design routing fixture remain follow-up candidates
+    - EVE maturity remains explicitly unassessed until EVE has operational evidence
+
 ---
 
 ## Last weekly snapshot
