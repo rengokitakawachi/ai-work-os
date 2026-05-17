@@ -8,6 +8,23 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
+## 再評価結果（2026-05-15 ADAM Phase 0 早期完了優先）
+
+User confirmed DELTA is operating without major trouble and ADAM Phase 0 should be completed early.
+
+Decision:
+
+- `現在の inbox を一回整理する` was promoted from next to active as the intake routing operational fixture.
+- `DELTA chapter-only normalization fixture を実行する` was deferred from active back to next because it is useful but not the current Phase 0 blocker.
+- Design routing / report hardening / handover latest index were promoted into active as Phase 0 completion candidates.
+
+Evidence:
+
+- `notes/08_analysis/2026-05-15_adam_only_phase0_routing_maturity_matrix.md`
+- `notes/04_operations/active_operations.md`
+
+---
+
 ## 再評価結果（2026-05-05 handover latest detection failure）
 
 Thread restart revealed an actual handover discovery failure.
@@ -24,86 +41,104 @@ Bug log:
 
 - `notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md`
 
----
+Current disposition:
 
-## 再評価結果（2026-05-05 DELTA reverse-planning correction）
-
-User clarification confirmed that DELTA's original defect is not merely test failure or unsafe write behavior.
-
-Original defect:
-
-```text
-operationsを生成する際にロードマップやPlanからの逆算をせずに、安易に7日間の計画を立ててしまう
-```
-
-Because DELTA's mission is to support passing the 社労士 exam on 2026-08-23, full reverse-planning from roadmap / plan / current position / remaining scope is not optional future scope.
-
-Disposition:
-
-- `DELTA full reverse-planning optimizer を設計する` is promoted out of next_operations.
-- It must be handled as an active Immediate Gate / blocker.
-- The prior `minimum deterministic generator` remains useful but is not sufficient to close the original issue.
-
----
-
-## 再評価結果（2026-05-05 DELTA generator gate）
-
-DELTA operations generation engine Immediate Gate では、minimum deterministic generator を service-only として test-backed readiness まで到達した。
-
-API / Action exposure はこの gate では実施せず、future DELTA daily review backend path からの呼び出し設計まで保留する。
-
-Correction:
-
-- Full reverse-planning optimizer was initially separated to next candidate.
-- This was a blocker underestimation.
-- It has now been promoted to active Immediate Gate because it is the core fix for the original DELTA defect.
-
----
-
-## 再評価結果（2026-05-04 rolling）
-
-2026-05-04 の conversation-triggered operations rolling により、以下2件を active_operations へ昇格した。
-
-- `ADAM bug fix log の運用方法を notes に固定する`
-- `Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する`
-
-昇格先:
-
-- `notes/04_operations/active_operations.md`
-- active sha after rolling: `f700ac509ed6485bf724270f7462d19031829cd8`
-
-Reason:
-
-- 複数の高優先度 task が next_operations に追加されたため rolling を実行した
-- `ADAM bug fix log` は不具合・回帰・修正履歴を記録止まりにしないための定着 task
-- `Phase 0 routing maturity matrix` は plan-driven discovery gap の再発防止 task
-- どちらも Immediate Gate ではないが、ADAM の governance quality に直結するため active 前半へ昇格した
-
----
-
-## 再評価結果（2026-05-03 conversation update）
-
-Phase 0 plan に明記されている routing maturity gap を ADAM が自律的に operations candidate 化できていなかった問題を受け、`Phase 0 routing maturity matrix を作る` task を next の最上位候補へ追加した。
-
-ADAM の不具合・回帰・修正履歴を集約する `adam_bug_fix_log` を作成したため、その運用方法を notes に固定する task も上位候補へ追加した。
-
-Result:
-
-- both promoted to active on 2026-05-04 rolling
-
----
-
-## 再評価結果（2026-05-02 daily review）
-
-明日以降の再開性を優先し、ADAM / EVE / DELTA の Action schema 正規ファイル名固定 task を active Day0 に追加した。
-
-DELTA v0.6 は引き続き active 主線として維持する。
+- promoted to active as Phase 0 completion candidate on 2026-05-15.
 
 ---
 
 ## タスク
 
-### 1. notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
+### 1. DELTA chapter-only normalization fixture を実行する
+
+source_ref:
+
+- systems/delta/config/delta_schema.yaml
+- systems/delta/roadmap/delta_roadmap.md
+- systems/delta/plan/2026_sharoushi_exam_plan.md
+- systems/delta/operations/active_operations.md
+- systems/delta/operations/next_operations.md
+- systems/delta/history/daily/2026-05-05.md
+
+why_next:
+
+- DELTA is currently operating without major trouble.
+- This fixture is still useful to prevent speculative progress normalization, but ADAM Phase 0 intake / design / report hardening now has higher priority.
+- Return to active if DELTA starts accepting chapter-only progress as precise Q/page progress or if user reports related error.
+
+completed_condition:
+
+- `健康保険法の3章が終わった` ケースで、L3なら question_id への正規化または uncertainty が必要と判断する
+- `国民年金法7章が終わった` ケースで、L1/L2なら page_range / next_start_page が必要と判断する
+- 変換不能時に confirmation next_action を出す
+- 実データを読んだ上で、推測で precise progress を作らない
+
+---
+
+### 2. repo history / show / grep の docs・schema・runtime reflection 残範囲を再確認する
+
+source_ref:
+
+- docs/10_repo_resource_api.md
+- config/ai/adam_action_schema.yaml
+- notes/08_analysis/2026-04-30_phase0_hardening_followup_candidate_routing.md
+
+why_next:
+
+- docs / schema / runtime reflection の境界確認は重要だが、Phase 0 intake/design/report hardening より後でよい
+
+completed_condition:
+
+- docs/10_repo_resource_api.md を読む
+- current repoResource action schema と runtime-visible behavior を区別する
+- history / show / grep の残 reflection 範囲を確認する
+- docs update / schema update / runtime fixture のどれが必要か判断する
+
+---
+
+### 3. ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する
+
+source_ref:
+
+- notes/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md
+- notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
+- notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
+
+why_next:
+
+- intake routing の実運用候補だが、まず current inbox cleanup fixture で全体の分類を閉じる
+- 最新 OpenAI 情報を扱う場合は official source 確認が必要
+
+completed_condition:
+
+- 抽象概念として残す部分と製品仕様として古くなる部分を分ける
+- 最新 OpenAI official source を確認する
+- issue / design / archive / future の disposition を保存する
+
+---
+
+### 4. Phase 1 Outlook Calendar API の読取設計を整理する
+
+source_ref:
+
+- notes/03_plan/2026-04_phase1_todoist_outlook_foundation.md
+- docs/05_roadmap.md
+- notes/08_analysis/2026-04-29_phase1_todoist_foundation_entry_boundary_analysis.md
+
+why_next:
+
+- Phase 1 の重要候補だが、ADAM Phase 0 の intake / design / report hardening が先
+
+completed_condition:
+
+- Outlook Calendar API の読み取り対象を定義する
+- EVE の schedule SSOT としての境界を整理する
+- Todoist projection との関係を整理する
+- Phase 1 entry criteria と接続する
+
+---
+
+### 5. notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
 
 source_ref:
 
@@ -114,8 +149,8 @@ source_ref:
 
 why_next:
 
-- active Day6 から外したが、repoResourceWrite delete semantics の整理は Phase 0 hardening の残件として近い将来必要
-- DELTA v0.6 runtime readiness と schema reflection を優先するため next に送る
+- repoResourceWrite delete semantics の整理は Phase 0 hardening の残件
+- current intake/design/report hardening の後でよい
 
 completed_condition:
 
@@ -125,33 +160,7 @@ completed_condition:
 
 ---
 
-### 2. 現在の inbox を一回整理する
-
-source_ref:
-
-- notes/99_archive/issues/2026-05-03_individual_issue_files_routing_archive.md
-- notes/02_design/2026-05-01_routing_type_destination_constraints.md
-- notes/08_analysis/2026-04-30_routing_session_checklist.md
-
-why_next:
-
-- inbox には開発時の test clip / 直下配置 / 下層 folder など一回限りの整理対象が残る
-- ただし DELTA v0.6 runtime readiness よりは後でよい
-
-completed_condition:
-
-- `notes/00_inbox` の current tree を確認する
-- 本システムと無関係な test clip を列挙する
-- delete candidate ごとに削除理由を明示する
-- inbox 直下の web / dev_memo 相当 file を分類する
-- inbox 配下の余計な下層 folder を列挙する
-- delete 前に対象と影響範囲を確認する
-- Write Gate 後に delete / move を実行する
-- write 後に read-back / NOT_FOUND / destination 確認を行う
-
----
-
-### 3. legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
+### 6. legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
 
 source_ref:
 
@@ -175,7 +184,7 @@ completed_condition:
 
 ---
 
-### 4. DELTA foundation を main に統合する準備をする
+### 7. DELTA foundation を main に統合する準備をする
 
 source_ref:
 
@@ -203,7 +212,7 @@ completed_condition:
 
 ---
 
-### 5. ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
+### 8. ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
 
 source_ref:
 
@@ -227,7 +236,7 @@ completed_condition:
 
 ---
 
-### 6. DELTA monthly summary rebuild automation を設計する
+### 9. DELTA monthly summary rebuild automation を設計する
 
 source_ref:
 
@@ -250,7 +259,7 @@ completed_condition:
 
 ---
 
-### 7. DELTA dedicated append_daily_event action を検討する
+### 10. DELTA dedicated append_daily_event action を検討する
 
 source_ref:
 
@@ -272,62 +281,7 @@ completed_condition:
 
 ---
 
-### 8. DELTA review automation / analytics を v0.7 候補として整理する
-
-source_ref:
-
-- systems/delta/config/delta_schema.yaml
-- systems/delta/history/daily/
-- systems/delta/review/
-
-why_next:
-
-- v0.6 は operations / history / projection の安定化が主目的
-- review automation / analytics は v0.7 候補として分離する方が安全
-
-completed_condition:
-
-- v0.6 scope から外す理由を明示する
-- v0.7 候補として必要 input / output / metrics を整理する
-- active に戻す再評価条件を決める
-
----
-
-### 9. handover latest index と月別フォルダ構成を導入する
-
-source_ref:
-
-- notes/02_design/2026-05-03_handover_restart_flow_design.md
-- notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md
-- notes/99_archive/issues/2026-05-03_individual_issue_files_routing_archive.md
-- notes/06_handover/handover_template.md
-- notes/06_handover/2026-05-03_delta_v0_6_readiness_handover.md
-- notes/06_handover/2026-05-05_delta_generator_test_and_runtime_reflection_handover.md
-- notes/04_operations/active_operations.md
-
-why_next:
-
-- `notes/06_handover/` 直下の一覧取得がレスポンス過大で失敗した
-- latest handover の特定を history / search / direct guess に依存すると再開手順が不安定になる
-- 2026-05-05 restart で ADAM は latest handover を自力特定できず、user が exact path を提示する必要があった
-- handover は restart entry point であり、latest pointer により小さい read で再開起点へ到達できるようにする必要がある
-- ただし current active task ではないため、active に横入りさせず next に置く
-
-completed_condition:
-
-- `notes/06_handover/latest.md` の形式を決める
-- `notes/06_handover/latest.md` を作成する
-- latest pointer が `notes/06_handover/2026-05-05_delta_generator_test_and_runtime_reflection_handover.md` または最新 handover を指すことを確認する
-- `notes/06_handover/YYYY/MM/` 構成を採用するか判断する
-- 既存 handover の移動方針を決める
-- `handover_index.md` が必要か判断する
-- handover 作成 procedure に latest 更新を組み込むか判断する
-- 移動 / 作成 / 更新を行う場合は Write Gate 後に実行する
-- 更新後に read-back し、latest pointer と actual file path の整合を確認する
-
----
-
-### 10. tasks API 全体を execution projection 前提で再設計する
+### 11. tasks API 全体を execution projection 前提で再設計する
 
 source_ref:
 
@@ -340,7 +294,6 @@ source_ref:
 
 why_next:
 
-- Issue routing で operations_candidate と判定したが、current active には独立 task として存在しない
 - DELTA projection profile / Todoist fixture 後に、Tasks API を execution projection 前提で再評価する必要がある
 
 completed_condition:
@@ -352,7 +305,7 @@ completed_condition:
 
 ---
 
-### 11. code resource の repo root allowlist 拡張を設計・確認する
+### 12. code resource の repo root allowlist 拡張を設計・確認する
 
 source_ref:
 
@@ -375,7 +328,7 @@ completed_condition:
 
 ---
 
-### 12. Todoist projection due_date / due_type 伝播を regression 確認する
+### 13. Todoist projection due_date / due_type 伝播を regression 確認する
 
 source_ref:
 
@@ -399,7 +352,7 @@ completed_condition:
 
 ---
 
-### 13. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
+### 14. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
 
 source_ref:
 
@@ -419,35 +372,6 @@ completed_condition:
 - always-on guard / procedure / background knowledge / API schema constraints を分離する
 - instruction に残すべき拘束ルールと knowledge に置くべき procedure を判定する
 - 更新が必要なら Write Gate 後に最小差分で反映し、read-back sha を記録する
-
----
-
-### 14. weekly review を定期実行 task として operations に組み込む
-
-source_ref:
-
-- config/ai/adam_instruction.md
-- notes/08_analysis/2026-05-03_docs15_issue_routing_completion_update_proposal.md
-- notes/02_design/2026-04-12_review_system_and_operations_rolling_connection.md
-- notes/04_operations/2026-04-12_weekly_review_prep.md
-- notes/04_operations/active_operations.md
-- notes/04_operations/next_operations.md
-
-why_next:
-
-- weekly review は report 作成ではなく、operations rolling / issue routing check / future・archive・design 滞留確認を含む定期 usecase である
-- issue routing が定期的に実行されないと `idea_log.md` が再び肥大化し、design / operations への流れが止まる
-- 現在の operations には weekly review preparation や archive 記録はあるが、recurring weekly review execution task が active / next に明示されていない
-
-completed_condition:
-
-- weekly review の standard completed condition を確認する
-- weekly review に issue routing check を必須項目として組み込む
-- weekly review で未routed issue がある場合、issue routing を実行するか active / next に明示的に入れる rule を固定する
-- weekly review task を active_operations の7日 rolling に定期的に入れる方法を決める
-- Todoist projection へ weekly review task をどう投影するか判断する
-- docs/17 または docs/15 への反映要否を判断する
-- read-back で active / next / docs proposal / instruction の整合を確認する
 
 ---
 
