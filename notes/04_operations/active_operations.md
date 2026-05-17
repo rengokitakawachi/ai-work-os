@@ -29,27 +29,39 @@ Last review:
   - created: none
   - closed: none
 - completed_today: none
-- note:
-  - 2026-05-14 active Day0 tasks had no completion evidence, so they were carried forward.
-  - The Phase 0 routing maturity matrix has now been carried across multiple daily reviews and is a focus risk if deferred again without blocker.
 
 Latest closure:
+
+- task: Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
+- status: completed_adam_only_scope
+- completed_at: 2026-05-15
+- archived_to: `notes/04_operations/archive_operations.md`
+- evidence:
+  - notes/08_analysis/2026-05-15_adam_only_phase0_routing_maturity_matrix.md
+  - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
+- result:
+  - scope corrected to ADAM-only
+  - EVE maturity explicitly not scored
+  - ADAM routing/review/operations domains classified
+  - plan-driven discovery gate defined
+  - follow-up candidates dispositioned
+
+Previous closure:
 
 - task: ADAM bug fix log の運用方法を notes に固定する
 - status: completed
 - completed_at: 2026-05-11
 - archived_to: `notes/04_operations/archive_operations.md`
 
-Previous closure:
-
-- task: DELTA L3 question index runtime fixture を確認する
-- status: actual_behavior_confirmed
-- completed_at: 2026-05-11
-- archived_to: `notes/04_operations/archive_operations.md`
-
 ---
 
 ## Recently resolved gates / completed scopes
+
+- task: Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
+  status: completed_adam_only_scope
+  completed: true
+  completed_at: 2026-05-15
+  archived_to: `notes/04_operations/archive_operations.md`
 
 - task: ADAM bug fix log の運用方法を notes に固定する
   status: completed
@@ -73,33 +85,7 @@ Previous closure:
 
 ## Day0（05/15 金）
 
-Capacity note: 約2h。5/14 Day0 未完了の2件をそのまま繰り越す。
-
-- task: Phase 0 routing maturity matrix を作り、plan-driven discovery gate を整理する
-  source_ref:
-    - notes/01_issues/2026-05-03_routing_maturity_gap_intake_design_issue.md
-    - notes/03_plan/2026-04_phase0_adam_to_eve_common_operating_model.md
-    - notes/04_operations/active_operations.md
-    - notes/04_operations/next_operations.md
-    - docs/05_roadmap.md
-    - docs/15_notes_system.md
-    - docs/17_operations_system.md
-  rolling_day: Day0
-  due_date: 2026-05-15
-  due_type: date
-  status: active_carryover
-  completed_condition:
-    - Phase 0 plan の重点テーマを列挙する
-    - issue / intake / design / test system の maturity を同じ基準で比較する
-    - 各テーマについて completed / partially completed / not yet operational を判定する
-    - intake routing の未充足 completed condition を列挙する
-    - design routing の未充足 completed condition を列挙する
-    - plan-driven discovery gate として、roadmap / plan の未充足テーマを issue / operations candidate 化する手順を整理する
-    - 必要な後続 task を active / next / future / absorbed に dispositionする
-    - 必要なら Phase 0 plan / docs / knowledge / operations への反映候補を分離する
-    - report / analysis / operations のどこに evidence を残すか判断し、read-back sha を記録する
-  external:
-    todoist_task_id: 6gWr53gP72vVPvjH
+Capacity note: 約2h。Phase 0 matrix は完了。次は DELTA fixture を実行する。
 
 - task: DELTA chapter-only normalization fixture を実行する
   source_ref:
