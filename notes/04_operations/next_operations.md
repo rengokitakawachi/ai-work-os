@@ -8,6 +8,27 @@ active_operations に入らなかった上位候補を保持する。
 
 ---
 
+## 再評価結果（2026-05-17 Sunday Weekly Review Mode）
+
+Completed / removed from next:
+
+- `ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する`
+  - result: completed as part of inbox intake routing partial fixture
+  - future/design: `notes/80_future/design/2026-05-17_chatgpt_agent_external_article_routing.md`
+  - archive: `notes/99_archive/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md`
+  - source inbox file: deleted after archive read-back
+  - evidence: `notes/08_analysis/2026-05-17_inbox_intake_routing_result.md`
+
+Still active / not in next:
+
+- `現在の inbox を一回整理する`
+  - remains active because full `notes/00_inbox` listing is still blocked
+- `design routing の最小 fixture を実行する`
+- `report template / README hardening を実行する`
+- `handover latest index と月別フォルダ構成を導入する`
+
+---
+
 ## 再評価結果（2026-05-15 ADAM Phase 0 早期完了優先）
 
 User confirmed DELTA is operating without major trouble and ADAM Phase 0 should be completed early.
@@ -22,28 +43,6 @@ Evidence:
 
 - `notes/08_analysis/2026-05-15_adam_only_phase0_routing_maturity_matrix.md`
 - `notes/04_operations/active_operations.md`
-
----
-
-## 再評価結果（2026-05-05 handover latest detection failure）
-
-Thread restart revealed an actual handover discovery failure.
-
-ADAM could not reliably identify the latest handover from `notes/06_handover/` and required the user to provide the exact path:
-
-```text
-notes/06_handover/2026-05-05_delta_generator_test_and_runtime_reflection_handover.md
-```
-
-This confirms `handover latest index と月別フォルダ構成を導入する` is not only cleanup. It is a restart reliability bug fix.
-
-Bug log:
-
-- `notes/10_logs/2026-05-05_adam_handover_latest_detection_failure.md`
-
-Current disposition:
-
-- promoted to active as Phase 0 completion candidate on 2026-05-15.
 
 ---
 
@@ -63,7 +62,7 @@ source_ref:
 why_next:
 
 - DELTA is currently operating without major trouble.
-- This fixture is still useful to prevent speculative progress normalization, but ADAM Phase 0 intake / design / report hardening now has higher priority.
+- This fixture is still useful to prevent speculative progress normalization, but ADAM Phase 0 intake / design / report hardening has higher priority.
 - Return to active if DELTA starts accepting chapter-only progress as precise Q/page progress or if user reports related error.
 
 completed_condition:
@@ -96,28 +95,7 @@ completed_condition:
 
 ---
 
-### 3. ChatGPT Agent 外部記事を抽象概念と製品仕様に分割して routing する
-
-source_ref:
-
-- notes/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md
-- notes/08_analysis/2026-04-30_intake_routing_archive_pending_reobservation.md
-- notes/08_analysis/2026-05-01_archive_decision_unmoved_inventory_current_rule.md
-
-why_next:
-
-- intake routing の実運用候補だが、まず current inbox cleanup fixture で全体の分類を閉じる
-- 最新 OpenAI 情報を扱う場合は official source 確認が必要
-
-completed_condition:
-
-- 抽象概念として残す部分と製品仕様として古くなる部分を分ける
-- 最新 OpenAI official source を確認する
-- issue / design / archive / future の disposition を保存する
-
----
-
-### 4. Phase 1 Outlook Calendar API の読取設計を整理する
+### 3. Phase 1 Outlook Calendar API の読取設計を整理する
 
 source_ref:
 
@@ -138,7 +116,7 @@ completed_condition:
 
 ---
 
-### 5. notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
+### 4. notes delete API draft と current repoResourceWrite delete semantics の差分を確認する
 
 source_ref:
 
@@ -160,7 +138,7 @@ completed_condition:
 
 ---
 
-### 6. legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
+### 5. legacy Todoist wrapper の削除判断を Phase 1 Todoist foundation 後に行う
 
 source_ref:
 
@@ -184,7 +162,7 @@ completed_condition:
 
 ---
 
-### 7. DELTA foundation を main に統合する準備をする
+### 6. DELTA foundation を main に統合する準備をする
 
 source_ref:
 
@@ -212,7 +190,7 @@ completed_condition:
 
 ---
 
-### 8. ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
+### 7. ATLAS 関係ファイルを systems/atlas に集約する設計を整理する
 
 source_ref:
 
@@ -236,7 +214,7 @@ completed_condition:
 
 ---
 
-### 9. DELTA monthly summary rebuild automation を設計する
+### 8. DELTA monthly summary rebuild automation を設計する
 
 source_ref:
 
@@ -259,7 +237,7 @@ completed_condition:
 
 ---
 
-### 10. DELTA dedicated append_daily_event action を検討する
+### 9. DELTA dedicated append_daily_event action を検討する
 
 source_ref:
 
@@ -281,7 +259,7 @@ completed_condition:
 
 ---
 
-### 11. tasks API 全体を execution projection 前提で再設計する
+### 10. tasks API 全体を execution projection 前提で再設計する
 
 source_ref:
 
@@ -295,17 +273,19 @@ source_ref:
 why_next:
 
 - DELTA projection profile / Todoist fixture 後に、Tasks API を execution projection 前提で再評価する必要がある
+- 2026-05-17 weekly review confirmed projectTasks delete / close / defer semantics remain ambiguous
 
 completed_condition:
 
 - current tasks API / service / projection / Todoist client の責務境界を確認する
 - create / update / close / delete / projection apply の意味を整理する
 - operations 正本と Todoist projection の関係を docs / design に接続する
+- active removal due to deferral and active removal due to completion を分ける
 - 実装が必要な場合は別 task として分解する
 
 ---
 
-### 12. code resource の repo root allowlist 拡張を設計・確認する
+### 11. code resource の repo root allowlist 拡張を設計・確認する
 
 source_ref:
 
@@ -328,7 +308,7 @@ completed_condition:
 
 ---
 
-### 13. Todoist projection due_date / due_type 伝播を regression 確認する
+### 12. Todoist projection due_date / due_type 伝播を regression 確認する
 
 source_ref:
 
@@ -336,12 +316,13 @@ source_ref:
 - src/services/tasks/projection.js
 - config/ai/adam_action_schema.yaml
 - notes/04_operations/active_operations.md
+- notes/01_issues/2026-05-17_todoist_projection_and_bug_log_gate_issue.md
 
 why_next:
 
 - 過去に Todoist projection で新規 task に due が入らない事象があった
-- 現 runtime-visible projectTasks schema には due_date / due_type が見えているが、actual create/update behavior は fixture で確認が必要
-- DELTA projection profile / Todoist fixture 後に、ADAM projection regression として確認するのが自然
+- 2026-05-17 に manual projection date normalization miss が起きた
+- projectTasks dry_run が completed weekly review task を delete 判定したため、close/defer semantics も確認が必要
 
 completed_condition:
 
@@ -349,10 +330,11 @@ completed_condition:
 - apply が必要な場合は previous_active_tasks と current_active_tasks を必ず用意する
 - new create / existing update の due propagation を確認する
 - dry_run 成功を apply 成功と混同しない
+- delete / close / defer semantics を確認する
 
 ---
 
-### 14. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
+### 13. ADAM instruction を GPT-5.5 向けに core / procedure / schema へ再層化する
 
 source_ref:
 
