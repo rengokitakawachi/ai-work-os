@@ -1,7 +1,8 @@
 # 2026-05-17 inbox intake routing result
 
-status: partial_completed_with_blocker
+status: partial_completed_with_listing_blocker
 created_at: 2026-05-17
+updated_at: 2026-05-17
 scope: current inbox intake routing
 source_ref:
   - notes/00_inbox/README.md
@@ -27,7 +28,7 @@ Alternative checks:
 - known direct files were read manually
 - source rules and routing checklist were read
 
-Because the full file list could not be obtained, this routing session is only partially complete until a stable listing method or segmented routing completes the remaining inbox items.
+Because the full file list could not be obtained, this routing session remains partially complete until a stable listing method or segmented routing completes the remaining inbox items.
 
 ---
 
@@ -58,12 +59,27 @@ reason: README defines dev_memo role and is not an intake item
 Disposition:
 
 ```yaml
-routing_output_type: transform + archive candidate
-destination_candidate: notes/80_future/design/2026-05-17_chatgpt_agent_external_article_routing.md
-archive_candidate: notes/99_archive/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md
+routing_output_type: transform + archive + delete_from_inbox
+destination: notes/80_future/design/2026-05-17_chatgpt_agent_external_article_routing.md
+archive_destination: notes/99_archive/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md
+source_status: deleted_from_inbox
 reason: third-party external product article; product facts are volatile but agentic work pattern has future EVE design value
-status: pending_write_after_runtime_recovery
 ```
+
+Evidence:
+
+- future/design created:
+  - `notes/80_future/design/2026-05-17_chatgpt_agent_external_article_routing.md`
+  - sha: `5e85d1a2dc4b4c4cbd5c0efd401ad83fc661686c`
+- archive created:
+  - `notes/99_archive/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md`
+  - sha: `150f4a1421126f026893809165b8af0aeadddff2`
+- original source deleted:
+  - original path: `notes/00_inbox/ChatGPT Agent（エージェント）とは？背景や使い方を解説！.md`
+  - original sha: `f0f2780e15e8315beb89d40c6ad98e9f6a4b3d4c`
+  - delete commit: `c33c6be22a43e72b5422e457ce5a9096ca2e53ff`
+- read-back after delete:
+  - `NOT_FOUND` confirmed
 
 Routing judgment:
 
@@ -75,13 +91,32 @@ Routing judgment:
 
 ---
 
-## tool blocker observed
+## tool blocker observed and resolved
 
 During the first attempt, writes to `notes/80_future/design` and `notes/08_analysis` failed with ClientResponseError, and DELTA also reported inability to write.
 
 User later reported runtime recovery.
 
-This file records the interrupted state before continuing physical routing.
+After recovery:
+
+- routing result was saved
+- future/design candidate was created
+- archive was created
+- source was deleted from inbox
+
+---
+
+## remaining blocker
+
+Full `notes/00_inbox` listing remains unresolved.
+
+Observed:
+
+- `notes` tree for `notes/00_inbox` returned response-too-large
+- `repo grep` on `notes/00_inbox` scanned 76 files but did not return a file list
+- `notes` list is not supported
+
+This means one real inbox item was successfully routed, but the whole inbox has not yet been fully classified.
 
 ---
 
@@ -92,32 +127,36 @@ Completed:
 - routing rules read
 - inbox known README files classified as retain
 - known ChatGPT Agent inbox article classified
+- ChatGPT Agent future/design candidate created
+- ChatGPT Agent source archived
+- ChatGPT Agent original inbox source deleted
+- delete read-back returned NOT_FOUND
 - full tree failure was not misinterpreted as content fact
 - tool blocker recorded
 
-Not completed yet:
+Not completed:
 
 - full `notes/00_inbox` file list
 - full classification of all scanned 76 files
-- future/design output creation
-- source article archive/delete
-- inbox cleanup read-back
+- unrelated test clip enumeration
+- complete delete / move / archive pass for all inbox items
 
 ---
 
 ## next action
 
-After runtime recovery:
+Use a stable listing strategy to continue the intake fixture.
 
-1. create future/design candidate for ChatGPT Agent article
-2. archive original source
-3. delete original inbox source only after archive read-back succeeds
-4. record remaining full-inbox listing blocker
+Options:
+
+1. segment known subfolders and route one group at a time
+2. add or use a repo list/tree endpoint that returns names without file contents
+3. promote a follow-up task for inbox listing/tool support if listing remains blocked
 
 ---
 
 ## judgment
 
-This is not yet a complete intake routing fixture.
+This is a valid partial intake routing fixture with one real inbox item completed end-to-end.
 
-It is a partial routing result with a resolved runtime blocker but an unresolved full-inbox listing blocker.
+It is not a complete inbox cleanup fixture because the full inbox listing is still blocked.
